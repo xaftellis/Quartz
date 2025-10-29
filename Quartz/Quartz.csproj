@@ -1,0 +1,1054 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C3852943-5254-4359-B294-450BC9302D19}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Quartz</RootNamespace>
+    <AssemblyName>Quartz</AssemblyName>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon_beta.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Quartz.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CustomMarshalers" />
+    <Reference Include="ExCSS, Version=4.3.1.0, Culture=neutral, PublicKeyToken=bdbe16be9b936b9a, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExCSS.4.3.1\lib\net48\ExCSS.dll</HintPath>
+    </Reference>
+    <Reference Include="Magick.NET-Q8-AnyCPU, Version=14.9.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
+      <HintPath>..\packages\Magick.NET-Q8-AnyCPU.14.9.0\lib\netstandard20\Magick.NET-Q8-AnyCPU.dll</HintPath>
+    </Reference>
+    <Reference Include="Magick.NET.Core, Version=14.9.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
+      <HintPath>..\packages\Magick.NET.Core.14.9.0\lib\netstandard20\Magick.NET.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.3537.50, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.3537.50\lib\net462\Microsoft.Web.WebView2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.3537.50, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.3537.50\lib\net462\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.3537.50, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.3537.50\lib\net462\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Svg, Version=3.4.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
+      <HintPath>..\packages\Svg.3.4.7\lib\net481\Svg.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="Win32Interop.Dwmapi, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Win32Interop.Dwmapi.1.0.1\lib\Win32Interop.Dwmapi.dll</HintPath>
+    </Reference>
+    <Reference Include="Win32Interop.Gdi32, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Win32Interop.Gdi32.1.0.1\lib\Win32Interop.Gdi32.dll</HintPath>
+    </Reference>
+    <Reference Include="Win32Interop.Kernel32, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Win32Interop.Kernel32.1.0.1\lib\Win32Interop.Kernel32.dll</HintPath>
+    </Reference>
+    <Reference Include="Win32Interop.User32, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Win32Interop.User32.1.0.1\lib\Win32Interop.User32.dll</HintPath>
+    </Reference>
+    <Reference Include="Win32Interop.Uxtheme, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Win32Interop.Uxtheme.1.0.1\lib\Win32Interop.Uxtheme.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AddBirthday.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddBirthday.Designer.cs">
+      <DependentUpon>AddBirthday.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AppContainer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AppContainer.Designer.cs">
+      <DependentUpon>AppContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Browser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Browser.Designer.cs">
+      <DependentUpon>Browser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CircularImageButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TabContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\DefaultContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Favorite.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Favorite.Designer.cs">
+      <DependentUpon>Favorite.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HappyBirthdayMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HappyBirthdayMessage.Designer.cs">
+      <DependentUpon>HappyBirthdayMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Libs\EmojiHelper.cs" />
+    <Compile Include="Libs\msg.cs" />
+    <Compile Include="Libs\RawInputCapture.cs" />
+    <Compile Include="Omnibox\OmniBoxHelper.cs" />
+    <Compile Include="Models\Birthday.cs" />
+    <Compile Include="ModifyProfile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModifyProfile.Designer.cs">
+      <DependentUpon>ModifyProfile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="History.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="History.Designer.cs">
+      <DependentUpon>History.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Libs\FaviconHelper.cs" />
+    <Compile Include="Models\Favicon.cs" />
+    <Compile Include="NameWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NameWindow.Designer.cs">
+      <DependentUpon>NameWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Omnibox\Suggestions.cs" />
+    <Compile Include="Omnibox\Theme.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Libs\FileLockChecker.cs" />
+    <Compile Include="Libs\Power.cs" />
+    <Compile Include="Libs\ThemeHelper.cs" />
+    <Compile Include="Models\MainSetting.cs" />
+    <Compile Include="Libs\Animation.cs" />
+    <Compile Include="Password.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Password.Designer.cs">
+      <DependentUpon>Password.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\FaviconService.cs" />
+    <Compile Include="Services\BirthdayService.cs" />
+    <Compile Include="Services\LightTabRenderer.cs" />
+    <Compile Include="Services\MouseDragger.cs" />
+    <Compile Include="Services\NewControlThemeChanger.cs" />
+    <Compile Include="Services\WhiteContextMenuRenderer.cs" />
+    <Compile Include="Services\AquaTabRenderer.cs" />
+    <Compile Include="Services\AquaContextMenuRenderer.cs" />
+    <Compile Include="Services\GetRealTimeInZone.cs" />
+    <Compile Include="Services\XmasContextMenuRenderer.cs" />
+    <Compile Include="Services\XmasTabRenderer.cs" />
+    <Compile Include="Services\BlackTabRenderer.cs" />
+    <Compile Include="Services\DarkContextMenuRenderer.cs" />
+    <Compile Include="Services\BlackContextMenuRenderer.cs" />
+    <Compile Include="Models\History.cs" />
+    <Compile Include="Models\Profile.cs" />
+    <Compile Include="Models\Setting.cs" />
+    <Compile Include="Models\Favourite.cs" />
+    <Compile Include="Profiles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Profiles.Designer.cs">
+      <DependentUpon>Profiles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DarkTabRenderer.cs" />
+    <Compile Include="Services\MainSettingsService.cs" />
+    <Compile Include="Services\ProfileService.cs" />
+    <Compile Include="Services\HistoryService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="Services\FavouriteService.cs" />
+    <Compile Include="Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings.Designer.cs">
+      <DependentUpon>Settings.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="AddBirthday.resx">
+      <DependentUpon>AddBirthday.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AppContainer.resx">
+      <DependentUpon>AppContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Browser.agq.resx">
+      <DependentUpon>Browser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Browser.resx">
+      <DependentUpon>Browser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModifyProfile.resx">
+      <DependentUpon>ModifyProfile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Favorite.resx">
+      <DependentUpon>Favorite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="History.resx">
+      <DependentUpon>History.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HappyBirthdayMessage.resx">
+      <DependentUpon>HappyBirthdayMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NameWindow.resx">
+      <DependentUpon>NameWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Password.resx">
+      <DependentUpon>Password.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Profiles.resx">
+      <DependentUpon>Profiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings.resx">
+      <DependentUpon>Settings.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\DataSources\Quartz.Models.HistoryModel.datasource" />
+    <None Include="Properties\DataSources\Quartz.Services.HistoryService.datasource" />
+    <None Include="Properties\DataSources\Quartz.Services.FavoriteService.datasource" />
+    <None Include="Resources\AddHover_xmas.png" />
+    <None Include="Resources\Add_xmas.png" />
+    <None Include="Resources\Background_xmas.png" />
+    <None Include="Resources\Birthday Quartz.ico" />
+    <None Include="Resources\Birthday Quartz.png" />
+    <None Include="Resources\Black_Download.png" />
+    <None Include="Resources\Black_Fav.png" />
+    <None Include="Resources\Black_House.png" />
+    <None Include="Resources\Black_Left.png" />
+    <None Include="Resources\Black_OG_Loading.gif" />
+    <None Include="Resources\Black_Refresh.png" />
+    <None Include="Resources\Black_Right.png" />
+    <None Include="Resources\Black_Settings.png" />
+    <None Include="Resources\Black_Stop.png" />
+    <None Include="Resources\Black_URL_Left.png" />
+    <None Include="Resources\Black_URL_Right.png" />
+    <None Include="Resources\B_Add.png" />
+    <None Include="Resources\B_AddHover.png" />
+    <None Include="Resources\B_Background.png" />
+    <None Include="Resources\B_Center.png" />
+    <None Include="Resources\B_Close.png" />
+    <None Include="Resources\B_CloseHover.png" />
+    <None Include="Resources\B_InactiveCenter.png" />
+    <None Include="Resources\B_InactiveLeft.png" />
+    <None Include="Resources\B_InactiveRight.png" />
+    <None Include="Resources\B_InactiveRightNoDivider.png" />
+    <None Include="Resources\B_Left.png" />
+    <None Include="Resources\B_Right.png" />
+    <None Include="Resources\Center_xmas.png" />
+    <None Include="Resources\CloseHover_xmas.png" />
+    <None Include="Resources\Close_xmas.png" />
+    <None Include="Resources\Cross.ico" />
+    <None Include="Resources\Cross.png" />
+    <None Include="Resources\Ddownload.png" />
+    <None Include="Resources\Dicon-Fav.png" />
+    <None Include="Resources\Dicon-House.png" />
+    <None Include="Resources\Dicon-Setting.png" />
+    <None Include="Resources\DLeft.png" />
+    <None Include="Resources\download.png" />
+    <None Include="Resources\DRefresh.png" />
+    <None Include="Resources\DRight.png" />
+    <None Include="Resources\DStop.png" />
+    <None Include="Resources\DUrlBoxLeftWhite.png" />
+    <None Include="Resources\DUrlBoxRightWhite.png" />
+    <None Include="Resources\Easter.ico" />
+    <None Include="Resources\Easter.png" />
+    <None Include="Resources\favicon_xmas.ico" />
+    <None Include="Resources\icon-Fav.png" />
+    <None Include="Resources\icon-House.png" />
+    <None Include="Resources\icon-Setting.png" />
+    <None Include="Resources\InactiveCenter_xmas.png" />
+    <None Include="Resources\InactiveLeft_xmas.png" />
+    <None Include="Resources\InactiveRightNoDivider_xmas.png" />
+    <None Include="Resources\InactiveRight_xmas.png" />
+    <None Include="Resources\Left.png" />
+    <None Include="Resources\Left_xmas.png" />
+    <None Include="Resources\pngimg.com - confetti_PNG87006.png" />
+    <None Include="Resources\Quartz Xmas.png" />
+    <None Include="Resources\Quartz Xmas1.png" />
+    <None Include="Resources\Quartz.png" />
+    <None Include="Resources\Quartz32x32.png" />
+    <None Include="Resources\Refresh.png" />
+    <None Include="Resources\Right.png" />
+    <None Include="Resources\Right_xmas.png" />
+    <None Include="Resources\Settings.png" />
+    <None Include="Resources\SnowFall1.gif" />
+    <None Include="Resources\SnowFall2.gif" />
+    <None Include="Resources\spin.gif" />
+    <None Include="Resources\Stop.png" />
+    <None Include="Resources\UrlBoxLeftWhite.png" />
+    <None Include="Resources\UrlBoxRight.png" />
+    <None Include="Resources\UrlBoxRightWhite.png" />
+    <None Include="Resources\Xdownload.png" />
+    <None Include="Resources\Xicon-Fav.png" />
+    <None Include="Resources\Xicon-House.png" />
+    <None Include="Resources\Xicon-Setting.png" />
+    <None Include="Resources\XLeft.png" />
+    <None Include="Resources\XRefresh.png" />
+    <None Include="Resources\XRight.png" />
+    <None Include="Resources\XStop.png" />
+    <None Include="Resources\XUrlBoxLeft.png" />
+    <None Include="Resources\XUrlBoxRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\X.png" />
+    <None Include="Resources\X.ico" />
+    <None Include="Resources\X_16.ico" />
+    <None Include="Resources\InformationIcon.ico" />
+    <None Include="Resources\QuestionIcon.ico" />
+    <None Include="Resources\ErrorIcon.ico" />
+    <None Include="Resources\WarningIcon.ico" />
+    <None Include="Resources\close_32dp_000000_FILL0_wght0_GRAD0_opsz40.png" />
+    <None Include="Resources\close_32dp_1F1F1F_FILL0_wght700_GRAD200_opsz40.png" />
+    <None Include="Resources\Xclose.png" />
+    <None Include="Resources\favicon-2.png" />
+    <None Include="Resources\blank.png" />
+    <None Include="Resources\16_4.ico" />
+    <None Include="Resources\16_3.ico" />
+    <None Include="Resources\16.ico" />
+    <None Include="Resources\16_2.ico" />
+    <None Include="Resources\16_5.ico" />
+    <None Include="Resources\Aqua_Close.png" />
+    <None Include="Resources\Aqua_CloseHover.png" />
+    <None Include="Resources\Aqua_InactiveCenter.png" />
+    <None Include="Resources\Aqua_InactiveLeft.png" />
+    <None Include="Resources\Aqua_InactiveRight.png" />
+    <None Include="Resources\Aqua_InactiveRightNoDivider.png" />
+    <None Include="Resources\Aqua_Left.png" />
+    <None Include="Resources\Aqua_Right.png" />
+    <None Include="Resources\Aqua_Add.png" />
+    <None Include="Resources\Aqua_AddHover.png" />
+    <None Include="Resources\Aqua_Background.png" />
+    <None Include="Resources\Aqua_Center.png" />
+    <Content Include="assets\quartz.com\aqua\assets\css\styles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\css\tabs.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\js\tabs.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Bing.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Custom.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\DuckDuckGo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Ecosia.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Error.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\favicon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Google Maps.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Google.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Netflix.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Quartz.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Safety.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Safety.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Wikipedia.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\Yahoo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\assets\Resources\YouTube.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\Bing.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\Custom.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\DuckDuckGo.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\Ecosia.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\Error.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\Google Maps.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\Google.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\Netflix.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\Safety.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\Yahoo.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\aqua\YouTube.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_medium_aqua.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_medium_blue.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_small_aqua.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_small_blue.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\Aqua_.png" />
+    <None Include="Resources\Aqua_Refresh.png" />
+    <None Include="Resources\Aqua_Fav.png" />
+    <None Include="Resources\Aqua_Download.png" />
+    <None Include="Resources\Aqua_Settings.png" />
+    <None Include="Resources\Aqua_Stop.png" />
+    <None Include="Resources\Aqua_Icon_.png" />
+    <None Include="Resources\Aqua_Home.png" />
+    <None Include="Resources\Aqua_Icon_Right.png" />
+    <None Include="Resources\Aqua_Right_Inactive.png" />
+    <None Include="Resources\Aqua_Icon_Left.png" />
+    <None Include="Resources\Aqua_Left_Inactive.png" />
+    <None Include="Resources\2D Quartz %28White%29 %2816%29.ico" />
+    <None Include="Resources\2D Quartz %28White%29.ico" />
+    <None Include="Resources\Aqua Quartz %2816%29.ico" />
+    <None Include="Resources\2D Quartz %28White%29.png" />
+    <None Include="Resources\Aqua Quartz.png" />
+    <None Include="Resources\2D Quartz %28Black%29.png" />
+    <None Include="bin\Debug\UserData\cache\www.google.com.png" />
+    <Content Include="favicon2.ico" />
+    <Content Include="favicon_beta.ico" />
+    <Content Include="favicon_xmas.ico" />
+    <None Include="Resources\AddHover.png" />
+    <None Include="Resources\Background.png" />
+    <None Include="Resources\Center.png" />
+    <None Include="Resources\Close.png" />
+    <None Include="Resources\CloseHover.png" />
+    <None Include="Resources\Add.png" />
+    <None Include="Resources\Beta.png" />
+    <Content Include="Resources\favicon.ico" />
+    <None Include="Resources\UrlBoxRightAqua.png" />
+    <None Include="Resources\UrlBoxLeftWhiteAqua.png" />
+    <None Include="Resources\Quartz Assistance.png" />
+    <None Include="Resources\Tabs_Add.png" />
+    <None Include="Resources\Tabs_AddHover.png" />
+    <None Include="Resources\Tabs_Background.png" />
+    <None Include="Resources\Tabs_Center.png" />
+    <None Include="Resources\Tabs_Close.png" />
+    <None Include="Resources\Tabs_CloseHover.png" />
+    <None Include="Resources\Tabs_InactiveCenter.png" />
+    <None Include="Resources\Tabs_InactiveLeft.png" />
+    <None Include="Resources\Tabs_InactiveRight.png" />
+    <None Include="Resources\Tabs_InactiveRightNoDivider.png" />
+    <None Include="Resources\Tabs_Left.png" />
+    <None Include="Resources\Tabs_Right.png" />
+    <None Include="Resources\Tabs_CloseHoverInactive.png" />
+    <None Include="Resources\InactiveCenter.png" />
+    <None Include="Resources\InactiveLeft.png" />
+    <None Include="Resources\InactiveRight.png" />
+    <None Include="Resources\InactiveRightNoDivider.png" />
+    <None Include="Resources\TLeft.png" />
+    <None Include="Resources\TRight.png" />
+    <None Include="Resources\search_16dp_0000FF_FILL0_wght400_GRAD0_opsz20.png" />
+    <None Include="Resources\search_16dp_FFFFFF_FILL0_wght400_GRAD0_opsz20.png" />
+    <None Include="Resources\search_16dp_C3C3C3_FILL0_wght400_GRAD0_opsz20.png" />
+    <None Include="Resources\search_16dp_555753_FILL0_wght400_GRAD0_opsz20.png" />
+    <None Include="Resources\search_16dp_00FF00_FILL0_wght400_GRAD0_opsz20.png" />
+    <None Include="Resources\favicon16_bera.ico" />
+    <Content Include="Resources\XLeft_disabled.png" />
+    <None Include="Resources\Xmas Quartz %2816%29.ico" />
+    <None Include="Resources\Xmas Quartz.ico" />
+    <None Include="Resources\Xmas Quartz.png" />
+    <Content Include="Resources\XRight_disabled.png" />
+    <None Include="bin\Debug\agq\xmas_edge 3.png" />
+    <None Include="bin\Debug\agq\xmas_edge2.png" />
+    <None Include="bin\Debug\agq\xmas_edge4.png" />
+    <Content Include="assets\quartz.com\black\assets\css\styles.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\css\tabs.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\js\tabs.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Bing.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Custom.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\DuckDuckGo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Ecosia.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Error.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\favicon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Google Maps.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Google.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Netflix.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Quartz.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Safety.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Safety.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Wikipedia.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\Yahoo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\assets\Resources\YouTube.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\Bing.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\Custom.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\DuckDuckGo.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\Ecosia.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\Error.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\Google Maps.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\Google.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\Netflix.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\Safety.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\Yahoo.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\black\YouTube.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\css\styles.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\css\tabs.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\js\tabs.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Bing.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Custom.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\DuckDuckGo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Ecosia.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Error.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\favicon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Google Maps.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Google.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Netflix.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Quartz.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Safety.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Safety.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Wikipedia.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\Yahoo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\assets\Resources\YouTube.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\Bing.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\Custom.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\DuckDuckGo.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\Ecosia.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\Error.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\Google Maps.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\Google.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\Netflix.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\Safety.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\Yahoo.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\dark\YouTube.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\css\styles.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\css\tabs.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\js\tabs.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Bing.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Custom.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\DuckDuckGo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Ecosia.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Error.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\favicon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Google Maps.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Google.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Netflix.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Quartz.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Safety.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Safety.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Wikipedia.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\Yahoo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\assets\Resources\YouTube.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\Bing.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\Custom.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\DuckDuckGo.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\Ecosia.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\Error.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\Google Maps.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\Google.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\Netflix.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\Safety.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\Yahoo.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\light\YouTube.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\css\styles.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\css\tabs.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\js\tabs.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Bing.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Custom.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\DuckDuckGo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Ecosia.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Error.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\favicon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Google Maps.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Google.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Netflix.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Quartz.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Safety.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Safety.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Wikipedia.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\Yahoo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\assets\Resources\YouTube.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\Bing.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\Custom.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\DuckDuckGo.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\Ecosia.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\Error.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\Google Maps.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\Google.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\Netflix.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\Safety.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\Yahoo.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\quartz.com\xmas\YouTube.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="bin\Release\UserData\cache\www.google.com.png" />
+    <Content Include="favicon.ico" />
+    <Content Include="assets\throbber\throbber_medium_black.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_medium_dark.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_medium_light.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_medium_white.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_medium_xmas_green.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_medium_xmas_red.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_small_black.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_small_dark.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_small_light.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_small_white.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_small_xmas_green.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\throbber\throbber_small_xmas_red.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AxWMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="MediaPlayer">
+      <Guid>{22D6F304-B0F6-11D0-94AB-0080C74C7E95}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EasyTabs\EasyTabs.csproj">
+      <Project>{690ba0f7-d8fe-4ebe-ba39-8058086c7a09}</Project>
+      <Name>EasyTabs</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.3405.78\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.3405.78\build\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2957.106\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2957.106\build\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2478.35\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2478.35\build\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.3065.39\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.3065.39\build\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.3537.50\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.3537.50\build\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\packages\Magick.NET-Q8-AnyCPU.14.9.0\build\netstandard20\Magick.NET-Q8-AnyCPU.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Magick.NET-Q8-AnyCPU.14.9.0\build\netstandard20\Magick.NET-Q8-AnyCPU.targets'))" />
+  </Target>
+  <Import Project="..\packages\Microsoft.Web.WebView2.1.0.3405.78\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.3405.78\build\Microsoft.Web.WebView2.targets')" />
+  <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2957.106\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2957.106\build\Microsoft.Web.WebView2.targets')" />
+  <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2478.35\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2478.35\build\Microsoft.Web.WebView2.targets')" />
+  <Import Project="..\packages\Microsoft.Web.WebView2.1.0.3065.39\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.3065.39\build\Microsoft.Web.WebView2.targets')" />
+  <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets')" />
+  <Import Project="..\packages\Microsoft.Web.WebView2.1.0.3537.50\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.3537.50\build\Microsoft.Web.WebView2.targets')" />
+  <Import Project="..\packages\Magick.NET-Q8-AnyCPU.14.9.0\build\netstandard20\Magick.NET-Q8-AnyCPU.targets" Condition="Exists('..\packages\Magick.NET-Q8-AnyCPU.14.9.0\build\netstandard20\Magick.NET-Q8-AnyCPU.targets')" />
+</Project>

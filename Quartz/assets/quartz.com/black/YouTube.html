@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>New Tab - YouTube</title>
+        <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+        <link rel="stylesheet" href="assets/css/styles.css">
+		<link rel='stylesheet'><link rel="stylesheet" href="assets/css/tabs.css">
+        <link rel="icon" type="image/x-icon" href="assets/Resources/favicon.ico">
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+		<script src="assets/js/tabs.js"></script>
+	</head>
+    <body>		
+		<div class="wrapper">
+			<nav class="tabs">
+				<div class="selector"></div>
+			  <a href="#" data-url="Google.html" ><i class="tabicon"><img height="16px" width="16px" style="vertical-align: top;" src="assets/Resources/Google.png" alt="Italian Trulli"></i>Google</a>
+			  <a href="#" data-url="Bing.html"><i class="fas fa-hand-rock"><img height="16px" width="16px" style="vertical-align: top;" src="assets/Resources/Bing.png" alt="Italian Trulli"></i>Bing</a>
+			  <a href="#" data-url="DuckDuckGo.html"><i class="fas fa-bolt"><img height="16px" width="16px" style="vertical-align: top;" src="assets/Resources/DuckDuckGo.png" alt="Italian Trulli"></i>DuckDuckGo</a>
+			  <a href="#" data-url="Yahoo.html"><i class="fas fa-hand-rock"><img height="16px" width="16px" style="vertical-align: top;" src="assets/Resources/Yahoo.png" alt="Italian Trulli"></i>Yahoo</a>
+			  <a href="#" data-url="YouTube.html" class="active"><i class="fas fa-hand-rock"><img height="16px" width="16px" style="vertical-align: top;" src="assets/Resources/YouTube.png" alt="Italian Trulli"></i>YouTube</a>
+			  <a href="#" data-url="Netflix.html"><i class="fas fa-hand-rock"><img height="16px" width="16px" style="vertical-align: top;" src="assets/Resources/Netflix.png" alt="Italian Trulli"></i>Netflix</a>
+			  <a href="#" data-url="Ecosia.html"><i class="fas fa-hand-rock"><img height="16px" width="16px" style="vertical-align: top;" src="assets/Resources/Ecosia.png" alt="Italian Trulli"></i>Ecosia</a>
+			  <a href="#" data-url="Google Maps.html"><i class="fas fa-hand-rock"><img height="16px" width="16px" style="vertical-align: top;" src="assets/Resources/Google Maps.png" alt="Italian Trulli"></i>Google Maps</a>
+			  <a href="#" data-url="Custom.html"><i class="fas fa-hand-rock"><img height="16px" width="16px" style="vertical-align: top;" src="assets/Resources/Custom.png" alt="Italian Trulli"></i>Custom</a>
+			</nav>
+		  </div>  
+        <div class="container">
+            <form action="https://www.youtube.com/results?search_query" class="search" id="search-bar">
+                <input autocomplete="off" style="background-color: #000000; color: #FFFFFF;" type="search" placeholder="Type something..." name="q" class="search__input" required>
+                <div class="search__button" id="search-button">
+					<i class="ri-search-2-line search__icon"></i>
+					<i class="ri-close-line search__close"></i>
+                </div>
+				<span class="validity"></span>
+            </form>
+        </div>
+    </body>
+</html>
+<script>
+		/*=============== SEARCH BAR JS ===============*/
+		const toggleSearch = (search, button) => {
+			const searchBar = document.getElementById(search),
+				  searchButton = document.getElementById(button)
+				
+			searchButton.addEventListener("click", () => {
+				if(searchBar.classList.contains("show-search")){
+					searchBar.classList.remove("show-search");
+					searchBar.classList.add("hide-search");
+				} else{
+					searchBar.classList.add("show-search");
+					searchBar.classList.remove("hide-search");
+				}
+			})  
+		}
+		toggleSearch("search-bar","search-button");
+</script>
