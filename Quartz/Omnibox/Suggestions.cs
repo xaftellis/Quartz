@@ -63,7 +63,7 @@ namespace Quartz.Omnibox
 
         private void OmniBox_GotFocus(object sender, EventArgs e)
         {
-
+            ShowSuggestionsAsync();
         }
 
         public async Task ShowSuggestionsAsync()
@@ -91,26 +91,26 @@ namespace Quartz.Omnibox
             lvSuggestions.Items.Clear();
 
 
-            if(!OmniBoxHelper.IsProbablyUrl(query))
-            {
-                string _key = query.GetHashCode().ToString();
+            string _key = query; // Use query string as key
+            Image _icon;
 
-                Image _icon = GetSearchIcon();
+            if (!OmniBoxHelper.IsProbablyUrl(query))
+            {
+                _icon = GetSearchIcon();
                 if (_icon != null && !iconList.Images.ContainsKey(_key))
                     iconList.Images.Add(_key, _icon);
 
-                lvSuggestions.Items.Add(query + " - Google Search", iconList.Images.ContainsKey(_key) ? _key : null);
+                lvSuggestions.Items.Add(query + " - Google Search", _key);
             }
             else
             {
-                string _key = query.GetHashCode().ToString();
-
-                Image _icon = FaviconHelper.GetDefaultFaviconAsImage16();
+                _icon = FaviconHelper.GetDefaultFaviconAsImage16();
                 if (_icon != null && !iconList.Images.ContainsKey(_key))
                     iconList.Images.Add(_key, _icon);
 
-                lvSuggestions.Items.Add(query, iconList.Images.ContainsKey(_key) ? _key : null);
+                lvSuggestions.Items.Add(query, _key);
             }
+
 
             //if (historySuggestions.Any())
             //{
@@ -294,7 +294,7 @@ namespace Quartz.Omnibox
                     isCommitting = false;
                     originalText = omniBox.Text;
                     selectedIndex = nextIndex;
-                    omniBox.Text = lvSuggestions.Items[nextIndex].Text;
+                    omniBox.Text = nextIndex != 0 ? lvSuggestions.Items[nextIndex].Text : lvSuggestions.Items[nextIndex].Text.Replace(" - Google Search", "");
                     omniBox.SelectionStart = omniBox.Text.Length;
                     e.Handled = true;
                 }
@@ -310,7 +310,7 @@ namespace Quartz.Omnibox
                     isCommitting = false;
                     originalText = omniBox.Text;
                     selectedIndex = prevIndex;
-                    omniBox.Text = lvSuggestions.Items[prevIndex].Text;
+                    omniBox.Text = prevIndex != 0 ? lvSuggestions.Items[prevIndex].Text : lvSuggestions.Items[prevIndex].Text.Replace(" - Google Search", "");
                     omniBox.SelectionStart = omniBox.Text.Length;
                     e.Handled = true;
                 }

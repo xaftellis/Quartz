@@ -146,7 +146,6 @@ namespace Quartz
             lstSuggestions.MultiSelect = false;
             lstSuggestions.HideSelection = false;
             lstSuggestions.HotTracking = true;
-            lstSuggestions.BorderStyle = BorderStyle.FixedSingle;
 
             // Add one column to simulate a ListBox
             lstSuggestions.Columns.Add(String.Empty, lstSuggestions.Width);
@@ -1039,7 +1038,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.2.0 (Beta 1)";
+            notifyIcon1.Text = "Quartz v2.2.0 (Beta 2)";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -2584,6 +2583,7 @@ namespace Quartz
         
         private async void txtWebAddress_TextChanged(object sender, EventArgs e)
         {
+            themeClass.RenderText();
             await suggestionsClass.ShowSuggestionsAsync();
         }
 

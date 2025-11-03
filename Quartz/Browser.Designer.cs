@@ -298,8 +298,9 @@
             this.locationToolStripMenuItem1,
             this.changeLocationToolStripMenuItem1});
             this.mnuDownloadsDropDown.Name = "mnuDownloadsDropDown";
-            this.mnuDownloadsDropDown.ShowImageMargin = false;
+            this.mnuDownloadsDropDown.OwnerItem = this.downloadsToolStripMenuItem;
             resources.ApplyResources(this.mnuDownloadsDropDown, "mnuDownloadsDropDown");
+            this.mnuDownloadsDropDown.ShowImageMargin = false;
             this.mnuDownloadsDropDown.TabStop = true;
             this.mnuDownloadsDropDown.Opening += new System.ComponentModel.CancelEventHandler(this.mnuDownloadsDropDown_Opening);
             // 
@@ -609,6 +610,7 @@
             this.restartToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.SettingsMenuStrip.Name = "SettingsMenuStrip";
+            this.SettingsMenuStrip.OwnerItem = this.toolStripMenuItem1;
             this.SettingsMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             resources.ApplyResources(this.SettingsMenuStrip, "SettingsMenuStrip");
             this.SettingsMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.SettingsMenuStrip_Opening);
@@ -651,8 +653,8 @@
             this.resetToolStripMenuItem1});
             this.mnuUserData.Name = "mnuUserData";
             this.mnuUserData.OwnerItem = this.userDataToolStripMenuItem;
-            this.mnuUserData.ShowImageMargin = false;
             resources.ApplyResources(this.mnuUserData, "mnuUserData");
+            this.mnuUserData.ShowImageMargin = false;
             this.mnuUserData.Opening += new System.ComponentModel.CancelEventHandler(this.mnuUserData_Opening);
             // 
             // openFolderToolStripMenuItem
@@ -720,8 +722,8 @@
             this.webview2TaskManagerToolStripMenuItem});
             this.mnuExperts.Name = "mnuExperts";
             this.mnuExperts.OwnerItem = this.expertsToolStripMenuItem;
-            this.mnuExperts.ShowImageMargin = false;
             resources.ApplyResources(this.mnuExperts, "mnuExperts");
+            this.mnuExperts.ShowImageMargin = false;
             this.mnuExperts.Opening += new System.ComponentModel.CancelEventHandler(this.mnuExperts_Opening);
             // 
             // inspectToolStripMenuItem

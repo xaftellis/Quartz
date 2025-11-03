@@ -503,6 +503,15 @@
   <data name="changeLocationToolStripMenuItem1.Text" xml:space="preserve">
     <value>Change Location</value>
   </data>
+  <data name="downloadsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>182, 22</value>
+  </data>
+  <data name="downloadsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Downloads</value>
+  </data>
+  <data name="mnuDownloadsDropDown.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
+  </data>
   <data name="mnuDownloadsDropDown.Size" type="System.Drawing.Size, System.Drawing">
     <value>140, 48</value>
   </data>
@@ -511,12 +520,6 @@
   </data>
   <data name="&gt;&gt;mnuDownloadsDropDown.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="downloadsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="downloadsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Downloads</value>
   </data>
   <metadata name="btnAddFavourite.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -1223,7 +1226,7 @@
     <value>wvLoadingProgress</value>
   </data>
   <data name="&gt;&gt;wvLoadingProgress.Type" xml:space="preserve">
-    <value>Microsoft.Web.WebView2.WinForms.WebView2, Microsoft.Web.WebView2.WinForms, Version=1.0.3537.50, Culture=neutral, PublicKeyToken=2a8ab48044d2601e</value>
+    <value>Microsoft.Web.WebView2.WinForms.WebView2, Microsoft.Web.WebView2.WinForms, Version=1.0.3595.46, Culture=neutral, PublicKeyToken=2a8ab48044d2601e</value>
   </data>
   <data name="&gt;&gt;wvLoadingProgress.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -2771,6 +2774,9 @@
   <data name="resetToolStripMenuItem1.Text" xml:space="preserve">
     <value>Reset</value>
   </data>
+  <data name="mnuUserData.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
+  </data>
   <data name="mnuUserData.Size" type="System.Drawing.Size, System.Drawing">
     <value>194, 54</value>
   </data>
@@ -2800,6 +2806,9 @@
   </data>
   <data name="toolStripSeparator10.Size" type="System.Drawing.Size, System.Drawing">
     <value>152, 6</value>
+  </data>
+  <data name="mnuHistory.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
   </data>
   <data name="mnuHistory.Size" type="System.Drawing.Size, System.Drawing">
     <value>156, 32</value>
@@ -2833,6 +2842,9 @@
   </data>
   <data name="webview2TaskManagerToolStripMenuItem.Text" xml:space="preserve">
     <value>Browser Task Manager</value>
+  </data>
+  <data name="mnuExperts.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
   </data>
   <data name="mnuExperts.Size" type="System.Drawing.Size, System.Drawing">
     <value>168, 48</value>
@@ -2900,8 +2912,17 @@
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
+  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>25, 20</value>
+  </data>
+  <data name="toolStripMenuItem1.Text" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="SettingsMenuStrip.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
+  </data>
   <data name="SettingsMenuStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 353</value>
+    <value>183, 331</value>
   </data>
   <data name="SettingsMenuStrip.Text" xml:space="preserve">
     <value>Options</value>
@@ -2972,12 +2993,6 @@
   <data name="&gt;&gt;pnlTop.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
-  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 20</value>
-  </data>
-  <data name="toolStripMenuItem1.Text" xml:space="preserve">
-    <value>1</value>
-  </data>
   <metadata name="mnuTabs.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1280, 19</value>
   </metadata>
@@ -3039,7 +3054,7 @@
     <value>wvWebView1</value>
   </data>
   <data name="&gt;&gt;wvWebView1.Type" xml:space="preserve">
-    <value>Microsoft.Web.WebView2.WinForms.WebView2, Microsoft.Web.WebView2.WinForms, Version=1.0.3537.50, Culture=neutral, PublicKeyToken=2a8ab48044d2601e</value>
+    <value>Microsoft.Web.WebView2.WinForms.WebView2, Microsoft.Web.WebView2.WinForms, Version=1.0.3595.46, Culture=neutral, PublicKeyToken=2a8ab48044d2601e</value>
   </data>
   <data name="&gt;&gt;wvWebView1.Parent" xml:space="preserve">
     <value>pnlBottom</value>

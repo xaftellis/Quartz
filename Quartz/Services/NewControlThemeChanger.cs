@@ -289,11 +289,11 @@ namespace Quartz.Services
                     }
                 }
             }
-            else if (control is ListBox listBox)
+            else if (control is ListView listBox)
             {
                 listBox.BackColor= backcolor;
                 listBox.ForeColor= forecolor;
-                listBox.BorderStyle = BorderStyle.FixedSingle;
+                listBox.BorderStyle = BorderStyle.None;
             }
         }
 

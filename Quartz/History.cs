@@ -167,6 +167,8 @@ namespace Quartz
 
                 SetDataLook();
             }
+
+            dataGridView1.Focus();
         }
 
         #endregion
@@ -602,6 +604,12 @@ namespace Quartz
                     dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.CloseHover_xmas;
                 }
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Delete form = new Delete(_browser.wvWebView1);
+            form.ShowDialog();
         }
     }
 }

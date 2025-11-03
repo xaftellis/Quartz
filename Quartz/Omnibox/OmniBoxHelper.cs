@@ -1,30 +1,27 @@
-﻿using Svg;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web.Management;
-using Win32Interop.Structs;
 
 namespace Quartz.Libs
 {
     public static class OmniBoxHelper
     {
-        // Common TLDs (partial, extend as needed)
+        // Common TLDs — extended for realism
         private static readonly string[] CommonTlds = new[]
         {
-        "com","org","net","edu","gov","io","co","info","biz","me"
-    };
+            "com","org","net","edu","gov","io","co","info","biz","me",
+            "au","uk","us","ca","de","fr","jp","cn","ru","in","tv","xyz","dev","app"
+        };
 
+        // Domain (includes subdomains, supports unicode)
         private static readonly Regex DomainRegex = new Regex(
-            @"^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$",
+            @"^(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,63}$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase
         );
 
+        // IPv4 pattern (strict 0–255 validation done later)
         private static readonly Regex IpRegex = new Regex(
-            @"^(\d{1,3}\.){3}\d{1,3}(:\d{1,5})?$",
+            @"^(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?$",
             RegexOptions.Compiled
         );
 
@@ -32,46 +29,70 @@ namespace Quartz.Libs
         {
             if (string.IsNullOrWhiteSpace(input))
                 return false;
-
             input = input.Trim();
 
-            // 1. Absolute URL with scheme
-            if (Uri.TryCreate(input, UriKind.Absolute, out Uri uriResult))
+            // 1. Try parsing as an absolute URL (with scheme)
+            Uri uri;
+            if (Uri.TryCreate(input, UriKind.Absolute, out uri))
             {
-                if (uriResult.Scheme == Uri.UriSchemeHttp ||
-                    uriResult.Scheme == Uri.UriSchemeHttps ||
-                    uriResult.Scheme == Uri.UriSchemeFtp ||
-                    uriResult.Scheme == Uri.UriSchemeFile)
-                {
-                    return true;
-                }
-            }
-
-            // 2. Bare IPv4 address with optional port
-            if (IpRegex.IsMatch(input))
-            {
-                string[] parts = input.Split(':');
-                string ipPart = parts[0];
-                string[] octets = ipPart.Split('.');
-                if (octets.Any(o => !int.TryParse(o, out int n) || n < 0 || n > 255))
-                    return false;
-
-                if (parts.Length == 2 && (!int.TryParse(parts[1], out int port) || port < 1 || port > 65535))
-                    return false;
-
-                return true;
-            }
-
-            // 3. Bare domain name
-            string domain = input.Split('/')[0]; // remove path if exists
-            if (DomainRegex.IsMatch(domain))
-            {
-                string tld = domain.Split('.').Last().ToLower();
-                if (CommonTlds.Contains(tld))
+                string scheme = uri.Scheme.ToLowerInvariant();
+                if (scheme == "http" || scheme == "https" || scheme == "ftp" || scheme == "file" || scheme == "mailto")
                     return true;
             }
 
-            return false; // fallback: likely search term
+            // 2. Handle missing scheme: prepend http:// and retry
+            if (!input.Contains("://") && Uri.TryCreate("http://" + input, UriKind.Absolute, out uri))
+            {
+                string host = uri.Host;
+
+                // Check if host is a valid IP or domain
+                if (IsValidIp(host) || IsValidDomain(host))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsValidDomain(string domain)
+        {
+            if (string.IsNullOrWhiteSpace(domain))
+                return false;
+
+            // Strip any trailing dot
+            domain = domain.TrimEnd('.');
+
+            if (!DomainRegex.IsMatch(domain))
+                return false;
+
+            string tld = domain.Split('.').Last().ToLowerInvariant();
+            return CommonTlds.Contains(tld);
+        }
+
+        private static bool IsValidIp(string ip)
+        {
+            if (!IpRegex.IsMatch(ip))
+                return false;
+
+            string[] parts = ip.Split(':');
+            string[] octets = parts[0].Split('.');
+
+            // Each octet must be 0–255
+            foreach (string o in octets)
+            {
+                int n;
+                if (!int.TryParse(o, out n) || n < 0 || n > 255)
+                    return false;
+            }
+
+            // Validate optional port
+            if (parts.Length == 2)
+            {
+                int port;
+                if (!int.TryParse(parts[1], out port) || port < 1 || port > 65535)
+                    return false;
+            }
+
+            return true;
         }
     }
 }
