@@ -19,7 +19,7 @@ using System.Windows.Forms;
 
 namespace Quartz.Omnibox
 {
-    internal class Suggestions
+    internal class OmniBoxThemeUI
     {
         private Form form;
         private RichTextBox omniBox;
@@ -34,7 +34,7 @@ namespace Quartz.Omnibox
         private int selectedIndex;
         private string originalText;
 
-        public Suggestions(Form Form, RichTextBox Omnibox, ListView ListView)
+        public OmniBoxThemeUI(Form Form, RichTextBox Omnibox, ListView ListView)
         {
             form = Form;
             omniBox = Omnibox;
@@ -45,6 +45,9 @@ namespace Quartz.Omnibox
             omniBox.GotFocus += OmniBox_GotFocus;
             omniBox.LostFocus += OmniBox_LostFocus;
 
+            lvSuggestions.OwnerDraw = true;
+            lvSuggestions.DrawItem += LvSuggestions_DrawItem;
+
             httpClient = new HttpClient();
 
             iconList = new ImageList
@@ -54,6 +57,41 @@ namespace Quartz.Omnibox
             };
             lvSuggestions.SmallImageList = iconList;
 
+        }
+
+        private void LvSuggestions_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            var item = e.Item;
+            Image icon = item.ImageList?.Images[item.ImageIndex];
+            int iconSize = item.ImageList?.ImageSize.Width ?? 16;
+            int iconY = e.Bounds.Top + (e.Bounds.Height - iconSize) / 2;
+
+            // Draw full row background if selected
+            if (item.Selected)
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+            else
+                e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
+
+            // Draw icon without changing its color
+            if (icon != null)
+                e.Graphics.DrawImage(icon, e.Bounds.Left, iconY, iconSize, iconSize);
+
+            // Draw text using ListView's font (or a new font if you want)
+            Font textFont = lvSuggestions.Font; // or new Font("Segoe UI", 9F) for default
+            Color textColor = item.Selected ? SystemColors.HighlightText : item.ForeColor;
+
+            TextRenderer.DrawText(
+                e.Graphics,
+                item.Text,
+                textFont,
+                new Rectangle(e.Bounds.Left + iconSize + 2, e.Bounds.Top, e.Bounds.Width - iconSize, e.Bounds.Height),
+                textColor,
+                TextFormatFlags.VerticalCenter | TextFormatFlags.Left
+            );
+
+            // Draw focus rectangle if needed
+            if (item.Selected && lvSuggestions.Focused)
+                e.DrawFocusRectangle();
         }
 
         private void OmniBox_LostFocus(object sender, EventArgs e)
@@ -82,25 +120,24 @@ namespace Quartz.Omnibox
                 return;
             }
 
-            //historySuggestions = GetHistorySuggestions();
-            searchSuggestions = await GetSearchSuggestionsAsync();
-
-            if(searchSuggestions == null)
-                return;
+            lvSuggestions.BeginUpdate();
 
             lvSuggestions.Items.Clear();
 
-
-            string _key = query; // Use query string as key
+            string _key = query;
             Image _icon;
 
-            if (!OmniBoxHelper.IsProbablyUrl(query))
+            // Decide if this is a URL or not
+            bool isUrl = QueryAnalyzer.IsProbablyUrl(query);
+
+            // Get icon
+            if (!isUrl)
             {
                 _icon = GetSearchIcon();
                 if (_icon != null && !iconList.Images.ContainsKey(_key))
                     iconList.Images.Add(_key, _icon);
 
-                lvSuggestions.Items.Add(query + " - Google Search", _key);
+                lvSuggestions.Items.Add(query.Trim() + " - Google Search", _key);
             }
             else
             {
@@ -108,27 +145,19 @@ namespace Quartz.Omnibox
                 if (_icon != null && !iconList.Images.ContainsKey(_key))
                     iconList.Images.Add(_key, _icon);
 
-                lvSuggestions.Items.Add(query, _key);
+                lvSuggestions.Items.Add(query.Trim() + " - Google Search", _key);
             }
 
+            // Preserve selection
+            lvSuggestions.Items[0].Selected = true;
+            lvSuggestions.Items[0].Focused = true;
 
-            //if (historySuggestions.Any())
-            //{
-            //    foreach (string s in historySuggestions)
-            //    {
-            //        string key = s.GetHashCode().ToString();
+            lvSuggestions.EndUpdate();
 
-            //        Image icon = FaviconHelper.GetFaviconFileExternalAsImage(s);
-            //        if (icon != null && !iconList.Images.ContainsKey(key))
-            //            iconList.Images.Add(key, icon);
 
-            //        var item = new ListViewItem(s)
-            //        {
-            //            ImageKey = iconList.Images.ContainsKey(key) ? key : null
-            //        };
-            //        lvSuggestions.Items.Add(item);
-            //    }
-            //}
+            searchSuggestions = await GetSearchSuggestionsAsync();
+            if (searchSuggestions == null)
+                return;
 
             if (searchSuggestions.Any())
             {
@@ -152,9 +181,25 @@ namespace Quartz.Omnibox
             lvSuggestions.BringToFront();
 
             PositionAndSizeListView();
-
-            lvSuggestions.Items[0].Selected = true;
         }
+
+        //if (historySuggestions.Any())
+        //{
+        //    foreach (string s in historySuggestions)
+        //    {
+        //        string key = s.GetHashCode().ToString();
+
+        //        Image icon = FaviconHelper.GetFaviconFileExternalAsImage(s);
+        //        if (icon != null && !iconList.Images.ContainsKey(key))
+        //            iconList.Images.Add(key, icon);
+
+        //        var item = new ListViewItem(s)
+        //        {
+        //            ImageKey = iconList.Images.ContainsKey(key) ? key : null
+        //        };
+        //        lvSuggestions.Items.Add(item);
+        //    }
+        //}
 
         private void PositionAndSizeListView()
         {

@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Quartz.Libs
 {
-    public static class OmniBoxHelper
+    public static class QueryAnalyzer
     {
         // Common TLDs — extended for realism
         private static readonly string[] CommonTlds = new[]

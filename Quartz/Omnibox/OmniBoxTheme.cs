@@ -13,12 +13,12 @@ using System.Windows.Media.Animation;
 
 namespace Quartz.Omnibox
 {
-    public class Theme
+    public class OmniBoxTheme
     {
         private RichTextBox omniBox;
         string input;
 
-        public Theme(RichTextBox Omnibox)
+        public OmniBoxTheme(RichTextBox Omnibox)
         {
             omniBox = Omnibox;
         }
@@ -44,70 +44,69 @@ namespace Quartz.Omnibox
             else if (theme == "xmas") return Color.Red;
             else return Color.Black;
         }
+        
+        public void RenderText()
+        
+        {
+            input = omniBox.Text;
+            
+            if (string.IsNullOrWhiteSpace(input))
+                return;
 
-public void RenderText()
-{
-    input = omniBox.Text;
+            int caretPos = omniBox.SelectionStart; // store current caret position
 
-    if (string.IsNullOrWhiteSpace(input))
-        return;
+            omniBox.Clear();
 
-    int caretPos = omniBox.SelectionStart; // store current caret position
-    string text = input.Trim();
+            // If it's not a URL, treat everything as main color
+            if (!QueryAnalyzer.IsProbablyUrl(input))
+            {
+                omniBox.SelectionColor = MainColor();
+                omniBox.AppendText(input);
 
-    omniBox.Clear();
+                // Restore caret
+                omniBox.SelectionStart = caretPos;
+                omniBox.SelectionLength = 0;
+                return;
+            }
 
-    // If it's not a URL, treat everything as main color
-    if (!OmniBoxHelper.IsProbablyUrl(text))
-    {
-        omniBox.SelectionColor = MainColor();
-        omniBox.AppendText(text);
+            // It's a URL, try to detect host
+            string host = GetHostPart(input);
+            if (string.IsNullOrEmpty(host))
+            {
+                omniBox.SelectionColor = MainColor();
+                omniBox.AppendText(input);
 
-        // Restore caret
-        omniBox.SelectionStart = caretPos;
-        omniBox.SelectionLength = 0;
-        return;
-    }
+                omniBox.SelectionStart = caretPos;
+                omniBox.SelectionLength = 0;
+                return;
+            }
 
-    // It's a URL, try to detect host
-    string host = GetHostPart(text);
-    if (string.IsNullOrEmpty(host))
-    {
-        omniBox.SelectionColor = MainColor();
-        omniBox.AppendText(text);
+            int hostIndex = input.IndexOf(host, StringComparison.OrdinalIgnoreCase);
+            if (hostIndex < 0) hostIndex = 0;
 
-        omniBox.SelectionStart = caretPos;
-        omniBox.SelectionLength = 0;
-        return;
-    }
+            // 1. Render everything before host as secondary
+            if (hostIndex > 0)
+            {
+                omniBox.SelectionColor = SecondaryColor();
+                omniBox.AppendText(input.Substring(0, hostIndex));
+            }
 
-    int hostIndex = text.IndexOf(host, StringComparison.OrdinalIgnoreCase);
-    if (hostIndex < 0) hostIndex = 0;
+            // 2. Render host as main
+            omniBox.SelectionColor = MainColor();
+            omniBox.AppendText(host);
 
-    // 1. Render everything before host as secondary
-    if (hostIndex > 0)
-    {
-        omniBox.SelectionColor = SecondaryColor();
-        omniBox.AppendText(text.Substring(0, hostIndex));
-    }
+            // 3. Render everything after host as secondary
+            int afterHostIndex = hostIndex + host.Length;
+            if (afterHostIndex < input.Length)
+            {
+                omniBox.SelectionColor = SecondaryColor();
+                omniBox.AppendText(input.Substring(afterHostIndex));
+            }
 
-    // 2. Render host as main
-    omniBox.SelectionColor = MainColor();
-    omniBox.AppendText(host);
-
-    // 3. Render everything after host as secondary
-    int afterHostIndex = hostIndex + host.Length;
-    if (afterHostIndex < text.Length)
-    {
-        omniBox.SelectionColor = SecondaryColor();
-        omniBox.AppendText(text.Substring(afterHostIndex));
-    }
-
-    // Restore caret position safely
-    omniBox.SelectionStart = Math.Min(caretPos, omniBox.Text.Length);
-    omniBox.SelectionLength = 0;
-}
-
+            // Restore caret position safely
+            omniBox.SelectionStart = Math.Min(caretPos, omniBox.Text.Length);
+            omniBox.SelectionLength = 0;
+        }
 
         /// <summary>
         /// Extracts host from URL text, even if incomplete

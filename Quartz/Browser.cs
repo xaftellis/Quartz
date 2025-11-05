@@ -45,8 +45,8 @@ namespace Quartz
         #region Declarations
         public AppContainer tabbedApp;
 
-        private Omnibox.Suggestions suggestionsClass;
-        private Omnibox.Theme themeClass;
+        private Omnibox.OmniBoxThemeUI suggestionsClass;
+        private Omnibox.OmniBoxTheme themeClass;
 
         public bool _newtab = false;
         public string _tabAddress = string.Empty;
@@ -146,6 +146,7 @@ namespace Quartz
             lstSuggestions.MultiSelect = false;
             lstSuggestions.HideSelection = false;
             lstSuggestions.HotTracking = true;
+            lstSuggestions.OwnerDraw = true;
 
             // Add one column to simulate a ListBox
             lstSuggestions.Columns.Add(String.Empty, lstSuggestions.Width);
@@ -153,8 +154,8 @@ namespace Quartz
             lstSuggestions.Visible = false;
             this.Controls.Add(lstSuggestions);
 
-           suggestionsClass = new Omnibox.Suggestions(this, txtWebAddress, lstSuggestions);
-            themeClass = new Omnibox.Theme(txtWebAddress);
+           suggestionsClass = new Omnibox.OmniBoxThemeUI(this, txtWebAddress, lstSuggestions);
+            themeClass = new Omnibox.OmniBoxTheme(txtWebAddress);
         }
 
         #endregion
@@ -1038,7 +1039,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.2.0 (Beta 2)";
+            notifyIcon1.Text = "Quartz v2.2.0 (Beta 3)";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }

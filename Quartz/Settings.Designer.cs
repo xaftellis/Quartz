@@ -198,7 +198,7 @@
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(189, 24);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version 2.2.0 (Beta 2)";
+            this.labelVersion.Text = "Version 2.2.0 (Beta 3)";
             // 
             // LoadingProgress
             // 
