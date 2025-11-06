@@ -19,7 +19,7 @@ using System.Windows.Forms;
 
 namespace Quartz.Omnibox
 {
-    internal class OmniBoxThemeUI
+    public class OmniBoxUI
     {
         private Form form;
         private RichTextBox omniBox;
@@ -34,7 +34,7 @@ namespace Quartz.Omnibox
         private int selectedIndex;
         private string originalText;
 
-        public OmniBoxThemeUI(Form Form, RichTextBox Omnibox, ListView ListView)
+        public OmniBoxUI(Form Form, RichTextBox Omnibox, ListView ListView)
         {
             form = Form;
             omniBox = Omnibox;
@@ -45,8 +45,8 @@ namespace Quartz.Omnibox
             omniBox.GotFocus += OmniBox_GotFocus;
             omniBox.LostFocus += OmniBox_LostFocus;
 
-            lvSuggestions.OwnerDraw = true;
-            lvSuggestions.DrawItem += LvSuggestions_DrawItem;
+            //lvSuggestions.OwnerDraw = false;
+            //lvSuggestions.DrawItem += LvSuggestions_DrawItem;
 
             httpClient = new HttpClient();
 
@@ -57,6 +57,9 @@ namespace Quartz.Omnibox
             };
             lvSuggestions.SmallImageList = iconList;
 
+            typeof(ListView)
+                .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.SetValue(lvSuggestions, true);
         }
 
         private void LvSuggestions_DrawItem(object sender, DrawListViewItemEventArgs e)
@@ -120,67 +123,69 @@ namespace Quartz.Omnibox
                 return;
             }
 
-            lvSuggestions.BeginUpdate();
-
-            lvSuggestions.Items.Clear();
-
-            string _key = query;
-            Image _icon;
-
-            // Decide if this is a URL or not
+            string key = query;
             bool isUrl = QueryAnalyzer.IsProbablyUrl(query);
 
-            // Get icon
-            if (!isUrl)
-            {
-                _icon = GetSearchIcon();
-                if (_icon != null && !iconList.Images.ContainsKey(_key))
-                    iconList.Images.Add(_key, _icon);
+            Image icon = isUrl
+                ? FaviconHelper.GetDefaultFaviconAsImage16()
+                : GetSearchIcon();
 
-                lvSuggestions.Items.Add(query.Trim() + " - Google Search", _key);
+            if (icon != null && !iconList.Images.ContainsKey(key))
+                iconList.Images.Add(key, icon);
+
+            lvSuggestions.BeginUpdate();
+
+            // If there's no top item yet, insert it.
+            if (lvSuggestions.Items.Count == 0)
+            {
+                lvSuggestions.Items.Add(query.Trim() + (isUrl ? "" : " - Google Search"),key);
             }
             else
             {
-                _icon = FaviconHelper.GetDefaultFaviconAsImage16();
-                if (_icon != null && !iconList.Images.ContainsKey(_key))
-                    iconList.Images.Add(_key, _icon);
-
-                lvSuggestions.Items.Add(query.Trim() + " - Google Search", _key);
+                // Update existing top item text and icon.
+                lvSuggestions.Items[0].Text = query.Trim() + (isUrl ? "" : " - Google Search");
+                lvSuggestions.Items[0].ImageKey = key;
             }
 
-            // Preserve selection
+
+            // Keep it selected and focused
             lvSuggestions.Items[0].Selected = true;
             lvSuggestions.Items[0].Focused = true;
 
             lvSuggestions.EndUpdate();
 
-
-            searchSuggestions = await GetSearchSuggestionsAsync();
-            if (searchSuggestions == null)
-                return;
-
-            if (searchSuggestions.Any())
-            {
-                foreach (string s in searchSuggestions)
-                {
-                    string key = s.GetHashCode().ToString();
-
-                    Image icon = GetSearchIcon();
-                    if (icon != null && !iconList.Images.ContainsKey(key))
-                        iconList.Images.Add(key, icon);
-
-                    var item = new ListViewItem(s)
-                    {
-                        ImageKey = iconList.Images.ContainsKey(key) ? key : null
-                    };
-                    lvSuggestions.Items.Add(item);
-                }
-            }
-
             lvSuggestions.Visible = true;
             lvSuggestions.BringToFront();
 
             PositionAndSizeListView();
+
+            var suggestions = await SearchSuggestions.GetAsync(query, SearchSuggestions.SearchEngine.Google);
+            if (suggestions == null)
+                return;
+
+            lvSuggestions.BeginUpdate();
+
+            // Remove any items after the top item
+            while (lvSuggestions.Items.Count > 1)
+                lvSuggestions.Items.RemoveAt(1);
+
+            // Add new ones
+            foreach (string s in suggestions)
+            {
+                string sKey = s.GetHashCode().ToString();
+                Image sIcon = GetSearchIcon();
+                if (sIcon != null && !iconList.Images.ContainsKey(sKey))
+                    iconList.Images.Add(sKey, sIcon);
+
+                var item = new ListViewItem(s)
+                {
+                    ImageKey = iconList.Images.ContainsKey(sKey) ? sKey : null
+                };
+                lvSuggestions.Items.Add(item);
+            }
+
+            PositionAndSizeListView();
+            lvSuggestions.EndUpdate();
         }
 
         //if (historySuggestions.Any())
@@ -224,77 +229,32 @@ namespace Quartz.Omnibox
             lvSuggestions.Columns[0].Width = lvSuggestions.Width;
         }
 
-        private List<string> GetHistorySuggestions()
-        {
-            try
-            {
-                HistoryService historyService = new HistoryService();
-                var suggestions = historyService.All()
-                    .Where(h =>
-                    {
-                        var uri = new Uri(h.WebAddress);
+        //private List<string> GetHistorySuggestions()
+        //{
+        //    try
+        //    {
+        //        HistoryService historyService = new HistoryService();
+        //        var suggestions = historyService.All()
+        //            .Where(h =>
+        //            {
+        //                var uri = new Uri(h.WebAddress);
 
-                        return uri.Host.Replace("www.", "").StartsWith(query)
-                        || uri.Host.StartsWith(query)
-                        || uri.AbsoluteUri.StartsWith(query);
-                    })
-                    .Take(5)
-                    .Select(h => h.WebAddress)
-                    .Distinct()
-                    .ToList();
+        //                return uri.Host.Replace("www.", "").StartsWith(query)
+        //                || uri.Host.StartsWith(query)
+        //                || uri.AbsoluteUri.StartsWith(query);
+        //            })
+        //            .Take(5)
+        //            .Select(h => h.WebAddress)
+        //            .Distinct()
+        //            .ToList();
 
-                return suggestions;
-            }
-            catch
-            {
-                return new List<string>();
-            }
-        }
-
-        private async Task<List<string>> GetSearchSuggestionsAsync()
-        {
-            try
-            {
-                string url = GetSearchSuggestionsAPI();
-                string response = await httpClient.GetStringAsync(url);
-
-                var data = JsonConvert.DeserializeObject<object[]>(response);
-                var suggestions = JsonConvert.DeserializeObject<List<string>>(data[1].ToString());
-                
-                return suggestions;
-            }
-            catch
-            {
-                return new List<string>();
-            }
-        }
-
-
-        private string GetSearchSuggestionsAPI()
-        {
-            string url;
-            switch (SettingsService.Get("SearchEngine"))
-            {
-                case "bing":
-                    url = $"https://api.bing.com/osjson.aspx?query={Uri.EscapeDataString(query)}";
-                    break;
-
-                case "duckduckgo":
-                    url = $"https://duckduckgo.com/ac/?q={Uri.EscapeDataString(query)}&type=list";
-                    break;
-
-                case "youtube":
-                    url = $"https://suggestqueries.google.com/complete/search?client=youtube&ds=yt&q=QUERY{Uri.EscapeDataString(query)}";
-                    break;
-
-                default:
-                    url = $"https://suggestqueries.google.com/complete/search?client=firefox&q={Uri.EscapeDataString(query)}";
-                    break;
-
-            }
-
-            return url;
-        }
+        //        return suggestions;
+        //    }
+        //    catch
+        //    {
+        //        return new List<string>();
+        //    }
+        //}
 
         public Image GetSearchIcon()
         {

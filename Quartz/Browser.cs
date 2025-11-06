@@ -45,7 +45,7 @@ namespace Quartz
         #region Declarations
         public AppContainer tabbedApp;
 
-        private Omnibox.OmniBoxThemeUI suggestionsClass;
+        private Omnibox.OmniBoxUI suggestionsClass;
         private Omnibox.OmniBoxTheme themeClass;
 
         public bool _newtab = false;
@@ -146,7 +146,7 @@ namespace Quartz
             lstSuggestions.MultiSelect = false;
             lstSuggestions.HideSelection = false;
             lstSuggestions.HotTracking = true;
-            lstSuggestions.OwnerDraw = true;
+            lstSuggestions.OwnerDraw = false;
 
             // Add one column to simulate a ListBox
             lstSuggestions.Columns.Add(String.Empty, lstSuggestions.Width);
@@ -154,7 +154,7 @@ namespace Quartz
             lstSuggestions.Visible = false;
             this.Controls.Add(lstSuggestions);
 
-           suggestionsClass = new Omnibox.OmniBoxThemeUI(this, txtWebAddress, lstSuggestions);
+           suggestionsClass = new Omnibox.OmniBoxUI(this, txtWebAddress, lstSuggestions);
             themeClass = new Omnibox.OmniBoxTheme(txtWebAddress);
         }
 
