@@ -45,7 +45,7 @@ namespace Quartz
         #region Declarations
         public AppContainer tabbedApp;
 
-        private Omnibox.OmniBoxUI suggestionsClass;
+        //private Omnibox.OmniBoxUI suggestionsClass;
         private Omnibox.OmniBoxTheme themeClass;
 
         public bool _newtab = false;
@@ -57,7 +57,7 @@ namespace Quartz
         Point point;
 
         public HttpClient httpClient = new HttpClient();
-        ListView lstSuggestions = new ListView();
+        //ListView lstSuggestions = new ListView();
 
         public bool WasDownloadDialogActive { get; set; } = false;
 
@@ -140,21 +140,21 @@ namespace Quartz
             _newtab = newtabrequest;
             _tabAddress = address;
 
-            lstSuggestions.View = View.Details;
-            lstSuggestions.HeaderStyle = ColumnHeaderStyle.None;
-            lstSuggestions.FullRowSelect = true;
-            lstSuggestions.MultiSelect = false;
-            lstSuggestions.HideSelection = false;
-            lstSuggestions.HotTracking = true;
-            lstSuggestions.OwnerDraw = false;
+            //lstSuggestions.View = View.Details;
+            //lstSuggestions.HeaderStyle = ColumnHeaderStyle.None;
+            //lstSuggestions.FullRowSelect = true;
+            //lstSuggestions.MultiSelect = false;
+            //lstSuggestions.HideSelection = false;
+            //lstSuggestions.HotTracking = true;
+            //lstSuggestions.OwnerDraw = false;
 
-            // Add one column to simulate a ListBox
-            lstSuggestions.Columns.Add(String.Empty, lstSuggestions.Width);
-            lstSuggestions.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular);
-            lstSuggestions.Visible = false;
-            this.Controls.Add(lstSuggestions);
+            //// Add one column to simulate a ListBox
+            //lstSuggestions.Columns.Add(String.Empty, lstSuggestions.Width);
+            //lstSuggestions.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular);
+            //lstSuggestions.Visible = false;
+            //this.Controls.Add(lstSuggestions);
 
-           suggestionsClass = new Omnibox.OmniBoxUI(this, txtWebAddress, lstSuggestions);
+           //suggestionsClass = new Omnibox.OmniBoxUI(this, txtWebAddress);
             themeClass = new Omnibox.OmniBoxTheme(txtWebAddress);
         }
 
@@ -295,10 +295,10 @@ namespace Quartz
             btnForward.FlatAppearance.MouseDownBackColor = mouseOver;
             btnForward.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnHome.BackgroundImage = houseImage;
-            btnHome.FlatAppearance.MouseOverBackColor = mouseOver;
-            btnHome.FlatAppearance.MouseDownBackColor = mouseOver;
-            btnHome.FlatAppearance.BorderColor = PanelforeColor;
+            //btnHome.BackgroundImage = houseImage;
+            //btnHome.FlatAppearance.MouseOverBackColor = mouseOver;
+            //btnHome.FlatAppearance.MouseDownBackColor = mouseOver;
+            //btnHome.FlatAppearance.BorderColor = PanelforeColor;
 
             btnRefresh.BackgroundImage = refreshImage;
             btnRefresh.FlatAppearance.MouseOverBackColor = mouseOver;
@@ -355,7 +355,7 @@ namespace Quartz
             NewControlThemeChanger.ChangeControlTheme(mnuHistory);
             NewControlThemeChanger.ChangeControlTheme(mnuUserData);
             NewControlThemeChanger.ChangeControlTheme(mnuSearch);
-            NewControlThemeChanger.ChangeControlTheme(lstSuggestions);
+            //NewControlThemeChanger.ChangeControlTheme(lstSuggestions);
 
         }
 
@@ -785,27 +785,27 @@ namespace Quartz
 
         public void FavPos()
         {
-            if (pnlFavourites.Controls.Count == 0)
-            {
-                pnlFavourites.Visible = false;
-                pnlFavourites.Height = 48;
-                pnlTop.Height = 67;
-            }
-            else
-            {
-                if (pnlFavourites.HorizontalScroll.Visible == true)
-                {
-                    pnlFavourites.Visible = true;
-                    pnlFavourites.Height = 48;
-                    pnlTop.Height = 105;
-                }
-                else
-                {
-                    pnlFavourites.Visible = true;
-                    pnlFavourites.Height = 29;
-                    pnlTop.Height = 89;
-                }
-            }
+            //if (pnlFavourites.Controls.Count == 0)
+            //{
+            //    pnlFavourites.Visible = false;
+            //    pnlFavourites.Height = 48;
+            //    pnlTop.Height = 67;
+            //}
+            //else
+            //{
+            //    if (pnlFavourites.HorizontalScroll.Visible == true)
+            //    {
+            //        pnlFavourites.Visible = true;
+            //        pnlFavourites.Height = 48;
+            //        pnlTop.Height = 105;
+            //    }
+            //    else
+            //    {
+            //        pnlFavourites.Visible = true;
+            //        pnlFavourites.Height = 29;
+            //        pnlTop.Height = 89;
+            //    }
+            //}
         }
 
         public async void RestoreDownloadDialog()
@@ -839,6 +839,7 @@ namespace Quartz
         #region Events
         private async void Browser_Load(object sender, EventArgs e)
         {
+
             //bugfix to the 0,0 location of the settings context menu when first opened.
             SettingsMenuStrip.Opening -= SettingsMenuStrip_Opening;
             SettingsMenuStrip.Show(this, new Point(-10000, -10000));
@@ -1039,7 +1040,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.2.0 (Beta 3)";
+            notifyIcon1.Text = "Quartz v2.2.0 (Beta 4)";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -2585,7 +2586,7 @@ namespace Quartz
         private async void txtWebAddress_TextChanged(object sender, EventArgs e)
         {
             themeClass.RenderText();
-            await suggestionsClass.ShowSuggestionsAsync();
+            //await suggestionsClass.ShowSuggestionsAsync();
         }
 
         private void emojiToolStripMenuItem_Click(object sender, EventArgs e)

@@ -48,7 +48,6 @@
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnHome = new System.Windows.Forms.Button();
             this.btnDownload = new System.Windows.Forms.Button();
             this.mnuDownloadsDropDown = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.locationToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,12 +75,9 @@
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.pnlTop = new System.Windows.Forms.Panel();
-            this.txtWebAddress = new System.Windows.Forms.RichTextBox();
             this.picFavicon = new System.Windows.Forms.PictureBox();
             this.pnlFavourites = new System.Windows.Forms.FlowLayoutPanel();
-            this.UrlRight = new System.Windows.Forms.PictureBox();
-            this.UrlLeft = new System.Windows.Forms.PictureBox();
-            this.UrlBox = new System.Windows.Forms.PictureBox();
+            this.txtWebAddress = new System.Windows.Forms.RichTextBox();
             this.btnSettings = new System.Windows.Forms.Button();
             this.SettingsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.newTabToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -113,6 +109,9 @@
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.UrlBox = new System.Windows.Forms.PictureBox();
+            this.UrlLeft = new System.Windows.Forms.PictureBox();
+            this.UrlRight = new System.Windows.Forms.PictureBox();
             this.mnuTabs = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.PlaceHolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlDivider = new System.Windows.Forms.Panel();
@@ -129,13 +128,13 @@
             this.mnuSearch.SuspendLayout();
             this.pnlTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picFavicon)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UrlLeft)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UrlBox)).BeginInit();
             this.SettingsMenuStrip.SuspendLayout();
             this.mnuUserData.SuspendLayout();
             this.mnuHistory.SuspendLayout();
             this.mnuExperts.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.UrlBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.UrlLeft)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).BeginInit();
             this.mnuTabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.wvWebView1)).BeginInit();
             this.pnlBottom.SuspendLayout();
@@ -269,16 +268,6 @@
             resources.ApplyResources(this.removeAllToolStripMenuItem, "removeAllToolStripMenuItem");
             this.removeAllToolStripMenuItem.Click += new System.EventHandler(this.removeAllToolStripMenuItem_Click);
             // 
-            // btnHome
-            // 
-            this.btnHome.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.btnHome, "btnHome");
-            this.btnHome.FlatAppearance.BorderSize = 0;
-            this.btnHome.ForeColor = System.Drawing.Color.White;
-            this.btnHome.Name = "btnHome";
-            this.btnHome.UseVisualStyleBackColor = false;
-            this.btnHome.Click += new System.EventHandler(this.btnHome_Click);
-            // 
             // btnDownload
             // 
             resources.ApplyResources(this.btnDownload, "btnDownload");
@@ -354,7 +343,7 @@
             this.wvLoadingProgress.DefaultBackgroundColor = System.Drawing.Color.Transparent;
             resources.ApplyResources(this.wvLoadingProgress, "wvLoadingProgress");
             this.wvLoadingProgress.Name = "wvLoadingProgress";
-            this.wvLoadingProgress.ZoomFactor = 1.6D;
+            this.wvLoadingProgress.ZoomFactor = 1.2D;
             // 
             // btnBack
             // 
@@ -500,38 +489,23 @@
             // pnlTop
             // 
             this.pnlTop.BackColor = System.Drawing.Color.Transparent;
-            this.pnlTop.Controls.Add(this.txtWebAddress);
             this.pnlTop.Controls.Add(this.picFavicon);
-            this.pnlTop.Controls.Add(this.pnlFavourites);
             this.pnlTop.Controls.Add(this.wvLoadingProgress);
-            this.pnlTop.Controls.Add(this.btnHome);
-            this.pnlTop.Controls.Add(this.UrlRight);
-            this.pnlTop.Controls.Add(this.UrlLeft);
-            this.pnlTop.Controls.Add(this.UrlBox);
+            this.pnlTop.Controls.Add(this.pnlFavourites);
+            this.pnlTop.Controls.Add(this.txtWebAddress);
             this.pnlTop.Controls.Add(this.btnBack);
             this.pnlTop.Controls.Add(this.btnForward);
             this.pnlTop.Controls.Add(this.btnSettings);
             this.pnlTop.Controls.Add(this.btnDownload);
             this.pnlTop.Controls.Add(this.btnAddFavourite);
             this.pnlTop.Controls.Add(this.btnStop);
+            this.pnlTop.Controls.Add(this.UrlBox);
             this.pnlTop.Controls.Add(this.btnRefresh);
+            this.pnlTop.Controls.Add(this.UrlLeft);
+            this.pnlTop.Controls.Add(this.UrlRight);
             resources.ApplyResources(this.pnlTop, "pnlTop");
             this.pnlTop.ForeColor = System.Drawing.Color.Transparent;
             this.pnlTop.Name = "pnlTop";
-            // 
-            // txtWebAddress
-            // 
-            resources.ApplyResources(this.txtWebAddress, "txtWebAddress");
-            this.txtWebAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.txtWebAddress.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtWebAddress.ContextMenuStrip = this.mnuSearch;
-            this.txtWebAddress.DetectUrls = false;
-            this.txtWebAddress.Name = "txtWebAddress";
-            this.txtWebAddress.Click += new System.EventHandler(this.txtWebAddress_Click);
-            this.txtWebAddress.BackColorChanged += new System.EventHandler(this.txtWebAddress_BackColorChanged);
-            this.txtWebAddress.TextChanged += new System.EventHandler(this.txtWebAddress_TextChanged);
-            this.txtWebAddress.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtWebAddress_KeyUp);
-            this.txtWebAddress.Leave += new System.EventHandler(this.txtWebAddress_Leave);
             // 
             // picFavicon
             // 
@@ -551,26 +525,19 @@
             this.pnlFavourites.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.pnlFavourites_ControlAdded);
             this.pnlFavourites.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.pnlFavourites_ControlRemoved);
             // 
-            // UrlRight
+            // txtWebAddress
             // 
-            resources.ApplyResources(this.UrlRight, "UrlRight");
-            this.UrlRight.BackColor = System.Drawing.Color.Transparent;
-            this.UrlRight.Name = "UrlRight";
-            this.UrlRight.TabStop = false;
-            // 
-            // UrlLeft
-            // 
-            this.UrlLeft.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.UrlLeft, "UrlLeft");
-            this.UrlLeft.Name = "UrlLeft";
-            this.UrlLeft.TabStop = false;
-            // 
-            // UrlBox
-            // 
-            resources.ApplyResources(this.UrlBox, "UrlBox");
-            this.UrlBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.UrlBox.Name = "UrlBox";
-            this.UrlBox.TabStop = false;
+            resources.ApplyResources(this.txtWebAddress, "txtWebAddress");
+            this.txtWebAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.txtWebAddress.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtWebAddress.ContextMenuStrip = this.mnuSearch;
+            this.txtWebAddress.DetectUrls = false;
+            this.txtWebAddress.Name = "txtWebAddress";
+            this.txtWebAddress.Click += new System.EventHandler(this.txtWebAddress_Click);
+            this.txtWebAddress.BackColorChanged += new System.EventHandler(this.txtWebAddress_BackColorChanged);
+            this.txtWebAddress.TextChanged += new System.EventHandler(this.txtWebAddress_TextChanged);
+            this.txtWebAddress.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtWebAddress_KeyUp);
+            this.txtWebAddress.Leave += new System.EventHandler(this.txtWebAddress_Leave);
             // 
             // btnSettings
             // 
@@ -803,6 +770,27 @@
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
             // 
+            // UrlBox
+            // 
+            resources.ApplyResources(this.UrlBox, "UrlBox");
+            this.UrlBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.UrlBox.Name = "UrlBox";
+            this.UrlBox.TabStop = false;
+            // 
+            // UrlLeft
+            // 
+            this.UrlLeft.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.UrlLeft, "UrlLeft");
+            this.UrlLeft.Name = "UrlLeft";
+            this.UrlLeft.TabStop = false;
+            // 
+            // UrlRight
+            // 
+            resources.ApplyResources(this.UrlRight, "UrlRight");
+            this.UrlRight.BackColor = System.Drawing.Color.Transparent;
+            this.UrlRight.Name = "UrlRight";
+            this.UrlRight.TabStop = false;
+            // 
             // mnuTabs
             // 
             this.mnuTabs.DropShadowEnabled = false;
@@ -864,6 +852,7 @@
             // 
             this.pnlBottom.BackColor = System.Drawing.Color.Transparent;
             this.pnlBottom.Controls.Add(this.wvWebView1);
+            this.pnlBottom.Controls.Add(this.pnlDivider);
             resources.ApplyResources(this.pnlBottom, "pnlBottom");
             this.pnlBottom.ForeColor = System.Drawing.Color.Transparent;
             this.pnlBottom.Name = "pnlBottom";
@@ -875,7 +864,6 @@
             this.BackColor = System.Drawing.Color.White;
             this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.pnlTop);
-            this.Controls.Add(this.pnlDivider);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.ForeColor = System.Drawing.Color.Black;
             this.Name = "Browser";
@@ -889,13 +877,13 @@
             this.mnuSearch.ResumeLayout(false);
             this.pnlTop.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picFavicon)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UrlLeft)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UrlBox)).EndInit();
             this.SettingsMenuStrip.ResumeLayout(false);
             this.mnuUserData.ResumeLayout(false);
             this.mnuHistory.ResumeLayout(false);
             this.mnuExperts.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.UrlBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.UrlLeft)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).EndInit();
             this.mnuTabs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.wvWebView1)).EndInit();
             this.pnlBottom.ResumeLayout(false);
@@ -953,7 +941,6 @@
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem1;
         private System.Windows.Forms.Panel pnlBottom;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
-        public System.Windows.Forms.Button btnHome;
         public System.Windows.Forms.Button btnDownload;
         public System.Windows.Forms.Button btnAddFavourite;
         public System.Windows.Forms.Button btnForward;

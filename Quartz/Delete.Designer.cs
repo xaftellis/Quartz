@@ -90,6 +90,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Delete browsing data";
+            this.Load += new System.EventHandler(this.Delete_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

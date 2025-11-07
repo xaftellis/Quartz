@@ -1,5 +1,6 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
+using Quartz.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +20,7 @@ namespace Quartz
         {
             InitializeComponent();
             webView2 = WebView2;
+            NewControlThemeChanger.ChangeTheme(this);
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
@@ -40,6 +42,11 @@ namespace Quartz
             endDate = DateTime.Now;
 
             webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(dataKinds, startDate, endDate);
+        }
+
+        private void Delete_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
