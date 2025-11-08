@@ -45,7 +45,7 @@ namespace Quartz
         #region Declarations
         public AppContainer tabbedApp;
 
-        //private Omnibox.OmniBoxUI suggestionsClass;
+        private Omnibox.OmniBoxUI suggestionsClass;
         private Omnibox.OmniBoxTheme themeClass;
 
         public bool _newtab = false;
@@ -154,7 +154,7 @@ namespace Quartz
             //lstSuggestions.Visible = false;
             //this.Controls.Add(lstSuggestions);
 
-           //suggestionsClass = new Omnibox.OmniBoxUI(this, txtWebAddress);
+           suggestionsClass = new Omnibox.OmniBoxUI(this, txtWebAddress);
             themeClass = new Omnibox.OmniBoxTheme(txtWebAddress);
         }
 
@@ -385,6 +385,7 @@ namespace Quartz
                         TextAlign = ContentAlignment.MiddleCenter,
                         MaximumSize = new Size(0, 23),
                         AutoSize = true,
+                        Font = new Font("Segoe UI", 8)
                     };
 
                     Uri address = new Uri(favourite.WebAddress);
@@ -785,27 +786,26 @@ namespace Quartz
 
         public void FavPos()
         {
-            //if (pnlFavourites.Controls.Count == 0)
-            //{
-            //    pnlFavourites.Visible = false;
-            //    pnlFavourites.Height = 48;
-            //    pnlTop.Height = 67;
-            //}
-            //else
-            //{
-            //    if (pnlFavourites.HorizontalScroll.Visible == true)
-            //    {
-            //        pnlFavourites.Visible = true;
-            //        pnlFavourites.Height = 48;
-            //        pnlTop.Height = 105;
-            //    }
-            //    else
-            //    {
-            //        pnlFavourites.Visible = true;
-            //        pnlFavourites.Height = 29;
-            //        pnlTop.Height = 89;
-            //    }
-            //}
+            if (pnlFavourites.Controls.Count == 0)
+            {
+                pnlFavourites.Visible = false;
+                pnlFavourites.Height = 48;
+                pnlTop.Height = 67;
+                return;
+            }
+
+            if (pnlFavourites.HorizontalScroll.Visible)
+            {
+                pnlFavourites.Visible = true;
+                pnlFavourites.Height = 48;
+                pnlTop.Height = 105;
+            }
+            else
+            {
+                pnlFavourites.Visible = true;
+                pnlFavourites.Height = 29;
+                pnlTop.Height = 89;
+            }
         }
 
         public async void RestoreDownloadDialog()
@@ -2586,7 +2586,7 @@ namespace Quartz
         private async void txtWebAddress_TextChanged(object sender, EventArgs e)
         {
             themeClass.RenderText();
-            //await suggestionsClass.ShowSuggestionsAsync();
+            await suggestionsClass.ShowSuggestionsAsync();
         }
 
         private void emojiToolStripMenuItem_Click(object sender, EventArgs e)

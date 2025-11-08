@@ -36,5 +36,10 @@ namespace Quartz.Services
         {
             get { return Color.FromArgb(242, 242, 242); }
         }
+
+        public override Color SeparatorDark
+        {
+            get { return Color.FromArgb(219, 220, 221); }
+        }
     }
 }

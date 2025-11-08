@@ -43,8 +43,7 @@ namespace Quartz.Services
             {
                 var backcolor = Color.White;
                 var forecolor = Color.Black;
-
-                CustomWindow(backcolor, forecolor, backcolor, handle);
+                CustomWindow(backcolor, forecolor, Color.FromArgb(219, 220, 221), handle);
             }
             else if (theme == "black")
             {
@@ -203,7 +202,7 @@ namespace Quartz.Services
                 }
                 ContextMenuStrip.Renderer = renderer;
                 ContextMenuStrip.BackgroundImage = buttonimage;    
-                ContextMenuStrip.DropShadowEnabled = false;
+                ContextMenuStrip.DropShadowEnabled = true;
             }
             else if (control is TextBox)
             {

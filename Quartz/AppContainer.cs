@@ -63,7 +63,7 @@ namespace Quartz
 
                 barBackColor = System.Drawing.Color.FromArgb(222, 225, 230);
                 textForeColor = System.Drawing.Color.Black;
-                windowOutline = System.Drawing.Color.FromArgb(222, 225, 230);
+                windowOutline = System.Drawing.Color.FromArgb(219, 220, 221);
             }
             else if (theme == "dark")
             {

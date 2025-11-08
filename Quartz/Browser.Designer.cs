@@ -172,9 +172,8 @@
             // 
             // favToolStripMenuItem
             // 
-            this.favToolStripMenuItem.Image = global::Quartz.Properties.Resources.SnowFall2;
-            this.favToolStripMenuItem.Name = "favToolStripMenuItem";
             resources.ApplyResources(this.favToolStripMenuItem, "favToolStripMenuItem");
+            this.favToolStripMenuItem.Name = "favToolStripMenuItem";
             // 
             // toolStripSeparator3
             // 
@@ -902,7 +901,6 @@
         private System.Windows.Forms.ToolStripMenuItem removeAllToolStripMenuItem;
         private System.Windows.Forms.FlowLayoutPanel pnlFavourites;
         private System.Windows.Forms.ToolStripMenuItem favToolStripMenuItem;
-        private System.Windows.Forms.PictureBox picFavicon;
         private System.Windows.Forms.Panel pnlDivider;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem modifyToolStripMenuItem;
@@ -982,8 +980,9 @@
         private System.Windows.Forms.ToolStripMenuItem alwaysShowFullURLsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
-        private System.Windows.Forms.RichTextBox txtWebAddress;
         private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
+        public System.Windows.Forms.PictureBox picFavicon;
+        public System.Windows.Forms.RichTextBox txtWebAddress;
     }
 }
 
