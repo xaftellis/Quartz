@@ -45,7 +45,7 @@ namespace Quartz
         #region Declarations
         public AppContainer tabbedApp;
 
-        private Omnibox.OmniBoxUI suggestionsClass;
+        //private Omnibox.OmniBoxUI suggestionsClass;
         private Omnibox.OmniBoxTheme themeClass;
 
         public bool _newtab = false;
@@ -154,7 +154,7 @@ namespace Quartz
             //lstSuggestions.Visible = false;
             //this.Controls.Add(lstSuggestions);
 
-           suggestionsClass = new Omnibox.OmniBoxUI(this, txtWebAddress);
+           //suggestionsClass = new Omnibox.OmniBoxUI(this, txtWebAddress);
             themeClass = new Omnibox.OmniBoxTheme(txtWebAddress);
         }
 
@@ -786,26 +786,26 @@ namespace Quartz
 
         public void FavPos()
         {
-            if (pnlFavourites.Controls.Count == 0)
-            {
-                pnlFavourites.Visible = false;
-                pnlFavourites.Height = 48;
-                pnlTop.Height = 67;
-                return;
-            }
+            //if (pnlFavourites.Controls.Count == 0)
+            //{
+            //    pnlFavourites.Visible = false;
+            //    pnlFavourites.Height = 48;
+            //    pnlTop.Height = 67;
+            //    return;
+            //}
 
-            if (pnlFavourites.HorizontalScroll.Visible)
-            {
-                pnlFavourites.Visible = true;
-                pnlFavourites.Height = 48;
-                pnlTop.Height = 105;
-            }
-            else
-            {
-                pnlFavourites.Visible = true;
-                pnlFavourites.Height = 29;
-                pnlTop.Height = 89;
-            }
+            //if (pnlFavourites.HorizontalScroll.Visible)
+            //{
+            //    pnlFavourites.Visible = true;
+            //    pnlFavourites.Height = 48;
+            //    pnlTop.Height = 105;
+            //}
+            //else
+            //{
+            //    pnlFavourites.Visible = true;
+            //    pnlFavourites.Height = 29;
+            //    pnlTop.Height = 89;
+            //}
         }
 
         public async void RestoreDownloadDialog()
@@ -1040,7 +1040,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.2.0 (Beta 4)";
+            notifyIcon1.Text = "Quartz v2.2.0 (Beta 4 - Prototype)";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -2586,7 +2586,7 @@ namespace Quartz
         private async void txtWebAddress_TextChanged(object sender, EventArgs e)
         {
             themeClass.RenderText();
-            await suggestionsClass.ShowSuggestionsAsync();
+            //await suggestionsClass.ShowSuggestionsAsync();
         }
 
         private void emojiToolStripMenuItem_Click(object sender, EventArgs e)
