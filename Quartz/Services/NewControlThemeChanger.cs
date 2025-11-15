@@ -187,7 +187,7 @@ namespace Quartz.Services
                 var ContextMenuStrip = (ContextMenuStrip)control;
                 if (theme == "dark")
                 {
-                    ContextMenuStrip.BackColor = Color.FromArgb(64, 64, 64);
+                    ContextMenuStrip.BackColor = backcolor;
                     ContextMenuStrip.ForeColor = forecolor;
                 }
                 else if (theme == "aqua")

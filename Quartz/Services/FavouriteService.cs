@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
+using Quartz.Libs;
 using Quartz.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Quartz.Libs;
 
 namespace Quartz.Services
 {
@@ -122,6 +123,29 @@ namespace Quartz.Services
             var original = Get(Original);
             original.Name = name;
             original.WebAddress = address;
+        }
+
+        public static async Task<bool> ValidatePanelAsync(FlowLayoutPanel panel)
+        {
+            return await Task.Run(() =>
+            {
+                var service = new FavouriteService();
+                var expectedFavourites = service.All().OrderBy(f => f.Index).ToList();
+
+                var buttons = panel.Controls.OfType<Button>().ToList();
+
+                // Check if every expected favourite exists in the buttons
+                bool allExist = expectedFavourites.All(fav =>
+                    buttons.Any(b => b.Text.Trim() == fav.Name && b.Tag?.ToString() == fav.WebAddress)
+                );
+
+                // Check if there are any extra buttons not in the expected list
+                bool noExtra = buttons.All(btn =>
+                    expectedFavourites.Any(f => f.Name == btn.Text.Trim() && f.WebAddress == btn.Tag?.ToString())
+                );
+
+                return allExist && noExtra;
+            });
         }
     }
 }

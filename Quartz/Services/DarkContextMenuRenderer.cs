@@ -16,15 +16,15 @@ namespace Quartz.Services
         }
         public override Color ImageMarginGradientBegin
         {
-            get { return Color.FromArgb(64, 64, 64); }
+            get { return Color.FromArgb(35, 35, 35); }
         }
         public override Color ImageMarginGradientMiddle
         {
-            get { return Color.FromArgb(64, 64, 64); }
+            get { return Color.FromArgb(35, 35, 35); }
         }
         public override Color ImageMarginGradientEnd
         {
-            get { return Color.FromArgb(64, 64, 64); }
+            get { return Color.FromArgb(35, 35, 35); }
         }
         public override Color MenuItemBorder
         {

@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Quartz
@@ -126,7 +127,7 @@ namespace Quartz
             this.TabSelected += AppContainer_TabSelected;
         }
 
-        private void AppContainer_TabSelected(object sender, TitleBarTabEventArgs e)
+        private async void AppContainer_TabSelected(object sender, TitleBarTabEventArgs e)
         {
             Browser browser = (Browser)SelectedTab.Content;
             browser.tabbedApp = (AppContainer)browser.Parent;
@@ -142,9 +143,11 @@ namespace Quartz
 
                     if (item.Active)
                     {
-                        form.LoadFavourites();
-                        form.notifyIcon1.Visible = true;
+                        bool isCorrect = await FavouriteService.ValidatePanelAsync(browser.pnlFavourites);
+                        if (!isCorrect)
+                            form.LoadFavourites();
 
+                        form.notifyIcon1.Visible = true;
                         if (form.wvWebView1?.CoreWebView2 != null && form.WasDownloadDialogActive)
                         {
                             form.wvWebView1.CoreWebView2.OpenDefaultDownloadDialog();
