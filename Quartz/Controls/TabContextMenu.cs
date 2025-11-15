@@ -27,6 +27,7 @@ namespace Quartz.Controls
         private ToolStripMenuItem closeOtherToolStripMenuItem;
         private ToolStripMenuItem closeLeftToolStripMenuItem;
         private ToolStripMenuItem closeRightToolStripMenuItem;
+        private ToolStripMenuItem showSiteIconsOnlyToolStripMenuItem;
         public TabContextMenu()
         {
             // Theme
@@ -44,6 +45,10 @@ namespace Quartz.Controls
             closeOtherToolStripMenuItem = new ToolStripMenuItem("Close other tabs");
             closeLeftToolStripMenuItem = new ToolStripMenuItem("Close tabs to the left");
             closeRightToolStripMenuItem = new ToolStripMenuItem("Close tabs to the right");
+            showSiteIconsOnlyToolStripMenuItem = new ToolStripMenuItem("Show site icons only");
+
+            showSiteIconsOnlyToolStripMenuItem.CheckOnClick = true;
+
 
 
             this.Items.AddRange(new ToolStripItem[]
@@ -58,7 +63,9 @@ namespace Quartz.Controls
                 closeTabToolStripMenuItem,
                 closeOtherToolStripMenuItem,
                 closeLeftToolStripMenuItem,
-                closeRightToolStripMenuItem
+                closeRightToolStripMenuItem,
+                showSiteIconsOnlyToolStripMenuItem
+
             });
 
             // Events
@@ -73,6 +80,12 @@ namespace Quartz.Controls
             closeOtherToolStripMenuItem.Click += CloseOtherToolStripMenuItem_Click;
             closeLeftToolStripMenuItem.Click += CloseLeftToolStripMenuItem_Click;
             closeRightToolStripMenuItem.Click += CloseRightToolStripMenuItem_Click;
+            showSiteIconsOnlyToolStripMenuItem.CheckStateChanged += ShowSiteIconsOnlyToolStripMenuItem_CheckStateChanged; ;
+        }
+
+        private void ShowSiteIconsOnlyToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
+        {
+            SettingsService.Set("showSiteIconsOnly", showSiteIconsOnlyToolStripMenuItem.Checked.ToString().ToLower());
         }
 
         private void NewTabRightStripMenuItem_Click(object sender, EventArgs e)
@@ -238,6 +251,8 @@ namespace Quartz.Controls
                 bool isMuted = browser.wvWebView1.CoreWebView2.IsMuted;
                 muteTabToolStripMenuItem.Text = !isMuted ? "Mute tab" : "Unmute tab";
             }
+
+            showSiteIconsOnlyToolStripMenuItem.Checked = SettingsService.Get("showSiteIconsOnly") == "true";
 
             if (SettingsService.Get("Animation") == "true")
             {

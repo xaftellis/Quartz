@@ -12,7 +12,7 @@ namespace Quartz.Services
     {
         public override Color MenuBorder
         {
-            get { return Color.White; }
+            get { return Color.FromArgb(219, 220, 221);  }
         }
         public override Color MenuItemBorder
         {

@@ -1040,7 +1040,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.2.0 (Beta 4 - Prototype)";
+            notifyIcon1.Text = "Quartz v2.2.0";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -1423,6 +1423,12 @@ namespace Quartz
             // could add code that refreshes tab favicon to show changes.
             if (Uri.IsWellFormedUriString(wvWebView1.Source.AbsoluteUri, UriKind.Absolute))
             {
+                bool showSiteIconsOnly = bool.Parse(SettingsService.Get("showSiteIconsOnly"));
+                if (showSiteIconsOnly)
+                {
+                    ShowIcon = true;
+                }
+
                 if (!FaviconHelper.DoesFaviconFileExist(wvWebView1.Source.AbsoluteUri))
                 {
                     Stream originalStream = await wvWebView1.CoreWebView2.GetFaviconAsync(Microsoft.Web.WebView2.Core.CoreWebView2FaviconImageFormat.Png);
@@ -1448,10 +1454,15 @@ namespace Quartz
                         }
                         else
                         {
+                            if (showSiteIconsOnly)
+                            {
+                                ShowIcon = false;
+                                return;
+                            }
+
                             Icon icon = FaviconHelper.GetDefaultFavicon16();
                             Icon = icon;
                             FaviconHelper.UpdateCurrentTab(ParentTabs, this);
-
                             picFavicon.Image = icon.ToBitmap();
                         }
                     }
