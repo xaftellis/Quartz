@@ -61,8 +61,6 @@ namespace Quartz
 
         public bool WasDownloadDialogActive { get; set; } = false;
 
-        bool istxtaddressFocused = false;
-
         private string ToBgr(Color c) => $"{c.B:X2}{c.G:X2}{c.R:X2}";
         [DllImport("DwmApi")]
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, int[] attrValue, int attrSize);
@@ -139,7 +137,6 @@ namespace Quartz
             InitializeComponent();
             _newtab = newtabrequest;
             _tabAddress = address;
-
             //lstSuggestions.View = View.Details;
             //lstSuggestions.HeaderStyle = ColumnHeaderStyle.None;
             //lstSuggestions.FullRowSelect = true;
@@ -837,7 +834,6 @@ namespace Quartz
         #region Events
         private async void Browser_Load(object sender, EventArgs e)
         {
-
             //bugfix to the 0,0 location of the settings context menu when first opened.
             SettingsMenuStrip.Opening -= SettingsMenuStrip_Opening;
             SettingsMenuStrip.Show(this, new Point(-10000, -10000));
@@ -1243,6 +1239,12 @@ namespace Quartz
             wvWebView1.CoreWebView2.DownloadStarting += CoreViewView2__DownloadStarting;
             wvWebView1.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
             wvWebView1.CoreWebView2.FaviconChanged += CoreWebView2_FaviconChanged;
+            wvWebView1.GotFocus += WvWebView1_GotFocus;
+        }
+
+        private void WvWebView1_GotFocus(object sender, EventArgs e)
+        {
+            MessageBox.Show("");
         }
 
         private void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
@@ -2400,19 +2402,14 @@ namespace Quartz
 
                 txtWebAddress.Text = host.Replace("www.", "") + pathAndQuery;
             }
-
-            istxtaddressFocused = false;
         }
 
-        private void txtWebAddress_Click(object sender, EventArgs e)
+        private void txtWebAddress_Enter(object sender, EventArgs e)
         {
-            if (istxtaddressFocused)
-                return;
-
-            txtWebAddress.SelectAll();
-            istxtaddressFocused = true;
-
             var uri = wvWebView1.Source;
+
+            if (uri == null)
+                return;
 
             // Get host
             string host = uri.Host;
@@ -2448,8 +2445,9 @@ namespace Quartz
 
                 _originalURL = txtWebAddress.Text;
             }
-        }
 
+            BeginInvoke((Action)(() => txtWebAddress.SelectAll()));
+        }
 
         public void SortByAlphabetially()
         {
