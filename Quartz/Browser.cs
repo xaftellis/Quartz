@@ -786,26 +786,25 @@ namespace Quartz
 
         public void FavPos()
         {
-            //if (pnlFavourites.Controls.Count == 0)
-            //{
-            //    pnlFavourites.Visible = false;
-            //    pnlFavourites.Height = 48;
-            //    pnlTop.Height = 67;
-            //    return;
-            //}
+            if (pnlFavourites.Controls.Count == 0)
+            {
+                pnlFavourites.Visible = false;
+                pnlTop.Height = 49;
+                return;
+            }
 
-            //if (pnlFavourites.HorizontalScroll.Visible)
-            //{
-            //    pnlFavourites.Visible = true;
-            //    pnlFavourites.Height = 48;
-            //    pnlTop.Height = 105;
-            //}
-            //else
-            //{
-            //    pnlFavourites.Visible = true;
-            //    pnlFavourites.Height = 29;
-            //    pnlTop.Height = 89;
-            //}
+            if (pnlFavourites.HorizontalScroll.Visible)
+            {
+                pnlFavourites.Visible = true;
+                pnlFavourites.Height = 47;
+                pnlTop.Height = 93;
+            }
+            else
+            {
+                pnlFavourites.Visible = true;
+                pnlFavourites.Height = 31;
+                pnlTop.Height = 80;
+            }
         }
 
         public async void RestoreDownloadDialog()
