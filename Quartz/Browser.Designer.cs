@@ -99,7 +99,6 @@
             this.inspectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.webview2TaskManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.fullscreenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zoomToolStrip = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.openFileInBrowserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -286,6 +285,7 @@
             this.locationToolStripMenuItem1,
             this.changeLocationToolStripMenuItem1});
             this.mnuDownloadsDropDown.Name = "mnuDownloadsDropDown";
+            this.mnuDownloadsDropDown.OwnerItem = this.downloadsToolStripMenuItem;
             this.mnuDownloadsDropDown.ShowImageMargin = false;
             resources.ApplyResources(this.mnuDownloadsDropDown, "mnuDownloadsDropDown");
             this.mnuDownloadsDropDown.TabStop = true;
@@ -565,7 +565,6 @@
             this.expertsToolStripMenuItem,
             this.downloadsToolStripMenuItem,
             this.toolStripSeparator2,
-            this.fullscreenToolStripMenuItem,
             this.zoomToolStrip,
             this.toolStripSeparator1,
             this.openFileInBrowserToolStripMenuItem,
@@ -706,12 +705,6 @@
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
-            // 
-            // fullscreenToolStripMenuItem
-            // 
-            resources.ApplyResources(this.fullscreenToolStripMenuItem, "fullscreenToolStripMenuItem");
-            this.fullscreenToolStripMenuItem.Name = "fullscreenToolStripMenuItem";
-            this.fullscreenToolStripMenuItem.Click += new System.EventHandler(this.fullscreenToolStripMenuItem_Click);
             // 
             // zoomToolStrip
             // 
@@ -949,7 +942,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ContextMenuStrip mnuSearch;
-        private System.Windows.Forms.ToolStripMenuItem fullscreenToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sortByAlphabeticallyToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator18;
         private System.Windows.Forms.ToolStripMenuItem openInNewTabToolStripMenuItem;

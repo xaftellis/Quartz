@@ -783,7 +783,6 @@ namespace Quartz
             }
         }
 
-
         public void FavPos()
         {
             if (pnlFavourites.Controls.Count == 0)
