@@ -1423,11 +1423,11 @@ namespace Quartz
             // could add code that refreshes tab favicon to show changes.
             if (Uri.IsWellFormedUriString(wvWebView1.Source.AbsoluteUri, UriKind.Absolute))
             {
-                bool showSiteIconsOnly = bool.Parse(SettingsService.Get("showSiteIconsOnly"));
-                if (showSiteIconsOnly)
-                {
-                    ShowIcon = true;
-                }
+                //bool showSiteIconsOnly = bool.Parse(SettingsService.Get("showSiteIconsOnly"));
+                //if (showSiteIconsOnly)
+                //{
+                //    ShowIcon = true;
+                //}
 
                 if (!FaviconHelper.DoesFaviconFileExist(wvWebView1.Source.AbsoluteUri))
                 {
@@ -1454,11 +1454,11 @@ namespace Quartz
                         }
                         else
                         {
-                            if (showSiteIconsOnly)
-                            {
-                                ShowIcon = false;
-                                return;
-                            }
+                            //if (showSiteIconsOnly)
+                            //{
+                            //    ShowIcon = false;
+                            //    return;
+                            //}
 
                             Icon icon = FaviconHelper.GetDefaultFavicon16();
                             Icon = icon;

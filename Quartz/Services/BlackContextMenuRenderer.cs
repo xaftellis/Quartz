@@ -12,7 +12,7 @@ namespace Quartz.Services
     {
         public override Color MenuBorder
         {
-            get { return Color.Black; }
+            get { return Color.FromArgb(64, 64, 64); }
         }
         public override Color ImageMarginGradientBegin
         {
