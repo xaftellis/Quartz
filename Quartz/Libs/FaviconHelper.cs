@@ -335,7 +335,7 @@ namespace Quartz.Libs
                 }
                 else
                 {
-                    icon = Quartz.Properties.Resources.favicon_beta;
+                    icon = Quartz.Properties.Resources.favicon;
                 }
             }
             return icon;
@@ -373,7 +373,7 @@ namespace Quartz.Libs
             }
             else
             {
-                icon = Quartz.Properties.Resources.favicon_beta;
+                icon = Quartz.Properties.Resources.favicon;
             }
             return icon;
         }
@@ -416,7 +416,7 @@ namespace Quartz.Libs
                 }
                 else
                 {
-                    icon = Quartz.Properties.Resources.favicon16_bera;
+                    icon = Quartz.Properties.Resources.favicon16;
                 }
             }
             return icon;
@@ -454,7 +454,7 @@ namespace Quartz.Libs
             }
             else
             {
-                image = Quartz.Properties.Resources.Beta;
+                image = Quartz.Properties.Resources.Quartz;
             }
             return image;
         }
