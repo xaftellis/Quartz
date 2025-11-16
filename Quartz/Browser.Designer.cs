@@ -108,10 +108,10 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.UrlBox = new System.Windows.Forms.PictureBox();
             this.UrlLeft = new System.Windows.Forms.PictureBox();
             this.UrlRight = new System.Windows.Forms.PictureBox();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTabs = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.PlaceHolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlDivider = new System.Windows.Forms.Panel();
@@ -286,7 +286,6 @@
             this.locationToolStripMenuItem1,
             this.changeLocationToolStripMenuItem1});
             this.mnuDownloadsDropDown.Name = "mnuDownloadsDropDown";
-            this.mnuDownloadsDropDown.OwnerItem = this.downloadsToolStripMenuItem;
             this.mnuDownloadsDropDown.ShowImageMargin = false;
             resources.ApplyResources(this.mnuDownloadsDropDown, "mnuDownloadsDropDown");
             this.mnuDownloadsDropDown.TabStop = true;
@@ -617,6 +616,7 @@
             this.toolStripSeparator6,
             this.resetToolStripMenuItem1});
             this.mnuUserData.Name = "mnuUserData";
+            this.mnuUserData.OwnerItem = this.userDataToolStripMenuItem;
             this.mnuUserData.ShowImageMargin = false;
             resources.ApplyResources(this.mnuUserData, "mnuUserData");
             this.mnuUserData.Opening += new System.ComponentModel.CancelEventHandler(this.mnuUserData_Opening);
@@ -652,6 +652,7 @@
             this.historyToolStripMenuItem1,
             this.toolStripSeparator10});
             this.mnuHistory.Name = "mnuHistory";
+            this.mnuHistory.OwnerItem = this.historyToolStripMenuItem;
             resources.ApplyResources(this.mnuHistory, "mnuHistory");
             this.mnuHistory.Opening += new System.ComponentModel.CancelEventHandler(this.mnuHistory_Opening);
             // 
@@ -684,6 +685,7 @@
             this.inspectToolStripMenuItem,
             this.webview2TaskManagerToolStripMenuItem});
             this.mnuExperts.Name = "mnuExperts";
+            this.mnuExperts.OwnerItem = this.expertsToolStripMenuItem;
             this.mnuExperts.ShowImageMargin = false;
             resources.ApplyResources(this.mnuExperts, "mnuExperts");
             this.mnuExperts.Opening += new System.ComponentModel.CancelEventHandler(this.mnuExperts_Opening);
@@ -715,8 +717,8 @@
             // 
             this.zoomToolStrip.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.zoomToolStrip.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            resources.ApplyResources(this.zoomToolStrip, "zoomToolStrip");
             this.zoomToolStrip.Name = "zoomToolStrip";
+            resources.ApplyResources(this.zoomToolStrip, "zoomToolStrip");
             this.zoomToolStrip.SelectedIndexChanged += new System.EventHandler(this.zoomToolStrip_SelectedIndexChanged);
             this.zoomToolStrip.KeyUp += new System.Windows.Forms.KeyEventHandler(this.zoomToolStrip_KeyUp);
             // 
@@ -759,12 +761,6 @@
             resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.DropDown = this.SettingsMenuStrip;
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
-            // 
             // UrlBox
             // 
             resources.ApplyResources(this.UrlBox, "UrlBox");
@@ -785,6 +781,12 @@
             this.UrlRight.BackColor = System.Drawing.Color.Transparent;
             this.UrlRight.Name = "UrlRight";
             this.UrlRight.TabStop = false;
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDown = this.SettingsMenuStrip;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
             // 
             // mnuTabs
             // 

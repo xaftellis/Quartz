@@ -76,7 +76,6 @@ namespace Quartz.Services
         }
         public static void ChangeControlTheme(object _object)
         {
-            var control = _object as Control;
             Color backcolor = Color.White;
             Color forecolor = Color.Black;
             Color extrabackcolor = Color.Blue;
@@ -164,6 +163,26 @@ namespace Quartz.Services
                 coreWebView2ColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Dark;
                 renderer = new DarkContextMenuRenderer();
             }
+
+
+            // FIRST: Check ToolStripComboBox
+            if (_object is ToolStripComboBox tscb)
+            {
+                if (tscb.Owner is ContextMenuStrip cms)
+                {
+                    // Match context menu theme
+                    tscb.ComboBox.BackColor = cms.BackColor;
+                    tscb.ComboBox.ForeColor = cms.ForeColor;
+
+                    // Optional: match flat style to your theme logic
+                    tscb.ComboBox.FlatStyle = FlatStyle.Flat;
+                }
+            }
+
+            // OTHERWISE treat it as a normal control
+            var control = _object as Control;
+            if (control == null)
+                return; // it’s a menu item, separator, etc.
 
             control.BackColor = backcolor;
             control.ForeColor = forecolor;
