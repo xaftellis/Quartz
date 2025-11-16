@@ -135,7 +135,7 @@ namespace Quartz
             if(_windowName == string.Empty)
                  this.Text = e.Tab.Content.Text;
 
-            foreach (var item in Tabs)
+            foreach (var item in Tabs.ToList())
             {
                 try
                 {

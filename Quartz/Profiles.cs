@@ -549,35 +549,36 @@ namespace Quartz
             birthdayService.SaveChanges();
 
             // Apply settings
-            SetSetting(MainSettingsService.Set, "RunBrowser", "true");
-            SetSetting(SettingsService.Set, "Theme", "black");
-            SetSetting(SettingsService.Set, "simulateDate", "false");
-            SetSetting(SettingsService.Set, "IsSwipeNavigationEnabled", "true");
-            SetSetting(SettingsService.Set, "SearchEngine", "google");
-            SetSetting(SettingsService.Set, "IsZoomControlEnabled", "true");
-            SetSetting(SettingsService.Set, "IsPinchZoomEnabled", "true");
-            SetSetting(SettingsService.Set, "AreDevToolsEnabled", "true");
-            SetSetting(SettingsService.Set, "AreBrowserAcceleratorKeysEnabled", "true");
-            SetSetting(SettingsService.Set, "DefaultHomePage", "true");
-            SetSetting(SettingsService.Set, "IsPasswordAutosaveEnabled", "true");
-            SetSetting(SettingsService.Set, "IsGeneralAutofillEnabled", "true");
-            SetSetting(SettingsService.Set, "Zoom", "1.0");
-            SetSetting(SettingsService.Set, "DownloadAlignment", "TopLeft");
-            SetSetting(SettingsService.Set, "Private", "false");
-            SetSetting(SettingsService.Set, "TrackingPreventionLevel", "balanced");
-            SetSetting(SettingsService.Set, "Animation", "true");
-            SetSetting(SettingsService.Set, "MemoryUsage", "normal");
-            SetSetting(SettingsService.Set, "escClose", "true");
-            SetSetting(SettingsService.Set, "DraggableForms", "true");
-            SetSetting(SettingsService.Set, "IsScriptEnabled", "true");
-            SetSetting(SettingsService.Set, "IsStatusBarEnabled", "true");
-            SetSetting(SettingsService.Set, "HiddenPDFNone", "true");
-            SetSetting(SettingsService.Set, "SettingsTabAlignment", "top");
-            SetSetting(SettingsService.Set, "showFavouriteIcon", "true");
-            SetSetting(SettingsService.Set, "sortProfilesBy", "alphabetically");
-            SetSetting(SettingsService.Set, "defaultFavicon", "default");
-            SetSetting(SettingsService.Set, "sortFavouritesBy", "alphabetically");
-            SetSetting(SettingsService.Set, "displayFullURLs", "true");
+            MainSettingsService.Set("RunBrowser", "true");
+            SettingsService.Set("Theme", "black");
+            SettingsService.Set("simulateDate", "false");
+            SettingsService.Set("IsSwipeNavigationEnabled", "true");
+            SettingsService.Set("SearchEngine", "google");
+            SettingsService.Set("IsZoomControlEnabled", "true");
+            SettingsService.Set("IsPinchZoomEnabled", "true");
+            SettingsService.Set("AreDevToolsEnabled", "true");
+            SettingsService.Set("AreBrowserAcceleratorKeysEnabled", "true");
+            SettingsService.Set("DefaultHomePage", "true");
+            SettingsService.Set("IsPasswordAutosaveEnabled", "true");
+            SettingsService.Set("IsGeneralAutofillEnabled", "true");
+            SettingsService.Set("Zoom", "1.0");
+            SettingsService.Set("DownloadAlignment", "TopLeft");
+            SettingsService.Set("Private", "false");
+            SettingsService.Set("TrackingPreventionLevel", "balanced");
+            SettingsService.Set("Animation", "true");
+            SettingsService.Set("MemoryUsage", "normal");
+            SettingsService.Set("escClose", "true");
+            SettingsService.Set("DraggableForms", "true");
+            SettingsService.Set("IsScriptEnabled", "true");
+            SettingsService.Set("IsStatusBarEnabled", "true");
+            SettingsService.Set("HiddenPDFNone", "true");
+            SettingsService.Set("SettingsTabAlignment", "top");
+            SettingsService.Set("showFavouriteIcon", "true");
+            SettingsService.Set("sortProfilesBy", "alphabetically");
+            SettingsService.Set("defaultFavicon", "default");
+            SettingsService.Set("sortFavouritesBy", "alphabetically");
+            SettingsService.Set("displayFullURLs", "true");
+            SettingsService.Set("showFavouritesBar", "false");
 
             Power.Restart();
         }
@@ -590,11 +591,6 @@ namespace Quartz
             FavouriteService.SaveChanges();
         }
 
-        // Helper for settings with logging
-        private void SetSetting(Action<string, string> setter, string key, string value)
-        {
-            setter(key, value);
-        }
 
         private void Profiles_KeyUp(object sender, KeyEventArgs e)
         {

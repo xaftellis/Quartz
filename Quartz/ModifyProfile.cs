@@ -225,6 +225,7 @@ namespace Quartz
                 SettingsService.Set("defaultFavicon", "default");
                 SettingsService.Set("sortFavouritesBy", "alphabetically");
                 SettingsService.Set("displayFullURLs", "true");
+                SettingsService.Set("showFavouritesBar", "false");
 
                 Program.profileService.SetActive(Program.profileService.LastActiveProfile());
                 Program.profileService.SaveChanges();

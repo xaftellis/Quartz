@@ -305,7 +305,8 @@ namespace Quartz
                 { "sortProfilesBy", "alphabetically" },
                 { "defaultFavicon", "default" },
                 { "sortFavouritesBy", "alphabetically" },
-                { "displayFullURLs", "true" }
+                { "displayFullURLs", "true" },
+                { "showFavouritesBar", "false" }
             };
 
             foreach (var kv in settings)
