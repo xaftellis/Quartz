@@ -580,32 +580,6 @@ namespace Quartz
             return buttons.Count;
         }
 
-
-        private DateTime CalculateEaster(int year)
-        {
-            int a = year % 19;
-            int b = year / 100;
-            int c = year % 100;
-            int d = b / 4;
-            int e = b % 4;
-            int f = (b + 8) / 25;
-            int g = (19 * a + b - d - f + 15) % 30;
-            int h = c / 4;
-            int i = c % 4;
-            int k = (32 + 2 * e + 2 * h - g - i) % 7;
-            int l = (a + 11 * g + 22 * k) / 451;
-            int m = g + k - 7 * l + 114;
-            int month = m / 31;
-            int day = (m % 31) + 1;
-
-            return new DateTime(year, month, day);
-        }
-
-        private DateTime CalculateGoodFriday(DateTime easterDate)
-        {
-            return easterDate.AddDays(-2); // Good Friday is 2 days before Easter Sunday
-        }
-
         public void SetSource(string url)
         {
             SetSource(new Uri(url));
@@ -638,150 +612,66 @@ namespace Quartz
             return path;
         }
 
-        public void SearchEngine()
+        public string GetHomeUrl()
         {
-            var theme = SettingsService.Get("Theme");
-            switch (SettingsService.Get("SearchEngine"))
+            string engine = SettingsService.Get("SearchEngine");
+            string theme = SettingsService.Get("Theme");
+            bool useDefaultHome = SettingsService.Get("DefaultHomePage") == "true";
+
+            // Helper for themed pages
+            string ThemePage(string name) => $"https://quartz.com/{theme}/{name}.html";
+
+            switch (engine)
             {
                 case "bing":
-                    switch (SettingsService.Get("DefaultHomePage"))
-                    {
-                        case "true":
-                            wvWebView1.Source = new Uri($"https://quartz.com/{theme}" + "/Bing.html");
-                            break;
-
-                        case "false":
-                            wvWebView1.Source = new Uri("https://www.bing.com/");
-                            break;
-                    }
-                    break;
+                    return useDefaultHome ? ThemePage("Bing") : "https://www.bing.com/";
 
                 case "yahoo":
-                    switch (SettingsService.Get("DefaultHomePage"))
-                    {
-                        case "true":
-                            wvWebView1.Source = new Uri($"https://quartz.com/{theme}" + "/Yahoo.html");
-                            break;
-
-                        case "false":
-                            wvWebView1.Source = new Uri("https://search.yahoo.com/");
-                            break;
-                    }
-                    break;
+                    return useDefaultHome ? ThemePage("Yahoo") : "https://search.yahoo.com/";
 
                 case "duckduckgo":
-                    switch (SettingsService.Get("DefaultHomePage"))
-                    {
-                        case "true":
-                            wvWebView1.Source = new Uri($"https://quartz.com/{theme}" + "/DuckDuckGo.html");
-                            break;
-
-                        case "false":
-                            wvWebView1.Source = new Uri("https://duckduckgo.com/");
-                            break;
-
-                    }
-                    break;
+                    return useDefaultHome ? ThemePage("DuckDuckGo") : "https://duckduckgo.com/";
 
                 case "wikipedia":
-                    wvWebView1.Source = new Uri("https://www.wikipedia.org/");
-                    break;
+                    return "https://www.wikipedia.org/";
 
                 case "netflix":
-                    switch (SettingsService.Get("DefaultHomePage"))
-                    {
-                        case "true":
-                            wvWebView1.Source = new Uri($"https://quartz.com/{theme}" + "/Netflix.html");
-                            break;
-
-                        case "false":
-                            wvWebView1.Source = new Uri("https://www.netflix.com/");
-                            break;
-                    }
-                    break;
+                    return useDefaultHome ? ThemePage("Netflix") : "https://www.netflix.com/";
 
                 case "youtube":
-                    switch (SettingsService.Get("DefaultHomePage"))
-                    {
-                        case "true":
-                            wvWebView1.Source = new Uri($"https://quartz.com/{theme}" + "/YouTube.html");
-                            break;
-
-                        case "false":
-                            wvWebView1.Source = new Uri("https://www.youtube.com/");
-                            break;
-                    }
-                    break;
+                    return useDefaultHome ? ThemePage("YouTube") : "https://www.youtube.com/";
 
                 case "googlemaps":
-                    switch (SettingsService.Get("DefaultHomePage"))
-                    {
-                        case "true":
-                            wvWebView1.Source = new Uri($"https://quartz.com/{theme}" + "/Google Maps.html");
-                            break;
-
-                        case "false":
-                            wvWebView1.Source = new Uri("https://www.google.com/maps");
-                            break;
-                    }
-                    break;
-
-                //case "favicon":
-                //    wvWebView1.Source = new Uri("https://www.google.com/");
-                //    break;
+                    return useDefaultHome ? ThemePage("Google Maps") : "https://www.google.com/maps";
 
                 case "ebay":
-                    wvWebView1.Source = new Uri("https://www.ebay.com/");
-                    break;
+                    return "https://www.ebay.com/";
 
-                case "amazom":
-                    wvWebView1.Source = new Uri("https://www.amazon.com/");
-                    break;
+                case "amazom": // your spelling
+                    return "https://www.amazon.com/";
 
                 case "ecosia":
-                    switch (SettingsService.Get("DefaultHomePage"))
-                    {
-                        case "true":
-                            wvWebView1.Source = new Uri($"https://quartz.com/{theme}" + "/Ecosia.html");
-                            break;
-
-                        case "false":
-                            wvWebView1.Source = new Uri("https://www.ecosia.org/");
-                            break;
-
-                    }
-                    break;
+                    return useDefaultHome ? ThemePage("Ecosia") : "https://www.ecosia.org/";
 
                 case "google":
-                    switch (SettingsService.Get("DefaultHomePage"))
-                    {
-                        case "true":
-                            wvWebView1.Source = new Uri($"https://quartz.com/{theme}" + "/Google.html");
-                            break;
-
-                        case "false":
-                            wvWebView1.Source = new Uri("https://www.google.com/");
-                            break;
-                    }
-                    break;
+                    return useDefaultHome ? ThemePage("Google") : "https://www.google.com/";
 
                 default:
-                    switch (SettingsService.Get("DefaultHomePage"))
-                    {
-                        case "true":
-                            wvWebView1.Source = new Uri($"https://quartz.com/{theme}" + "/Google.html");
-                            break;
-
-                        case "false":
-                            wvWebView1.Source = new Uri("https://www.google.com/");
-                            break;
-                    }
-                    break;
+                    // Fallback to Google
+                    return useDefaultHome ? ThemePage("Google") : "https://www.google.com/";
             }
         }
-
-        public void FavPos()
+        public void UpdateFavBar()
         {
+            bool showFavSetting = SettingsService.Get("showFavouritesBar") == "true";
+
+            // --- Safely check Source ---
+            string currentUrl = wvWebView1?.Source?.ToString() ?? "";
+            bool isHome = currentUrl == GetHomeUrl();
+
+            bool shouldShow = showFavSetting || isHome;
+
+            // --- No favourites? Force hidden ---
             if (pnlFavourites.Controls.Count == 0)
             {
                 pnlFavourites.Visible = false;
@@ -789,19 +679,30 @@ namespace Quartz
                 return;
             }
 
+            // --- If user disabled bar AND not home, hide it ---
+            if (!shouldShow)
+            {
+                pnlFavourites.Visible = false;
+                pnlTop.Height = 49;
+                return;
+            }
+
+            // --- Show favourites bar ---
+            pnlFavourites.Visible = true;
+
             if (pnlFavourites.HorizontalScroll.Visible)
             {
-                pnlFavourites.Visible = true;
                 pnlFavourites.Height = 47;
                 pnlTop.Height = 93;
             }
             else
             {
-                pnlFavourites.Visible = true;
                 pnlFavourites.Height = 31;
                 pnlTop.Height = 80;
             }
         }
+
+
 
         public async void RestoreDownloadDialog()
         {
@@ -913,7 +814,7 @@ namespace Quartz
             }
             else
             {
-                SearchEngine();
+                SetSource(GetHomeUrl());
             }
 
             wvWebView1.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) =>
@@ -921,7 +822,7 @@ namespace Quartz
                 this.FullScreen = wvWebView1.CoreWebView2.ContainsFullScreenElement;
             };
 
-            FavPos();
+            UpdateFavBar();
             LoadTheme();
             LoadFavourites();
             btnStop.Visible = false;
@@ -1061,11 +962,6 @@ namespace Quartz
             {
                 wvWebView1.GoForward();
             }
-        }
-
-        private async void btnHome_Click(object sender, EventArgs LoadEngine)
-        {
-            SearchEngine();
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -1239,12 +1135,6 @@ namespace Quartz
             wvWebView1.CoreWebView2.DownloadStarting += CoreViewView2__DownloadStarting;
             wvWebView1.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
             wvWebView1.CoreWebView2.FaviconChanged += CoreWebView2_FaviconChanged;
-            wvWebView1.GotFocus += WvWebView1_GotFocus;
-        }
-
-        private void WvWebView1_GotFocus(object sender, EventArgs e)
-        {
-            MessageBox.Show("");
         }
 
         private void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
@@ -1415,7 +1305,8 @@ namespace Quartz
                     txtWebAddress.Text = host.Replace("www.", "") + pathAndQuery;
                 }
             }
-            //UpdateTitleWithEvent("SourceChanged");
+
+            UpdateFavBar();
         }
 
         private async void CoreWebView2_FaviconChanged(object sender, object e)
@@ -1729,12 +1620,12 @@ namespace Quartz
 
         private void pnlFavourites_ControlRemoved(object sender, ControlEventArgs e)
         {
-            FavPos();
+            UpdateFavBar();
         }
 
         private void pnlFavourites_ControlAdded(object sender, ControlEventArgs e)
         {
-            FavPos();
+            UpdateFavBar();
         }
 
         private void Browser_MouseMove(object sender, MouseEventArgs e)
@@ -1752,7 +1643,7 @@ namespace Quartz
 
         private void Browser_SizeChanged(object sender, EventArgs e)
         {
-            FavPos();
+            UpdateFavBar();
             RestoreDownloadDialog();
         }
 
@@ -1760,9 +1651,9 @@ namespace Quartz
         {
             FavouriteService favouriteService = new FavouriteService();
 
-            favToolStripMenuItem.Text = "Favourites: " + pnlFavourites.Controls.Count;
             removeAllToolStripMenuItem.Enabled = pnlFavourites.Controls.Count > 1;
 
+            showFavouritesBarToolStripMenuItem.Checked = SettingsService.Get("showFavouritesBar") == "true";
             toolStripMenuItem5.Checked = SettingsService.Get("showFavouriteIcon") == "true";
             sortByAlphabeticallyToolStripMenuItem.Checked = SettingsService.Get("sortFavouritesBy") == "alphabetically";
 
@@ -2037,42 +1928,6 @@ namespace Quartz
             {
                 Animation.AnimateWindow(mnuExperts.Handle, 100, Animation.AW_BLEND);
             }
-        }
-
-        private void tabbedToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var find = -1;
-            try
-            {
-                find = ParentTabs.Tabs.FindIndex(f => f.Content.Text == $"Settings - {Program.profileService.Get(ProfileService.Current).Name}");
-            }
-            catch { }
-            if (find == -1)
-            {
-                var newtab = new TitleBarTab(ParentTabs) { Content = new Settings(this, true) { Text = "Settings" } };
-                if (ParentTabs.InvokeRequired)
-                {
-                    ParentTabs.Invoke(new Action(() =>
-                    {
-                        ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                        ParentTabs.SelectedTabIndex++;
-                        ParentTabs.RedrawTabs();
-                        ParentTabs.Refresh();
-                    }));
-                }
-                else
-                {
-                    ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                    ParentTabs.SelectedTabIndex++;
-                    ParentTabs.RedrawTabs();
-                    ParentTabs.Refresh();
-                }
-            }
-            else
-            {
-                ParentTabs.SelectedTabIndex = find;
-            }
-            SettingsMenuStrip.Visible = false;
         }
 
         private void restartToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2744,6 +2599,12 @@ namespace Quartz
         {
             txtWebAddress.BackColor = GetBackColor();
             txtWebAddress.SelectionBackColor = GetBackColor();
+        }
+
+        private void showFavouritesBarToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            SettingsService.Set("showFavouritesBar", showFavouritesBarToolStripMenuItem.Checked.ToString().ToLower());
+            UpdateFavBar();
         }
     }
 }

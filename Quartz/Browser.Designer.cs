@@ -31,23 +31,22 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Browser));
             this.mnuMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.favToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator18 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
-            this.sortByAlphabeticallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openInNewTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
-            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.modifyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator18 = new System.Windows.Forms.ToolStripSeparator();
+            this.cutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pasteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
+            this.sortByAlphabeticallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+            this.showFavouritesBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDownload = new System.Windows.Forms.Button();
             this.mnuDownloadsDropDown = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.locationToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -107,10 +106,10 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.UrlBox = new System.Windows.Forms.PictureBox();
             this.UrlLeft = new System.Windows.Forms.PictureBox();
             this.UrlRight = new System.Windows.Forms.PictureBox();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTabs = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.PlaceHolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlDivider = new System.Windows.Forms.Panel();
@@ -145,69 +144,28 @@
             this.mnuMenu.DropShadowEnabled = false;
             this.mnuMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mnuMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.favToolStripMenuItem,
-            this.toolStripSeparator3,
-            this.refreshToolStripMenuItem,
-            this.toolStripSeparator18,
-            this.toolStripMenuItem5,
-            this.sortByAlphabeticallyToolStripMenuItem,
-            this.toolStripSeparator4,
             this.openToolStripMenuItem,
             this.openInNewTabToolStripMenuItem,
             this.openInNewWindowToolStripMenuItem,
-            this.toolStripSeparator17,
-            this.copyToolStripMenuItem,
-            this.toolStripSeparator16,
+            this.toolStripSeparator3,
             this.modifyToolStripMenuItem,
-            this.toolStripSeparator14,
+            this.toolStripSeparator18,
+            this.cutToolStripMenuItem1,
+            this.copyToolStripMenuItem,
+            this.pasteToolStripMenuItem1,
+            this.toolStripSeparator4,
             this.removeToolStripMenuItem,
-            this.removeAllToolStripMenuItem});
+            this.removeAllToolStripMenuItem,
+            this.toolStripSeparator14,
+            this.toolStripMenuItem5,
+            this.sortByAlphabeticallyToolStripMenuItem,
+            this.showFavouritesBarToolStripMenuItem});
             this.mnuMenu.Name = "contextMenuStrip1";
             this.mnuMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.mnuMenu.ShowCheckMargin = true;
             this.mnuMenu.ShowImageMargin = false;
             resources.ApplyResources(this.mnuMenu, "mnuMenu");
             this.mnuMenu.Opening += new System.ComponentModel.CancelEventHandler(this.mnuMenu_Opening);
-            // 
-            // favToolStripMenuItem
-            // 
-            resources.ApplyResources(this.favToolStripMenuItem, "favToolStripMenuItem");
-            this.favToolStripMenuItem.Name = "favToolStripMenuItem";
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
-            // 
-            // refreshToolStripMenuItem
-            // 
-            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            resources.ApplyResources(this.refreshToolStripMenuItem, "refreshToolStripMenuItem");
-            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator18
-            // 
-            this.toolStripSeparator18.Name = "toolStripSeparator18";
-            resources.ApplyResources(this.toolStripSeparator18, "toolStripSeparator18");
-            // 
-            // toolStripMenuItem5
-            // 
-            this.toolStripMenuItem5.CheckOnClick = true;
-            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            resources.ApplyResources(this.toolStripMenuItem5, "toolStripMenuItem5");
-            this.toolStripMenuItem5.CheckedChanged += new System.EventHandler(this.toolStripMenuItem5_CheckedChanged);
-            // 
-            // sortByAlphabeticallyToolStripMenuItem
-            // 
-            this.sortByAlphabeticallyToolStripMenuItem.CheckOnClick = true;
-            this.sortByAlphabeticallyToolStripMenuItem.Name = "sortByAlphabeticallyToolStripMenuItem";
-            resources.ApplyResources(this.sortByAlphabeticallyToolStripMenuItem, "sortByAlphabeticallyToolStripMenuItem");
-            this.sortByAlphabeticallyToolStripMenuItem.Click += new System.EventHandler(this.sortByAlphabeticallyToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            resources.ApplyResources(this.toolStripSeparator4, "toolStripSeparator4");
             // 
             // openToolStripMenuItem
             // 
@@ -227,21 +185,10 @@
             resources.ApplyResources(this.openInNewWindowToolStripMenuItem, "openInNewWindowToolStripMenuItem");
             this.openInNewWindowToolStripMenuItem.Click += new System.EventHandler(this.openInNewWindowToolStripMenuItem_Click);
             // 
-            // toolStripSeparator17
+            // toolStripSeparator3
             // 
-            this.toolStripSeparator17.Name = "toolStripSeparator17";
-            resources.ApplyResources(this.toolStripSeparator17, "toolStripSeparator17");
-            // 
-            // copyToolStripMenuItem
-            // 
-            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            resources.ApplyResources(this.copyToolStripMenuItem, "copyToolStripMenuItem");
-            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator16
-            // 
-            this.toolStripSeparator16.Name = "toolStripSeparator16";
-            resources.ApplyResources(this.toolStripSeparator16, "toolStripSeparator16");
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
             // 
             // modifyToolStripMenuItem
             // 
@@ -249,10 +196,31 @@
             this.modifyToolStripMenuItem.Name = "modifyToolStripMenuItem";
             this.modifyToolStripMenuItem.Click += new System.EventHandler(this.modifyToolStripMenuItem_Click);
             // 
-            // toolStripSeparator14
+            // toolStripSeparator18
             // 
-            this.toolStripSeparator14.Name = "toolStripSeparator14";
-            resources.ApplyResources(this.toolStripSeparator14, "toolStripSeparator14");
+            this.toolStripSeparator18.Name = "toolStripSeparator18";
+            resources.ApplyResources(this.toolStripSeparator18, "toolStripSeparator18");
+            // 
+            // cutToolStripMenuItem1
+            // 
+            this.cutToolStripMenuItem1.Name = "cutToolStripMenuItem1";
+            resources.ApplyResources(this.cutToolStripMenuItem1, "cutToolStripMenuItem1");
+            // 
+            // copyToolStripMenuItem
+            // 
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            resources.ApplyResources(this.copyToolStripMenuItem, "copyToolStripMenuItem");
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+            // 
+            // pasteToolStripMenuItem1
+            // 
+            this.pasteToolStripMenuItem1.Name = "pasteToolStripMenuItem1";
+            resources.ApplyResources(this.pasteToolStripMenuItem1, "pasteToolStripMenuItem1");
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            resources.ApplyResources(this.toolStripSeparator4, "toolStripSeparator4");
             // 
             // removeToolStripMenuItem
             // 
@@ -265,6 +233,32 @@
             this.removeAllToolStripMenuItem.Name = "removeAllToolStripMenuItem";
             resources.ApplyResources(this.removeAllToolStripMenuItem, "removeAllToolStripMenuItem");
             this.removeAllToolStripMenuItem.Click += new System.EventHandler(this.removeAllToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator14
+            // 
+            this.toolStripSeparator14.Name = "toolStripSeparator14";
+            resources.ApplyResources(this.toolStripSeparator14, "toolStripSeparator14");
+            // 
+            // sortByAlphabeticallyToolStripMenuItem
+            // 
+            this.sortByAlphabeticallyToolStripMenuItem.CheckOnClick = true;
+            this.sortByAlphabeticallyToolStripMenuItem.Name = "sortByAlphabeticallyToolStripMenuItem";
+            resources.ApplyResources(this.sortByAlphabeticallyToolStripMenuItem, "sortByAlphabeticallyToolStripMenuItem");
+            this.sortByAlphabeticallyToolStripMenuItem.Click += new System.EventHandler(this.sortByAlphabeticallyToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.CheckOnClick = true;
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            resources.ApplyResources(this.toolStripMenuItem5, "toolStripMenuItem5");
+            this.toolStripMenuItem5.CheckedChanged += new System.EventHandler(this.toolStripMenuItem5_CheckedChanged);
+            // 
+            // showFavouritesBarToolStripMenuItem
+            // 
+            this.showFavouritesBarToolStripMenuItem.CheckOnClick = true;
+            this.showFavouritesBarToolStripMenuItem.Name = "showFavouritesBarToolStripMenuItem";
+            resources.ApplyResources(this.showFavouritesBarToolStripMenuItem, "showFavouritesBarToolStripMenuItem");
+            this.showFavouritesBarToolStripMenuItem.CheckedChanged += new System.EventHandler(this.showFavouritesBarToolStripMenuItem_CheckedChanged);
             // 
             // btnDownload
             // 
@@ -755,6 +749,12 @@
             resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDown = this.SettingsMenuStrip;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
+            // 
             // UrlBox
             // 
             resources.ApplyResources(this.UrlBox, "UrlBox");
@@ -775,12 +775,6 @@
             this.UrlRight.BackColor = System.Drawing.Color.Transparent;
             this.UrlRight.Name = "UrlRight";
             this.UrlRight.TabStop = false;
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.DropDown = this.SettingsMenuStrip;
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
             // 
             // mnuTabs
             // 
@@ -891,9 +885,7 @@
         private System.Windows.Forms.PictureBox UrlRight;
         private System.Windows.Forms.PictureBox UrlBox;
         private System.Windows.Forms.ToolStripMenuItem removeAllToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem favToolStripMenuItem;
         private System.Windows.Forms.Panel pnlDivider;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem modifyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem historyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changeProfileToolStripMenuItem;
@@ -906,7 +898,6 @@
         private System.Windows.Forms.ToolStripMenuItem locationToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem changeLocationToolStripMenuItem1;
         public Microsoft.Web.WebView2.WinForms.WebView2 wvLoadingProgress;
-        private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
@@ -947,8 +938,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator18;
         private System.Windows.Forms.ToolStripMenuItem openInNewTabToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openInNewWindowToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator17;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newTabToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem newWindowToolStripMenuItem;
@@ -974,6 +963,10 @@
         public System.Windows.Forms.PictureBox picFavicon;
         public System.Windows.Forms.RichTextBox txtWebAddress;
         public System.Windows.Forms.FlowLayoutPanel pnlFavourites;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem showFavouritesBarToolStripMenuItem;
     }
 }
 
