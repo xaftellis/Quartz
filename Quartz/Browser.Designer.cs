@@ -44,8 +44,8 @@
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
-            this.sortByAlphabeticallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+            this.sortByAlphabeticallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showFavouritesBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDownload = new System.Windows.Forms.Button();
             this.mnuDownloadsDropDown = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -205,6 +205,7 @@
             // 
             this.cutToolStripMenuItem1.Name = "cutToolStripMenuItem1";
             resources.ApplyResources(this.cutToolStripMenuItem1, "cutToolStripMenuItem1");
+            this.cutToolStripMenuItem1.Click += new System.EventHandler(this.cutToolStripMenuItem1_Click);
             // 
             // copyToolStripMenuItem
             // 
@@ -239,19 +240,19 @@
             this.toolStripSeparator14.Name = "toolStripSeparator14";
             resources.ApplyResources(this.toolStripSeparator14, "toolStripSeparator14");
             // 
-            // sortByAlphabeticallyToolStripMenuItem
-            // 
-            this.sortByAlphabeticallyToolStripMenuItem.CheckOnClick = true;
-            this.sortByAlphabeticallyToolStripMenuItem.Name = "sortByAlphabeticallyToolStripMenuItem";
-            resources.ApplyResources(this.sortByAlphabeticallyToolStripMenuItem, "sortByAlphabeticallyToolStripMenuItem");
-            this.sortByAlphabeticallyToolStripMenuItem.Click += new System.EventHandler(this.sortByAlphabeticallyToolStripMenuItem_Click);
-            // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.CheckOnClick = true;
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
             resources.ApplyResources(this.toolStripMenuItem5, "toolStripMenuItem5");
             this.toolStripMenuItem5.CheckedChanged += new System.EventHandler(this.toolStripMenuItem5_CheckedChanged);
+            // 
+            // sortByAlphabeticallyToolStripMenuItem
+            // 
+            this.sortByAlphabeticallyToolStripMenuItem.CheckOnClick = true;
+            this.sortByAlphabeticallyToolStripMenuItem.Name = "sortByAlphabeticallyToolStripMenuItem";
+            resources.ApplyResources(this.sortByAlphabeticallyToolStripMenuItem, "sortByAlphabeticallyToolStripMenuItem");
+            this.sortByAlphabeticallyToolStripMenuItem.Click += new System.EventHandler(this.sortByAlphabeticallyToolStripMenuItem_Click);
             // 
             // showFavouritesBarToolStripMenuItem
             // 

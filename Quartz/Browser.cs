@@ -491,34 +491,35 @@ namespace Quartz
             }
         }
 
-        private void Button_MouseUp(object sender, MouseEventArgs e)
+        private async void Button_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Middle)
             {
                 var button = (System.Windows.Forms.Button)sender;
-                var FavouriteService = new FavouriteService();
-                var favourite = FavouriteService.Get(button.Text.Replace("      ", ""));
 
-                Browser browser = new Browser(favourite.WebAddress, true);
+                var favourite = new FavouriteService()
+                    .Get(button.Text.Trim());
+
+                var browser = new Browser(favourite.WebAddress, true);
                 browser.InitializeTab();
-                var newtab = new TitleBarTab(ParentTabs) { Content = browser };
-                if (ParentTabs.InvokeRequired)
+
+                var newTab = new TitleBarTab(ParentTabs) { Content = browser };
+
+                void AddTab()
                 {
-                    ParentTabs.Invoke(new Action(() =>
-                    {
-                        ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                        ParentTabs.SelectedTabIndex++;
-                        ParentTabs.RedrawTabs();
-                        ParentTabs.Refresh();
-                    }));
-                }
-                else
-                {
-                    ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                    ParentTabs.SelectedTabIndex++;
+                    int index = ParentTabs.SelectedTabIndex + 1;
+                    ParentTabs.Tabs.Insert(index, newTab);
+                    ParentTabs.SelectedTabIndex = index;
                     ParentTabs.RedrawTabs();
-                    ParentTabs.Refresh();
                 }
+
+                if (ParentTabs.InvokeRequired)
+                    ParentTabs.Invoke(new Action(AddTab));
+                else
+                    AddTab();
+
+                // Instant UI activation (0–1ms)
+                await Task.Yield();
             }
             else if (e.Button == MouseButtons.Left && isDragging)
             {
@@ -2370,7 +2371,7 @@ namespace Quartz
             }
         }
 
-        private void openInNewWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void openInNewWindowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Try to cast the sender to a ToolStripItem
             ToolStripItem menuItem = sender as ToolStripItem;
@@ -2397,7 +2398,7 @@ namespace Quartz
                             addreses.Add(_button.Tag.ToString());
                         }
 
-                        Program.OpenNewWindowWithTabs(addreses);
+                        await Program.OpenNewWindowWithTabsFast(addreses);
                     }
                 }
             }
@@ -2605,6 +2606,30 @@ namespace Quartz
         {
             SettingsService.Set("showFavouritesBar", showFavouritesBarToolStripMenuItem.Checked.ToString().ToLower());
             UpdateFavBar();
+        }
+
+        private void cutToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            // Try to cast the sender to a ToolStripItem
+            ToolStripItem menuItem = sender as ToolStripItem;
+            if (menuItem != null)
+            {
+                // Retrieve the ContextMenuStrip that owns this ToolStripItem
+                ContextMenuStrip owner = menuItem.Owner as ContextMenuStrip;
+                if (owner != null)
+                {
+                    // Get the control that is displaying this context menu
+                    Button button = (Button)owner.SourceControl;
+
+                    Clipboard.SetText(button.Tag.ToString());
+
+                    FavouriteService favouriteService = new FavouriteService();
+                    favouriteService.Remove(button.Text.Replace("      ", ""));
+                    favouriteService.SaveChanges();
+
+                    LoadFavourites();
+                }
+            }
         }
     }
 }

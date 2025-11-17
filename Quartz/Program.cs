@@ -142,22 +142,34 @@ namespace Quartz
             EasyTabsContext.Start(container);
         }
 
-        public static void OpenNewWindowWithTabs(List<string> urls)
+        public static async Task OpenNewWindowWithTabsFast(List<string> urls)
         {
-            if (urls == null || urls.Count == 0 || EasyTabsContext == null) return;
+            if (urls == null || urls.Count == 0 || EasyTabsContext == null)
+                return;
 
             var container = new AppContainer();
 
+            EasyTabsContext.Start(container);
+
             foreach (var url in urls)
             {
-                var browser = string.IsNullOrEmpty(url) ? new Browser(null, false) : new Browser(url, true);
-                browser.InitializeTab();
-                container.Tabs.Add(new TitleBarTab(container) { Content = browser });
-            }
+                var browser = string.IsNullOrEmpty(url)
+                    ? new Browser(null, false)
+                    : new Browser(url, true);
 
-            container.SelectedTabIndex = 0;
-            EasyTabsContext.Start(container);
+                browser.InitializeTab();
+
+                var tab = new TitleBarTab(container) { Content = browser };
+                container.Tabs.Add(tab);
+
+                // Select immediately
+                container.SelectedTab = tab;
+
+                // Allow UI to process ONE frame → almost instant
+                await Task.Yield();
+            }
         }
+
         #endregion
 
         #region UserData & Reset
