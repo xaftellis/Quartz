@@ -317,7 +317,7 @@ namespace Quartz
                 { "sortProfilesBy", "alphabetically" },
                 { "defaultFavicon", "default" },
                 { "sortFavouritesBy", "alphabetically" },
-                { "displayFullURLs", "true" },
+                { "displayFullURLs", "false" },
                 { "showFavouritesBar", "false" }
             };
 
