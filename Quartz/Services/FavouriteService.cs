@@ -3,6 +3,7 @@ using Quartz.Libs;
 using Quartz.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -67,7 +68,7 @@ namespace Quartz.Services
             if (Exists(favourite.Name))
                 throw new ApplicationException("Favourite already exists.");
 
-            favourite.ProfileId=  ProfileService.Current;
+            favourite.ProfileId = ProfileService.Current;
             _items.Add(favourite);
         }
 
@@ -94,8 +95,8 @@ namespace Quartz.Services
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException("name");
 
-            var favourite = Get(name); 
-            if (favourite == null) 
+            var favourite = Get(name);
+            if (favourite == null)
                 throw new ArgumentNullException("favourite");
 
             _items.Remove(favourite);
@@ -130,19 +131,61 @@ namespace Quartz.Services
             return await Task.Run(() =>
             {
                 var service = new FavouriteService();
-                var expectedFavourites = service.All().OrderBy(f => f.Index).ToList();
+                var expected = service.All().OrderBy(f => f.Index).ToList();
 
                 var buttons = panel.Controls.OfType<Button>().ToList();
 
-                // Check if every expected favourite exists in the buttons
-                bool allExist = expectedFavourites.All(fav =>
-                    buttons.Any(b => b.Text.Trim() == fav.Name && b.Tag?.ToString() == fav.WebAddress)
-                );
+                bool CheckIcon(Image a, Image b)
+                {
+                    if (a == null && b == null) return true;
+                    if (a == null || b == null) return false;
 
-                // Check if there are any extra buttons not in the expected list
+                    // Compare sizes first (cheap)
+                    if (a.Width != b.Width || a.Height != b.Height)
+                        return false;
+
+                    // Compare pixel data
+                    using (var bmpA = new Bitmap(a))
+                    using (var bmpB = new Bitmap(b))
+                    {
+                        for (int y = 0; y < bmpA.Height; y++)
+                        {
+                            for (int x = 0; x < bmpA.Width; x++)
+                            {
+                                if (bmpA.GetPixel(x, y) != bmpB.GetPixel(x, y))
+                                    return false;
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+
+                bool allExist = expected.All(fav =>
+                {
+                    // expected icon
+                    var expectedIcon = FaviconHelper.GetFaviconFileExternalAsImage(fav.WebAddress);
+
+                    return buttons.Any(b =>
+                        b.Text.Trim() == fav.Name &&
+                        b.Tag?.ToString() == fav.WebAddress &&
+                        CheckIcon(b.Image, expectedIcon)
+                    );
+                });
+
                 bool noExtra = buttons.All(btn =>
-                    expectedFavourites.Any(f => f.Name == btn.Text.Trim() && f.WebAddress == btn.Tag?.ToString())
-                );
+                {
+                    string name = btn.Text.Trim();
+                    string url = btn.Tag?.ToString();
+
+                    var match = expected.FirstOrDefault(f => f.Name == name && f.WebAddress == url);
+                    if (match == null) return false;
+
+                    // expected icon
+                    var expectedIcon = FaviconHelper.GetFaviconFileExternalAsImage(match.WebAddress);
+
+                    return CheckIcon(btn.Image, expectedIcon);
+                });
 
                 return allExist && noExtra;
             });
