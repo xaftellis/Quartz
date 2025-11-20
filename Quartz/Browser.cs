@@ -351,6 +351,7 @@ namespace Quartz
             NewControlThemeChanger.ChangeControlTheme(mnuHistory);
             NewControlThemeChanger.ChangeControlTheme(mnuUserData);
             NewControlThemeChanger.ChangeControlTheme(mnuSearch);
+            NewControlThemeChanger.ChangeControlTheme(wvWebView1);
             NewControlThemeChanger.ChangeControlTheme(zoomToolStrip);
 
         }
