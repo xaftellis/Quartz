@@ -176,7 +176,6 @@ namespace Quartz
             Text = "New Tab";
         }
 
-
         public void LoadTheme()
         {
             //IMAGES
@@ -1308,6 +1307,34 @@ namespace Quartz
             }
 
             UpdateFavBar();
+
+            if (isQuartzDotCom(wvWebView1.Source))
+            {
+                Icon icon = FaviconHelper.GetDefaultFavicon16();
+                Icon = icon;
+                FaviconHelper.UpdateCurrentTab(ParentTabs, this);
+                picFavicon.Image = icon.ToBitmap();
+                return;
+            }
+        }
+
+        private bool isQuartzDotCom(Uri uri)
+        {
+            // Must be quartz.com
+            if (!string.Equals(uri.Host, "quartz.com", StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            // Pages that should NOT count
+            string[] messagePages =
+            {
+                "Error.html",
+                "Safety.html",
+            };
+
+            string fileName = Path.GetFileName(uri.AbsolutePath);
+
+            // Return true ONLY if it's NOT a message page
+            return !messagePages.Any(p => p.Equals(fileName, StringComparison.OrdinalIgnoreCase));
         }
 
         private async void CoreWebView2_FaviconChanged(object sender, object e)
@@ -1320,6 +1347,15 @@ namespace Quartz
                 //{
                 //    ShowIcon = true;
                 //}
+
+                if (isQuartzDotCom(wvWebView1.Source))
+                {
+                    Icon icon = FaviconHelper.GetDefaultFavicon16();
+                    Icon = icon;
+                    FaviconHelper.UpdateCurrentTab(ParentTabs, this);
+                    picFavicon.Image = icon.ToBitmap();
+                    return;
+                }
 
                 if (!FaviconHelper.DoesFaviconFileExist(wvWebView1.Source.AbsoluteUri))
                 {
