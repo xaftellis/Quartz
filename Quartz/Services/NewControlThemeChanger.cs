@@ -141,7 +141,7 @@ namespace Quartz.Services
                 forecolor = Color.Lime;
                 extrabackcolor = Color.Red;
                 extraforecolor = Color.Lime;
-                mouseOver = Color.FromArgb(255, 50, 50);
+                mouseOver = Color.FromArgb(229, 0, 0);
                 flatStyle = FlatStyle.Flat;
                 checkboxflatstyle = FlatStyle.Flat;
                 borderStyle = BorderStyle.FixedSingle;

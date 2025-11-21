@@ -41,7 +41,7 @@ namespace Quartz.Omnibox
             else if (theme == "dark") return Color.FromArgb(148, 148, 148);
             else if (theme == "black") return Color.Gray;
             else if (theme == "aqua") return Color.DeepSkyBlue;
-            else if (theme == "xmas") return Color.FromArgb(255, 71, 76);
+            else if (theme == "xmas") return Color.FromArgb(192, 0, 0);
             else return Color.Black;
         }
         

@@ -647,7 +647,6 @@
             this.historyToolStripMenuItem1,
             this.toolStripSeparator10});
             this.mnuHistory.Name = "mnuHistory";
-            this.mnuHistory.OwnerItem = this.historyToolStripMenuItem;
             resources.ApplyResources(this.mnuHistory, "mnuHistory");
             this.mnuHistory.Opening += new System.ComponentModel.CancelEventHandler(this.mnuHistory_Opening);
             // 
