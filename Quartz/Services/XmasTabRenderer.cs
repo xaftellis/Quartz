@@ -114,6 +114,15 @@ namespace Quartz
 
         protected override void Render(Graphics graphicsContext, TitleBarTab tab, int index, Rectangle area, Point cursor, Image tabLeftImage, Image tabCenterImage, Image tabRightImage)
         {
+            if (tab.Active)
+            {
+                ForeColor = Color.White;
+            }
+            else
+            {
+                ForeColor = Color.Aqua;
+            }
+
             if (!IsWindows10 && !tab.Active && index == _parentWindow.Tabs.Count - 1)
             {
                 tabRightImage = Properties.Resources.InactiveRightNoDivider_xmas;

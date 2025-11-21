@@ -273,7 +273,7 @@ namespace Quartz
                 rightImage = Quartz.Properties.Resources.XUrlBoxRight;
 
                 //COLORS
-                mouseOver = Color.FromArgb(255, 50, 50);
+                mouseOver = Color.FromArgb(229, 0, 0);
                 PanelbackColor = Color.Lime;
                 PanelforeColor = Color.Red;
                 dividerColor = Color.Lime;

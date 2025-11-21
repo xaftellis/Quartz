@@ -130,74 +130,39 @@ namespace Quartz
             LoadingProgress.Visible = true;
             pictureBox1.Visible = false;
 
-            var theme = SettingsService.Get("Theme");
+            // ----- Set throbber based on theme (4.8.1 SAFE) -----
+            string theme = SettingsService.Get("Theme");
+            string fileName;
+
             if (theme == "xmas")
-            {
-                LoadingProgress.Reload();
-                LoadingProgress.ZoomFactor = 1;
-                LoadingProgress.Source = new Uri("file://" + Path.Combine(new string[] { Application.StartupPath + "\\assets\\throbber\\", "throbber_medium_xmas_green.svg" }));
-            }
+                fileName = "throbber_medium_xmas_green.svg";
             else if (theme == "black")
-            {
-                LoadingProgress.Reload();
-                LoadingProgress.ZoomFactor = 1;
-                LoadingProgress.Source = new Uri("file://" + Path.Combine(new string[] { Application.StartupPath + "\\assets\\throbber\\", "throbber_medium_white.svg" }));
-            }
+                fileName = "throbber_medium_white.svg";
             else if (theme == "aqua")
-            {
-                LoadingProgress.Reload();
-                LoadingProgress.ZoomFactor = 1;
-                LoadingProgress.Source = new Uri("file://" + Path.Combine(new string[] { Application.StartupPath + "\\assets\\throbber\\", "throbber_medium_blue.svg" }));
-            }
+                fileName = "throbber_medium_blue.svg";
             else
+                fileName = "throbber_medium_" + theme + ".svg";
+
+            string path = Path.Combine(Application.StartupPath, "assets", "throbber", fileName);
+
+            LoadingProgress.Reload();
+            LoadingProgress.ZoomFactor = 1;
+            LoadingProgress.Source = new Uri("file://" + path);
+
+            // ----- Animate "Checking For Updates" -----
+            string baseText = "Checking For Updates";
+            string[] dots = { "", ".", "..", "..." };
+
+            for (int i = 0; i < 5; i++)  // number of animation cycles
             {
-                LoadingProgress.Reload();
-                LoadingProgress.ZoomFactor = 1;
-                LoadingProgress.Source = new Uri("file://" + Path.Combine(new string[] { Application.StartupPath + "\\assets\\throbber\\", $"throbber_medium_{SettingsService.Get("Theme")}.svg"}));
+                foreach (string d in dots)
+                {
+                    txtUpdate.Text = baseText + d;
+                    await Task.Delay(500);
+                }
             }
 
-            txtUpdate.Text = "Checking For Updates";
-            await Task.Delay(500);
-            txtUpdate.Text = "Checking For Updates.";
-            await Task.Delay(500);
-            txtUpdate.Text = "Checking For Updates..";
-            await Task.Delay(500);
-            txtUpdate.Text = "Checking For Updates...";
-
-            await Task.Delay(500);
-
-            txtUpdate.Text = "Checking For Updates.";
-            await Task.Delay(500);
-            txtUpdate.Text = "Checking For Updates..";
-            await Task.Delay(500);
-            txtUpdate.Text = "Checking For Updates...";
-
-            await Task.Delay(500);
-
-            txtUpdate.Text = "Checking For Updates.";
-            await Task.Delay(500);
-            txtUpdate.Text = "Checking For Updates..";
-            await Task.Delay(500);
-            txtUpdate.Text = "Checking For Updates...";
-
-            await Task.Delay(500);
-
-            txtUpdate.Text = "Checking For Updates.";
-            await Task.Delay(500);
-            txtUpdate.Text = "Checking For Updates..";
-            await Task.Delay(500);
-            txtUpdate.Text = "Checking For Updates...";
-
-            await Task.Delay(500);
-
-            txtUpdate.Text = "Checking For Updates.";
-            await Task.Delay(500);
-            txtUpdate.Text = "Checking For Updates..";
-            await Task.Delay(500);
-            txtUpdate.Text = "Checking For Updates...";
-
-            await Task.Delay(200);
-
+            // ----- Restore UI -----
             updating = false;
 
             buttonChech.Visible = true;
@@ -205,14 +170,15 @@ namespace Quartz
             LoadingProgress.Visible = false;
             pictureBox1.Visible = true;
 
-            DialogResult dr = MessageBox.Show("Failed to connect to servers, please check your internet connection.", "Something Went Wrong", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+            // ----- Error / Retry dialog -----
+            DialogResult dr = MessageBox.Show(
+                "Failed to connect to servers, please check your internet connection.",
+                "Something Went Wrong",
+                MessageBoxButtons.RetryCancel,
+                MessageBoxIcon.Error);
+
             if (dr == DialogResult.Retry)
-            {
                 checkforupdates();
-            }
-            else
-            {
-            }
         }
 
         private Browser _browser = null;

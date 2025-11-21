@@ -12,7 +12,7 @@ namespace Quartz.Services
     {
         public override Color MenuBorder
         {
-            get { return Color.Lime; }
+            get { return Color.FromArgb(229, 0, 0); }
         }
         public override Color ImageMarginGradientBegin
         {
@@ -28,11 +28,11 @@ namespace Quartz.Services
         }
         public override Color MenuItemBorder
         {
-            get { return Color.Lime; }
+            get { return Color.FromArgb(229, 0, 0); }
         }
         public override Color MenuItemSelected
         {
-            get { return Color.Red; }
+            get { return Color.FromArgb(229, 0, 0); }
         }
         public override Color SeparatorDark
         {

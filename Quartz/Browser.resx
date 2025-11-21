@@ -210,7 +210,7 @@
     <value>Show favourites bar</value>
   </data>
   <data name="mnuMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 314</value>
+    <value>188, 292</value>
   </data>
   <data name="&gt;&gt;mnuMenu.Name" xml:space="preserve">
     <value>mnuMenu</value>
