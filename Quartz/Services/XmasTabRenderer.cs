@@ -48,7 +48,7 @@ namespace Quartz
             {
                 _captionFont = new Font(SystemFonts.CaptionFont.Name, 9);
             }
-            ForeColor = Color.White;
+            ForeColor = Color.Lime;
         }
 
         public override Font CaptionFont
@@ -116,11 +116,15 @@ namespace Quartz
         {
             if (tab.Active)
             {
-                ForeColor = Color.White;
+                ForeColor = Color.Lime;
+                _closeButtonImage = Properties.Resources.Close_xmas;
+                _closeButtonHoverImage = Properties.Resources.CloseHover_xmas;
             }
             else
             {
-                ForeColor = Color.Aqua;
+                ForeColor = Color.Red;
+                _closeButtonImage = Properties.Resources.Close_xmas_lime;
+                _closeButtonHoverImage = Properties.Resources.CloseHover_xmas_lime;
             }
 
             if (!IsWindows10 && !tab.Active && index == _parentWindow.Tabs.Count - 1)

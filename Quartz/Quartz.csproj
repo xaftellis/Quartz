@@ -213,11 +213,6 @@
     <Compile Include="Omnibox\OmniBoxUI.cs" />
     <Compile Include="Omnibox\QueryAnalyzer.cs" />
     <Compile Include="Omnibox\SearchSuggestions.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Libs\FileLockChecker.cs" />
     <Compile Include="Libs\Power.cs" />
     <Compile Include="Libs\ThemeHelper.cs" />
@@ -228,6 +223,11 @@
     </Compile>
     <Compile Include="Password.Designer.cs">
       <DependentUpon>Password.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\FaviconService.cs" />
     <Compile Include="Services\BirthdayService.cs" />
@@ -304,7 +304,7 @@
       <DependentUpon>Profiles.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
