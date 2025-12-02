@@ -86,7 +86,7 @@ namespace Quartz
                 button3 = null;
             }
 
-            CustomMessageBox form = new CustomMessageBox(message, title, icon, button1, button2, button3);
+            CustomMessageBox form = new CustomMessageBox(message, title, icon, button3, button2, button1);
             form.ShowDialog();
         }
     }
