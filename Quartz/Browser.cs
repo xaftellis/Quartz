@@ -664,43 +664,43 @@ namespace Quartz
         }
         public void UpdateFavBar()
         {
-            bool showFavSetting = SettingsService.Get("showFavouritesBar") == "true";
+            //bool showFavSetting = SettingsService.Get("showFavouritesBar") == "true";
 
-            // --- Safely check Source ---
-            string currentUrl = wvWebView1?.Source?.ToString() ?? "";
-            bool isHome = currentUrl == GetHomeUrl();
+            //// --- Safely check Source ---
+            //string currentUrl = wvWebView1?.Source?.ToString() ?? "";
+            //bool isHome = currentUrl == GetHomeUrl();
 
-            bool shouldShow = showFavSetting || isHome;
+            //bool shouldShow = showFavSetting || isHome;
 
-            // --- No favourites? Force hidden ---
-            if (pnlFavourites.Controls.Count == 0)
-            {
-                pnlFavourites.Visible = false;
-                pnlTop.Height = 49;
-                return;
-            }
+            //// --- No favourites? Force hidden ---
+            //if (pnlFavourites.Controls.Count == 0)
+            //{
+            //    pnlFavourites.Visible = false;
+            //    pnlTop.Height = 49;
+            //    return;
+            //}
 
-            // --- If user disabled bar AND not home, hide it ---
-            if (!shouldShow)
-            {
-                pnlFavourites.Visible = false;
-                pnlTop.Height = 49;
-                return;
-            }
+            //// --- If user disabled bar AND not home, hide it ---
+            //if (!shouldShow)
+            //{
+            //    pnlFavourites.Visible = false;
+            //    pnlTop.Height = 49;
+            //    return;
+            //}
 
-            // --- Show favourites bar ---
-            pnlFavourites.Visible = true;
+            //// --- Show favourites bar ---
+            //pnlFavourites.Visible = true;
 
-            if (pnlFavourites.HorizontalScroll.Visible)
-            {
-                pnlFavourites.Height = 47;
-                pnlTop.Height = 93;
-            }
-            else
-            {
-                pnlFavourites.Height = 31;
-                pnlTop.Height = 80;
-            }
+            //if (pnlFavourites.HorizontalScroll.Visible)
+            //{
+            //    pnlFavourites.Height = 47;
+            //    pnlTop.Height = 93;
+            //}
+            //else
+            //{
+            //    pnlFavourites.Height = 31;
+            //    pnlTop.Height = 80;
+            //}
         }
 
 
