@@ -121,15 +121,6 @@
     <value>1381, 19</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="mnuMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 292</value>
-  </data>
-  <data name="&gt;&gt;mnuMenu.Name" xml:space="preserve">
-    <value>mnuMenu</value>
-  </data>
-  <data name="&gt;&gt;mnuMenu.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>187, 22</value>
   </data>
@@ -217,6 +208,15 @@
   </data>
   <data name="showFavouritesBarToolStripMenuItem.Text" xml:space="preserve">
     <value>Show favourites bar</value>
+  </data>
+  <data name="mnuMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 292</value>
+  </data>
+  <data name="&gt;&gt;mnuMenu.Name" xml:space="preserve">
+    <value>mnuMenu</value>
+  </data>
+  <data name="&gt;&gt;mnuMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="btnDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1296,15 +1296,6 @@
   <metadata name="mnuSearch.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>191, 45</value>
   </metadata>
-  <data name="mnuSearch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>192, 248</value>
-  </data>
-  <data name="&gt;&gt;mnuSearch.Name" xml:space="preserve">
-    <value>mnuSearch</value>
-  </data>
-  <data name="&gt;&gt;mnuSearch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="emojiToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>191, 22</value>
   </data>
@@ -1376,6 +1367,15 @@
   </data>
   <data name="alwaysShowFullURLsToolStripMenuItem.Text" xml:space="preserve">
     <value>Always show full URLs</value>
+  </data>
+  <data name="mnuSearch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>192, 248</value>
+  </data>
+  <data name="&gt;&gt;mnuSearch.Name" xml:space="preserve">
+    <value>mnuSearch</value>
+  </data>
+  <data name="&gt;&gt;mnuSearch.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="btnRefresh.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

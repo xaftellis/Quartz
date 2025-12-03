@@ -698,7 +698,7 @@ namespace Quartz
             else
             {
                 pnlFavourites.Height = 30;
-                pnlTop.Height = 70;
+                pnlTop.Height = 71;
             }
         }
 
