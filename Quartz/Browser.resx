@@ -2257,7 +2257,7 @@
     <value>GrowAndShrink</value>
   </data>
   <data name="pnlFavourites.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 39</value>
+    <value>4, 40</value>
   </data>
   <data name="pnlFavourites.Size" type="System.Drawing.Size, System.Drawing">
     <value>1172, 30</value>
@@ -2806,7 +2806,7 @@
     <value>0, 0</value>
   </data>
   <data name="pnlTop.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1178, 70</value>
+    <value>1178, 71</value>
   </data>
   <data name="pnlTop.TabIndex" type="System.Int32, mscorlib">
     <value>17</value>
@@ -2872,7 +2872,7 @@
     <value>0, 1</value>
   </data>
   <data name="wvWebView1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1178, 570</value>
+    <value>1178, 569</value>
   </data>
   <data name="wvWebView1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -5582,10 +5582,10 @@
     <value>Fill</value>
   </data>
   <data name="pnlBottom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 70</value>
+    <value>0, 71</value>
   </data>
   <data name="pnlBottom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1178, 571</value>
+    <value>1178, 570</value>
   </data>
   <data name="pnlBottom.TabIndex" type="System.Int32, mscorlib">
     <value>18</value>

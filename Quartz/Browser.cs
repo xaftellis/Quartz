@@ -703,8 +703,6 @@ namespace Quartz
             //}
         }
 
-
-
         public async void RestoreDownloadDialog()
         {
             if (wvWebView1.CoreWebView2 != null)
@@ -1260,9 +1258,13 @@ namespace Quartz
             }
         }
 
+        private string lastGoodUrl = null;
         private void CoreWebView2_SourceChanged(object sender, CoreWebView2SourceChangedEventArgs e)
         {
-            if (loadnum == 0 && _newtab == false)
+            var currentUri = wvWebView1.Source;
+            if (currentUri == null) return;
+
+            if (loadnum == 0 && !_newtab)
             {
                 if (txtWebAddress.SelectionLength != txtWebAddress.TextLength)
                 {
@@ -1270,56 +1272,64 @@ namespace Quartz
                     txtWebAddress.SelectAll();
                 }
             }
-            else
-            {
-                if (SettingsService.Get("displayFullURLs") == "true")
-                {
-                    var url = wvWebView1.Source.AbsoluteUri;
 
-                    if (url.EndsWith("/"))
-                    {
-                        url = url.Substring(0, url.Length - 1); // remove the trailing slash
-                    }
-
-                    this.txtWebAddress.Text = url;
-                }
-                else
-                {
-                    var uri = wvWebView1.Source;
-
-                    // Get host
-                    string host = uri.Host;
-
-                    // Get path and query
-                    string pathAndQuery = uri.PathAndQuery;
-
-                    // Remove trailing slash if it exists
-                    if (pathAndQuery.EndsWith("/") && pathAndQuery.Length > 1)
-                    {
-                        pathAndQuery = pathAndQuery.TrimEnd('/');
-                    }
-                    else if (pathAndQuery == "/")
-                    {
-                        pathAndQuery = ""; // remove lone slash
-                    }
-
-                    txtWebAddress.Text = host.Replace("www.", "") + pathAndQuery;
-                }
-            }
-
-            UpdateFavBar();
-
-            if (isQuartzDotCom(wvWebView1.Source))
+            if (isQuartzDotCom(currentUri))
             {
                 picFavicon.Image = null;
                 this.ShowIcon = false;
-                return;
             }
             else
             {
                 this.ShowIcon = true;
             }
+
+            // If this is an error page
+            if (isQuartzDotComErrorPages(currentUri))
+            {
+                if (!string.IsNullOrEmpty(lastGoodUrl))
+                {
+                    Uri lastUri = new Uri(lastGoodUrl);
+
+                    if (SettingsService.Get("displayFullURLs") == "true")
+                    {
+                        string url = lastGoodUrl;
+                        if (url.EndsWith("/"))
+                            url = url.Substring(0, url.Length - 1);
+
+                        txtWebAddress.Text = url;
+                    }
+                    else
+                    {
+                        string host = lastUri.Host.Replace("www.", "");
+                        string path = lastUri.PathAndQuery.TrimEnd('/');
+                        if (path == "/") path = "";
+                        txtWebAddress.Text = host + path;
+                    }
+                }
+
+                return; // 🚫 avoid overwriting UI with the error URL
+            }
+
+            // If not error page → update last known good URL
+            lastGoodUrl = currentUri.AbsoluteUri;
+
+            if (SettingsService.Get("displayFullURLs") == "true")
+            {
+                var url = currentUri.AbsoluteUri;
+                if (url.EndsWith("/"))
+                    url = url.Substring(0, url.Length - 1);
+
+                txtWebAddress.Text = url;
+            }
+            else
+            {
+                string host = currentUri.Host.Replace("www.", "");
+                string path = currentUri.PathAndQuery.TrimEnd('/');
+                if (path == "/") path = "";
+                txtWebAddress.Text = host + path;
+            }
         }
+
 
         private bool isQuartzDotCom(Uri uri)
         {
@@ -1328,7 +1338,25 @@ namespace Quartz
                 return true;
             else
                 return false;
+        }
 
+        private bool isQuartzDotComErrorPages(Uri uri)
+        {
+            // Must be quartz.com
+            if (!string.Equals(uri.Host, "quartz.com", StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            // Pages that should NOT count
+            string[] messagePages =
+            {
+                "Error.html",
+                "Safety.html",
+            };
+
+            string fileName = Path.GetFileName(uri.AbsolutePath);
+
+            // Return true ONLY if it's NOT a message page
+            return messagePages.Any(p => p.Equals(fileName, StringComparison.OrdinalIgnoreCase));
         }
 
         private async void CoreWebView2_FaviconChanged(object sender, object e)

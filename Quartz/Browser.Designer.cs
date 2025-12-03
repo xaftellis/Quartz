@@ -75,7 +75,6 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.pnlTop = new System.Windows.Forms.Panel();
             this.picFavicon = new System.Windows.Forms.PictureBox();
-            this.pnlFavourites = new System.Windows.Forms.FlowLayoutPanel();
             this.txtWebAddress = new System.Windows.Forms.RichTextBox();
             this.btnSettings = new System.Windows.Forms.Button();
             this.SettingsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -122,6 +121,7 @@
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.pnlBottom = new System.Windows.Forms.Panel();
+            this.pnlFavourites = new System.Windows.Forms.FlowLayoutPanel();
             this.mnuMenu.SuspendLayout();
             this.mnuDownloadsDropDown.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.wvLoadingProgress)).BeginInit();
@@ -509,17 +509,6 @@
             this.picFavicon.Name = "picFavicon";
             this.picFavicon.TabStop = false;
             // 
-            // pnlFavourites
-            // 
-            resources.ApplyResources(this.pnlFavourites, "pnlFavourites");
-            this.pnlFavourites.BackColor = System.Drawing.Color.Transparent;
-            this.pnlFavourites.ContextMenuStrip = this.mnuMenu;
-            this.pnlFavourites.ForeColor = System.Drawing.Color.Black;
-            this.pnlFavourites.Name = "pnlFavourites";
-            this.pnlFavourites.Click += new System.EventHandler(this.btnGotoFavourite_Click);
-            this.pnlFavourites.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.pnlFavourites_ControlAdded);
-            this.pnlFavourites.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.pnlFavourites_ControlRemoved);
-            // 
             // txtWebAddress
             // 
             resources.ApplyResources(this.txtWebAddress, "txtWebAddress");
@@ -858,6 +847,17 @@
             this.pnlBottom.ForeColor = System.Drawing.Color.Transparent;
             this.pnlBottom.Name = "pnlBottom";
             // 
+            // pnlFavourites
+            // 
+            resources.ApplyResources(this.pnlFavourites, "pnlFavourites");
+            this.pnlFavourites.BackColor = System.Drawing.Color.Transparent;
+            this.pnlFavourites.ContextMenuStrip = this.mnuMenu;
+            this.pnlFavourites.ForeColor = System.Drawing.Color.Black;
+            this.pnlFavourites.Name = "pnlFavourites";
+            this.pnlFavourites.Click += new System.EventHandler(this.btnGotoFavourite_Click);
+            this.pnlFavourites.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.pnlFavourites_ControlAdded);
+            this.pnlFavourites.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.pnlFavourites_ControlRemoved);
+            // 
             // Browser
             // 
             resources.ApplyResources(this, "$this");
@@ -979,13 +979,13 @@
         private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
         public System.Windows.Forms.PictureBox picFavicon;
         public System.Windows.Forms.RichTextBox txtWebAddress;
-        public System.Windows.Forms.FlowLayoutPanel pnlFavourites;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem showFavouritesBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem newMessageBoxBetaToolStripMenuItem;
+        public System.Windows.Forms.FlowLayoutPanel pnlFavourites;
     }
 }
 
