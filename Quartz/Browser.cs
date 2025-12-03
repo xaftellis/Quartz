@@ -936,7 +936,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.2.0";
+            notifyIcon1.Text = "Quartz v2.3.0";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -1311,31 +1311,24 @@ namespace Quartz
 
             if (isQuartzDotCom(wvWebView1.Source))
             {
-                Icon icon = FaviconHelper.GetDefaultFavicon16();
-                Icon = icon;
-                FaviconHelper.UpdateCurrentTab(ParentTabs, this);
-                picFavicon.Image = icon.ToBitmap();
+                picFavicon.Image = null;
+                this.ShowIcon = false;
                 return;
+            }
+            else
+            {
+                this.ShowIcon = true;
             }
         }
 
         private bool isQuartzDotCom(Uri uri)
         {
             // Must be quartz.com
-            if (!string.Equals(uri.Host, "quartz.com", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(uri.Host, "quartz.com", StringComparison.OrdinalIgnoreCase))
+                return true;
+            else
                 return false;
 
-            // Pages that should NOT count
-            string[] messagePages =
-            {
-                "Error.html",
-                "Safety.html",
-            };
-
-            string fileName = Path.GetFileName(uri.AbsolutePath);
-
-            // Return true ONLY if it's NOT a message page
-            return !messagePages.Any(p => p.Equals(fileName, StringComparison.OrdinalIgnoreCase));
         }
 
         private async void CoreWebView2_FaviconChanged(object sender, object e)
@@ -1351,11 +1344,13 @@ namespace Quartz
 
                 if (isQuartzDotCom(wvWebView1.Source))
                 {
-                    Icon icon = FaviconHelper.GetDefaultFavicon16();
-                    Icon = icon;
-                    FaviconHelper.UpdateCurrentTab(ParentTabs, this);
-                    picFavicon.Image = icon.ToBitmap();
+                    picFavicon.Image = null;
+                    this.ShowIcon = false;
                     return;
+                }
+                else
+                {
+                    this.ShowIcon = true;
                 }
 
                 if (!FaviconHelper.DoesFaviconFileExist(wvWebView1.Source.AbsoluteUri))
@@ -2670,6 +2665,12 @@ namespace Quartz
                     LoadFavourites();
                 }
             }
+        }
+
+        private void newMessageBoxBetaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form form = new TryOut();
+            form.ShowDialog();
         }
     }
 }

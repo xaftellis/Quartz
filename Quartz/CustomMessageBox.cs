@@ -34,29 +34,29 @@ namespace Quartz
             Information,
             Warning,
             Error,
-            Question,   
+            Question,
         }
         public SystemIconType iconType { get; private set; }
 
         public Icon GetIcon(SystemIconType iconType)
         {
+            // Return null when no icon rather than throwing
             switch (iconType)
             {
                 case SystemIconType.Information:
                     return Quartz.Properties.Resources.InformationIcon;
-
                 case SystemIconType.Warning:
                     return Quartz.Properties.Resources.WarningIcon;
-
                 case SystemIconType.Error:
                     return Quartz.Properties.Resources.ErrorIcon;
-
                 case SystemIconType.Question:
                     return Quartz.Properties.Resources.QuestionIcon;
+                case SystemIconType.None:
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    return null;
             }
         }
+
         public string AddNewLinesEveryNChars(string input, int n)
         {
             // Ensure that n is a positive value and not zero
@@ -77,31 +77,86 @@ namespace Quartz
             return result.ToString();
         }
 
-
-
         private void AdjustFormSize(bool icon)
         {
-            // Left Margin (11), Right Margin (28), Top Margin (25), Bottom Margin (67)
+            // Base margins (you had these originally)
             int leftMargin = 8;
             if (icon)
             {
-                leftMargin = 64;
+                leftMargin = 60; // room for icon
             }
 
-            int topMargin = 22;
+            // Increase top/bottom margins when icon present to make the white/message area taller
+            int topMargin = icon ? 20 : 22;    // slightly taller when icon shown
             int rightMargin = 26;
-            int bottomMargin = 66;
+            int bottomMargin = icon ? 64 : 66; // give more space at bottom when icon present
 
-            // Calculate the size of the form based on label1 size and margins
+            // Ensure label autosizes so widths/heights reflect the real rendered size
+            label1.AutoSize = true;
+
+            // Calculate form width/height from label and margins
             int formWidth = label1.Width + leftMargin + rightMargin;
             int formHeight = label1.Height + topMargin + bottomMargin;
 
-            // Set the size of the form
+            // Minimum width guard (so buttons don't overflow)
+            int minWidth = 300;
+            if (formWidth < minWidth) formWidth = minWidth;
+
+            // Set client size
             this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
 
-            // Recalculate the position of label1 within the form
-            label1.Location = new System.Drawing.Point(leftMargin, topMargin);
+            // If icon present, we want to vertically center the icon and the label inside the main area.
+            // Define the content area top and height (the "white" area where icon + text sit)
+            int contentTop = topMargin;
+            int contentHeight = label1.Height;
+            int iconHeight = 0;
 
+            if (icon)
+            {
+                var ic = GetIcon(iconType);
+                if (ic != null)
+                {
+                    iconHeight = ic.Height;
+                    // ensure picturebox size matches icon (or at least able to display it nicely)
+                    pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
+                    pictureBox1.Image = ic.ToBitmap();
+                    pictureBox1.Visible = true;
+                }
+                else
+                {
+                    pictureBox1.Visible = false;
+                }
+
+                // contentHeight should be the max of icon and label heights so both fit and can be centered
+                contentHeight = Math.Max(label1.Height, iconHeight);
+                // Give a little vertical breathing room
+                contentHeight += 6; // padding
+            }
+            else
+            {
+                pictureBox1.Visible = false;
+            }
+
+            // Recalculate overall form height to ensure content area fits (label + icon) plus margins
+            formHeight = contentTop + contentHeight + bottomMargin;
+            this.ClientSize = new Size(formWidth, formHeight);
+
+            // Now compute vertical center offset inside the content area for label and icon
+            int labelY = contentTop + (contentHeight - label1.Height) / 2;
+            int iconY = contentTop + (contentHeight - iconHeight) / 2;
+
+            // Position label at leftMargin (after icon space) and vertically centered
+            label1.Location = new System.Drawing.Point(leftMargin, labelY);
+
+            // Position pictureBox if icon present
+            if (icon && pictureBox1.Visible)
+            {
+                pictureBox1.Location = new Point(20, iconY);
+                // optional: size box to icon size (keeps perfect centering)
+                pictureBox1.Size = new Size(iconHeight, iconHeight);
+            }
+
+            // Place buttons — I kept your original coordinates logic but they are now relative to the new form size
             if (_button1 != null)
             {
                 btnButton1.Location = new Point(formWidth - 12 - btnButton1.Width, 9);
@@ -116,17 +171,11 @@ namespace Quartz
             {
                 btnButton3.Location = new Point(formWidth - 174 - btnButton3.Width, 9);
             }
-
-
-            if (icon)
-            {
-                pictureBox1.Location = new Point(20, 15);
-                pictureBox1.Image = GetIcon(iconType).ToBitmap();
-            }
         }
+
         public void CenterForm(Form childForm, Form parentForm)
         {
-            if(parentForm == null)
+            if (parentForm == null)
             {
                 // Get the screen's working area (excluding taskbar)
                 Rectangle screenBounds = Screen.PrimaryScreen.WorkingArea;
@@ -150,15 +199,6 @@ namespace Quartz
             }
         }
 
-        public static int CountLines(string input)
-        {
-            if (string.IsNullOrEmpty(input))
-                return 0;
-
-            // Split by both Unix and Windows newlines
-            string[] lines = input.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
-            return lines.Length;
-        }
 
         public CustomMessageBox(string Message, string Title, SystemIconType icon, string Button1, string Button2, string Button3)
         {
@@ -169,14 +209,17 @@ namespace Quartz
             _button2 = Button2;
             _button3 = Button3;
             iconType = icon;
+
+            //NewControlThemeChanger.ChangeTheme(this);
         }
 
         private void CustomMessageBox_Load(object sender, EventArgs e)
         {
             Text = _title;
             label1.Text = AddNewLinesEveryNChars(_message, 256);
+            label1.AutoSize = true; // ensure measured height is accurate
 
-            if(_button1 != null)
+            if (_button1 != null)
             {
                 btnButton1.Visible = true;
                 btnButton1.Text = _button1;
@@ -186,10 +229,11 @@ namespace Quartz
                 btnButton1.Visible = false;
             }
 
+            // FIXED: set correct texts for button2 and button3 (previously using _button1 by mistake)
             if (_button2 != null)
             {
                 btnButton2.Visible = true;
-                btnButton2.Text = _button1;
+                btnButton2.Text = _button2;
             }
             else
             {
@@ -199,18 +243,24 @@ namespace Quartz
             if (_button3 != null)
             {
                 btnButton3.Visible = true;
-                btnButton3.Text = _button1;
+                btnButton3.Text = _button3;
             }
             else
             {
                 btnButton3.Visible = false;
             }
 
-            //if()
             AdjustFormSize(iconType != SystemIconType.None);
 
             //NewControlThemeChanger.ChangeTheme(this);
             CenterForm(this, null);
+
+            //NewControlThemeChanger.ChangeWindowTheme(this.Handle);
+            //NewControlThemeChanger.ChangeControlTheme(btnButton1);
+            //NewControlThemeChanger.ChangeControlTheme(btnButton2);
+            //NewControlThemeChanger.ChangeControlTheme(btnButton3);
+            //NewControlThemeChanger.ChangeControlTheme(this);
+            //pnlBottom.BackColor = 
         }
 
         private void btnButton1_Click(object sender, EventArgs e)

@@ -120,6 +120,8 @@
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.pnlBottom = new System.Windows.Forms.Panel();
+            this.newMessageBoxBetaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuMenu.SuspendLayout();
             this.mnuDownloadsDropDown.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.wvLoadingProgress)).BeginInit();
@@ -280,9 +282,8 @@
             this.locationToolStripMenuItem1,
             this.changeLocationToolStripMenuItem1});
             this.mnuDownloadsDropDown.Name = "mnuDownloadsDropDown";
-            this.mnuDownloadsDropDown.OwnerItem = this.downloadsToolStripMenuItem;
-            resources.ApplyResources(this.mnuDownloadsDropDown, "mnuDownloadsDropDown");
             this.mnuDownloadsDropDown.ShowImageMargin = false;
+            resources.ApplyResources(this.mnuDownloadsDropDown, "mnuDownloadsDropDown");
             this.mnuDownloadsDropDown.TabStop = true;
             this.mnuDownloadsDropDown.Opening += new System.ComponentModel.CancelEventHandler(this.mnuDownloadsDropDown_Opening);
             // 
@@ -565,11 +566,12 @@
             this.openFileInBrowserToolStripMenuItem,
             this.toolStripSeparator8,
             this.settingsToolStripMenuItem,
+            this.toolStripSeparator7,
+            this.newMessageBoxBetaToolStripMenuItem,
             this.toolStripSeparator5,
             this.restartToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.SettingsMenuStrip.Name = "SettingsMenuStrip";
-            this.SettingsMenuStrip.OwnerItem = this.toolStripMenuItem1;
             this.SettingsMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             resources.ApplyResources(this.SettingsMenuStrip, "SettingsMenuStrip");
             this.SettingsMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.SettingsMenuStrip_Opening);
@@ -611,9 +613,8 @@
             this.toolStripSeparator6,
             this.resetToolStripMenuItem1});
             this.mnuUserData.Name = "mnuUserData";
-            this.mnuUserData.OwnerItem = this.userDataToolStripMenuItem;
-            resources.ApplyResources(this.mnuUserData, "mnuUserData");
             this.mnuUserData.ShowImageMargin = false;
+            resources.ApplyResources(this.mnuUserData, "mnuUserData");
             this.mnuUserData.Opening += new System.ComponentModel.CancelEventHandler(this.mnuUserData_Opening);
             // 
             // openFolderToolStripMenuItem
@@ -679,9 +680,8 @@
             this.inspectToolStripMenuItem,
             this.webview2TaskManagerToolStripMenuItem});
             this.mnuExperts.Name = "mnuExperts";
-            this.mnuExperts.OwnerItem = this.expertsToolStripMenuItem;
-            resources.ApplyResources(this.mnuExperts, "mnuExperts");
             this.mnuExperts.ShowImageMargin = false;
+            resources.ApplyResources(this.mnuExperts, "mnuExperts");
             this.mnuExperts.Opening += new System.ComponentModel.CancelEventHandler(this.mnuExperts_Opening);
             // 
             // inspectToolStripMenuItem
@@ -842,6 +842,17 @@
             this.pnlBottom.ForeColor = System.Drawing.Color.Transparent;
             this.pnlBottom.Name = "pnlBottom";
             // 
+            // newMessageBoxBetaToolStripMenuItem
+            // 
+            this.newMessageBoxBetaToolStripMenuItem.Name = "newMessageBoxBetaToolStripMenuItem";
+            resources.ApplyResources(this.newMessageBoxBetaToolStripMenuItem, "newMessageBoxBetaToolStripMenuItem");
+            this.newMessageBoxBetaToolStripMenuItem.Click += new System.EventHandler(this.newMessageBoxBetaToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            resources.ApplyResources(this.toolStripSeparator7, "toolStripSeparator7");
+            // 
             // Browser
             // 
             resources.ApplyResources(this, "$this");
@@ -852,6 +863,7 @@
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.ForeColor = System.Drawing.Color.Black;
             this.Name = "Browser";
+            this.ShowIcon = false;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Browser_FormClosing);
             this.Load += new System.EventHandler(this.Browser_Load);
             this.LocationChanged += new System.EventHandler(this.Browser_LocationChanged);
@@ -967,6 +979,8 @@
         private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem showFavouritesBarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripMenuItem newMessageBoxBetaToolStripMenuItem;
     }
 }
 
