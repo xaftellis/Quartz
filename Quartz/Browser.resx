@@ -2260,7 +2260,7 @@
     <value>4, 40</value>
   </data>
   <data name="pnlFavourites.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1172, 30</value>
+    <value>1171, 30</value>
   </data>
   <data name="pnlFavourites.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>

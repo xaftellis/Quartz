@@ -233,6 +233,7 @@ namespace Quartz
                 {
                     favButton.Text = NameTextBox.Text;
                 }
+                _browser.UpdateFavBar();
             }
         }
     }

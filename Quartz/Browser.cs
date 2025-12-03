@@ -698,7 +698,7 @@ namespace Quartz
             else
             {
                 pnlFavourites.Height = 30;
-                pnlTop.Height = 71;
+                pnlTop.Height = 70;
             }
         }
 
@@ -933,7 +933,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.3.0";
+            notifyIcon1.Text = "Quartz v2.3.0 RC1";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -1283,7 +1283,6 @@ namespace Quartz
             else
             {
                 this.ShowIcon = true;
-                FaviconHelper.UpdateCurrentTab(ParentTabs, this);
             }
 
             // If this is an error page
@@ -1383,7 +1382,6 @@ namespace Quartz
                 else
                 {
                     this.ShowIcon = true;
-                    FaviconHelper.UpdateCurrentTab(ParentTabs, this);
                 }
 
                 if (!FaviconHelper.DoesFaviconFileExist(wvWebView1.Source.AbsoluteUri))
