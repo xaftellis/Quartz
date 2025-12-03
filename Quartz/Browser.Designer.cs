@@ -75,6 +75,7 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.pnlTop = new System.Windows.Forms.Panel();
             this.picFavicon = new System.Windows.Forms.PictureBox();
+            this.pnlFavourites = new System.Windows.Forms.FlowLayoutPanel();
             this.txtWebAddress = new System.Windows.Forms.RichTextBox();
             this.btnSettings = new System.Windows.Forms.Button();
             this.SettingsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -103,16 +104,12 @@
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.newMessageBoxBetaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.UrlBox = new System.Windows.Forms.PictureBox();
             this.UrlLeft = new System.Windows.Forms.PictureBox();
             this.UrlRight = new System.Windows.Forms.PictureBox();
-            this.mnuTabs = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.PlaceHolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlDivider = new System.Windows.Forms.Panel();
             this.wvWebView1 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -121,7 +118,6 @@
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.pnlBottom = new System.Windows.Forms.Panel();
-            this.pnlFavourites = new System.Windows.Forms.FlowLayoutPanel();
             this.mnuMenu.SuspendLayout();
             this.mnuDownloadsDropDown.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.wvLoadingProgress)).BeginInit();
@@ -135,7 +131,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.UrlBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlLeft)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).BeginInit();
-            this.mnuTabs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.wvWebView1)).BeginInit();
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
@@ -509,6 +504,17 @@
             this.picFavicon.Name = "picFavicon";
             this.picFavicon.TabStop = false;
             // 
+            // pnlFavourites
+            // 
+            resources.ApplyResources(this.pnlFavourites, "pnlFavourites");
+            this.pnlFavourites.BackColor = System.Drawing.Color.Transparent;
+            this.pnlFavourites.ContextMenuStrip = this.mnuMenu;
+            this.pnlFavourites.ForeColor = System.Drawing.Color.Black;
+            this.pnlFavourites.Name = "pnlFavourites";
+            this.pnlFavourites.Click += new System.EventHandler(this.btnGotoFavourite_Click);
+            this.pnlFavourites.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.pnlFavourites_ControlAdded);
+            this.pnlFavourites.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.pnlFavourites_ControlRemoved);
+            // 
             // txtWebAddress
             // 
             resources.ApplyResources(this.txtWebAddress, "txtWebAddress");
@@ -557,8 +563,6 @@
             this.toolStripSeparator8,
             this.settingsToolStripMenuItem,
             this.toolStripSeparator7,
-            this.newMessageBoxBetaToolStripMenuItem,
-            this.toolStripSeparator5,
             this.restartToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.SettingsMenuStrip.Name = "SettingsMenuStrip";
@@ -731,17 +735,6 @@
             this.toolStripSeparator7.Name = "toolStripSeparator7";
             resources.ApplyResources(this.toolStripSeparator7, "toolStripSeparator7");
             // 
-            // newMessageBoxBetaToolStripMenuItem
-            // 
-            this.newMessageBoxBetaToolStripMenuItem.Name = "newMessageBoxBetaToolStripMenuItem";
-            resources.ApplyResources(this.newMessageBoxBetaToolStripMenuItem, "newMessageBoxBetaToolStripMenuItem");
-            this.newMessageBoxBetaToolStripMenuItem.Click += new System.EventHandler(this.newMessageBoxBetaToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            resources.ApplyResources(this.toolStripSeparator5, "toolStripSeparator5");
-            // 
             // restartToolStripMenuItem
             // 
             this.restartToolStripMenuItem.Name = "restartToolStripMenuItem";
@@ -780,19 +773,6 @@
             this.UrlRight.BackColor = System.Drawing.Color.Transparent;
             this.UrlRight.Name = "UrlRight";
             this.UrlRight.TabStop = false;
-            // 
-            // mnuTabs
-            // 
-            this.mnuTabs.DropShadowEnabled = false;
-            this.mnuTabs.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.PlaceHolderToolStripMenuItem});
-            this.mnuTabs.Name = "mnuTabs";
-            resources.ApplyResources(this.mnuTabs, "mnuTabs");
-            // 
-            // PlaceHolderToolStripMenuItem
-            // 
-            this.PlaceHolderToolStripMenuItem.Name = "PlaceHolderToolStripMenuItem";
-            resources.ApplyResources(this.PlaceHolderToolStripMenuItem, "PlaceHolderToolStripMenuItem");
             // 
             // pnlDivider
             // 
@@ -847,17 +827,6 @@
             this.pnlBottom.ForeColor = System.Drawing.Color.Transparent;
             this.pnlBottom.Name = "pnlBottom";
             // 
-            // pnlFavourites
-            // 
-            resources.ApplyResources(this.pnlFavourites, "pnlFavourites");
-            this.pnlFavourites.BackColor = System.Drawing.Color.Transparent;
-            this.pnlFavourites.ContextMenuStrip = this.mnuMenu;
-            this.pnlFavourites.ForeColor = System.Drawing.Color.Black;
-            this.pnlFavourites.Name = "pnlFavourites";
-            this.pnlFavourites.Click += new System.EventHandler(this.btnGotoFavourite_Click);
-            this.pnlFavourites.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.pnlFavourites_ControlAdded);
-            this.pnlFavourites.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.pnlFavourites_ControlRemoved);
-            // 
             // Browser
             // 
             resources.ApplyResources(this, "$this");
@@ -886,7 +855,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.UrlBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlLeft)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).EndInit();
-            this.mnuTabs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.wvWebView1)).EndInit();
             this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -945,8 +913,6 @@
         public System.Windows.Forms.Button btnSettings;
         public System.Windows.Forms.Button btnBack;
         public System.Windows.Forms.Button btnRefresh;
-        private System.Windows.Forms.ContextMenuStrip mnuTabs;
-        private System.Windows.Forms.ToolStripMenuItem PlaceHolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripComboBox zoomToolStrip;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
@@ -960,7 +926,6 @@
         private System.Windows.Forms.ToolStripMenuItem newWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator20;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator19;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem emojiToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
@@ -984,7 +949,6 @@
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem showFavouritesBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
-        private System.Windows.Forms.ToolStripMenuItem newMessageBoxBetaToolStripMenuItem;
         public System.Windows.Forms.FlowLayoutPanel pnlFavourites;
     }
 }

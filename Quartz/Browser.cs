@@ -345,7 +345,6 @@ namespace Quartz
             NewControlThemeChanger.ChangeControlTheme(mnuExperts);
             NewControlThemeChanger.ChangeControlTheme(mnuHistory);
             NewControlThemeChanger.ChangeControlTheme(mnuMenu);
-            NewControlThemeChanger.ChangeControlTheme(mnuTabs);
             NewControlThemeChanger.ChangeControlTheme(mnuUserData);
             NewControlThemeChanger.ChangeControlTheme(mnuDownloadsDropDown);
             NewControlThemeChanger.ChangeControlTheme(mnuHistory);
@@ -664,43 +663,43 @@ namespace Quartz
         }
         public void UpdateFavBar()
         {
-            //bool showFavSetting = SettingsService.Get("showFavouritesBar") == "true";
+            bool showFavSetting = SettingsService.Get("showFavouritesBar") == "true";
 
-            //// --- Safely check Source ---
-            //string currentUrl = wvWebView1?.Source?.ToString() ?? "";
-            //bool isHome = currentUrl == GetHomeUrl();
+            // --- Safely check Source ---
+            string currentUrl = wvWebView1?.Source?.ToString() ?? "";
+            bool isHome = currentUrl == GetHomeUrl();
 
-            //bool shouldShow = showFavSetting || isHome;
+            bool shouldShow = showFavSetting || isHome;
 
-            //// --- No favourites? Force hidden ---
-            //if (pnlFavourites.Controls.Count == 0)
-            //{
-            //    pnlFavourites.Visible = false;
-            //    pnlTop.Height = 49;
-            //    return;
-            //}
+            // --- No favourites? Force hidden ---
+            if (pnlFavourites.Controls.Count == 0)
+            {
+                pnlFavourites.Visible = false;
+                pnlTop.Height = 43;
+                return;
+            }
 
-            //// --- If user disabled bar AND not home, hide it ---
-            //if (!shouldShow)
-            //{
-            //    pnlFavourites.Visible = false;
-            //    pnlTop.Height = 49;
-            //    return;
-            //}
+            // --- If user disabled bar AND not home, hide it ---
+            if (!shouldShow)
+            {
+                pnlFavourites.Visible = false;
+                pnlTop.Height = 43;
+                return;
+            }
 
-            //// --- Show favourites bar ---
-            //pnlFavourites.Visible = true;
+            // --- Show favourites bar ---
+            pnlFavourites.Visible = true;
 
-            //if (pnlFavourites.HorizontalScroll.Visible)
-            //{
-            //    pnlFavourites.Height = 47;
-            //    pnlTop.Height = 93;
-            //}
-            //else
-            //{
-            //    pnlFavourites.Height = 31;
-            //    pnlTop.Height = 80;
-            //}
+            if (pnlFavourites.HorizontalScroll.Visible)
+            {
+                pnlFavourites.Height = 47;
+                pnlTop.Height = 88;
+            }
+            else
+            {
+                pnlFavourites.Height = 30;
+                pnlTop.Height = 71;
+            }
         }
 
         public async void RestoreDownloadDialog()
@@ -1263,6 +1262,8 @@ namespace Quartz
         {
             var currentUri = wvWebView1.Source;
             if (currentUri == null) return;
+
+            UpdateFavBar();
 
             if (loadnum == 0 && !_newtab)
             {
@@ -2704,12 +2705,6 @@ namespace Quartz
                     LoadFavourites();
                 }
             }
-        }
-
-        private void newMessageBoxBetaToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form form = new TryOut();
-            form.ShowDialog();
         }
     }
 }
