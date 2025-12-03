@@ -1277,10 +1277,12 @@ namespace Quartz
             {
                 picFavicon.Image = null;
                 this.ShowIcon = false;
+                FaviconHelper.UpdateCurrentTab(ParentTabs, this);
             }
             else
             {
                 this.ShowIcon = true;
+                FaviconHelper.UpdateCurrentTab(ParentTabs, this);
             }
 
             // If this is an error page
@@ -1374,11 +1376,13 @@ namespace Quartz
                 {
                     picFavicon.Image = null;
                     this.ShowIcon = false;
+                    FaviconHelper.UpdateCurrentTab(ParentTabs, this);
                     return;
                 }
                 else
                 {
                     this.ShowIcon = true;
+                    FaviconHelper.UpdateCurrentTab(ParentTabs, this);
                 }
 
                 if (!FaviconHelper.DoesFaviconFileExist(wvWebView1.Source.AbsoluteUri))
@@ -1441,7 +1445,14 @@ namespace Quartz
 
         private void CoreWebView2_DocumentTitleChanged(object sender, object e)
         {
-            this.Text = wvWebView1.CoreWebView2.DocumentTitle;
+            if (lastGoodUrl != string.Empty && isQuartzDotComErrorPages(wvWebView1.Source))
+            {
+                this.Text = (new Uri(lastGoodUrl)).Host;
+            }
+            else
+            {
+                this.Text = wvWebView1.CoreWebView2.DocumentTitle;
+            }
 
             if (tabbedApp.SelectedTab.Content == this)
             {
