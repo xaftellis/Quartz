@@ -3,9 +3,13 @@ using Quartz.Libs;
 using Quartz.Models;
 using Quartz.Services;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -21,14 +25,53 @@ namespace Quartz
         private static FavouriteService favouriteService = new FavouriteService();
         private static BirthdayService birthdayService = new BirthdayService();
 
+        // --- Single-instance & IPC fields ---
+        private const string AppId = "QuartzApp_Unique_v1"; // change if you want a different identity
+        private static readonly string MutexName = $"Global\\QuartzSingleInstance_{AppId}";
+        private static readonly string PipeName = $"QuartzPipe_{AppId}";
+        private static Mutex _singleInstanceMutex;
+        private static CancellationTokenSource _pipeServerCts;
+        // Queue messages that arrive before EasyTabsContext is ready
+        private static readonly ConcurrentQueue<string> _pendingUrls = new ConcurrentQueue<string>();
+
         [STAThread]
         static void Main(string[] args)
         {
+            // --- Single-instance detection ---
+            bool createdNew = false;
+            try
+            {
+                _singleInstanceMutex = new Mutex(true, MutexName, out createdNew);
+            }
+            catch
+            {
+                // If mutex creation fails for some reason, fallback to assuming secondary and try to send message.
+                createdNew = false;
+            }
+
+            if (!createdNew)
+            {
+                // Secondary instance -> send two strings to primary and exit immediately.
+                string indicator = "RUN";
+                string urlToSend = (args != null && args.Length > 0) ? (args[0] ?? string.Empty) : string.Empty;
+                SendTwoStringsToPrimary(indicator, urlToSend, timeoutMs: 2000);
+                return;
+            }
+
+            // Primary instance: set up IPC server early so other instances can communicate quickly.
+            _pipeServerCts = new CancellationTokenSource();
+            Task.Run(() => PipeServerLoopAsync(_pipeServerCts.Token));
+
+            // Continue with your existing startup flow
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             EnsureUserDataFolders();
-            InitializeDefaultProfile();
+            // NOTE: InitializeDefaultProfile is async - original had "private static async Task InitializeDefaultProfile()"
+            // The original method is async and in your file it returns Task. We must wait for it.
+            // Call .GetAwaiter().GetResult() to run synchronously during startup (preserve original behaviour).
+            InitializeDefaultProfile().GetAwaiter().GetResult();
+
             HandleResetIfRequested();
 
             bool runBrowser = MainSettingsService.Get("RunBrowser") == "true";
@@ -55,6 +98,21 @@ namespace Quartz
             {
                 MainSettingsService.Set("bypassPassword", "true");
             }
+
+            // Clean up IPC server & mutex
+            try
+            {
+                _pipeServerCts?.Cancel();
+                _pipeServerCts?.Dispose();
+            }
+            catch { }
+
+            try
+            {
+                _singleInstanceMutex?.ReleaseMutex();
+                _singleInstanceMutex?.Dispose();
+            }
+            catch { }
         }
         #endregion
 
@@ -85,6 +143,9 @@ namespace Quartz
 
             EasyTabsContext.Start(firstContainer);
 
+            // Now that EasyTabsContext is available, process any pending IPC messages
+            ProcessPendingMessages();
+
             OpenBirthdayDialogIfNecessary();
 
             Application.ApplicationExit += Application_ApplicationExit;
@@ -95,6 +156,9 @@ namespace Quartz
         {
             Application.ApplicationExit += Application_ApplicationExit;
 
+            // Profiles window is not using EasyTabsContext; but we still want to process pending messages if any
+            // (If the app was launched in "profiles" mode and receives a RUN message, we won't have an EasyTabsContext
+            // — you can decide whether to ignore or store and open browser later. Here we enqueue but won't process until browser opens.)
             if (args.Length == 0)
                 Application.Run(new Profiles(null, null));
             else
@@ -324,6 +388,133 @@ namespace Quartz
             foreach (var kv in settings)
                 SettingsService.Set(kv.Key, kv.Value);
         }
+        #endregion
+
+        #region --- IPC: named pipe server & client + pending processing ---
+
+        /// <summary>
+        /// Background loop that accepts named-pipe client connections and processes two-line messages:
+        /// first line = indicator (expecting "RUN"), second line = url (possibly empty).
+        /// </summary>
+        private static async Task PipeServerLoopAsync(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                using (var server = new NamedPipeServerStream(PipeName, PipeDirection.In, 1, PipeTransmissionMode.Message, PipeOptions.Asynchronous))
+                {
+                    try
+                    {
+                        await server.WaitForConnectionAsync(token).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+                    catch
+                    {
+                        // swallow and continue
+                        continue;
+                    }
+
+                    try
+                    {
+                        using (var reader = new StreamReader(server, Encoding.UTF8))
+                        {
+                            string indicator = await reader.ReadLineAsync().ConfigureAwait(false);
+                            string url = await reader.ReadLineAsync().ConfigureAwait(false);
+
+                            if (string.Equals(indicator, "RUN", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // If EasyTabsContext is available, invoke on UI thread; otherwise enqueue
+                                if (EasyTabsContext != null)
+                                {
+                                    // We are not guaranteed to be on UI thread — marshal using BeginInvoke on any visible form if possible
+                                    try
+                                    {
+                                        // Try to get a form from the running context to invoke on the UI thread.
+                                        // TitleBarTabsApplicationContext doesn't expose a Form directly; but we can use Application.OpenForms as a safe way.
+                                        if (Application.OpenForms.Count > 0)
+                                        {
+                                            var f = Application.OpenForms[0];
+                                            f.BeginInvoke(new Action(() => HandleRunMessageOnUiThread(url)));
+                                        }
+                                        else
+                                        {
+                                            // No forms yet; enqueue for later
+                                            _pendingUrls.Enqueue(url ?? string.Empty);
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        // If invoking fails, enqueue for later
+                                        _pendingUrls.Enqueue(url ?? string.Empty);
+                                    }
+                                }
+                                else
+                                {
+                                    _pendingUrls.Enqueue(url ?? string.Empty);
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // swallow IO errors
+                    }
+                    finally
+                    {
+                        try { if (server.IsConnected) server.Disconnect(); } catch { }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Client-side helper used by secondary instances to send the two-line message.
+        /// </summary>
+        private static bool SendTwoStringsToPrimary(string indicator, string url, int timeoutMs = 2000)
+        {
+            try
+            {
+                using (var client = new NamedPipeClientStream(".", PipeName, PipeDirection.Out))
+                {
+                    client.Connect(timeoutMs);
+                    using (var writer = new StreamWriter(client, Encoding.UTF8) { AutoFlush = true })
+                    {
+                        writer.WriteLine(indicator ?? string.Empty);
+                        writer.WriteLine(url ?? string.Empty);
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Called once EasyTabsContext is created (in LaunchBrowser). Processes any queued URLs.
+        /// </summary>
+        private static void ProcessPendingMessages()
+        {
+            while (_pendingUrls.TryDequeue(out var url))
+            {
+                HandleRunMessageOnUiThread(url);
+            }
+        }
+
+        /// <summary>
+        /// Runs on UI thread (or invoked on UI thread), calls OpenNewAppContainer with null or the url string.
+        /// </summary>
+        private static void HandleRunMessageOnUiThread(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                OpenNewAppContainer(null);
+            else
+                OpenNewAppContainer(url);
+        }
+
         #endregion
     }
 }
