@@ -12,7 +12,7 @@ namespace Quartz.Services
 {
     public class BirthdayService
     {
-        private string _jsonPath = Path.Combine(Application.StartupPath + @"\UserData\Jsons", "birthdays.json");
+        private string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Quartz\UserData\jsons", "birthdays.json");
         private List<BirthdayModel> _items = null;
 
         public BirthdayService()

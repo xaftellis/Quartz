@@ -13,7 +13,7 @@ namespace Quartz.Services
 {
     public class SettingsService
     {
-        private static string _jsonPath = Path.Combine(Application.StartupPath + @"\UserData\Jsons", "settings.json");
+        private static string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Quartz\UserData\jsons", "settings.json");
         private static string WindowsTheme = ThemeHelper.GetTheme();
         private static bool DisplayOutOfDateThemeMessage = true;
 

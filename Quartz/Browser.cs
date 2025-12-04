@@ -597,14 +597,14 @@ namespace Quartz
             }
         }
 
-        public string GetAppPath()
+        public string GetLocalPath()
         {
-            return Application.StartupPath;
+            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         }
 
         public string GetCachePath()
         {
-            var path = GetAppPath() + @"\UserData\cache\";
+            var path = GetLocalPath() + @"\Quartz\UserData\cache\";
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -750,9 +750,9 @@ namespace Quartz
                 MainSettingsService.Set("RunBrowser", "false");
             }
 
-            if (!Directory.Exists(GetAppPath() + @"\UserData\WebView2\"))
+            if (!Directory.Exists(GetLocalPath() + @"\Quartz\UserData\WebView2\"))
             {
-                Directory.CreateDirectory(GetAppPath() + @"\UserData\WebView2\");
+                Directory.CreateDirectory(GetLocalPath() + @"\Quartz\UserData\WebView2\");
             }
 
             //user webview
@@ -761,13 +761,13 @@ namespace Quartz
 
             try
             {
-                env = await CoreWebView2Environment.CreateAsync(null, GetAppPath() + @"\UserData\WebView2\", null);
+                env = await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Quartz\UserData\WebView2\", null);
                 options = env.CreateCoreWebView2ControllerOptions();
                 options.ProfileName = ProfileService.Current.ToString();
                 options.IsInPrivateModeEnabled = Program.profileService.Get(ProfileService.Current).isDisposable;
 
                 //sys webview
-                var sysenv = await CoreWebView2Environment.CreateAsync(null, GetAppPath() + @"\UserData\WebView2\", null);
+                var sysenv = await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Quartz\UserData\WebView2\", null);
                 var sysoptions = sysenv.CreateCoreWebView2ControllerOptions();
 
                 if (wvWebView1.CoreWebView2 == null)
@@ -2656,7 +2656,7 @@ namespace Quartz
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenDirectoryAndSelect(Application.StartupPath, Application.StartupPath + @"\UserData\");
+            OpenDirectoryAndSelect(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\UserData\");
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)

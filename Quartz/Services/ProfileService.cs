@@ -15,7 +15,7 @@ namespace Quartz.Services
     public class ProfileService
     {
         public static Guid Current = Guid.Empty;
-        private static string _jsonPath = System.IO.Path.Combine(Application.StartupPath + @"\UserData\Jsons", "profiles.json");
+        private static string _jsonPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Quartz\UserData\jsons", "profiles.json");
         private List<ProfileModel> _items = null;
 
         public ProfileService()
@@ -107,7 +107,7 @@ namespace Quartz.Services
             if (profile == null)
                 throw new ArgumentNullException("profile");
 
-            string path = $@"{Application.StartupPath}\UserData\pictures\{profile.profilePicture}";
+            string path = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Quartz\UserData\pictures\{profile.profilePicture}";
 
             try
             {

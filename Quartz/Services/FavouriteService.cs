@@ -13,7 +13,7 @@ namespace Quartz.Services
 {
     public class FavouriteService
     {
-        private string _jsonPath = Path.Combine(Application.StartupPath + @"\UserData\Jsons", "favourites.json");
+        private string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Quartz\UserData\jsons", "favourites.json");
         private List<FavouriteModel> _items = null;
 
         public FavouriteService()

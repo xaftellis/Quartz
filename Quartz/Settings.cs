@@ -376,7 +376,7 @@ namespace Quartz
 
         
             //sys webview
-            var sysenv = await CoreWebView2Environment.CreateAsync(null, _browser.GetAppPath() + @"\UserData\WebView2\", null);
+            var sysenv = await CoreWebView2Environment.CreateAsync(null, _browser.GetLocalPath() + @"\Quartz\UserData\WebView2\", null);
             var sysoptions = sysenv.CreateCoreWebView2ControllerOptions();
 
             if (LoadingProgress.CoreWebView2 == null)
@@ -987,54 +987,6 @@ namespace Quartz
                 LoadingProgress.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Normal;
             }
         }
-
-        //private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    //if (tabControl1.SelectedIndex == 5 && LoadingProgress.Visible)
-        //    //{
-        //    //    string url;
-        //    //    var theme = SettingsService.Get("Theme");
-        //    //    if (theme == "xmas")
-        //    //    {
-        //    //        url = "file://" + Path.Combine(new string[] { Application.StartupPath + "\\assets\\throbber\\", "throbber_medium_xmas_green.svg" });
-        //    //    }
-        //    //    else if (theme == "black")
-        //    //    {
-        //    //        url = "file://" + Path.Combine(new string[] { Application.StartupPath + "\\assets\\throbber\\", "throbber_medium_white.svg" });
-        //    //    }
-        //    //    else if (theme == "aqua")
-        //    //    {
-        //    //        url = "file://" + Path.Combine(new string[] { Application.StartupPath + "\\assets\\throbber\\", "throbber_medium_blue.svg" });
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        url = "file://" + Path.Combine(new string[] { Application.StartupPath + "\\assets\\throbber\\", $"throbber_medium_{SettingsService.Get("Theme")}.svg" });
-        //    //    }
-
-        //    //    if (!LoadingProgress.Source.AbsoluteUri.EndsWith($"throbber_medium_{SettingsService.Get("Theme")}.svg"))
-        //    //    {
-        //    //        if (theme == "xmas")
-        //    //        {
-        //    //            LoadingProgress.Reload();
-        //    //            LoadingProgress.ZoomFactor = 1;
-        //    //            LoadingProgress.Source = new Uri(url);
-        //    //        }
-        //    //        else if (theme == "black")
-        //    //        {
-        //    //            LoadingProgress.Reload();
-        //    //            LoadingProgress.ZoomFactor = 1;
-        //    //            LoadingProgress.Source = new Uri(url);
-        //    //        }
-        //    //        else
-        //    //        {
-        //    //            LoadingProgress.Reload();
-        //    //            LoadingProgress.ZoomFactor = 1;
-        //    //            LoadingProgress.Source = new Uri(url);
-        //    //        }
-        //    //    }
-        //    //}
-        //}
-
         private void Settings_FormClosing(object sender, FormClosingEventArgs e)
         {
             _browser.Shortcuts(true);
@@ -1563,7 +1515,7 @@ namespace Quartz
 
         private async Task CDFSelectedIndexChanged()
         {
-            string directory = Path.Combine(Application.StartupPath, "UserData", "pictures");
+            string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Quartz", "UserData", "pictures");
             string filename = $"{ProfileService.Current}.ico";
             string smallIconFilename = $"16_{ProfileService.Current}.ico";
             string path = Path.Combine(directory, filename);

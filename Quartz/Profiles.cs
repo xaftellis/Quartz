@@ -331,7 +331,7 @@ namespace Quartz
             WebView2 webView2 = new WebView2();
 
             CoreWebView2EnvironmentOptions environmentOptions = new CoreWebView2EnvironmentOptions();
-            CoreWebView2Environment environment = await CoreWebView2Environment.CreateAsync(null, $@"{Application.StartupPath}\UserData\WebView2\", environmentOptions);
+            CoreWebView2Environment environment = await CoreWebView2Environment.CreateAsync(null, $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Quartz\UserData\WebView2\", environmentOptions);
             CoreWebView2ControllerOptions controllerOptions = environment.CreateCoreWebView2ControllerOptions();
 
             controllerOptions.ProfileName = profile;

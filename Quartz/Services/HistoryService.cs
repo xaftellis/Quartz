@@ -12,7 +12,7 @@ namespace Quartz.Services
 {
     public class HistoryService
     {
-        private string _jsonPath = Path.Combine(Application.StartupPath + @"\UserData\Jsons", "history.json");
+        private string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Quartz\UserData\jsons", "history.json");
         private List<HistoryModel> _items = null;
 
         public HistoryService()
