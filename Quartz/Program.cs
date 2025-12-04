@@ -239,7 +239,7 @@ namespace Quartz
         #region UserData & Reset
         private static void EnsureUserDataFolders()
         {
-            string basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Quartz", "UserData");
+            string basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Xaftellis", "Quartz", "UserData");
             Directory.CreateDirectory(basePath);
 
             foreach (var subDir in new[] { "webview2", "jsons" })
@@ -252,7 +252,7 @@ namespace Quartz
         {
             if (MainSettingsService.Get("Reset") != "true") return;
 
-            string userdataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Quartz", "UserData");
+            string userdataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Xaftellis", "Quartz", "UserData");
 
             int attempts = string.IsNullOrEmpty(MainSettingsService.Get("Attempts")) ? 1 : int.Parse(MainSettingsService.Get("Attempts")) + 1;
             MainSettingsService.Set("Attempts", attempts.ToString());

@@ -85,7 +85,7 @@ namespace Quartz.Libs
                 return false;
             }
 
-            string directory = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Quartz\UserData\cache\";
+            string directory = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Xaftellis\Quartz\UserData\cache\";
             string filename = $@"{faviconService.Get(address).Id}.ico";
             string path = directory + filename;
             
@@ -177,7 +177,7 @@ namespace Quartz.Libs
         public static Icon GetFaviconFile(string address)
         {
             FaviconService faviconService = new FaviconService();
-            string directory = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Quartz\UserData\cache\";
+            string directory = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Xaftellis\Quartz\UserData\cache\";
             string filename = $@"{faviconService.Get(address).Id}.ico";
             string path = directory + filename;
 
@@ -188,7 +188,7 @@ namespace Quartz.Libs
         public static void SaveToFile(Icon icon, string address)
         {
             Guid guid = Guid.NewGuid();
-            string directory = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Quartz\UserData\cache\";
+            string directory = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Xaftellis\Quartz\UserData\cache\";
             string filename = $@"{guid}.ico";
             string path = directory + filename;
 

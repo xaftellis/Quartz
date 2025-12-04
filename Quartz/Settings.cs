@@ -376,7 +376,7 @@ namespace Quartz
 
         
             //sys webview
-            var sysenv = await CoreWebView2Environment.CreateAsync(null, _browser.GetLocalPath() + @"\Quartz\UserData\WebView2\", null);
+            var sysenv = await CoreWebView2Environment.CreateAsync(null, _browser.GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\", null);
             var sysoptions = sysenv.CreateCoreWebView2ControllerOptions();
 
             if (LoadingProgress.CoreWebView2 == null)
@@ -1515,7 +1515,7 @@ namespace Quartz
 
         private async Task CDFSelectedIndexChanged()
         {
-            string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Quartz", "UserData", "pictures");
+            string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Xaftellis", "Quartz", "UserData", "pictures");
             string filename = $"{ProfileService.Current}.ico";
             string smallIconFilename = $"16_{ProfileService.Current}.ico";
             string path = Path.Combine(directory, filename);

@@ -604,7 +604,7 @@ namespace Quartz
 
         public string GetCachePath()
         {
-            var path = GetLocalPath() + @"\Quartz\UserData\cache\";
+            var path = GetLocalPath() + @"\Xaftellis\Quartz\UserData\cache\";
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -750,9 +750,9 @@ namespace Quartz
                 MainSettingsService.Set("RunBrowser", "false");
             }
 
-            if (!Directory.Exists(GetLocalPath() + @"\Quartz\UserData\WebView2\"))
+            if (!Directory.Exists(GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\"))
             {
-                Directory.CreateDirectory(GetLocalPath() + @"\Quartz\UserData\WebView2\");
+                Directory.CreateDirectory(GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\");
             }
 
             //user webview
@@ -761,13 +761,13 @@ namespace Quartz
 
             try
             {
-                env = await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Quartz\UserData\WebView2\", null);
+                env = await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\", null);
                 options = env.CreateCoreWebView2ControllerOptions();
                 options.ProfileName = ProfileService.Current.ToString();
                 options.IsInPrivateModeEnabled = Program.profileService.Get(ProfileService.Current).isDisposable;
 
                 //sys webview
-                var sysenv = await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Quartz\UserData\WebView2\", null);
+                var sysenv = await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\", null);
                 var sysoptions = sysenv.CreateCoreWebView2ControllerOptions();
 
                 if (wvWebView1.CoreWebView2 == null)
@@ -933,7 +933,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.3.0";
+            notifyIcon1.Text = "Quartz v2.3.0 RC2";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -2656,7 +2656,7 @@ namespace Quartz
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenDirectoryAndSelect(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\UserData\");
+            OpenDirectoryAndSelect(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Xaftellis\Quartz\UserData\");
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)

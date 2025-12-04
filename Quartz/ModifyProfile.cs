@@ -42,7 +42,7 @@ namespace Quartz
 
         public void SetProfilePicture(Guid id, System.Drawing.Image image, string extention)
         {
-            string directory = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Quartz\UserData\pictures\";
+            string directory = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Xaftellis\Quartz\UserData\pictures\";
             string filename = $@"{id.ToString()}.{extention}";
             string path = directory + filename;
 
@@ -51,7 +51,7 @@ namespace Quartz
                 Directory.CreateDirectory(directory);
             }
 
-            string current = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Quartz\UserData\pictures\{Program.profileService.Get(id).profilePicture}";
+            string current = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Xaftellis\Quartz\UserData\pictures\{Program.profileService.Get(id).profilePicture}";
             if (File.Exists(current))
             {
                 File.Delete(current);

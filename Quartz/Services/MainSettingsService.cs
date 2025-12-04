@@ -13,7 +13,7 @@ namespace Quartz.Services
 {
     public class MainSettingsService
     {
-        private static string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Quartz\UserData\jsons", "startup.json");
+        private static string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Xaftellis\Quartz\UserData\jsons", "startup.json");
 
         public static string Get(string name)
         {

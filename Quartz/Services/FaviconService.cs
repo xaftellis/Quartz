@@ -10,7 +10,7 @@ namespace Quartz.Services
 {
     public class FaviconService
     {
-        private string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Quartz\UserData\jsons", "favicons.json");
+        private string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Xaftellis\Quartz\UserData\jsons", "favicons.json");
         private List<FaviconModel> _items = null;
 
         public FaviconService()
