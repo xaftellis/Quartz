@@ -159,8 +159,6 @@
             this.showFavouritesBarToolStripMenuItem});
             this.mnuMenu.Name = "contextMenuStrip1";
             this.mnuMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.mnuMenu.ShowCheckMargin = true;
-            this.mnuMenu.ShowImageMargin = false;
             resources.ApplyResources(this.mnuMenu, "mnuMenu");
             this.mnuMenu.Opening += new System.ComponentModel.CancelEventHandler(this.mnuMenu_Opening);
             // 
@@ -277,9 +275,7 @@
             this.locationToolStripMenuItem1,
             this.changeLocationToolStripMenuItem1});
             this.mnuDownloadsDropDown.Name = "mnuDownloadsDropDown";
-            this.mnuDownloadsDropDown.OwnerItem = this.downloadsToolStripMenuItem;
             resources.ApplyResources(this.mnuDownloadsDropDown, "mnuDownloadsDropDown");
-            this.mnuDownloadsDropDown.ShowImageMargin = false;
             this.mnuDownloadsDropDown.TabStop = true;
             this.mnuDownloadsDropDown.Opening += new System.ComponentModel.CancelEventHandler(this.mnuDownloadsDropDown_Opening);
             // 
@@ -566,7 +562,6 @@
             this.restartToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.SettingsMenuStrip.Name = "SettingsMenuStrip";
-            this.SettingsMenuStrip.OwnerItem = this.toolStripMenuItem1;
             this.SettingsMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             resources.ApplyResources(this.SettingsMenuStrip, "SettingsMenuStrip");
             this.SettingsMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.SettingsMenuStrip_Opening);
@@ -608,9 +603,7 @@
             this.toolStripSeparator6,
             this.resetToolStripMenuItem1});
             this.mnuUserData.Name = "mnuUserData";
-            this.mnuUserData.OwnerItem = this.userDataToolStripMenuItem;
             resources.ApplyResources(this.mnuUserData, "mnuUserData");
-            this.mnuUserData.ShowImageMargin = false;
             this.mnuUserData.Opening += new System.ComponentModel.CancelEventHandler(this.mnuUserData_Opening);
             // 
             // openFolderToolStripMenuItem
@@ -644,7 +637,6 @@
             this.historyToolStripMenuItem1,
             this.toolStripSeparator10});
             this.mnuHistory.Name = "mnuHistory";
-            this.mnuHistory.OwnerItem = this.historyToolStripMenuItem;
             resources.ApplyResources(this.mnuHistory, "mnuHistory");
             this.mnuHistory.Opening += new System.ComponentModel.CancelEventHandler(this.mnuHistory_Opening);
             // 
@@ -677,9 +669,7 @@
             this.inspectToolStripMenuItem,
             this.webview2TaskManagerToolStripMenuItem});
             this.mnuExperts.Name = "mnuExperts";
-            this.mnuExperts.OwnerItem = this.expertsToolStripMenuItem;
             resources.ApplyResources(this.mnuExperts, "mnuExperts");
-            this.mnuExperts.ShowImageMargin = false;
             this.mnuExperts.Opening += new System.ComponentModel.CancelEventHandler(this.mnuExperts_Opening);
             // 
             // inspectToolStripMenuItem

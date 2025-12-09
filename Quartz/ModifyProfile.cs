@@ -333,6 +333,11 @@ namespace Quartz
             }
 
             NewControlThemeChanger.ChangeTheme(this);
+            //if (GetRealTimeInZone.GetRealTimeInComputerTimeZone().Month == 12 && SettingsService.Get("Theme") == "black")
+            //{
+            //    NewControlThemeChanger.AnimateButtonImageFromResources(circularImageButton1);
+            //}
+
             txtExists.ForeColor = Color.Red;
             LabelNameNull.ForeColor = Color.Red;
             circularImageButton1.CircularImageBorderColor = circularImageButton1.ForeColor;
