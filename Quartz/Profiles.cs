@@ -134,6 +134,7 @@ namespace Quartz
             {
                 var button = new CircularImageButton
                 {
+                    Name = "btn" + profile.Name,
                     ButtonText = profile.Name,
                     Tag = profile.Id,
                     AutoSize = false,

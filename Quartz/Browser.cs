@@ -373,6 +373,7 @@ namespace Quartz
                 {
                     var button = new Button
                     {
+                        Name = "btn" + favourite.Name,
                         Text = "      " + favourite.Name,
                         Tag = favourite.WebAddress,
                         ContextMenuStrip = mnuMenu,
@@ -410,6 +411,7 @@ namespace Quartz
                 {
                     var button = new Button
                     {
+                        Name = "btn" + favourite.Name,
                         Text = favourite.Name,
                         Tag = favourite.WebAddress,
                         ContextMenuStrip = mnuMenu,
@@ -417,7 +419,7 @@ namespace Quartz
                         ImageAlign = ContentAlignment.MiddleLeft,
                         TextAlign = ContentAlignment.MiddleCenter,
                         MaximumSize = new Size(0, 23),
-                        AutoSize = true,
+                        AutoSize = true
                     };
 
                     Uri address = new Uri(favourite.WebAddress);
