@@ -1267,15 +1267,6 @@ namespace Quartz
 
             UpdateFavBar();
 
-            if (loadnum == 0 && !_newtab)
-            {
-                if (txtWebAddress.SelectionLength != txtWebAddress.TextLength)
-                {
-                    txtWebAddress.Focus();
-                    txtWebAddress.SelectAll();
-                }
-            }
-
             if (isQuartzDotCom(currentUri))
             {
                 picFavicon.Image = null;
@@ -1285,6 +1276,16 @@ namespace Quartz
             else
             {
                 this.ShowIcon = true;
+            }
+
+            if (loadnum == 0 && !_newtab)
+            {
+                if (txtWebAddress.SelectionLength != txtWebAddress.TextLength)
+                {
+                    txtWebAddress.Focus();
+                    txtWebAddress.SelectAll();
+                    return;
+                }
             }
 
             // If this is an error page
