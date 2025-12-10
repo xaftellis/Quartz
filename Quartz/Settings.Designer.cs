@@ -538,26 +538,24 @@
             // 
             // mnuBirthdays
             // 
-            this.mnuBirthdays.DropShadowEnabled = false;
             this.mnuBirthdays.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addBirthdayToolStripMenuItem,
             this.toolStripSeparator3});
             this.mnuBirthdays.Name = "mnuBirthdays";
-            this.mnuBirthdays.OwnerItem = this.birthdaysToolStripMenuItem;
-            this.mnuBirthdays.Size = new System.Drawing.Size(144, 32);
+            this.mnuBirthdays.Size = new System.Drawing.Size(181, 54);
             this.mnuBirthdays.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.mnuBirthdays_Closing);
             this.mnuBirthdays.Opening += new System.ComponentModel.CancelEventHandler(this.mnuBirthdays_Opening);
             // 
             // addBirthdayToolStripMenuItem
             // 
             this.addBirthdayToolStripMenuItem.Name = "addBirthdayToolStripMenuItem";
-            this.addBirthdayToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.addBirthdayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addBirthdayToolStripMenuItem.Text = "Add birthday";
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(140, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
             // 
             // groupBoxDownloadDialog
             // 

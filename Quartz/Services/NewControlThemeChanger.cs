@@ -255,8 +255,7 @@ namespace Quartz.Services
                     ContextMenuStrip.ForeColor = extraforecolor;
                 }
                 ContextMenuStrip.Renderer = renderer;
-                //ContextMenuStrip.BackgroundImage = buttonimage;    
-                ContextMenuStrip.DropShadowEnabled = true;
+                //ContextMenuStrip.DropShadowEnabled = true;
             }
             else if (control is TextBox)
             {

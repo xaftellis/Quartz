@@ -106,10 +106,10 @@
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.UrlBox = new System.Windows.Forms.PictureBox();
             this.UrlLeft = new System.Windows.Forms.PictureBox();
             this.UrlRight = new System.Windows.Forms.PictureBox();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlDivider = new System.Windows.Forms.Panel();
             this.wvWebView1 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -138,7 +138,6 @@
             // mnuMenu
             // 
             this.mnuMenu.BackColor = System.Drawing.Color.White;
-            this.mnuMenu.DropShadowEnabled = false;
             this.mnuMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mnuMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
@@ -269,7 +268,6 @@
             // 
             // mnuDownloadsDropDown
             // 
-            this.mnuDownloadsDropDown.DropShadowEnabled = false;
             this.mnuDownloadsDropDown.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mnuDownloadsDropDown.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.locationToolStripMenuItem1,
@@ -540,7 +538,6 @@
             // SettingsMenuStrip
             // 
             this.SettingsMenuStrip.BackColor = System.Drawing.Color.White;
-            this.SettingsMenuStrip.DropShadowEnabled = false;
             this.SettingsMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.SettingsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newTabToolStripMenuItem1,
@@ -597,7 +594,6 @@
             // 
             // mnuUserData
             // 
-            this.mnuUserData.DropShadowEnabled = false;
             this.mnuUserData.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openFolderToolStripMenuItem,
             this.toolStripSeparator6,
@@ -632,7 +628,6 @@
             // 
             // mnuHistory
             // 
-            this.mnuHistory.DropShadowEnabled = false;
             this.mnuHistory.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.historyToolStripMenuItem1,
             this.toolStripSeparator10});
@@ -664,7 +659,6 @@
             // 
             // mnuExperts
             // 
-            this.mnuExperts.DropShadowEnabled = false;
             this.mnuExperts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.inspectToolStripMenuItem,
             this.webview2TaskManagerToolStripMenuItem});
@@ -737,12 +731,6 @@
             resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.DropDown = this.SettingsMenuStrip;
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
-            // 
             // UrlBox
             // 
             resources.ApplyResources(this.UrlBox, "UrlBox");
@@ -763,6 +751,12 @@
             this.UrlRight.BackColor = System.Drawing.Color.Transparent;
             this.UrlRight.Name = "UrlRight";
             this.UrlRight.TabStop = false;
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDown = this.SettingsMenuStrip;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
             // 
             // pnlDivider
             // 

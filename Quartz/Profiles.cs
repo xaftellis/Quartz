@@ -145,11 +145,7 @@ namespace Quartz
                     CircularImageToTextGapping = 5,
                 };
 
-                NewControlThemeChanger.ChangeTheme(this);
-                //if (GetRealTimeInZone.GetRealTimeInComputerTimeZone().Month == 12 && SettingsService.Get("Theme") == "black")
-                //{
-                //    NewControlThemeChanger.AnimateButtonImageFromResources(button);
-                //}
+                NewControlThemeChanger.ChangeControlTheme(button);
 
                 if (Program.profileService.GetProfilePicture(profile.Id) != null)
                 {
