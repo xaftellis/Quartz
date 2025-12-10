@@ -120,11 +120,28 @@ namespace Quartz
             if(tab.Active)
             {
                 ForeColor = Color.Blue;
+                _closeButtonImage = Properties.Resources.Blue_Close;
+                _closeButtonHoverImage = Properties.Resources.Blue_CloseHover;
             }
             else
             {
                 ForeColor = Color.Aqua;
+                _closeButtonImage = Properties.Resources.Aqua_Close;
+                _closeButtonHoverImage = Properties.Resources.Aqua_CloseHover;
             }
+
+            //if (tab.Active)
+            //{
+            //    ForeColor = Color.Lime;
+            //    _closeButtonImage = Properties.Resources.Close_xmas;
+            //    _closeButtonHoverImage = Properties.Resources.CloseHover_xmas;
+            //}
+            //else
+            //{
+            //    ForeColor = Color.Red;
+            //    _closeButtonImage = Properties.Resources.Close_xmas_lime;
+            //    _closeButtonHoverImage = Properties.Resources.CloseHover_xmas_lime;
+            //}
 
             if (!IsWindows10 && !tab.Active && index == _parentWindow.Tabs.Count - 1)
             {

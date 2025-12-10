@@ -633,6 +633,26 @@ namespace Quartz.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Blue_Close {
+            get {
+                object obj = ResourceManager.GetObject("Blue_Close", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Blue_CloseHover {
+            get {
+                object obj = ResourceManager.GetObject("Blue_CloseHover", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Center {
             get {
                 object obj = ResourceManager.GetObject("Center", resourceCulture);

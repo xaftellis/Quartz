@@ -569,6 +569,8 @@
     <None Include="Resources\CloseHover.png" />
     <None Include="Resources\Add.png" />
     <None Include="Resources\Beta.png" />
+    <None Include="Resources\Blue_Close.png" />
+    <None Include="Resources\Blue_CloseHover.png" />
     <Content Include="Resources\favicon.ico" />
     <None Include="Resources\UrlBoxRightAqua.png" />
     <None Include="Resources\UrlBoxLeftWhiteAqua.png" />
