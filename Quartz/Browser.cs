@@ -2620,23 +2620,6 @@ namespace Quartz
 
         private void mnuSearch_Opening(object sender, CancelEventArgs e)
         {
-            txtWebAddress.Focus();
-
-            alwaysShowFullURLsToolStripMenuItem.Checked = SettingsService.Get("displayFullURLs") == "true";
-          
-            undoToolStripMenuItem.Enabled = txtWebAddress.CanUndo;
-            redoToolStripMenuItem.Enabled = txtWebAddress.CanRedo;
-            cutToolStripMenuItem.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
-            copyToolStripMenuItem1.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
-            deleteToolStripMenuItem.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
-
-
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(mnuSearch.Handle, 100, Animation.AW_BLEND);
-            }
-
-
             if (!string.IsNullOrEmpty(Clipboard.GetText()))
             {
                 pasteAndGoToolStripMenuItem.Text = LimitStringLength(
@@ -2654,6 +2637,21 @@ namespace Quartz
                 pasteAndGoToolStripMenuItem.Text = "Paste and go";
                 pasteAndGoToolStripMenuItem.Enabled = false;
                 pasteToolStripMenuItem.Enabled = false;
+            }
+
+            txtWebAddress.Focus();
+
+            alwaysShowFullURLsToolStripMenuItem.Checked = SettingsService.Get("displayFullURLs") == "true";
+
+            undoToolStripMenuItem.Enabled = txtWebAddress.CanUndo;
+            redoToolStripMenuItem.Enabled = txtWebAddress.CanRedo;
+            cutToolStripMenuItem.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
+            copyToolStripMenuItem1.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
+            deleteToolStripMenuItem.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
+
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(mnuSearch.Handle, 100, Animation.AW_BLEND);
             }
         }
 
