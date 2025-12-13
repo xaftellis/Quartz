@@ -2230,7 +2230,7 @@ namespace Quartz
         {
             Shortcuts(false);
             Settings setting = new Settings(this, false);
-            //setting.Owner = this;
+            setting.Owner = this;
             setting.ShowDialog();
         }
 

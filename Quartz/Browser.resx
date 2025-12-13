@@ -355,19 +355,19 @@
     <value>504, 15</value>
   </metadata>
   <data name="locationToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>164, 22</value>
   </data>
   <data name="locationToolStripMenuItem1.Text" xml:space="preserve">
     <value>Location:</value>
   </data>
   <data name="changeLocationToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>164, 22</value>
   </data>
   <data name="changeLocationToolStripMenuItem1.Text" xml:space="preserve">
     <value>Change Location</value>
   </data>
   <data name="mnuDownloadsDropDown.Size" type="System.Drawing.Size, System.Drawing">
-    <value>181, 70</value>
+    <value>165, 48</value>
   </data>
   <data name="&gt;&gt;mnuDownloadsDropDown.Name" xml:space="preserve">
     <value>mnuDownloadsDropDown</value>
@@ -1291,7 +1291,7 @@
     <value>4</value>
   </data>
   <metadata name="mnuSearch.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>191, 45</value>
+    <value>184, 45</value>
   </metadata>
   <data name="emojiToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>191, 22</value>
@@ -2592,17 +2592,8 @@
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
-  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 20</value>
-  </data>
-  <data name="toolStripMenuItem1.Text" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="SettingsMenuStrip.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
-    <value>Inherit</value>
-  </data>
   <data name="SettingsMenuStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 309</value>
+    <value>183, 331</value>
   </data>
   <data name="SettingsMenuStrip.Text" xml:space="preserve">
     <value>Options</value>
@@ -2801,6 +2792,12 @@
   </data>
   <data name="&gt;&gt;pnlTop.ZOrder" xml:space="preserve">
     <value>8</value>
+  </data>
+  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>25, 20</value>
+  </data>
+  <data name="toolStripMenuItem1.Text" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="pnlDivider.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
