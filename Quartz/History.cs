@@ -214,7 +214,7 @@ namespace Quartz
                     }
                     else if (theme == "aqua")
                     {
-                        row.Cells["Delete"].Value = Properties.Resources.Aqua_Close;
+                        row.Cells["Delete"].Value = Properties.Resources.Blue_Close;
                     }
                     else if (theme == "xmas")
                     {
@@ -569,7 +569,7 @@ namespace Quartz
                 }
                 else if (theme == "aqua")
                 {
-                    dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.Aqua_Close;
+                    dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.Blue_Close;
                 }
                 else if (theme == "xmas")
                 {
@@ -597,7 +597,7 @@ namespace Quartz
                 }
                 else if (theme == "aqua")
                 {
-                    dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.Aqua_CloseHover;
+                    dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.Blue_CloseHover;
                 }
                 else if (theme == "xmas")
                 {
