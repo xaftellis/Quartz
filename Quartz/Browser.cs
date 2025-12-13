@@ -935,7 +935,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.3.0";
+            notifyIcon1.Text = "Quartz v2.3.1";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -1927,11 +1927,12 @@ namespace Quartz
 
         private void mnuDownloadsDropDown_Opening(object sender, CancelEventArgs e)
         {
+            locationToolStripMenuItem1.Text = $"Location: {wvWebView1.CoreWebView2.Profile.DefaultDownloadFolderPath}";
+
             if (SettingsService.Get("Animation") == "true")
             {
                 Animation.AnimateWindow(mnuDownloadsDropDown.Handle, 100, Animation.AW_BLEND);
             }
-            locationToolStripMenuItem1.Text = $"Location: {wvWebView1.CoreWebView2.Profile.DefaultDownloadFolderPath}";
         }
 
         private void changeLocationToolStripMenuItem1_Click(object sender, EventArgs e)

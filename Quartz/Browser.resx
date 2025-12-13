@@ -355,19 +355,19 @@
     <value>504, 15</value>
   </metadata>
   <data name="locationToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="locationToolStripMenuItem1.Text" xml:space="preserve">
     <value>Location:</value>
   </data>
   <data name="changeLocationToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="changeLocationToolStripMenuItem1.Text" xml:space="preserve">
     <value>Change Location</value>
   </data>
   <data name="mnuDownloadsDropDown.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 48</value>
+    <value>181, 70</value>
   </data>
   <data name="&gt;&gt;mnuDownloadsDropDown.Name" xml:space="preserve">
     <value>mnuDownloadsDropDown</value>
@@ -1366,7 +1366,7 @@
     <value>Always show full URLs</value>
   </data>
   <data name="mnuSearch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>192, 270</value>
+    <value>192, 248</value>
   </data>
   <data name="&gt;&gt;mnuSearch.Name" xml:space="preserve">
     <value>mnuSearch</value>
@@ -2524,7 +2524,7 @@
     <value>179, 6</value>
   </data>
   <metadata name="mnuExperts.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1157, 19</value>
+    <value>1148, 32</value>
   </metadata>
   <data name="inspectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>192, 22</value>
@@ -2591,6 +2591,15 @@
   </data>
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Exit</value>
+  </data>
+  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>25, 20</value>
+  </data>
+  <data name="toolStripMenuItem1.Text" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="SettingsMenuStrip.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
   </data>
   <data name="SettingsMenuStrip.Size" type="System.Drawing.Size, System.Drawing">
     <value>183, 309</value>
@@ -2792,12 +2801,6 @@
   </data>
   <data name="&gt;&gt;pnlTop.ZOrder" xml:space="preserve">
     <value>8</value>
-  </data>
-  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 20</value>
-  </data>
-  <data name="toolStripMenuItem1.Text" xml:space="preserve">
-    <value>1</value>
   </data>
   <data name="pnlDivider.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
