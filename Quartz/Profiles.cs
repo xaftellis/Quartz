@@ -390,26 +390,11 @@ namespace Quartz
 
         private void ContextMenuStripProfiles_Opening(object sender, CancelEventArgs e)
         {
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(ContextMenuStripProfiles.Handle, 100, Animation.AW_BLEND);
-            }
-
             // Get the control that is displaying this context menu
             Button button = (Button)ContextMenuStripProfiles.SourceControl;
             button.Select();
 
             profilesToolStripMenuItem.Text = "Profiles: " + Program.profileService.All().Count.ToString();
-
-            //if (Program.profileService.Current == Guid.Parse(button.Tag.ToString()) && Application.OpenForms["AppContainer"] != null)
-            //{
-
-            //    editToolStripMenuItem.Enabled = false;
-            //}
-            //else
-            //{
-            //    editToolStripMenuItem.Enabled = true;
-            //}
 
             //if there is only one profile
             if ((Program.profileService.All().Count == 1)
@@ -440,18 +425,10 @@ namespace Quartz
                 setDefaultToolStripMenuItem.Text = "Set Default";
             }
 
-            //if (string.IsNullOrEmpty(Program.profileService.GetPassword(Guid.Parse(button.Tag.ToString()))))
-            //{
-            //    //createPasswordToolStripMenuItem.Text = "Create Password";
-            //    //removePasswordToolStripMenuItem.Visible = false;
-            //    //setDefaultToolStripMenuItem.Enabled = true;
-            //}
-            //else
-            //{
-            //    createPasswordToolStripMenuItem.Text = "Change Password";
-            //    removePasswordToolStripMenuItem.Visible = true;
-            //    //setDefaultToolStripMenuItem.Enabled = false;
-            //}
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(ContextMenuStripProfiles.Handle, 100, Animation.AW_BLEND);
+            }
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
