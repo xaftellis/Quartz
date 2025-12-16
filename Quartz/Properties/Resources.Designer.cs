@@ -343,6 +343,46 @@ namespace Quartz.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap arrow_back_22dp_626368_FILL0_wght600_GRAD0_opsz24 {
+            get {
+                object obj = ResourceManager.GetObject("arrow_back_22dp_626368_FILL0_wght600_GRAD0_opsz24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap arrow_back_22dp_626368_FILL0_wght600_GRAD0_opsz241 {
+            get {
+                object obj = ResourceManager.GetObject("arrow_back_22dp_626368_FILL0_wght600_GRAD0_opsz241", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap arrow_forward_21dp_1F1F1F_FILL0_wght700_GRAD0_opsz20 {
+            get {
+                object obj = ResourceManager.GetObject("arrow_forward_21dp_1F1F1F_FILL0_wght700_GRAD0_opsz20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap arrow_forward_22dp_626368_FILL0_wght600_GRAD0_opsz24 {
+            get {
+                object obj = ResourceManager.GetObject("arrow_forward_22dp_626368_FILL0_wght600_GRAD0_opsz24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap B_Add {
             get {
                 object obj = ResourceManager.GetObject("B_Add", resourceCulture);
@@ -676,6 +716,16 @@ namespace Quartz.Properties {
         public static System.Drawing.Bitmap Close {
             get {
                 object obj = ResourceManager.GetObject("Close", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap close_22dp_626368_FILL0_wght600_GRAD0_opsz24 {
+            get {
+                object obj = ResourceManager.GetObject("close_22dp_626368_FILL0_wght600_GRAD0_opsz24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -2153,6 +2203,56 @@ namespace Quartz.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap refresh_21dp_626368_FILL0_wght600_GRAD0_opsz20 {
+            get {
+                object obj = ResourceManager.GetObject("refresh_21dp_626368_FILL0_wght600_GRAD0_opsz20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap refresh_22dp_626365_FILL0_wght700_GRAD0_opsz24 {
+            get {
+                object obj = ResourceManager.GetObject("refresh_22dp_626365_FILL0_wght700_GRAD0_opsz24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap refresh_22dp_626368_FILL0_wght500_GRAD0_opsz24_1_ {
+            get {
+                object obj = ResourceManager.GetObject("refresh_22dp_626368_FILL0_wght500_GRAD0_opsz24(1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap refresh_22dp_626368_FILL0_wght600_GRAD0_opsz24 {
+            get {
+                object obj = ResourceManager.GetObject("refresh_22dp_626368_FILL0_wght600_GRAD0_opsz24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap refresh_22dp_626368_FILL0_wght600_GRAD0_opsz241 {
+            get {
+                object obj = ResourceManager.GetObject("refresh_22dp_626368_FILL0_wght600_GRAD0_opsz241", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Right {
             get {
                 object obj = ResourceManager.GetObject("Right", resourceCulture);
@@ -2396,6 +2496,16 @@ namespace Quartz.Properties {
         public static System.Drawing.Bitmap TRight {
             get {
                 object obj = ResourceManager.GetObject("TRight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap UrlBoxLeft {
+            get {
+                object obj = ResourceManager.GetObject("UrlBoxLeft", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

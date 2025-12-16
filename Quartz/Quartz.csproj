@@ -571,6 +571,11 @@
     <None Include="Resources\Beta.png" />
     <None Include="Resources\Blue_Close.png" />
     <None Include="Resources\Blue_CloseHover.png" />
+    <None Include="Resources\arrow_forward_21dp_1F1F1F_FILL0_wght700_GRAD0_opsz20.png" />
+    <None Include="Resources\arrow_back_22dp_626368_FILL0_wght600_GRAD0_opsz24.png" />
+    <None Include="Resources\arrow_forward_22dp_626368_FILL0_wght600_GRAD0_opsz24.png" />
+    <None Include="Resources\close_22dp_626368_FILL0_wght600_GRAD0_opsz24.png" />
+    <None Include="Resources\arrow_back_22dp_626368_FILL0_wght600_GRAD0_opsz241.png" />
     <Content Include="Resources\favicon.ico" />
     <None Include="Resources\UrlBoxRightAqua.png" />
     <None Include="Resources\UrlBoxLeftWhiteAqua.png" />
@@ -698,6 +703,12 @@
     <None Include="Resources\frame-55.png" />
     <None Include="Resources\frame-56.png" />
     <None Include="Resources\frame-57.png" />
+    <None Include="Resources\UrlBoxLeft.png" />
+    <None Include="Resources\refresh_22dp_626365_FILL0_wght700_GRAD0_opsz24.png" />
+    <None Include="Resources\refresh_22dp_626368_FILL0_wght600_GRAD0_opsz24.png" />
+    <None Include="Resources\refresh_21dp_626368_FILL0_wght600_GRAD0_opsz20.png" />
+    <None Include="Resources\refresh_22dp_626368_FILL0_wght600_GRAD0_opsz241.png" />
+    <None Include="Resources\refresh_22dp_626368_FILL0_wght500_GRAD0_opsz24%281%29.png" />
     <Content Include="Resources\XLeft_disabled.png" />
     <None Include="Resources\Xmas Quartz %2816%29.ico" />
     <None Include="Resources\Xmas Quartz.ico" />

@@ -57,7 +57,7 @@ namespace Quartz
         {
             NewControlThemeChanger.ChangeTheme(this);
             NewControlThemeChanger.ChangeControlTheme(contextMenuStrip1);
-
+            
             Rebind();
         }
 

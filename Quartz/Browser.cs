@@ -178,180 +178,175 @@ namespace Quartz
 
         public void LoadTheme()
         {
-            //IMAGES
-            Image backImage = Quartz.Properties.Resources.Left;
-            Image forwardImage = Quartz.Properties.Resources.Right;
-            Image houseImage = Quartz.Properties.Resources.icon_House;
-            Image refreshImage = Quartz.Properties.Resources.Refresh;
-            Image stopImage = Quartz.Properties.Resources.Stop;
-            Image downloadImage = Quartz.Properties.Resources.download;
-            Image favImage = Quartz.Properties.Resources.icon_Fav;
-            Image settingsImage = Quartz.Properties.Resources.icon_Setting;
-            Image leftImage = Quartz.Properties.Resources.UrlBoxLeftWhite;
-            Image rightImage = Quartz.Properties.Resources.UrlBoxRightWhite;
+            ////IMAGES
+            //Image backImage = Quartz.Properties.Resources.Left;
+            //Image forwardImage = Quartz.Properties.Resources.Right;
+            //Image houseImage = Quartz.Properties.Resources.icon_House;
+            //Image refreshImage = Quartz.Properties.Resources.Refresh;
+            //Image stopImage = Quartz.Properties.Resources.Stop;
+            //Image downloadImage = Quartz.Properties.Resources.download;
+            //Image favImage = Quartz.Properties.Resources.icon_Fav;
+            //Image settingsImage = Quartz.Properties.Resources.icon_Setting;
+            //Image leftImage = Quartz.Properties.Resources.UrlBoxLeft;
+            //Image rightImage = Quartz.Properties.Resources.UrlBoxRight;
 
-            //COLORS
-            Color mouseOver = Color.FromArgb(242, 242, 242);
-            Color PanelbackColor = Color.FromArgb(200, 200, 200);
-            Color PanelforeColor = Color.Black;
-            Color dividerColor = Color.FromArgb(219, 220, 221);
+            ////COLORS
+            //Color mouseOver = Color.FromArgb(242, 242, 242);
+            //Color PanelbackColor = Color.FromArgb(241, 243, 244);
+            //Color PanelforeColor = Color.Black;
+            //Color dividerColor = Color.FromArgb(219, 220, 221);
 
-            string theme = SettingsService.Get("Theme");
+            //string theme = SettingsService.Get("Theme");
 
-            if (theme == "dark")
-            {
-                //IMAGES
-                backImage = Quartz.Properties.Resources.DLeft;
-                forwardImage = Quartz.Properties.Resources.DRight;
-                houseImage = Quartz.Properties.Resources.Dicon_House;
-                refreshImage = Quartz.Properties.Resources.DRefresh;
-                stopImage = Quartz.Properties.Resources.DStop;
-                downloadImage = Quartz.Properties.Resources.Ddownload;
-                favImage = Quartz.Properties.Resources.Dicon_Fav;
-                settingsImage = Quartz.Properties.Resources.Dicon_Setting;
-                leftImage = Quartz.Properties.Resources.DUrlBoxLeftWhite;
-                rightImage = Quartz.Properties.Resources.DUrlBoxRightWhite;
+            //if (theme == "dark")
+            //{
+            //    //IMAGES
+            //    backImage = Quartz.Properties.Resources.DLeft;
+            //    forwardImage = Quartz.Properties.Resources.DRight;
+            //    houseImage = Quartz.Properties.Resources.Dicon_House;
+            //    refreshImage = Quartz.Properties.Resources.DRefresh;
+            //    stopImage = Quartz.Properties.Resources.DStop;
+            //    downloadImage = Quartz.Properties.Resources.Ddownload;
+            //    favImage = Quartz.Properties.Resources.Dicon_Fav;
+            //    settingsImage = Quartz.Properties.Resources.Dicon_Setting;
+            //    leftImage = Quartz.Properties.Resources.DUrlBoxLeftWhite;
+            //    rightImage = Quartz.Properties.Resources.DUrlBoxRightWhite;
 
-                //COLORS
-                mouseOver = Color.FromArgb(64, 64, 64);
-                PanelbackColor = Color.FromArgb(88, 88, 88);
-                PanelforeColor = Color.FromArgb(195, 195, 195);
-                dividerColor = Color.FromArgb(88, 88, 88);
-            }
-            if (theme == "black")
-            {
-                //IMAGES
-                backImage = Quartz.Properties.Resources.Black_Left;
-                forwardImage = Quartz.Properties.Resources.Black_Right;
-                houseImage = Quartz.Properties.Resources.Black_House;
-                refreshImage = Quartz.Properties.Resources.Black_Refresh;
-                stopImage = Quartz.Properties.Resources.Black_Stop;
-                downloadImage = Quartz.Properties.Resources.Black_Download;
-                favImage = Quartz.Properties.Resources.Black_Fav;
-                settingsImage = Quartz.Properties.Resources.Black_Settings;
-                leftImage = Quartz.Properties.Resources.Black_URL_Left;
-                rightImage = Quartz.Properties.Resources.Black_URL_Right;
+            //    //COLORS
+            //    mouseOver = Color.FromArgb(64, 64, 64);
+            //    PanelbackColor = Color.FromArgb(88, 88, 88);
+            //    PanelforeColor = Color.FromArgb(195, 195, 195);
+            //    dividerColor = Color.FromArgb(88, 88, 88);
+            //}
+            //if (theme == "black")
+            //{
+            //    //IMAGES
+            //    backImage = Quartz.Properties.Resources.Black_Left;
+            //    forwardImage = Quartz.Properties.Resources.Black_Right;
+            //    houseImage = Quartz.Properties.Resources.Black_House;
+            //    refreshImage = Quartz.Properties.Resources.Black_Refresh;
+            //    stopImage = Quartz.Properties.Resources.Black_Stop;
+            //    downloadImage = Quartz.Properties.Resources.Black_Download;
+            //    favImage = Quartz.Properties.Resources.Black_Fav;
+            //    settingsImage = Quartz.Properties.Resources.Black_Settings;
+            //    leftImage = Quartz.Properties.Resources.Black_URL_Left;
+            //    rightImage = Quartz.Properties.Resources.Black_URL_Right;
 
-                //COLORS
-                mouseOver = Color.FromArgb(18, 18, 18);
-                PanelbackColor = Color.White;
-                PanelforeColor = Color.Black;
-                dividerColor = Color.FromArgb(128, 128, 128);
-            }
-            if (theme == "aqua")
-            {
-                //IMAGES
-                backImage = Quartz.Properties.Resources.Aqua_Icon_Left;
-                forwardImage = Quartz.Properties.Resources.Aqua_Icon_Right;
-                houseImage = Quartz.Properties.Resources.Aqua_Home;
-                refreshImage = Quartz.Properties.Resources.Aqua_Refresh;
-                stopImage = Quartz.Properties.Resources.Aqua_Stop;
-                downloadImage = Quartz.Properties.Resources.Aqua_Download;
-                favImage = Quartz.Properties.Resources.Aqua_Fav;
-                settingsImage = Quartz.Properties.Resources.Aqua_Settings;
-                leftImage = Quartz.Properties.Resources.UrlBoxLeftWhiteAqua;
-                rightImage = Quartz.Properties.Resources.UrlBoxRightAqua;
+            //    //COLORS
+            //    mouseOver = Color.FromArgb(18, 18, 18);
+            //    PanelbackColor = Color.White;
+            //    PanelforeColor = Color.Black;
+            //    dividerColor = Color.FromArgb(128, 128, 128);
+            //}
+            //if (theme == "aqua")
+            //{
+            //    //IMAGES
+            //    backImage = Quartz.Properties.Resources.Aqua_Icon_Left;
+            //    forwardImage = Quartz.Properties.Resources.Aqua_Icon_Right;
+            //    houseImage = Quartz.Properties.Resources.Aqua_Home;
+            //    refreshImage = Quartz.Properties.Resources.Aqua_Refresh;
+            //    stopImage = Quartz.Properties.Resources.Aqua_Stop;
+            //    downloadImage = Quartz.Properties.Resources.Aqua_Download;
+            //    favImage = Quartz.Properties.Resources.Aqua_Fav;
+            //    settingsImage = Quartz.Properties.Resources.Aqua_Settings;
+            //    leftImage = Quartz.Properties.Resources.UrlBoxLeftWhiteAqua;
+            //    rightImage = Quartz.Properties.Resources.UrlBoxRightAqua;
 
-                //COLORS
-                mouseOver = Color.FromArgb(0, 238, 238);
-                PanelbackColor = Color.Blue;
-                PanelforeColor = Color.Aqua;
-                dividerColor = Color.Blue;
-            }
-            if (theme == "xmas")
-            {
-                //IMAGES
-                backImage = Quartz.Properties.Resources.XLeft;
-                forwardImage = Quartz.Properties.Resources.XRight;
-                houseImage = Quartz.Properties.Resources.Xicon_House;
-                refreshImage = Quartz.Properties.Resources.XRefresh;
-                stopImage = Quartz.Properties.Resources.XStop;
-                downloadImage = Quartz.Properties.Resources.Xdownload;
-                favImage = Quartz.Properties.Resources.Xicon_Fav;
-                settingsImage = Quartz.Properties.Resources.Xicon_Setting;
-                leftImage = Quartz.Properties.Resources.XUrlBoxLeft;
-                rightImage = Quartz.Properties.Resources.XUrlBoxRight;
+            //    //COLORS
+            //    mouseOver = Color.FromArgb(0, 238, 238);
+            //    PanelbackColor = Color.Blue;
+            //    PanelforeColor = Color.Aqua;
+            //    dividerColor = Color.Blue;
+            //}
+            //if (theme == "xmas")
+            //{
+            //    //IMAGES
+            //    backImage = Quartz.Properties.Resources.XLeft;
+            //    forwardImage = Quartz.Properties.Resources.XRight;
+            //    houseImage = Quartz.Properties.Resources.Xicon_House;
+            //    refreshImage = Quartz.Properties.Resources.XRefresh;
+            //    stopImage = Quartz.Properties.Resources.XStop;
+            //    downloadImage = Quartz.Properties.Resources.Xdownload;
+            //    favImage = Quartz.Properties.Resources.Xicon_Fav;
+            //    settingsImage = Quartz.Properties.Resources.Xicon_Setting;
+            //    leftImage = Quartz.Properties.Resources.XUrlBoxLeft;
+            //    rightImage = Quartz.Properties.Resources.XUrlBoxRight;
 
-                //COLORS
-                mouseOver = Color.FromArgb(229, 0, 0);
-                PanelbackColor = Color.Lime;
-                PanelforeColor = Color.Red;
-                dividerColor = Color.Lime;
-            }
+            //    //COLORS
+            //    mouseOver = Color.FromArgb(229, 0, 0);
+            //    PanelbackColor = Color.Lime;
+            //    PanelforeColor = Color.Red;
+            //    dividerColor = Color.Lime;
+            //}
 
 
-            //BUTTONS
-            btnBack.BackgroundImage = backImage;
-            btnBack.FlatAppearance.MouseOverBackColor = mouseOver;
-            btnBack.FlatAppearance.MouseDownBackColor = mouseOver;
-            btnBack.FlatAppearance.BorderColor = PanelforeColor;
+            ////BUTTONS
+            //btnBack.BackgroundImage = backImage;
+            //btnBack.FlatAppearance.MouseOverBackColor = mouseOver;
+            //btnBack.FlatAppearance.MouseDownBackColor = mouseOver;
+            //btnBack.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnForward.BackgroundImage = forwardImage;
-            btnForward.FlatAppearance.MouseOverBackColor = mouseOver;
-            btnForward.FlatAppearance.MouseDownBackColor = mouseOver;
-            btnForward.FlatAppearance.BorderColor = PanelforeColor;
+            //btnForward.BackgroundImage = forwardImage;
+            //btnForward.FlatAppearance.MouseOverBackColor = mouseOver;
+            //btnForward.FlatAppearance.MouseDownBackColor = mouseOver;
+            //btnForward.FlatAppearance.BorderColor = PanelforeColor;
 
-            //btnHome.BackgroundImage = houseImage;
-            //btnHome.FlatAppearance.MouseOverBackColor = mouseOver;
-            //btnHome.FlatAppearance.MouseDownBackColor = mouseOver;
-            //btnHome.FlatAppearance.BorderColor = PanelforeColor;
+            //btnRefresh.BackgroundImage = refreshImage;
+            //btnRefresh.FlatAppearance.MouseOverBackColor = mouseOver;
+            //btnRefresh.FlatAppearance.MouseDownBackColor = mouseOver;
+            //btnRefresh.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnRefresh.BackgroundImage = refreshImage;
-            btnRefresh.FlatAppearance.MouseOverBackColor = mouseOver;
-            btnRefresh.FlatAppearance.MouseDownBackColor = mouseOver;
-            btnRefresh.FlatAppearance.BorderColor = PanelforeColor;
+            //btnStop.BackgroundImage = stopImage;
+            //btnStop.FlatAppearance.MouseOverBackColor = mouseOver;
+            //btnStop.FlatAppearance.MouseDownBackColor = mouseOver;
+            //btnStop.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnStop.BackgroundImage = stopImage;
-            btnStop.FlatAppearance.MouseOverBackColor = mouseOver;
-            btnStop.FlatAppearance.MouseDownBackColor = mouseOver;
-            btnStop.FlatAppearance.BorderColor = PanelforeColor;
+            //btnDownload.BackgroundImage = downloadImage;
+            //btnDownload.FlatAppearance.MouseOverBackColor = mouseOver;
+            //btnDownload.FlatAppearance.MouseDownBackColor = mouseOver;
+            //btnDownload.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnDownload.BackgroundImage = downloadImage;
-            btnDownload.FlatAppearance.MouseOverBackColor = mouseOver;
-            btnDownload.FlatAppearance.MouseDownBackColor = mouseOver;
-            btnDownload.FlatAppearance.BorderColor = PanelforeColor;
+            //btnAddFavourite.BackgroundImage = favImage;
+            //btnAddFavourite.FlatAppearance.MouseOverBackColor = mouseOver;
+            //btnAddFavourite.FlatAppearance.MouseDownBackColor = mouseOver;
+            //btnAddFavourite.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnAddFavourite.BackgroundImage = favImage;
-            btnAddFavourite.FlatAppearance.MouseOverBackColor = mouseOver;
-            btnAddFavourite.FlatAppearance.MouseDownBackColor = mouseOver;
-            btnAddFavourite.FlatAppearance.BorderColor = PanelforeColor;
+            //btnSettings.BackgroundImage = settingsImage;
+            //btnSettings.FlatAppearance.MouseOverBackColor = mouseOver;
+            //btnSettings.FlatAppearance.MouseDownBackColor = mouseOver;
+            //btnSettings.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnSettings.BackgroundImage = settingsImage;
-            btnSettings.FlatAppearance.MouseOverBackColor = mouseOver;
-            btnSettings.FlatAppearance.MouseDownBackColor = mouseOver;
-            btnSettings.FlatAppearance.BorderColor = PanelforeColor;
+            ////PICTUREBOXS
+            //UrlLeft.BackgroundImage = leftImage;
 
-            //PICTUREBOXS
-            UrlLeft.BackgroundImage = leftImage;
+            //UrlBox.BackColor = PanelbackColor;
 
-            UrlBox.BackColor = PanelbackColor;
+            //UrlRight.BackgroundImage = rightImage;
 
-            UrlRight.BackgroundImage = rightImage;
+            ////PANNELS
+            //pnlDivider.BackColor = PanelbackColor;
 
-            //PANNELS
-            pnlDivider.BackColor = PanelbackColor;
+            //picFavicon.BackColor = PanelbackColor;
 
-            picFavicon.BackColor = PanelbackColor;
+            //pnlDivider.BackColor = dividerColor;
 
-            pnlDivider.BackColor = dividerColor;
+            ////TEXTBOXS
+            //txtWebAddress.BackColor = PanelbackColor;
+            //txtWebAddress.ForeColor = PanelforeColor;
 
-            //TEXTBOXS
-            txtWebAddress.BackColor = PanelbackColor;
-            txtWebAddress.ForeColor = PanelforeColor;
-
-            //MODERN THEME SYSTEM
-            NewControlThemeChanger.ChangeControlTheme(this);
-            NewControlThemeChanger.ChangeControlTheme(SettingsMenuStrip);
-            NewControlThemeChanger.ChangeControlTheme(mnuExperts);
-            NewControlThemeChanger.ChangeControlTheme(mnuHistory);
-            NewControlThemeChanger.ChangeControlTheme(mnuMenu);
-            NewControlThemeChanger.ChangeControlTheme(mnuUserData);
-            NewControlThemeChanger.ChangeControlTheme(mnuDownloadsDropDown);
-            NewControlThemeChanger.ChangeControlTheme(mnuHistory);
-            NewControlThemeChanger.ChangeControlTheme(mnuUserData);
-            NewControlThemeChanger.ChangeControlTheme(mnuSearch);
-            NewControlThemeChanger.ChangeControlTheme(wvWebView1);
-            NewControlThemeChanger.ChangeControlTheme(zoomToolStrip);
+            ////MODERN THEME SYSTEM
+            //NewControlThemeChanger.ChangeControlTheme(this);
+            //NewControlThemeChanger.ChangeControlTheme(SettingsMenuStrip);
+            //NewControlThemeChanger.ChangeControlTheme(mnuExperts);
+            //NewControlThemeChanger.ChangeControlTheme(mnuHistory);
+            //NewControlThemeChanger.ChangeControlTheme(mnuMenu);
+            //NewControlThemeChanger.ChangeControlTheme(mnuUserData);
+            //NewControlThemeChanger.ChangeControlTheme(mnuDownloadsDropDown);
+            //NewControlThemeChanger.ChangeControlTheme(mnuHistory);
+            //NewControlThemeChanger.ChangeControlTheme(mnuUserData);
+            //NewControlThemeChanger.ChangeControlTheme(mnuSearch);
+            //NewControlThemeChanger.ChangeControlTheme(wvWebView1);
+            //NewControlThemeChanger.ChangeControlTheme(zoomToolStrip);
 
         }
 
@@ -935,7 +930,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.3.1";
+            notifyIcon1.Text = "Quartz v2.4.0 Preview I";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -1558,122 +1553,122 @@ namespace Quartz
 
         private void btnBack_EnabledChanged(object sender, EventArgs e)
         {
-            var theme = SettingsService.Get("Theme");
-            if (theme == "light")
-            {
-                if (btnBack.Enabled)
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Left;
-                }
-                else
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.DLeft;
-                }
-            }
-            else if (theme == "dark")
-            {
-                if (btnBack.Enabled)
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.DLeft;
-                }
-                else
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Left;
-                }
-            }
-            else if (theme == "black")
-            {
-                if (btnBack.Enabled)
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Black_Left;
-                }
-                else
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Left;
-                }
-            }
-            else if (theme == "aqua")
-            {
-                if (btnBack.Enabled)
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Aqua_Icon_Left;
-                }
-                else
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Aqua_Left_Inactive;
-                }
-            }
-            else if (theme == "xmas")
-            {
-                if (btnBack.Enabled)
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.XLeft;
-                }
-                else
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.XLeft_disabled;
-                }
-            }
+            //var theme = SettingsService.Get("Theme");
+            //if (theme == "light")
+            //{
+            //    if (btnBack.Enabled)
+            //    {
+            //        btnBack.BackgroundImage = Quartz.Properties.Resources.Left;
+            //    }
+            //    else
+            //    {
+            //        btnBack.BackgroundImage = Quartz.Properties.Resources.DLeft;
+            //    }
+            //}
+            //else if (theme == "dark")
+            //{
+            //    if (btnBack.Enabled)
+            //    {
+            //        btnBack.BackgroundImage = Quartz.Properties.Resources.DLeft;
+            //    }
+            //    else
+            //    {
+            //        btnBack.BackgroundImage = Quartz.Properties.Resources.Left;
+            //    }
+            //}
+            //else if (theme == "black")
+            //{
+            //    if (btnBack.Enabled)
+            //    {
+            //        btnBack.BackgroundImage = Quartz.Properties.Resources.Black_Left;
+            //    }
+            //    else
+            //    {
+            //        btnBack.BackgroundImage = Quartz.Properties.Resources.Left;
+            //    }
+            //}
+            //else if (theme == "aqua")
+            //{
+            //    if (btnBack.Enabled)
+            //    {
+            //        btnBack.BackgroundImage = Quartz.Properties.Resources.Aqua_Icon_Left;
+            //    }
+            //    else
+            //    {
+            //        btnBack.BackgroundImage = Quartz.Properties.Resources.Aqua_Left_Inactive;
+            //    }
+            //}
+            //else if (theme == "xmas")
+            //{
+            //    if (btnBack.Enabled)
+            //    {
+            //        btnBack.BackgroundImage = Quartz.Properties.Resources.XLeft;
+            //    }
+            //    else
+            //    {
+            //        btnBack.BackgroundImage = Quartz.Properties.Resources.XLeft_disabled;
+            //    }
+            //}
         }
 
         private void btnForward_EnabledChanged(object sender, EventArgs e)
         {
-            var theme = SettingsService.Get("Theme");
-            if (theme == "light")
-            {
-                if (btnForward.Enabled)
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Right;
-                }
-                else
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.DRight;
-                }
-            }
-            else if (theme == "dark")
-            {
-                if (btnForward.Enabled)
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.DRight;
-                }
-                else
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Right;
-                }
-            }
-            else if (theme == "black")
-            {
-                if (btnForward.Enabled)
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Black_Right;
-                }
-                else
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Right;
-                }
-            }
-            else if (theme == "aqua")
-            {
-                if (btnForward.Enabled)
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Aqua_Icon_Right;
-                }
-                else
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Aqua_Right_Inactive;
-                }
-            }
-            else if (theme == "xmas")
-            {
-                if (btnForward.Enabled)
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.XRight;
-                }
-                else
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.XRight_disabled;
-                }
-            }
+            //var theme = SettingsService.Get("Theme");
+            //if (theme == "light")
+            //{
+            //    if (btnForward.Enabled)
+            //    {
+            //        btnForward.BackgroundImage = Quartz.Properties.Resources.Right;
+            //    }
+            //    else
+            //    {
+            //        btnForward.BackgroundImage = Quartz.Properties.Resources.DRight;
+            //    }
+            //}
+            //else if (theme == "dark")
+            //{
+            //    if (btnForward.Enabled)
+            //    {
+            //        btnForward.BackgroundImage = Quartz.Properties.Resources.DRight;
+            //    }
+            //    else
+            //    {
+            //        btnForward.BackgroundImage = Quartz.Properties.Resources.Right;
+            //    }
+            //}
+            //else if (theme == "black")
+            //{
+            //    if (btnForward.Enabled)
+            //    {
+            //        btnForward.BackgroundImage = Quartz.Properties.Resources.Black_Right;
+            //    }
+            //    else
+            //    {
+            //        btnForward.BackgroundImage = Quartz.Properties.Resources.Right;
+            //    }
+            //}
+            //else if (theme == "aqua")
+            //{
+            //    if (btnForward.Enabled)
+            //    {
+            //        btnForward.BackgroundImage = Quartz.Properties.Resources.Aqua_Icon_Right;
+            //    }
+            //    else
+            //    {
+            //        btnForward.BackgroundImage = Quartz.Properties.Resources.Aqua_Right_Inactive;
+            //    }
+            //}
+            //else if (theme == "xmas")
+            //{
+            //    if (btnForward.Enabled)
+            //    {
+            //        btnForward.BackgroundImage = Quartz.Properties.Resources.XRight;
+            //    }
+            //    else
+            //    {
+            //        btnForward.BackgroundImage = Quartz.Properties.Resources.XRight_disabled;
+            //    }
+            //}
         }
 
         private void wvWebView1_ZoomFactorChanged(object sender, EventArgs e)
@@ -2705,6 +2700,11 @@ namespace Quartz
                     LoadFavourites();
                 }
             }
+        }
+
+        private void UrlBox_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

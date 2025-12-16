@@ -106,10 +106,10 @@
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.UrlRight = new System.Windows.Forms.PictureBox();
             this.UrlBox = new System.Windows.Forms.PictureBox();
             this.UrlLeft = new System.Windows.Forms.PictureBox();
-            this.UrlRight = new System.Windows.Forms.PictureBox();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlDivider = new System.Windows.Forms.Panel();
             this.wvWebView1 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -128,9 +128,9 @@
             this.mnuUserData.SuspendLayout();
             this.mnuHistory.SuspendLayout();
             this.mnuExperts.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlLeft)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.wvWebView1)).BeginInit();
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
@@ -273,6 +273,7 @@
             this.locationToolStripMenuItem1,
             this.changeLocationToolStripMenuItem1});
             this.mnuDownloadsDropDown.Name = "mnuDownloadsDropDown";
+            this.mnuDownloadsDropDown.OwnerItem = this.downloadsToolStripMenuItem;
             resources.ApplyResources(this.mnuDownloadsDropDown, "mnuDownloadsDropDown");
             this.mnuDownloadsDropDown.TabStop = true;
             this.mnuDownloadsDropDown.Opening += new System.ComponentModel.CancelEventHandler(this.mnuDownloadsDropDown_Opening);
@@ -310,9 +311,8 @@
             // 
             this.btnForward.BackColor = System.Drawing.Color.Transparent;
             resources.ApplyResources(this.btnForward, "btnForward");
-            this.btnForward.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnForward.FlatAppearance.BorderSize = 0;
-            this.btnForward.ForeColor = System.Drawing.Color.White;
+            this.btnForward.Image = global::Quartz.Properties.Resources.arrow_forward_22dp_626368_FILL0_wght600_GRAD0_opsz24;
             this.btnForward.Name = "btnForward";
             this.btnForward.UseVisualStyleBackColor = false;
             this.btnForward.EnabledChanged += new System.EventHandler(this.btnForward_EnabledChanged);
@@ -321,23 +321,23 @@
             // wvLoadingProgress
             // 
             this.wvLoadingProgress.AllowExternalDrop = true;
-            this.wvLoadingProgress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.wvLoadingProgress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(243)))), ((int)(((byte)(244)))));
             this.wvLoadingProgress.CreationProperties = null;
             this.wvLoadingProgress.Cursor = System.Windows.Forms.Cursors.Default;
             this.wvLoadingProgress.DefaultBackgroundColor = System.Drawing.Color.Transparent;
             resources.ApplyResources(this.wvLoadingProgress, "wvLoadingProgress");
             this.wvLoadingProgress.Name = "wvLoadingProgress";
-            this.wvLoadingProgress.ZoomFactor = 1.2D;
+            this.wvLoadingProgress.ZoomFactor = 1D;
             // 
             // btnBack
             // 
             this.btnBack.BackColor = System.Drawing.Color.Transparent;
             resources.ApplyResources(this.btnBack, "btnBack");
-            this.btnBack.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnBack.FlatAppearance.BorderSize = 0;
             this.btnBack.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.btnBack.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btnBack.ForeColor = System.Drawing.Color.Transparent;
+            this.btnBack.Image = global::Quartz.Properties.Resources.arrow_back_22dp_626368_FILL0_wght600_GRAD0_opsz24;
             this.btnBack.Name = "btnBack";
             this.btnBack.UseVisualStyleBackColor = false;
             this.btnBack.EnabledChanged += new System.EventHandler(this.btnBack_EnabledChanged);
@@ -451,10 +451,9 @@
             // btnRefresh
             // 
             this.btnRefresh.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.btnRefresh, "btnRefresh");
-            this.btnRefresh.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnRefresh.FlatAppearance.BorderSize = 0;
-            this.btnRefresh.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.btnRefresh, "btnRefresh");
+            this.btnRefresh.Image = global::Quartz.Properties.Resources.refresh_22dp_626368_FILL0_wght500_GRAD0_opsz24_1_;
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
@@ -462,10 +461,10 @@
             // btnStop
             // 
             this.btnStop.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.btnStop, "btnStop");
-            this.btnStop.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnStop.FlatAppearance.BorderSize = 0;
+            resources.ApplyResources(this.btnStop, "btnStop");
             this.btnStop.ForeColor = System.Drawing.Color.Transparent;
+            this.btnStop.Image = global::Quartz.Properties.Resources.close_22dp_626368_FILL0_wght600_GRAD0_opsz24;
             this.btnStop.Name = "btnStop";
             this.btnStop.UseVisualStyleBackColor = false;
             this.btnStop.Click += new System.EventHandler(this.btnBack_Click);
@@ -473,27 +472,27 @@
             // pnlTop
             // 
             this.pnlTop.BackColor = System.Drawing.Color.Transparent;
-            this.pnlTop.Controls.Add(this.picFavicon);
             this.pnlTop.Controls.Add(this.wvLoadingProgress);
+            this.pnlTop.Controls.Add(this.picFavicon);
+            this.pnlTop.Controls.Add(this.btnRefresh);
             this.pnlTop.Controls.Add(this.pnlFavourites);
-            this.pnlTop.Controls.Add(this.txtWebAddress);
             this.pnlTop.Controls.Add(this.btnBack);
+            this.pnlTop.Controls.Add(this.txtWebAddress);
             this.pnlTop.Controls.Add(this.btnForward);
             this.pnlTop.Controls.Add(this.btnSettings);
             this.pnlTop.Controls.Add(this.btnDownload);
             this.pnlTop.Controls.Add(this.btnAddFavourite);
-            this.pnlTop.Controls.Add(this.btnStop);
-            this.pnlTop.Controls.Add(this.UrlBox);
-            this.pnlTop.Controls.Add(this.btnRefresh);
-            this.pnlTop.Controls.Add(this.UrlLeft);
             this.pnlTop.Controls.Add(this.UrlRight);
+            this.pnlTop.Controls.Add(this.UrlBox);
+            this.pnlTop.Controls.Add(this.UrlLeft);
+            this.pnlTop.Controls.Add(this.btnStop);
             resources.ApplyResources(this.pnlTop, "pnlTop");
             this.pnlTop.ForeColor = System.Drawing.Color.Transparent;
             this.pnlTop.Name = "pnlTop";
             // 
             // picFavicon
             // 
-            this.picFavicon.BackColor = System.Drawing.Color.Transparent;
+            this.picFavicon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(243)))), ((int)(((byte)(244)))));
             resources.ApplyResources(this.picFavicon, "picFavicon");
             this.picFavicon.Name = "picFavicon";
             this.picFavicon.TabStop = false;
@@ -512,7 +511,7 @@
             // txtWebAddress
             // 
             resources.ApplyResources(this.txtWebAddress, "txtWebAddress");
-            this.txtWebAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.txtWebAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(243)))), ((int)(((byte)(244)))));
             this.txtWebAddress.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtWebAddress.ContextMenuStrip = this.mnuSearch;
             this.txtWebAddress.DetectUrls = false;
@@ -559,6 +558,7 @@
             this.restartToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.SettingsMenuStrip.Name = "SettingsMenuStrip";
+            this.SettingsMenuStrip.OwnerItem = this.toolStripMenuItem1;
             this.SettingsMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             resources.ApplyResources(this.SettingsMenuStrip, "SettingsMenuStrip");
             this.SettingsMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.SettingsMenuStrip_Opening);
@@ -599,6 +599,7 @@
             this.toolStripSeparator6,
             this.resetToolStripMenuItem1});
             this.mnuUserData.Name = "mnuUserData";
+            this.mnuUserData.OwnerItem = this.userDataToolStripMenuItem;
             resources.ApplyResources(this.mnuUserData, "mnuUserData");
             this.mnuUserData.Opening += new System.ComponentModel.CancelEventHandler(this.mnuUserData_Opening);
             // 
@@ -632,6 +633,7 @@
             this.historyToolStripMenuItem1,
             this.toolStripSeparator10});
             this.mnuHistory.Name = "mnuHistory";
+            this.mnuHistory.OwnerItem = this.historyToolStripMenuItem;
             resources.ApplyResources(this.mnuHistory, "mnuHistory");
             this.mnuHistory.Opening += new System.ComponentModel.CancelEventHandler(this.mnuHistory_Opening);
             // 
@@ -663,6 +665,7 @@
             this.inspectToolStripMenuItem,
             this.webview2TaskManagerToolStripMenuItem});
             this.mnuExperts.Name = "mnuExperts";
+            this.mnuExperts.OwnerItem = this.expertsToolStripMenuItem;
             resources.ApplyResources(this.mnuExperts, "mnuExperts");
             this.mnuExperts.Opening += new System.ComponentModel.CancelEventHandler(this.mnuExperts_Opening);
             // 
@@ -731,32 +734,35 @@
             resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // UrlBox
-            // 
-            resources.ApplyResources(this.UrlBox, "UrlBox");
-            this.UrlBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.UrlBox.Name = "UrlBox";
-            this.UrlBox.TabStop = false;
-            // 
-            // UrlLeft
-            // 
-            this.UrlLeft.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.UrlLeft, "UrlLeft");
-            this.UrlLeft.Name = "UrlLeft";
-            this.UrlLeft.TabStop = false;
-            // 
-            // UrlRight
-            // 
-            resources.ApplyResources(this.UrlRight, "UrlRight");
-            this.UrlRight.BackColor = System.Drawing.Color.Transparent;
-            this.UrlRight.Name = "UrlRight";
-            this.UrlRight.TabStop = false;
-            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.DropDown = this.SettingsMenuStrip;
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
+            // 
+            // UrlRight
+            // 
+            resources.ApplyResources(this.UrlRight, "UrlRight");
+            this.UrlRight.BackColor = System.Drawing.Color.Transparent;
+            this.UrlRight.BackgroundImage = global::Quartz.Properties.Resources.UrlBoxRight;
+            this.UrlRight.Name = "UrlRight";
+            this.UrlRight.TabStop = false;
+            // 
+            // UrlBox
+            // 
+            resources.ApplyResources(this.UrlBox, "UrlBox");
+            this.UrlBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(243)))), ((int)(((byte)(244)))));
+            this.UrlBox.Name = "UrlBox";
+            this.UrlBox.TabStop = false;
+            this.UrlBox.Click += new System.EventHandler(this.UrlBox_Click);
+            // 
+            // UrlLeft
+            // 
+            this.UrlLeft.BackColor = System.Drawing.Color.Transparent;
+            this.UrlLeft.BackgroundImage = global::Quartz.Properties.Resources.UrlBoxLeft;
+            resources.ApplyResources(this.UrlLeft, "UrlLeft");
+            this.UrlLeft.Name = "UrlLeft";
+            this.UrlLeft.TabStop = false;
             // 
             // pnlDivider
             // 
@@ -836,9 +842,9 @@
             this.mnuUserData.ResumeLayout(false);
             this.mnuHistory.ResumeLayout(false);
             this.mnuExperts.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlLeft)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.wvWebView1)).EndInit();
             this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);

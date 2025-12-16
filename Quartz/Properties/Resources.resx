@@ -118,8 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="AddHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AddHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_88" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-88.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_30" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Tabs_Center" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Tabs_Center.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -130,8 +133,8 @@
   <data name="QuestionIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\QuestionIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="B_CloseHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\B_CloseHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_18" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-18.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Aqua_InactiveRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_InactiveRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -139,23 +142,50 @@
   <data name="Close" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="favicon16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\16.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="UrlBoxRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UrlBoxRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="favicon16_bera" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\favicon16_bera.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_9" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-9.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_84" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-84.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Tabs_Right" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Tabs_Right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_72" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-72.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Center" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Center.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_57" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-57.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-10.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Black_Settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Black_Settings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="search_16dp_0000FF_FILL0_wght400_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search_16dp_0000FF_FILL0_wght400_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_37" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-37.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SnowFall1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SnowFall1.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Easter" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Easter.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_95" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-95.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UrlBoxRightWhite" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UrlBoxRightWhite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -175,6 +205,12 @@
   <data name="Background" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_31" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-31.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Aqua_Download" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_Download.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -184,20 +220,47 @@
   <data name="Refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_74" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-74.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_58" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-58.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="InformationIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\InformationIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_91" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-91.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Quartz32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Quartz32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_70" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-70.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_94" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-94.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Aqua_Home" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_Home.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Blue_CloseHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Blue_CloseHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="pngimg_com___confetti_PNG87006" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pngimg.com - confetti_PNG87006.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Aqua_Fav" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Aqua_Fav.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_75" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-75.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_46" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-46.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_76" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-76.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="B_InactiveRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\B_InactiveRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -205,14 +268,32 @@
   <data name="Quartz" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Quartz.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_41" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-41.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_8" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-8.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="close_22dp_626368_FILL0_wght600_GRAD0_opsz24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\close_22dp_626368_FILL0_wght600_GRAD0_opsz24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_96" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-96.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="XRight_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XRight_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Xicon_Fav" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Xicon-Fav.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_82" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-82.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UrlBoxLeftWhite" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UrlBoxLeftWhite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="search_16dp_FFFFFF_FILL0_wght400_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search_16dp_FFFFFF_FILL0_wght400_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_73" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-73.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_28" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-28.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Aqua_Icon_Left" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_Icon_Left.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -220,8 +301,23 @@
   <data name="CloseHover_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CloseHover_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_92" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-92.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_83" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-83.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="InactiveRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\InactiveRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_89" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-89.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow_forward_22dp_626368_FILL0_wght600_GRAD0_opsz24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrow_forward_22dp_626368_FILL0_wght600_GRAD0_opsz24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Cross1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Cross.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -232,8 +328,14 @@
   <data name="B_InactiveLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\B_InactiveLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="UrlBoxRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\UrlBoxRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="refresh_22dp_626368_FILL0_wght600_GRAD0_opsz24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh_22dp_626368_FILL0_wght600_GRAD0_opsz24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_71" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-71.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="XUrlBoxLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XUrlBoxLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -241,11 +343,26 @@
   <data name="Black_URL_Right" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Black_URL_Right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="AddHover_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AddHover_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Aqua_InactiveLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Aqua_InactiveLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="xmas16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\16_3.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CloseHover_xmas_lime" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CloseHover_xmas_lime.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_90" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-90.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_80" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-80.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Aqua_Refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_Refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -253,11 +370,17 @@
   <data name="Cross" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Cross.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_13" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-13.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="XLeft_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XLeft_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="DRefresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DRefresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Black_Download" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Black_Download.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Tabs_AddHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Tabs_AddHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -274,23 +397,56 @@
   <data name="WarningIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\WarningIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Tabs_Add" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Tabs_Add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_29" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-29.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="B_InactiveCenter" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\B_InactiveCenter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_38" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-38.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="search_16dp_555753_FILL0_wght400_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search_16dp_555753_FILL0_wght400_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="InactiveRightNoDivider_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\InactiveRightNoDivider_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Tabs_InactiveRightNoDivider" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Tabs_InactiveRightNoDivider.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Beta" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Beta.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_68" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-68.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UrlBoxLeftWhiteAqua" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UrlBoxLeftWhiteAqua.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="arrow_back_22dp_626368_FILL0_wght600_GRAD0_opsz24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrow_back_22dp_626368_FILL0_wght600_GRAD0_opsz24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_97" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-97.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_35" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-35.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow_back_22dp_626368_FILL0_wght600_GRAD0_opsz241" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrow_back_22dp_626368_FILL0_wght600_GRAD0_opsz241.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Close_xmas_lime" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Close_xmas_lime.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="favicon16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\16.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Aqua_Add" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_Add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="refresh_22dp_626365_FILL0_wght700_GRAD0_opsz24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh_22dp_626365_FILL0_wght700_GRAD0_opsz24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="B_InactiveRightNoDivider" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\B_InactiveRightNoDivider.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -301,11 +457,17 @@
   <data name="icon_Setting" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon-Setting.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_55" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-55.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="refresh_21dp_626368_FILL0_wght600_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh_21dp_626368_FILL0_wght600_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="DLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Dicon_House" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Dicon-House.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Aqua_Fav" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Aqua_Fav.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Aqua_InactiveRightNoDivider" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_InactiveRightNoDivider.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -316,11 +478,20 @@
   <data name="ErrorIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ErrorIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_12" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-12.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_54" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-54.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Aqua_Left_Inactive" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_Left_Inactive.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Aqua_CloseHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Aqua_CloseHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Black_Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Black_Stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -334,14 +505,35 @@
   <data name="XRefresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XRefresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_78" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-78.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_40" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-40.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="birthday16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\16_2.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="XStop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XStop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="xmas16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\16_3.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_62" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-62.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DUrlBoxLeftWhite" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DUrlBoxLeftWhite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="search_16dp_00FF00_FILL0_wght400_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search_16dp_00FF00_FILL0_wght400_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_14" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-14.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_36" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-36.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Tabs_Background" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Tabs_Background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -358,8 +550,11 @@
   <data name="Easter1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Easter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icon_Fav" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon-Fav.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_66" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-66.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_67" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-67.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Aqua_Left" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_Left.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -367,11 +562,17 @@
   <data name="Aqua_" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_39" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-39.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Black_Refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Black_Refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Tabs_CloseHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Tabs_CloseHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="B_Right" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\B_Right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AddHover_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AddHover_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="UrlBoxRightAqua" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UrlBoxRightAqua.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -382,8 +583,20 @@
   <data name="Xclose" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Xclose.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_47" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-47.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_33" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-33.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="B_Close" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\B_Close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UrlBoxLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UrlBoxLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_60" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-60.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Aqua_Background" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_Background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -400,6 +613,18 @@
   <data name="Tabs_InactiveLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Tabs_InactiveLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Xicon_Fav" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Xicon-Fav.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_65" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-65.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="search_16dp_C3C3C3_FILL0_wght400_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search_16dp_C3C3C3_FILL0_wght400_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_44" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-44.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Black_House" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Black_House.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -409,8 +634,8 @@
   <data name="Left_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Left_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Tabs_InactiveRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Tabs_InactiveRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_56" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Right_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Right_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -418,20 +643,41 @@
   <data name="B_AddHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\B_AddHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_93" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-93.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Black_Left" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Black_Left.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="easter16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\16_5.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="B_Right" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\B_Right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DUrlBoxRightWhite" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DUrlBoxRightWhite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_23" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-23.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="InactiveRight_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\InactiveRight_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_63" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-63.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Black_Fav" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Black_Fav.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tabs_Add" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tabs_Add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_22" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Aqua_Center" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_Center.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -439,26 +685,62 @@
   <data name="icon_House" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon-House.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="refresh_22dp_626368_FILL0_wght600_GRAD0_opsz241" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh_22dp_626368_FILL0_wght600_GRAD0_opsz241.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="favicon_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\favicon_xmas.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Black_Download" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Black_Download.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_26" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-26.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_34" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-34.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Aqua_InactiveLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Aqua_InactiveLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Xicon_Setting" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Xicon-Setting.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Black_Right" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Black_Right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_15" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-15.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DRefresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DRefresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Birthday_Quartz1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Birthday Quartz.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Aqua_Icon_Right" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Aqua_Icon_Right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="icon_Fav" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon-Fav.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_79" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-79.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Blue_Close" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Blue_Close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blank" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\blank.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Aqua_InactiveCenter" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_InactiveCenter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Black_Refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Black_Refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Tabs_InactiveRightNoDivider" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tabs_InactiveRightNoDivider.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Dicon_House" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Dicon-House.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_52" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-52.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Right" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -466,23 +748,44 @@
   <data name="Xdownload" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Xdownload.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_25" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-25.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Tabs_CloseHoverInactive" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Tabs_CloseHoverInactive.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_49" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-49.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Dicon_Fav" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Dicon-Fav.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_17" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-17.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_21" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-21.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_77" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-77.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_43" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-43.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="InactiveCenter" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\InactiveCenter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SnowFall2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SnowFall2.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_85" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-85.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="B_Left" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\B_Left.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Aqua_AddHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_AddHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tabs_InactiveRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tabs_InactiveRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Birthday_Quartz" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Birthday Quartz.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -493,11 +796,41 @@
   <data name="XRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="AddHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AddHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_42" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow_forward_21dp_1F1F1F_FILL0_wght700_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrow_forward_21dp_1F1F1F_FILL0_wght700_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_81" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-81.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_19" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-19.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnowFall2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SnowFall2.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Aqua_Icon_Right" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Aqua_Icon_Right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_87" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-87.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Quartz_Xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Quartz Xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frame_61" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-61.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="CloseHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CloseHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="easter16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\16_5.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Aqua_Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Aqua_Stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -505,379 +838,79 @@
   <data name="Center_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Center_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Add_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Add_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Aqua_Settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Aqua_Settings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="TLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="download" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\download.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Dicon_Setting" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Dicon-Setting.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Black_Right" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Black_Right.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="XLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\XLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="InactiveLeft_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\InactiveLeft_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="B_Close" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\B_Close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Aqua_CloseHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Aqua_CloseHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="favicon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\favicon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Aqua_Right_Inactive" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Aqua_Right_Inactive.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="blank" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\blank.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="birthday16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\16_2.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="goodFriday16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\16_4.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="search_16dp_0000FF_FILL0_wght400_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search_16dp_0000FF_FILL0_wght400_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="search_16dp_00FF00_FILL0_wght400_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search_16dp_00FF00_FILL0_wght400_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="search_16dp_555753_FILL0_wght400_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search_16dp_555753_FILL0_wght400_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="search_16dp_C3C3C3_FILL0_wght400_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search_16dp_C3C3C3_FILL0_wght400_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="search_16dp_FFFFFF_FILL0_wght400_GRAD0_opsz20" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search_16dp_FFFFFF_FILL0_wght400_GRAD0_opsz20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Beta" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Beta.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="favicon16_bera" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\favicon16_bera.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_86" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-86.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="favicon_beta" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\favicon_beta.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CloseHover_xmas_lime" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CloseHover_xmas_lime.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Close_xmas_lime" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Close_xmas_lime.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_10" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-10.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_11" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_12" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-12.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_13" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-13.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_14" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-14.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_15" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-15.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_17" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-17.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_18" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-18.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_19" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-19.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_20" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_21" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-21.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_22" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_23" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-23.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_25" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-25.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_26" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-26.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_27" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-27.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_28" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-28.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_29" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-29.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_30" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_31" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-31.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_33" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-33.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_34" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-34.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_35" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-35.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_36" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-36.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_37" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-37.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_38" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-38.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_39" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-39.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_40" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-40.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_41" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-41.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_42" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_43" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-43.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_44" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-44.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_45" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-45.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_46" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-46.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_47" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-47.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_49" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-49.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_5" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_50" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_51" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-51.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_52" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-52.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_53" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-53.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_54" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-54.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_55" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-55.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_56" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_57" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-57.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_58" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-58.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_59" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-59.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_60" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-60.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_61" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-61.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_62" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-62.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_63" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-63.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_64" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_65" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-65.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_66" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-66.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_67" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-67.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_68" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-68.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_69" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-69.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Add_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Add_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="frame_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\frame-7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_70" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-70.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_45" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-45.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_71" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-71.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="TLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_72" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-72.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="UrlBoxLeftWhite" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\UrlBoxLeftWhite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_73" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-73.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_74" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-74.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Dicon_Setting" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Dicon-Setting.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_75" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-75.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="goodFriday16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\16_4.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_76" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-76.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="B_CloseHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\B_CloseHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_77" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-77.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="XLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\XLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_78" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-78.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_27" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-27.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_79" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-79.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="InactiveLeft_xmas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\InactiveLeft_xmas.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_8" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-8.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_80" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-80.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_59" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-59.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_81" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-81.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Aqua_Settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Aqua_Settings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_82" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-82.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="download" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\download.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_83" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-83.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_69" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-69.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="frame_84" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-84.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_85" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-85.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_86" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-86.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_87" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-87.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_88" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-88.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_89" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-89.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_9" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-9.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_90" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-90.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_91" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-91.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_92" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-92.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_93" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-93.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_94" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-94.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_95" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-95.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_96" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-96.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frame_97" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frame-97.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="favicon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\favicon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="frame_98" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\frame-98.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Blue_Close" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Blue_Close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="frame_51" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-51.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Blue_CloseHover" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Blue_CloseHover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Aqua_Right_Inactive" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Aqua_Right_Inactive.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frame_53" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frame-53.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="refresh_22dp_626368_FILL0_wght500_GRAD0_opsz24(1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh_22dp_626368_FILL0_wght500_GRAD0_opsz24(1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
