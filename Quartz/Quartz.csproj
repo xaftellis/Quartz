@@ -709,6 +709,15 @@
     <None Include="Resources\refresh_21dp_626368_FILL0_wght600_GRAD0_opsz20.png" />
     <None Include="Resources\refresh_22dp_626368_FILL0_wght600_GRAD0_opsz241.png" />
     <None Include="Resources\refresh_22dp_626368_FILL0_wght500_GRAD0_opsz24%281%29.png" />
+    <None Include="Resources\star_22dp_626368_FILL0_wght600_GRAD0_opsz24.png" />
+    <None Include="Resources\star_22dp_626368_FILL0_wght500_GRAD0_opsz24.png" />
+    <None Include="Resources\star_21dp_626368_FILL0_wght500_GRAD0_opsz20.png" />
+    <None Include="Resources\star_20dp_626368_FILL0_wght500_GRAD0_opsz20.png" />
+    <None Include="Resources\star_20dp_626368_FILL0_wght400_GRAD0_opsz20.png" />
+    <None Include="Resources\more_vert_22dp_626368_FILL0_wght500_GRAD0_opsz24.png" />
+    <None Include="Resources\more_vert_22dp_626368_FILL0_wght600_GRAD0_opsz24.png" />
+    <None Include="Resources\more_vert_20dp_626368_FILL0_wght500_GRAD0_opsz20.png" />
+    <None Include="Resources\more_vert_20dp_626368_FILL0_wght600_GRAD0_opsz20.png" />
     <Content Include="Resources\XLeft_disabled.png" />
     <None Include="Resources\Xmas Quartz %2816%29.ico" />
     <None Include="Resources\Xmas Quartz.ico" />

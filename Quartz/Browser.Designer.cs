@@ -259,7 +259,6 @@
             // 
             resources.ApplyResources(this.btnDownload, "btnDownload");
             this.btnDownload.BackColor = System.Drawing.Color.Transparent;
-            this.btnDownload.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnDownload.FlatAppearance.BorderSize = 0;
             this.btnDownload.ForeColor = System.Drawing.Color.White;
             this.btnDownload.Name = "btnDownload";
@@ -299,10 +298,9 @@
             // btnAddFavourite
             // 
             resources.ApplyResources(this.btnAddFavourite, "btnAddFavourite");
-            this.btnAddFavourite.BackColor = System.Drawing.Color.Transparent;
-            this.btnAddFavourite.Cursor = System.Windows.Forms.Cursors.Default;
+            this.btnAddFavourite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(243)))), ((int)(((byte)(244)))));
             this.btnAddFavourite.FlatAppearance.BorderSize = 0;
-            this.btnAddFavourite.ForeColor = System.Drawing.Color.White;
+            this.btnAddFavourite.Image = global::Quartz.Properties.Resources.star_20dp_626368_FILL0_wght400_GRAD0_opsz20;
             this.btnAddFavourite.Name = "btnAddFavourite";
             this.btnAddFavourite.UseVisualStyleBackColor = false;
             this.btnAddFavourite.Click += new System.EventHandler(this.btnAddFavourite_Click);
@@ -480,12 +478,12 @@
             this.pnlTop.Controls.Add(this.txtWebAddress);
             this.pnlTop.Controls.Add(this.btnForward);
             this.pnlTop.Controls.Add(this.btnSettings);
-            this.pnlTop.Controls.Add(this.btnDownload);
             this.pnlTop.Controls.Add(this.btnAddFavourite);
             this.pnlTop.Controls.Add(this.UrlRight);
             this.pnlTop.Controls.Add(this.UrlBox);
             this.pnlTop.Controls.Add(this.UrlLeft);
             this.pnlTop.Controls.Add(this.btnStop);
+            this.pnlTop.Controls.Add(this.btnDownload);
             resources.ApplyResources(this.pnlTop, "pnlTop");
             this.pnlTop.ForeColor = System.Drawing.Color.Transparent;
             this.pnlTop.Name = "pnlTop";
@@ -527,9 +525,9 @@
             resources.ApplyResources(this.btnSettings, "btnSettings");
             this.btnSettings.BackColor = System.Drawing.Color.Transparent;
             this.btnSettings.ContextMenuStrip = this.SettingsMenuStrip;
-            this.btnSettings.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnSettings.FlatAppearance.BorderSize = 0;
             this.btnSettings.ForeColor = System.Drawing.Color.White;
+            this.btnSettings.Image = global::Quartz.Properties.Resources.more_vert_20dp_626368_FILL0_wght600_GRAD0_opsz20;
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.UseVisualStyleBackColor = false;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);

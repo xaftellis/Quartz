@@ -2133,6 +2133,46 @@ namespace Quartz.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap more_vert_20dp_626368_FILL0_wght500_GRAD0_opsz20 {
+            get {
+                object obj = ResourceManager.GetObject("more_vert_20dp_626368_FILL0_wght500_GRAD0_opsz20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap more_vert_20dp_626368_FILL0_wght600_GRAD0_opsz20 {
+            get {
+                object obj = ResourceManager.GetObject("more_vert_20dp_626368_FILL0_wght600_GRAD0_opsz20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap more_vert_22dp_626368_FILL0_wght500_GRAD0_opsz24 {
+            get {
+                object obj = ResourceManager.GetObject("more_vert_22dp_626368_FILL0_wght500_GRAD0_opsz24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap more_vert_22dp_626368_FILL0_wght600_GRAD0_opsz24 {
+            get {
+                object obj = ResourceManager.GetObject("more_vert_22dp_626368_FILL0_wght600_GRAD0_opsz24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap pngimg_com___confetti_PNG87006 {
             get {
                 object obj = ResourceManager.GetObject("pngimg_com___confetti_PNG87006", resourceCulture);
@@ -2336,6 +2376,56 @@ namespace Quartz.Properties {
         public static System.Drawing.Bitmap SnowFall2 {
             get {
                 object obj = ResourceManager.GetObject("SnowFall2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap star_20dp_626368_FILL0_wght400_GRAD0_opsz20 {
+            get {
+                object obj = ResourceManager.GetObject("star_20dp_626368_FILL0_wght400_GRAD0_opsz20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap star_20dp_626368_FILL0_wght500_GRAD0_opsz20 {
+            get {
+                object obj = ResourceManager.GetObject("star_20dp_626368_FILL0_wght500_GRAD0_opsz20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap star_21dp_626368_FILL0_wght500_GRAD0_opsz20 {
+            get {
+                object obj = ResourceManager.GetObject("star_21dp_626368_FILL0_wght500_GRAD0_opsz20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap star_22dp_626368_FILL0_wght500_GRAD0_opsz24 {
+            get {
+                object obj = ResourceManager.GetObject("star_22dp_626368_FILL0_wght500_GRAD0_opsz24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap star_22dp_626368_FILL0_wght600_GRAD0_opsz24 {
+            get {
+                object obj = ResourceManager.GetObject("star_22dp_626368_FILL0_wght600_GRAD0_opsz24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
