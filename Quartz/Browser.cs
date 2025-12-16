@@ -178,7 +178,7 @@ namespace Quartz
 
         public void LoadTheme()
         {
-            ////IMAGES
+            //IMAGES
             //Image backImage = Quartz.Properties.Resources.Left;
             //Image forwardImage = Quartz.Properties.Resources.Right;
             //Image houseImage = Quartz.Properties.Resources.icon_House;
@@ -190,163 +190,163 @@ namespace Quartz
             //Image leftImage = Quartz.Properties.Resources.UrlBoxLeft;
             //Image rightImage = Quartz.Properties.Resources.UrlBoxRight;
 
-            ////COLORS
-            //Color mouseOver = Color.FromArgb(242, 242, 242);
-            //Color PanelbackColor = Color.FromArgb(241, 243, 244);
-            //Color PanelforeColor = Color.Black;
-            //Color dividerColor = Color.FromArgb(219, 220, 221);
+            //COLORS
+            Color mouseOver = Color.FromArgb(242, 242, 242);
+            Color PanelbackColor = Color.FromArgb(241, 243, 244);
+            Color PanelforeColor = Color.Black;
+            Color dividerColor = Color.FromArgb(219, 220, 221);
 
-            //string theme = SettingsService.Get("Theme");
+            string theme = SettingsService.Get("Theme");
 
-            //if (theme == "dark")
-            //{
-            //    //IMAGES
-            //    backImage = Quartz.Properties.Resources.DLeft;
-            //    forwardImage = Quartz.Properties.Resources.DRight;
-            //    houseImage = Quartz.Properties.Resources.Dicon_House;
-            //    refreshImage = Quartz.Properties.Resources.DRefresh;
-            //    stopImage = Quartz.Properties.Resources.DStop;
-            //    downloadImage = Quartz.Properties.Resources.Ddownload;
-            //    favImage = Quartz.Properties.Resources.Dicon_Fav;
-            //    settingsImage = Quartz.Properties.Resources.Dicon_Setting;
-            //    leftImage = Quartz.Properties.Resources.DUrlBoxLeftWhite;
-            //    rightImage = Quartz.Properties.Resources.DUrlBoxRightWhite;
+            if (theme == "dark")
+            {
+                //IMAGES
+                //backImage = Quartz.Properties.Resources.DLeft;
+                //forwardImage = Quartz.Properties.Resources.DRight;
+                //houseImage = Quartz.Properties.Resources.Dicon_House;
+                //refreshImage = Quartz.Properties.Resources.DRefresh;
+                //stopImage = Quartz.Properties.Resources.DStop;
+                //downloadImage = Quartz.Properties.Resources.Ddownload;
+                //favImage = Quartz.Properties.Resources.Dicon_Fav;
+                //settingsImage = Quartz.Properties.Resources.Dicon_Setting;
+                //leftImage = Quartz.Properties.Resources.DUrlBoxLeftWhite;
+                //rightImage = Quartz.Properties.Resources.DUrlBoxRightWhite;
 
-            //    //COLORS
-            //    mouseOver = Color.FromArgb(64, 64, 64);
-            //    PanelbackColor = Color.FromArgb(88, 88, 88);
-            //    PanelforeColor = Color.FromArgb(195, 195, 195);
-            //    dividerColor = Color.FromArgb(88, 88, 88);
-            //}
-            //if (theme == "black")
-            //{
-            //    //IMAGES
-            //    backImage = Quartz.Properties.Resources.Black_Left;
-            //    forwardImage = Quartz.Properties.Resources.Black_Right;
-            //    houseImage = Quartz.Properties.Resources.Black_House;
-            //    refreshImage = Quartz.Properties.Resources.Black_Refresh;
-            //    stopImage = Quartz.Properties.Resources.Black_Stop;
-            //    downloadImage = Quartz.Properties.Resources.Black_Download;
-            //    favImage = Quartz.Properties.Resources.Black_Fav;
-            //    settingsImage = Quartz.Properties.Resources.Black_Settings;
-            //    leftImage = Quartz.Properties.Resources.Black_URL_Left;
-            //    rightImage = Quartz.Properties.Resources.Black_URL_Right;
+                //COLORS
+                mouseOver = Color.FromArgb(64, 64, 64);
+                PanelbackColor = Color.FromArgb(88, 88, 88);
+                PanelforeColor = Color.FromArgb(195, 195, 195);
+                dividerColor = Color.FromArgb(88, 88, 88);
+            }
+            if (theme == "black")
+            {
+                //IMAGES
+                //backImage = Quartz.Properties.Resources.Black_Left;
+                //forwardImage = Quartz.Properties.Resources.Black_Right;
+                //houseImage = Quartz.Properties.Resources.Black_House;
+                //refreshImage = Quartz.Properties.Resources.Black_Refresh;
+                //stopImage = Quartz.Properties.Resources.Black_Stop;
+                //downloadImage = Quartz.Properties.Resources.Black_Download;
+                //favImage = Quartz.Properties.Resources.Black_Fav;
+                //settingsImage = Quartz.Properties.Resources.Black_Settings;
+                //leftImage = Quartz.Properties.Resources.Black_URL_Left;
+                //rightImage = Quartz.Properties.Resources.Black_URL_Right;
 
-            //    //COLORS
-            //    mouseOver = Color.FromArgb(18, 18, 18);
-            //    PanelbackColor = Color.White;
-            //    PanelforeColor = Color.Black;
-            //    dividerColor = Color.FromArgb(128, 128, 128);
-            //}
-            //if (theme == "aqua")
-            //{
-            //    //IMAGES
-            //    backImage = Quartz.Properties.Resources.Aqua_Icon_Left;
-            //    forwardImage = Quartz.Properties.Resources.Aqua_Icon_Right;
-            //    houseImage = Quartz.Properties.Resources.Aqua_Home;
-            //    refreshImage = Quartz.Properties.Resources.Aqua_Refresh;
-            //    stopImage = Quartz.Properties.Resources.Aqua_Stop;
-            //    downloadImage = Quartz.Properties.Resources.Aqua_Download;
-            //    favImage = Quartz.Properties.Resources.Aqua_Fav;
-            //    settingsImage = Quartz.Properties.Resources.Aqua_Settings;
-            //    leftImage = Quartz.Properties.Resources.UrlBoxLeftWhiteAqua;
-            //    rightImage = Quartz.Properties.Resources.UrlBoxRightAqua;
+                //COLORS
+                mouseOver = Color.FromArgb(18, 18, 18);
+                PanelbackColor = Color.White;
+                PanelforeColor = Color.Black;
+                dividerColor = Color.FromArgb(128, 128, 128);
+            }
+            if (theme == "aqua")
+            {
+                //IMAGES
+                //backImage = Quartz.Properties.Resources.Aqua_Icon_Left;
+                //forwardImage = Quartz.Properties.Resources.Aqua_Icon_Right;
+                //houseImage = Quartz.Properties.Resources.Aqua_Home;
+                //refreshImage = Quartz.Properties.Resources.Aqua_Refresh;
+                //stopImage = Quartz.Properties.Resources.Aqua_Stop;
+                //downloadImage = Quartz.Properties.Resources.Aqua_Download;
+                //favImage = Quartz.Properties.Resources.Aqua_Fav;
+                //settingsImage = Quartz.Properties.Resources.Aqua_Settings;
+                //leftImage = Quartz.Properties.Resources.UrlBoxLeftWhiteAqua;
+                //rightImage = Quartz.Properties.Resources.UrlBoxRightAqua;
 
-            //    //COLORS
-            //    mouseOver = Color.FromArgb(0, 238, 238);
-            //    PanelbackColor = Color.Blue;
-            //    PanelforeColor = Color.Aqua;
-            //    dividerColor = Color.Blue;
-            //}
-            //if (theme == "xmas")
-            //{
-            //    //IMAGES
-            //    backImage = Quartz.Properties.Resources.XLeft;
-            //    forwardImage = Quartz.Properties.Resources.XRight;
-            //    houseImage = Quartz.Properties.Resources.Xicon_House;
-            //    refreshImage = Quartz.Properties.Resources.XRefresh;
-            //    stopImage = Quartz.Properties.Resources.XStop;
-            //    downloadImage = Quartz.Properties.Resources.Xdownload;
-            //    favImage = Quartz.Properties.Resources.Xicon_Fav;
-            //    settingsImage = Quartz.Properties.Resources.Xicon_Setting;
-            //    leftImage = Quartz.Properties.Resources.XUrlBoxLeft;
-            //    rightImage = Quartz.Properties.Resources.XUrlBoxRight;
+                //COLORS
+                mouseOver = Color.FromArgb(0, 238, 238);
+                PanelbackColor = Color.Blue;
+                PanelforeColor = Color.Aqua;
+                dividerColor = Color.Blue;
+            }
+            if (theme == "xmas")
+            {
+                //IMAGES
+                //backImage = Quartz.Properties.Resources.XLeft;
+                //forwardImage = Quartz.Properties.Resources.XRight;
+                //houseImage = Quartz.Properties.Resources.Xicon_House;
+                //refreshImage = Quartz.Properties.Resources.XRefresh;
+                //stopImage = Quartz.Properties.Resources.XStop;
+                //downloadImage = Quartz.Properties.Resources.Xdownload;
+                //favImage = Quartz.Properties.Resources.Xicon_Fav;
+                //settingsImage = Quartz.Properties.Resources.Xicon_Setting;
+                //leftImage = Quartz.Properties.Resources.XUrlBoxLeft;
+                //rightImage = Quartz.Properties.Resources.XUrlBoxRight;
 
-            //    //COLORS
-            //    mouseOver = Color.FromArgb(229, 0, 0);
-            //    PanelbackColor = Color.Lime;
-            //    PanelforeColor = Color.Red;
-            //    dividerColor = Color.Lime;
-            //}
+                //COLORS
+                mouseOver = Color.FromArgb(229, 0, 0);
+                PanelbackColor = Color.Lime;
+                PanelforeColor = Color.Red;
+                dividerColor = Color.Lime;
+            }
 
 
-            ////BUTTONS
+            //BUTTONS
             //btnBack.BackgroundImage = backImage;
-            //btnBack.FlatAppearance.MouseOverBackColor = mouseOver;
-            //btnBack.FlatAppearance.MouseDownBackColor = mouseOver;
-            //btnBack.FlatAppearance.BorderColor = PanelforeColor;
+            btnBack.FlatAppearance.MouseOverBackColor = mouseOver;
+            btnBack.FlatAppearance.MouseDownBackColor = mouseOver;
+            btnBack.FlatAppearance.BorderColor = PanelforeColor;
 
             //btnForward.BackgroundImage = forwardImage;
-            //btnForward.FlatAppearance.MouseOverBackColor = mouseOver;
-            //btnForward.FlatAppearance.MouseDownBackColor = mouseOver;
-            //btnForward.FlatAppearance.BorderColor = PanelforeColor;
+            btnForward.FlatAppearance.MouseOverBackColor = mouseOver;
+            btnForward.FlatAppearance.MouseDownBackColor = mouseOver;
+            btnForward.FlatAppearance.BorderColor = PanelforeColor;
 
             //btnRefresh.BackgroundImage = refreshImage;
-            //btnRefresh.FlatAppearance.MouseOverBackColor = mouseOver;
-            //btnRefresh.FlatAppearance.MouseDownBackColor = mouseOver;
-            //btnRefresh.FlatAppearance.BorderColor = PanelforeColor;
+            btnRefresh.FlatAppearance.MouseOverBackColor = mouseOver;
+            btnRefresh.FlatAppearance.MouseDownBackColor = mouseOver;
+            btnRefresh.FlatAppearance.BorderColor = PanelforeColor;
 
             //btnStop.BackgroundImage = stopImage;
-            //btnStop.FlatAppearance.MouseOverBackColor = mouseOver;
-            //btnStop.FlatAppearance.MouseDownBackColor = mouseOver;
-            //btnStop.FlatAppearance.BorderColor = PanelforeColor;
+            btnStop.FlatAppearance.MouseOverBackColor = mouseOver;
+            btnStop.FlatAppearance.MouseDownBackColor = mouseOver;
+            btnStop.FlatAppearance.BorderColor = PanelforeColor;
 
             //btnDownload.BackgroundImage = downloadImage;
-            //btnDownload.FlatAppearance.MouseOverBackColor = mouseOver;
-            //btnDownload.FlatAppearance.MouseDownBackColor = mouseOver;
-            //btnDownload.FlatAppearance.BorderColor = PanelforeColor;
+            btnDownload.FlatAppearance.MouseOverBackColor = mouseOver;
+            btnDownload.FlatAppearance.MouseDownBackColor = mouseOver;
+            btnDownload.FlatAppearance.BorderColor = PanelforeColor;
 
             //btnAddFavourite.BackgroundImage = favImage;
-            //btnAddFavourite.FlatAppearance.MouseOverBackColor = mouseOver;
-            //btnAddFavourite.FlatAppearance.MouseDownBackColor = mouseOver;
-            //btnAddFavourite.FlatAppearance.BorderColor = PanelforeColor;
+            btnAddFavourite.FlatAppearance.MouseOverBackColor = mouseOver;
+            btnAddFavourite.FlatAppearance.MouseDownBackColor = mouseOver;
+            btnAddFavourite.FlatAppearance.BorderColor = PanelforeColor;
 
             //btnSettings.BackgroundImage = settingsImage;
-            //btnSettings.FlatAppearance.MouseOverBackColor = mouseOver;
-            //btnSettings.FlatAppearance.MouseDownBackColor = mouseOver;
-            //btnSettings.FlatAppearance.BorderColor = PanelforeColor;
+            btnSettings.FlatAppearance.MouseOverBackColor = mouseOver;
+            btnSettings.FlatAppearance.MouseDownBackColor = mouseOver;
+            btnSettings.FlatAppearance.BorderColor = PanelforeColor;
 
-            ////PICTUREBOXS
+            //PICTUREBOXS
             //UrlLeft.BackgroundImage = leftImage;
 
-            //UrlBox.BackColor = PanelbackColor;
+            UrlBox.BackColor = PanelbackColor;
 
             //UrlRight.BackgroundImage = rightImage;
 
-            ////PANNELS
-            //pnlDivider.BackColor = PanelbackColor;
+            //PANNELS
+            pnlDivider.BackColor = PanelbackColor;
 
-            //picFavicon.BackColor = PanelbackColor;
+            picFavicon.BackColor = PanelbackColor;
 
-            //pnlDivider.BackColor = dividerColor;
+            pnlDivider.BackColor = dividerColor;
 
-            ////TEXTBOXS
-            //txtWebAddress.BackColor = PanelbackColor;
-            //txtWebAddress.ForeColor = PanelforeColor;
+            //TEXTBOXS
+            txtWebAddress.BackColor = PanelbackColor;
+            txtWebAddress.ForeColor = PanelforeColor;
 
-            ////MODERN THEME SYSTEM
-            //NewControlThemeChanger.ChangeControlTheme(this);
-            //NewControlThemeChanger.ChangeControlTheme(SettingsMenuStrip);
-            //NewControlThemeChanger.ChangeControlTheme(mnuExperts);
-            //NewControlThemeChanger.ChangeControlTheme(mnuHistory);
-            //NewControlThemeChanger.ChangeControlTheme(mnuMenu);
-            //NewControlThemeChanger.ChangeControlTheme(mnuUserData);
-            //NewControlThemeChanger.ChangeControlTheme(mnuDownloadsDropDown);
-            //NewControlThemeChanger.ChangeControlTheme(mnuHistory);
-            //NewControlThemeChanger.ChangeControlTheme(mnuUserData);
-            //NewControlThemeChanger.ChangeControlTheme(mnuSearch);
-            //NewControlThemeChanger.ChangeControlTheme(wvWebView1);
-            //NewControlThemeChanger.ChangeControlTheme(zoomToolStrip);
+            //MODERN THEME SYSTEM
+            NewControlThemeChanger.ChangeControlTheme(this);
+            NewControlThemeChanger.ChangeControlTheme(SettingsMenuStrip);
+            NewControlThemeChanger.ChangeControlTheme(mnuExperts);
+            NewControlThemeChanger.ChangeControlTheme(mnuHistory);
+            NewControlThemeChanger.ChangeControlTheme(mnuMenu);
+            NewControlThemeChanger.ChangeControlTheme(mnuUserData);
+            NewControlThemeChanger.ChangeControlTheme(mnuDownloadsDropDown);
+            NewControlThemeChanger.ChangeControlTheme(mnuHistory);
+            NewControlThemeChanger.ChangeControlTheme(mnuUserData);
+            NewControlThemeChanger.ChangeControlTheme(mnuSearch);
+            NewControlThemeChanger.ChangeControlTheme(wvWebView1);
+            NewControlThemeChanger.ChangeControlTheme(zoomToolStrip);
 
         }
 
@@ -660,43 +660,43 @@ namespace Quartz
         }
         public void UpdateFavBar()
         {
-            bool showFavSetting = SettingsService.Get("showFavouritesBar") == "true";
+            //bool showFavSetting = SettingsService.Get("showFavouritesBar") == "true";
 
-            // --- Safely check Source ---
-            string currentUrl = wvWebView1?.Source?.ToString() ?? "";
-            bool isHome = currentUrl == GetHomeUrl();
+            //// --- Safely check Source ---
+            //string currentUrl = wvWebView1?.Source?.ToString() ?? "";
+            //bool isHome = currentUrl == GetHomeUrl();
 
-            bool shouldShow = showFavSetting || isHome;
+            //bool shouldShow = showFavSetting || isHome;
 
-            // --- No favourites? Force hidden ---
-            if (pnlFavourites.Controls.Count == 0)
-            {
-                pnlFavourites.Visible = false;
-                pnlTop.Height = 43;
-                return;
-            }
+            //// --- No favourites? Force hidden ---
+            //if (pnlFavourites.Controls.Count == 0)
+            //{
+            //    pnlFavourites.Visible = false;
+            //    pnlTop.Height = 43;
+            //    return;
+            //}
 
-            // --- If user disabled bar AND not home, hide it ---
-            if (!shouldShow)
-            {
-                pnlFavourites.Visible = false;
-                pnlTop.Height = 43;
-                return;
-            }
+            //// --- If user disabled bar AND not home, hide it ---
+            //if (!shouldShow)
+            //{
+            //    pnlFavourites.Visible = false;
+            //    pnlTop.Height = 43;
+            //    return;
+            //}
 
-            // --- Show favourites bar ---
-            pnlFavourites.Visible = true;
+            //// --- Show favourites bar ---
+            //pnlFavourites.Visible = true;
 
-            if (pnlFavourites.HorizontalScroll.Visible)
-            {
-                pnlFavourites.Height = 47;
-                pnlTop.Height = 88;
-            }
-            else
-            {
-                pnlFavourites.Height = 30;
-                pnlTop.Height = 71;
-            }
+            //if (pnlFavourites.HorizontalScroll.Visible)
+            //{
+            //    pnlFavourites.Height = 47;
+            //    pnlTop.Height = 88;
+            //}
+            //else
+            //{
+            //    pnlFavourites.Height = 30;
+            //    pnlTop.Height = 71;
+            //}
         }
 
         public async void RestoreDownloadDialog()
@@ -930,7 +930,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.4.0 Preview I";
+            notifyIcon1.Text = "Quartz v3.0.0 Preview I";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
