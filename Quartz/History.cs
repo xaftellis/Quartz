@@ -61,13 +61,6 @@ namespace Quartz
             Rebind();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            int currentScrollingRowIndex = dataGridView1.FirstDisplayedScrollingRowIndex;
-            Rebind();
-            dataGridView1.FirstDisplayedScrollingRowIndex = currentScrollingRowIndex;
-        }
-
         private void btnClear_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Are You Sure Want To Clear All History?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
@@ -361,7 +354,7 @@ namespace Quartz
             }
         }
 
-
+        int rowIndex;
         private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (dataGridView1.Columns[e.ColumnIndex].Name == "CheckBox")
@@ -393,8 +386,6 @@ namespace Quartz
                 }
                 else if (e.Button == MouseButtons.Middle)
                 {
-                    //if (keyPressed != Keys.Shift || keyPressed != Keys.Control)
-                    //{
                         dataGridView1.ClearSelection();
                         dataGridView1.Rows[e.RowIndex].Cells["WebAddress"].Selected = true;
                         var ParentTabs = _browser.ParentTabs;
@@ -420,20 +411,17 @@ namespace Quartz
                             ParentTabs.RedrawTabs();
                             ParentTabs.Refresh();
                         }
-                    //}
                 }
                 else if (e.Button == MouseButtons.Right)
                 {
-                    //if (keyPressed != Keys.ShiftKey || keyPressed != Keys.ControlKey) 
-                    //{
                     if (!dataGridView1.Rows[e.RowIndex].Selected)
                         {
                             dataGridView1.ClearSelection();
                             dataGridView1.Rows[e.RowIndex].Cells["Title"].Selected = true;
                         }
 
+                    rowIndex = e.RowIndex;
                     contextMenuStrip1.Show(MousePosition);
-                    //}
                 }
             }
         }
@@ -472,14 +460,14 @@ namespace Quartz
             }
 
 
-            if(dataGridView1.SelectedRows.Count > 1)
-            {
-                historyToolStripMenuItem.Text = "Selected: " + dataGridView1.SelectedRows.Count;
-            }
-            else
-            {
-                historyToolStripMenuItem.Text = "History: " + currentOffset;
-            }
+            //if(dataGridView1.SelectedRows.Count > 1)
+            //{
+            //    historyToolStripMenuItem.Text = "Selected: " + dataGridView1.SelectedRows.Count;
+            //}
+            //else
+            //{
+            //    historyToolStripMenuItem.Text = "History: " + currentOffset;
+            //}
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -505,7 +493,6 @@ namespace Quartz
             // Reset bindings and rebind after deletion
             bindingSource1.ResetBindings(false);
             Rebind();
-
         }
 
         //WHEN KEY IS PRESSED
@@ -544,7 +531,6 @@ namespace Quartz
                 // Reset bindings and rebind after deletion
                 bindingSource1.ResetBindings(false);
                 Rebind();
-
             }
 
             keyPressed = Keys.None;
@@ -610,6 +596,13 @@ namespace Quartz
         {
             Delete form = new Delete(_browser.wvWebView1);
             form.ShowDialog();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var url = dataGridView1.Rows[rowIndex].Cells["WebAddress"].Value.ToString();
+            _browser.SetSource(url);
+            Close();
         }
     }
 }

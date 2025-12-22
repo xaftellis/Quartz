@@ -371,13 +371,13 @@ namespace Quartz
                         }
                     }
 
-                    if (setDefaultToolStripMenuItem.Text == "Unset Default")
+                    if (setDefaultToolStripMenuItem.Text == "Unset default")
                     {
                         Program.profileService.UnsetDefault(Guid.Parse(button.Tag.ToString()));
                         Program.profileService.SaveChanges();
                         MainSettingsService.Set("RunBrowser", "false");
                     }
-                    else if (setDefaultToolStripMenuItem.Text == "Set Default")
+                    else if (setDefaultToolStripMenuItem.Text == "Set default")
                     {
                         Program.profileService.SetDefault(Guid.Parse(button.Tag.ToString()));
                         Program.profileService.SetActive(Guid.Parse(button.Tag.ToString()));
@@ -394,8 +394,6 @@ namespace Quartz
             Button button = (Button)ContextMenuStripProfiles.SourceControl;
             button.Select();
 
-            profilesToolStripMenuItem.Text = "Profiles: " + Program.profileService.All().Count.ToString();
-
             //if there is only one profile
             if ((Program.profileService.All().Count == 1)
             || (Application.OpenForms["AppContainer"] != null && ProfileService.Current == Guid.Parse(button.Tag.ToString())))
@@ -411,18 +409,18 @@ namespace Quartz
             {
                 if (Guid.Parse(button.Tag.ToString()) == Program.profileService.GetDefault().Id)
                 {
-                    setDefaultToolStripMenuItem.Text = "Unset Default";
+                    setDefaultToolStripMenuItem.Text = "Unset default";
                     //createPasswordToolStripMenuItem.Enabled = false;
                 }
                 else
                 {
-                    setDefaultToolStripMenuItem.Text = "Set Default";
+                    setDefaultToolStripMenuItem.Text = "Set default";
                     //createPasswordToolStripMenuItem.Enabled = true;
                 }
             }
             else
             {
-                setDefaultToolStripMenuItem.Text = "Set Default";
+                setDefaultToolStripMenuItem.Text = "Set default";
             }
 
             if (SettingsService.Get("Animation") == "true")

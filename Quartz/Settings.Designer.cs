@@ -198,7 +198,7 @@
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(120, 24);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version 2.3.1";
+            this.labelVersion.Text = "Version 2.3.2";
             // 
             // LoadingProgress
             // 
@@ -486,53 +486,53 @@
             this.toolStripSeparator2,
             this.birthdaysToolStripMenuItem});
             this.mnuTimeMachine.Name = "contextMenuStrip1";
-            this.mnuTimeMachine.Size = new System.Drawing.Size(181, 148);
+            this.mnuTimeMachine.Size = new System.Drawing.Size(139, 126);
             this.mnuTimeMachine.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.mnuTimeMachine_Closing);
             this.mnuTimeMachine.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // todayToolStripMenuItem
             // 
             this.todayToolStripMenuItem.Name = "todayToolStripMenuItem";
-            this.todayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.todayToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.todayToolStripMenuItem.Text = "Today";
             this.todayToolStripMenuItem.Click += new System.EventHandler(this.todayToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(135, 6);
             // 
             // goodFridayToolStripMenuItem
             // 
             this.goodFridayToolStripMenuItem.Name = "goodFridayToolStripMenuItem";
-            this.goodFridayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.goodFridayToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.goodFridayToolStripMenuItem.Text = "Good Friday";
             this.goodFridayToolStripMenuItem.Click += new System.EventHandler(this.goodFridayToolStripMenuItem_Click);
             // 
             // easterToolStripMenuItem
             // 
             this.easterToolStripMenuItem.Name = "easterToolStripMenuItem";
-            this.easterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.easterToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.easterToolStripMenuItem.Text = "Easter";
             this.easterToolStripMenuItem.Click += new System.EventHandler(this.easterToolStripMenuItem_Click);
             // 
             // christmasToolStripMenuItem
             // 
             this.christmasToolStripMenuItem.Name = "christmasToolStripMenuItem";
-            this.christmasToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.christmasToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.christmasToolStripMenuItem.Text = "Christmas";
             this.christmasToolStripMenuItem.Click += new System.EventHandler(this.christmasToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(135, 6);
             // 
             // birthdaysToolStripMenuItem
             // 
             this.birthdaysToolStripMenuItem.DropDown = this.mnuBirthdays;
             this.birthdaysToolStripMenuItem.Name = "birthdaysToolStripMenuItem";
-            this.birthdaysToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.birthdaysToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.birthdaysToolStripMenuItem.Text = "Birthdays";
             // 
             // mnuBirthdays
@@ -541,6 +541,7 @@
             this.addBirthdayToolStripMenuItem,
             this.toolStripSeparator3});
             this.mnuBirthdays.Name = "mnuBirthdays";
+            this.mnuBirthdays.OwnerItem = this.birthdaysToolStripMenuItem;
             this.mnuBirthdays.Size = new System.Drawing.Size(144, 32);
             this.mnuBirthdays.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.mnuBirthdays_Closing);
             this.mnuBirthdays.Opening += new System.ComponentModel.CancelEventHandler(this.mnuBirthdays_Opening);
