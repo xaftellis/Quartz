@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.panel2 = new System.Windows.Forms.Panel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -147,9 +147,9 @@
             // When
             // 
             this.When.DataPropertyName = "When";
-            dataGridViewCellStyle1.Format = "F";
-            dataGridViewCellStyle1.NullValue = null;
-            this.When.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Format = "F";
+            dataGridViewCellStyle4.NullValue = null;
+            this.When.DefaultCellStyle = dataGridViewCellStyle4;
             this.When.FillWeight = 99.49239F;
             this.When.HeaderText = "When";
             this.When.Name = "When";
@@ -192,12 +192,14 @@
             this.openInNewTabToolStripMenuItem.Name = "openInNewTabToolStripMenuItem";
             this.openInNewTabToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.openInNewTabToolStripMenuItem.Text = "Open in new tab";
+            this.openInNewTabToolStripMenuItem.Click += new System.EventHandler(this.openInNewTabToolStripMenuItem_Click);
             // 
             // openInNewWindowToolStripMenuItem
             // 
             this.openInNewWindowToolStripMenuItem.Name = "openInNewWindowToolStripMenuItem";
             this.openInNewWindowToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.openInNewWindowToolStripMenuItem.Text = "Open in new window";
+            this.openInNewWindowToolStripMenuItem.Click += new System.EventHandler(this.openInNewWindowToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -209,6 +211,7 @@
             this.copyLinkToolStripMenuItem.Name = "copyLinkToolStripMenuItem";
             this.copyLinkToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.copyLinkToolStripMenuItem.Text = "Copy link";
+            this.copyLinkToolStripMenuItem.Click += new System.EventHandler(this.copyLinkToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 

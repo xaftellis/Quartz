@@ -16,6 +16,7 @@ using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.UI.WebControls;
@@ -415,10 +416,10 @@ namespace Quartz
                 else if (e.Button == MouseButtons.Right)
                 {
                     if (!dataGridView1.Rows[e.RowIndex].Selected)
-                        {
-                            dataGridView1.ClearSelection();
-                            dataGridView1.Rows[e.RowIndex].Cells["Title"].Selected = true;
-                        }
+                    {
+                        dataGridView1.ClearSelection();
+                        dataGridView1.Rows[e.RowIndex].Cells["Title"].Selected = true;
+                    }
 
                     rowIndex = e.RowIndex;
                     contextMenuStrip1.Show(MousePosition);
@@ -600,9 +601,82 @@ namespace Quartz
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            dataGridView1.ClearSelection();
+            dataGridView1.Rows[rowIndex].Cells["Title"].Selected = true;
+            Application.DoEvents(); // lets the UI update
+
             var url = dataGridView1.Rows[rowIndex].Cells["WebAddress"].Value.ToString();
             _browser.SetSource(url);
             Close();
+        }
+
+        private void openInNewTabToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Get the collection of selected rows
+            DataGridViewSelectedRowCollection selectedRows = dataGridView1.SelectedRows;
+
+            // Process the selected rows in reverse order
+            for (int i = selectedRows.Count - 1; i >= 0; i--)
+            {
+                DataGridViewRow row = selectedRows[i];
+
+                // Ensure the row is valid and perform the delete operation
+                if (row != null)
+                {
+                    string url = row.Cells["WebAddress"].Value.ToString();
+
+                    var browser = new Browser(url, true);
+                    browser.InitializeTab();
+
+                    var newTab = new TitleBarTab(_browser.ParentTabs) { Content = browser };
+
+                    void AddTab()
+                    {
+                        int index = _browser.ParentTabs.SelectedTabIndex + 1;
+                        _browser.ParentTabs.Tabs.Insert(index, newTab);
+                        _browser.ParentTabs.SelectedTabIndex = index;
+                        _browser.ParentTabs.RedrawTabs();
+                    }
+
+                    if (_browser.ParentTabs.InvokeRequired)
+                        _browser.ParentTabs.Invoke(new Action(AddTab));
+                    else
+                        AddTab();
+
+                    this.Close();
+                }
+            }
+        }
+
+        private void openInNewWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Get the collection of selected rows
+            DataGridViewSelectedRowCollection selectedRows = dataGridView1.SelectedRows;
+
+            List<string> urls = new List<string>();
+
+            // Process the selected rows in reverse order
+            for (int i = selectedRows.Count - 1; i >= 0; i--)
+            {
+                DataGridViewRow row = selectedRows[i];
+
+                // Ensure the row is valid and perform the delete operation
+                if (row != null)
+                {
+                    urls.Add(row.Cells["WebAddress"].Value.ToString());
+                }
+            }
+            Program.OpenNewWindowWithTabsFast(urls);
+            this.Close();
+        }
+
+        private void copyLinkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dataGridView1.ClearSelection();
+            dataGridView1.Rows[rowIndex].Cells["Title"].Selected = true;
+            Application.DoEvents(); // lets the UI update
+
+            Clipboard.SetText(dataGridView1.Rows[rowIndex].Cells["WebAddress"].Value.ToString());
         }
     }
 }

@@ -210,7 +210,7 @@
     <value>Show favourites bar</value>
   </data>
   <data name="mnuMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 292</value>
+    <value>188, 314</value>
   </data>
   <data name="&gt;&gt;mnuMenu.Name" xml:space="preserve">
     <value>mnuMenu</value>
@@ -2491,7 +2491,7 @@
     <value>UserData</value>
   </data>
   <metadata name="mnuHistory.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>117, 14</value>
+    <value>113, 16</value>
   </metadata>
   <data name="historyToolStripMenuItem1.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+H</value>
