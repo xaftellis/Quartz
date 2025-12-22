@@ -418,7 +418,8 @@ namespace Quartz
                     if (!dataGridView1.Rows[e.RowIndex].Selected)
                     {
                         dataGridView1.ClearSelection();
-                        dataGridView1.Rows[e.RowIndex].Cells["Title"].Selected = true;
+                        dataGridView1.CurrentCell = dataGridView1.Rows[e.RowIndex].Cells["Title"];
+                        dataGridView1.Rows[e.RowIndex].Selected = true;
                     }
 
                     rowIndex = e.RowIndex;
