@@ -19,6 +19,7 @@ using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.UI.WebControls;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -456,20 +457,23 @@ namespace Quartz
 
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if(selectedRows.Count > 1)
+            {
+                openInNewTabToolStripMenuItem.Text = "Open all in new tabs";
+                openInNewWindowToolStripMenuItem.Text = "Open all in new window";
+                copyLinkToolStripMenuItem.Text = "Copy links";
+            }
+            else
+            {
+                openInNewTabToolStripMenuItem.Text = "Open in new tab";
+                openInNewWindowToolStripMenuItem.Text = "Open in new window";
+                copyLinkToolStripMenuItem.Text = "Copy link";
+            }
+
             if (SettingsService.Get("Animation") == "true")
             {
                 Animation.AnimateWindow(contextMenuStrip1.Handle, 100, Animation.AW_BLEND);
             }
-
-
-            //if(dataGridView1.SelectedRows.Count > 1)
-            //{
-            //    historyToolStripMenuItem.Text = "Selected: " + dataGridView1.SelectedRows.Count;
-            //}
-            //else
-            //{
-            //    historyToolStripMenuItem.Text = "History: " + currentOffset;
-            //}
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -594,12 +598,6 @@ namespace Quartz
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            Delete form = new Delete(_browser.wvWebView1);
-            form.ShowDialog();
-        }
-
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dataGridView1.ClearSelection();
@@ -673,11 +671,32 @@ namespace Quartz
 
         private void copyLinkToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            dataGridView1.ClearSelection();
-            dataGridView1.Rows[rowIndex].Cells["Title"].Selected = true;
-            Application.DoEvents(); // lets the UI update
+            // Get the collection of selected rows
+            DataGridViewSelectedRowCollection selectedRows = dataGridView1.SelectedRows;
 
-            Clipboard.SetText(dataGridView1.Rows[rowIndex].Cells["WebAddress"].Value.ToString());
+            string urls = string.Empty;
+
+            // Process the selected rows in reverse order
+            for (int i = 0; i <= selectedRows.Count - 1; i++)
+            {
+                DataGridViewRow row = selectedRows[i];
+
+                // Ensure the row is valid and perform the delete operation
+                if (row != null)
+                {
+                    string url = dataGridView1.Rows[rowIndex].Cells["WebAddress"].Value.ToString();
+
+                    if (i == selectedRows.Count - 1)
+                    {
+                        urls += url;
+                    }
+                    else
+                    {
+                        urls += url + Environment.NewLine;
+                    }
+                }
+            }
+            Clipboard.SetText(urls);
         }
     }
 }
