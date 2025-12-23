@@ -67,8 +67,6 @@ namespace Quartz
                 Program.profileService.SetProfilePicture(id, filename);
                 Program.profileService.SaveChanges();
             }
-
-            _profiles.LoadProfiles();
         }
 
         bool AreImagesEqual(Image img1, Image img2)
