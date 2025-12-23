@@ -1,23 +1,26 @@
-﻿using Quartz.Services;
+﻿using EasyTabs;
+using ImageMagick;
+using Microsoft.SqlServer.Server;
+using Microsoft.Web.WebView2.Core;
+using Quartz.Libs;
+using Quartz.Models;
+using Quartz.Services;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data.SqlTypes;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Web.WebView2.Core;
-using System.Security.Policy;
-using System.Data.SqlTypes;
-using EasyTabs;
-using System.Collections.Generic;
 using System.Windows.Media.TextFormatting;
-using Quartz.Libs;
 using Win32Interop.Enums;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
-using System.ComponentModel;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using Quartz.Models;
 
 namespace Quartz
 {
@@ -1513,61 +1516,115 @@ namespace Quartz
             }
         }
 
-        private async Task CDFSelectedIndexChanged()
+        private void CDFSelectedIndexChanged()
         {
-            string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Xaftellis", "Quartz", "UserData", "pictures");
-            string filename = $"{ProfileService.Current}.ico";
-            string smallIconFilename = $"16_{ProfileService.Current}.ico";
+            string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                            "Xaftellis", "Quartz", "UserData", "pictures");
+            string filename = string.Format("{0}.ico", ProfileService.Current);
             string path = Path.Combine(directory, filename);
 
             if (combDefaultFavicon.SelectedIndex == 0)
             {
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
-
+                DeleteFileIfExists(path);
                 SettingsService.Set("defaultFavicon", "default");
             }
             else if (combDefaultFavicon.SelectedIndex == 1)
             {
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Title = "Default Favicon";
-                openFileDialog.Filter = "Icon Files (*.ico)|*.ico";
-                openFileDialog.Multiselect = false;
-                openFileDialog.ShowDialog();
+                string file = OpenImageFileDialog();
+                if (string.IsNullOrEmpty(file) || !File.Exists(file))
+                    return;
 
-                if (File.Exists(openFileDialog.FileName))
+                // Load image first to check if conversion/resizing is needed
+                using (Image image = Image.FromFile(file))
                 {
-                    Icon icon = new Icon(openFileDialog.FileName);
+                    bool needsConversion = !ImageFormat.Icon.Equals(image.RawFormat) || image.Size != new Size(16, 16);
 
-                    if (icon.Size != new Size(16, 16))
+                    if (needsConversion)
                     {
+                        // Ask user for confirmation
+                        DialogResult result = MessageBox.Show(
+                            "The selected image will be resized to 16x16 and/or converted to .ico format.\nDo you want to continue?",
+                            "Favicon Conversion",
+                            MessageBoxButtons.OKCancel,
+                            MessageBoxIcon.Information
+                        );
 
-                        MessageBox.Show("Invalid icon - dimensions must be 16x16 pixels.", "Invalid Icon", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        CDFSelectedIndexChanged();
-                        return;
+                        if (result != DialogResult.OK)
+                            return; // Stop if user clicks Cancel
                     }
+                }
 
-                    if (!Directory.Exists(directory))
+                // If user agreed or no conversion needed, continue
+                Icon icon = LoadOrConvertToIcon(file);
+                SaveIconToFile(icon, path);
+                SettingsService.Set("defaultFavicon", string.Format("custom - {0}", path));
+            }
+        }
+
+        private void DeleteFileIfExists(string path)
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+
+        private string OpenImageFileDialog()
+        {
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Title = "Select Default Favicon";
+                dialog.Filter = "Icon Files (*.ico)|*.ico|Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff)|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff";
+                dialog.Multiselect = false;
+
+                return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : null;
+            }
+        }
+
+        private Icon LoadOrConvertToIcon(string file)
+        {
+            using (Image image = Image.FromFile(file))
+            {
+                // Already valid 16x16 .ico?
+                if (ImageFormat.Icon.Equals(image.RawFormat) && image.Size == new Size(16, 16))
+                    return new Icon(file);
+
+                // Otherwise, convert & resize
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    image.Save(ms, image.RawFormat);
+                    ms.Position = 0;
+
+                    using (MagickImage magickImage = new MagickImage(ms))
                     {
-                        Directory.CreateDirectory(directory);
-                    }
+                        if (image.Size != new Size(16, 16))
+                        {
+                            magickImage.FilterType = FilterType.Lanczos;
+                            magickImage.Resize(16, 16);
+                        }
 
+                        magickImage.Format = MagickFormat.Ico;
 
-                    using (FileStream fs = new FileStream(path, FileMode.Create))
-                    {
-                        icon.Save(fs);
-                    }
-
-                    if (File.Exists(path))
-                    {
-                        SettingsService.Set("defaultFavicon", $"custom - {path}");
+                        using (MemoryStream outStream = new MemoryStream())
+                        {
+                            magickImage.Write(outStream);
+                            outStream.Position = 0;
+                            return new Icon(outStream);
+                        }
                     }
                 }
             }
         }
 
+        private void SaveIconToFile(Icon icon, string path)
+        {
+            string directory = Path.GetDirectoryName(path);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                icon.Save(fs);
+            }
+        }
 
         private void combDefaultFavicon_SelectedIndexChanged(object sender, EventArgs e)
         {
