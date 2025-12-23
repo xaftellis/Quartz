@@ -273,7 +273,7 @@ namespace Quartz
                 {
                     if (originalProfilePicture == null || !AreImagesEqual(profilePicture, originalProfilePicture))
                     {
-                        SetProfilePicture(ProfileService.Current, profilePicture, extension);
+                        SetProfilePicture(_id, profilePicture, extension);
                     }
                 }
                 else

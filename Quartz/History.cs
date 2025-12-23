@@ -388,31 +388,36 @@ namespace Quartz
                 }
                 else if (e.Button == MouseButtons.Middle)
                 {
-                        dataGridView1.ClearSelection();
-                        dataGridView1.Rows[e.RowIndex].Cells["WebAddress"].Selected = true;
-                        var ParentTabs = _browser.ParentTabs;
-                        var url = dataGridView1.Rows[e.RowIndex].Cells["WebAddress"].Value.ToString();
+                    dataGridView1.ClearSelection();
+                    dataGridView1.CurrentCell = dataGridView1.Rows[e.RowIndex].Cells["Title"];
+                    dataGridView1.Rows[e.RowIndex].Cells["Title"].Selected = true;
+                    Application.DoEvents(); // lets the UI update
 
-                        Browser browser = new Browser(url, true);
-                        browser.InitializeTab();
-                        var newtab = new TitleBarTab(ParentTabs) { Content = browser };
-                        if (ParentTabs.InvokeRequired)
-                        {
-                            ParentTabs.Invoke(new Action(() =>
-                            {
-                                ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                                ParentTabs.SelectedTabIndex++;
-                                ParentTabs.RedrawTabs();
-                                ParentTabs.Refresh();
-                            }));
-                        }
-                        else
+                    var ParentTabs = _browser.ParentTabs;
+                    var url = dataGridView1.Rows[e.RowIndex].Cells["WebAddress"].Value.ToString();
+
+                    Browser browser = new Browser(url, true);
+                    browser.InitializeTab();
+                    var newtab = new TitleBarTab(ParentTabs) { Content = browser };
+                    if (ParentTabs.InvokeRequired)
+                    {
+                        ParentTabs.Invoke(new Action(() =>
                         {
                             ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
                             ParentTabs.SelectedTabIndex++;
                             ParentTabs.RedrawTabs();
                             ParentTabs.Refresh();
-                        }
+                        }));
+                    }
+                    else
+                    {
+                        ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
+                        ParentTabs.SelectedTabIndex++;
+                        ParentTabs.RedrawTabs();
+                        ParentTabs.Refresh();
+                    }
+
+                    this.Close();
                 }
                 else if (e.Button == MouseButtons.Right)
                 {
