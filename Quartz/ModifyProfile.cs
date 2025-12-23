@@ -392,6 +392,11 @@ namespace Quartz
         {
             IsActionButtonEnabled(profilePicture != null);
 
+            if (profilePicture != null)
+                circularImageButton1.Text = string.Empty;
+            else
+                circularImageButton1.Text = "Profile Picture";
+
             if (profileOptions == ProfileOptions.Edit)
             {
                 if (profilePicture != null)
