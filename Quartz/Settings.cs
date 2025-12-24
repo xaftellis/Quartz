@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -377,7 +378,6 @@ namespace Quartz
                 PreviousThemeSelectedIndex = ComboBoxTheme.SelectedIndex;
             }
 
-        
             //sys webview
             var sysenv = await CoreWebView2Environment.CreateAsync(null, _browser.GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\", null);
             var sysoptions = sysenv.CreateCoreWebView2ControllerOptions();
@@ -541,6 +541,8 @@ namespace Quartz
             }
             NewControlThemeChanger.ChangeTheme(this);
             NewControlThemeChanger.ChangeControlTheme(mnuBirthdays);
+            NewControlThemeChanger.ChangeControlTheme(contextMenuStrip1);
+
         }
 
         private void autoSaveCheckBox_Click(object sender, EventArgs e)
@@ -1419,58 +1421,25 @@ namespace Quartz
             mnuBirthdays.Items.Add(toolStripMenu);
             mnuBirthdays.Items.Add(toolStripSeparator);
 
-            foreach(BirthdayModel model in birthdayService.All())
+            // Populate the main menu
+            foreach (BirthdayModel model in birthdayService.All())
             {
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem();
-                toolStripMenuItem.Text = model.Name + "'s Birthday";
-                toolStripMenuItem.Tag = model.DOB;
-
-                string theme = SettingsService.Get("Theme");
-                Image image = Properties.Resources.Close;
-
-                if (theme == "light")
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem
                 {
-                    image = Properties.Resources.Close;
-                }
-                else if (theme == "dark")
-                {
-                    image = Properties.Resources.Tabs_Close;
-                }
-                else if (theme == "black")
-                {
-                    image = Properties.Resources.B_Close;
-                }
-                else if (theme == "aqua")
-                {
-                    image = Properties.Resources.Aqua_Close;
-                }
-                else if (theme == "xmas")
-                {
-                    image = Properties.Resources.Close_xmas;
-                }
-                toolStripMenuItem.Image = image;
-
-                toolStripMenuItem.MouseDown += (s, c) =>
-                {
-                    ToolStripMenuItem item = (ToolStripMenuItem)s;
-
-                    // Image area is usually on the left
-                    if (c.X < item.Image.Width + 5) // adjust padding if needed
-                    {
-                        birthdayService.Remove(model.Id);
-                        birthdayService.SaveChanges();
-                        mnubClose = false;
-                    }
-                    else
-                    {
-                        toolStripMenuItem.Click += ToolStripMenuItem_Click;
-                    }
+                    Text = $"{model.Name}'s Birthday",
+                    Tag = model,            // Store the model for click handling
+                    DropDown = contextMenuStrip1         // Assign the same menu
                 };
 
+                // When opening the dropdown, set the menu's Tag to the current model
+                toolStripMenuItem.DropDownOpening += (s, ee) =>
+                {
+                    contextMenuStrip1.Tag = toolStripMenuItem.Tag;
+                };
 
                 mnuBirthdays.Items.Add(toolStripMenuItem);
-
             }
+
 
             //last
             if (SettingsService.Get("Animation") == "true")
@@ -1482,15 +1451,16 @@ namespace Quartz
 
         private void ToolStripMenu_Click(object sender, EventArgs e)
         {
-            AddBirthday addBirthdayForm = new AddBirthday(this);
+            AddBirthday addBirthdayForm = new AddBirthday(this, false, null, DateTime.MinValue, Guid.Empty);
             addBirthdayForm.ShowDialog();
         }
 
         private void ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DateTime currentDate = DateTime.Now;
+            var model = ((ToolStripMenuItem)sender).Tag as BirthdayModel;
 
-            DateTime dateTime = ((DateTime)((ToolStripMenuItem)sender).Tag);
+            DateTime currentDate = DateTime.Now;
+            DateTime dateTime = model.DOB;
             string target = dateTime.ToString("D")
                 .Replace(dateTime.DayOfWeek + ", ", "")
                 .Replace(dateTime.Year.ToString(), "");
@@ -1678,6 +1648,33 @@ namespace Quartz
                 //WAITS
                 await Task.Delay(100);
                 mnubClose = true;
+            }
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (contextMenuStrip1.Tag is BirthdayModel model)
+            {
+                birthdayService.Remove(model.Id);
+                birthdayService.SaveChanges();
+                // Refresh your menu or UI if needed
+            }
+        }
+
+        private void contextMenuStrip1_Opening_1(object sender, CancelEventArgs e)
+        {
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow((sender as ContextMenuStrip).Handle, 100, Animation.AW_BLEND);
+            }
+        }
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (contextMenuStrip1.Tag is BirthdayModel model)
+            {
+                AddBirthday addBirthdayForm = new AddBirthday(this, true, model.Name, model.DOB, model.Id);
+                addBirthdayForm.ShowDialog();
             }
         }
     }

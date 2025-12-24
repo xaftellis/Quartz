@@ -16,13 +16,23 @@ namespace Quartz
     {
         DateTime selectedDate;
         string selectedDateString;
-        Settings settings; 
+        Settings settings;
 
-        public AddBirthday(Settings settings)
+        bool isModifying;
+        string name;
+        DateTime _DOB;
+        Guid id;
+
+        public AddBirthday(Settings settings, bool IsModifying, string Name, DateTime DOB, Guid ID)
         {
             InitializeComponent();
             this.settings = settings;
+            isModifying = IsModifying;
+            name = Name;
+            _DOB = DOB;
+            id = ID;
         }
+
 
         private void btnDown_Click(object sender, EventArgs e)
         {
@@ -65,9 +75,21 @@ namespace Quartz
             NewControlThemeChanger.ChangeTheme(this);
             txtExists.ForeColor = Color.Red;
 
-            selectedDate = DateTime.Parse(mcCalender.SelectionStart.ToString("D").Replace(mcCalender.SelectionStart.DayOfWeek + ", ", ""));
-            selectedDateString = mcCalender.SelectionStart.ToString("D").Replace(mcCalender.SelectionStart.DayOfWeek + ", ", "");
-            txtDOB.Text = selectedDateString;
+            if (isModifying)
+            {
+                selectedDate = _DOB;
+                selectedDateString = _DOB.ToString("D").Replace(mcCalender.SelectionStart.DayOfWeek + ", ", "");
+                txtDOB.Text = selectedDateString;
+
+                mcCalender.SelectionStart = selectedDate;
+                txtName.Text = name;
+            }
+            else
+            {
+                selectedDate = DateTime.Parse(mcCalender.SelectionStart.ToString("D").Replace(mcCalender.SelectionStart.DayOfWeek + ", ", ""));
+                selectedDateString = mcCalender.SelectionStart.ToString("D").Replace(mcCalender.SelectionStart.DayOfWeek + ", ", "");
+                txtDOB.Text = selectedDateString;
+            }
         }
 
         private void mcCalender_DateChanged(object sender, DateRangeEventArgs e)
@@ -103,12 +125,23 @@ namespace Quartz
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(!string.IsNullOrEmpty(txtName.Text) 
-                && !string.IsNullOrEmpty(txtDOB.Text)
-                && selectedDate != null)
+            if (string.IsNullOrEmpty(txtName.Text)
+                && string.IsNullOrEmpty(txtDOB.Text)
+                && selectedDate == null)
             {
-                txtExists.Visible = false;
+                txtExists.Visible = true;
+                return;
+            }
 
+            txtExists.Visible = false;
+
+            if (isModifying)
+            {
+                settings.birthdayService.Get(id).Name = txtName.Text;
+                settings.birthdayService.Get(id).DOB = selectedDate;
+            }
+            else
+            {
                 var model = new Models.BirthdayModel
                 {
                     Name = txtName.Text,
@@ -116,14 +149,11 @@ namespace Quartz
                 };
 
                 settings.birthdayService.Modify(model);
-                settings.birthdayService.SaveChanges();
 
-                this.Close();
             }
-            else
-            {
-                txtExists.Visible = true;
-            }
+
+            settings.birthdayService.SaveChanges();
+            this.Close();
         }
     }
 }
