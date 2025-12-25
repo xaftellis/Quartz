@@ -1438,6 +1438,7 @@ namespace Quartz
                 };
 
                 mnuBirthdays.Items.Add(toolStripMenuItem);
+                toolStripMenuItem.Click += ToolStripMenuItem_Click;
             }
 
 
@@ -1484,6 +1485,7 @@ namespace Quartz
             {
                 mcTimeMachine.SelectionStart = dateTimeNext;
             }
+            mnuTimeMachine.Close();
         }
 
         private void CDFSelectedIndexChanged()
@@ -1507,7 +1509,11 @@ namespace Quartz
                 // Load image first to check if conversion/resizing is needed
                 using (Image image = Image.FromFile(file))
                 {
-                    bool needsConversion = !ImageFormat.Icon.Equals(image.RawFormat) || image.Size != new Size(16, 16);
+                    bool isIcon = ImageFormat.Icon.Equals(image.RawFormat);
+                    bool is16x16 = image.Width == 16 && image.Height == 16;
+                    bool isMultiSized = IsMultiSizedIcon(file);
+
+                    bool needsConversion = !(isIcon && is16x16) || isMultiSized;
 
                     if (needsConversion)
                     {
@@ -1546,6 +1552,14 @@ namespace Quartz
                 dialog.Multiselect = false;
 
                 return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : null;
+            }
+        }
+
+        public static bool IsMultiSizedIcon(string path)
+        {
+            using (var icoImages = new MagickImageCollection(path))
+            {
+                return icoImages.Count > 1; // more than 1 frame → multi-sized
             }
         }
 

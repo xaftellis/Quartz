@@ -76,7 +76,7 @@
             // btnDown
             // 
             this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDown.Location = new System.Drawing.Point(256, 38);
+            this.btnDown.Location = new System.Drawing.Point(258, 38);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(20, 20);
             this.btnDown.TabIndex = 15;
