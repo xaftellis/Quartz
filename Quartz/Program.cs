@@ -366,7 +366,7 @@ namespace Quartz
                 { "IsPasswordAutosaveEnabled", "true" },
                 { "IsGeneralAutofillEnabled", "true" },
                 { "Zoom", "1.0" },
-                { "DownloadAlignment", "TopLeft" },
+                { "DownloadAlignment", "TopRight" },
                 { "Private", "false" },
                 { "TrackingPreventionLevel", "balanced" },
                 { "Animation", "true" },

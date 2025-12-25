@@ -69,16 +69,14 @@
             this.addBirthdayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.groupBoxDownloadDialog = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.cbDownloadAlighment = new System.Windows.Forms.ComboBox();
             this.combDefaultFavicon = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.ComboBoxTheme = new System.Windows.Forms.ComboBox();
             this.comboSettingsTabAlinement = new System.Windows.Forms.ComboBox();
-            this.BottomLeftBox = new System.Windows.Forms.RadioButton();
-            this.BottomRightBox = new System.Windows.Forms.RadioButton();
             this.labelTheme = new System.Windows.Forms.Label();
-            this.TopRightBox = new System.Windows.Forms.RadioButton();
-            this.TopLeftBox = new System.Windows.Forms.RadioButton();
             this.labelAppTittle = new System.Windows.Forms.Label();
             this.tabPageAccount = new System.Windows.Forms.TabPage();
             this.AccountTittle = new System.Windows.Forms.Label();
@@ -546,6 +544,7 @@
             this.addBirthdayToolStripMenuItem,
             this.toolStripSeparator3});
             this.mnuBirthdays.Name = "mnuBirthdays";
+            this.mnuBirthdays.OwnerItem = this.birthdaysToolStripMenuItem;
             this.mnuBirthdays.Size = new System.Drawing.Size(144, 32);
             this.mnuBirthdays.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.mnuBirthdays_Closing);
             this.mnuBirthdays.Opening += new System.ComponentModel.CancelEventHandler(this.mnuBirthdays_Opening);
@@ -566,23 +565,46 @@
             this.groupBoxDownloadDialog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxDownloadDialog.BackColor = System.Drawing.Color.White;
+            this.groupBoxDownloadDialog.Controls.Add(this.label9);
+            this.groupBoxDownloadDialog.Controls.Add(this.cbDownloadAlighment);
             this.groupBoxDownloadDialog.Controls.Add(this.combDefaultFavicon);
             this.groupBoxDownloadDialog.Controls.Add(this.label7);
             this.groupBoxDownloadDialog.Controls.Add(this.label8);
             this.groupBoxDownloadDialog.Controls.Add(this.ComboBoxTheme);
             this.groupBoxDownloadDialog.Controls.Add(this.comboSettingsTabAlinement);
-            this.groupBoxDownloadDialog.Controls.Add(this.BottomLeftBox);
-            this.groupBoxDownloadDialog.Controls.Add(this.BottomRightBox);
             this.groupBoxDownloadDialog.Controls.Add(this.labelTheme);
-            this.groupBoxDownloadDialog.Controls.Add(this.TopRightBox);
-            this.groupBoxDownloadDialog.Controls.Add(this.TopLeftBox);
             this.groupBoxDownloadDialog.ForeColor = System.Drawing.Color.Black;
             this.groupBoxDownloadDialog.Location = new System.Drawing.Point(593, 0);
             this.groupBoxDownloadDialog.Name = "groupBoxDownloadDialog";
             this.groupBoxDownloadDialog.Size = new System.Drawing.Size(199, 406);
             this.groupBoxDownloadDialog.TabIndex = 9;
             this.groupBoxDownloadDialog.TabStop = false;
-            this.groupBoxDownloadDialog.Text = "Download Dialog Alignment";
+            this.groupBoxDownloadDialog.Text = "Other Appearance Settings";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(7, 29);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(189, 18);
+            this.label9.TabIndex = 18;
+            this.label9.Text = "Download Dialog Alignment";
+            // 
+            // cbDownloadAlighment
+            // 
+            this.cbDownloadAlighment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbDownloadAlighment.FormattingEnabled = true;
+            this.cbDownloadAlighment.Items.AddRange(new object[] {
+            "Top Right (Default)",
+            "Top Left",
+            "Bottom Right",
+            "Bottom Left"});
+            this.cbDownloadAlighment.Location = new System.Drawing.Point(31, 50);
+            this.cbDownloadAlighment.Name = "cbDownloadAlighment";
+            this.cbDownloadAlighment.Size = new System.Drawing.Size(140, 21);
+            this.cbDownloadAlighment.TabIndex = 17;
+            this.cbDownloadAlighment.SelectedIndexChanged += new System.EventHandler(this.cbDownloadAlighment_SelectedIndexChanged);
             // 
             // combDefaultFavicon
             // 
@@ -590,7 +612,7 @@
             this.combDefaultFavicon.Items.AddRange(new object[] {
             "Default",
             "(Custom)"});
-            this.combDefaultFavicon.Location = new System.Drawing.Point(29, 187);
+            this.combDefaultFavicon.Location = new System.Drawing.Point(31, 140);
             this.combDefaultFavicon.Name = "combDefaultFavicon";
             this.combDefaultFavicon.Size = new System.Drawing.Size(140, 21);
             this.combDefaultFavicon.TabIndex = 16;
@@ -603,7 +625,7 @@
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.Black;
-            this.label7.Location = new System.Drawing.Point(9, 286);
+            this.label7.Location = new System.Drawing.Point(6, 280);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(182, 20);
             this.label7.TabIndex = 14;
@@ -612,10 +634,10 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(19, 159);
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(32, 102);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(162, 25);
+            this.label8.Size = new System.Drawing.Size(139, 24);
             this.label8.TabIndex = 15;
             this.label8.Text = "Default Favicon";
             // 
@@ -635,7 +657,7 @@
             "Dark",
             "Black",
             "Aqua"});
-            this.ComboBoxTheme.Location = new System.Drawing.Point(32, 255);
+            this.ComboBoxTheme.Location = new System.Drawing.Point(31, 220);
             this.ComboBoxTheme.Name = "ComboBoxTheme";
             this.ComboBoxTheme.Size = new System.Drawing.Size(140, 21);
             this.ComboBoxTheme.TabIndex = 13;
@@ -649,94 +671,24 @@
             "Left",
             "Right",
             "Bottom"});
-            this.comboSettingsTabAlinement.Location = new System.Drawing.Point(32, 309);
+            this.comboSettingsTabAlinement.Location = new System.Drawing.Point(31, 303);
             this.comboSettingsTabAlinement.Name = "comboSettingsTabAlinement";
             this.comboSettingsTabAlinement.Size = new System.Drawing.Size(140, 21);
             this.comboSettingsTabAlinement.TabIndex = 15;
             this.comboSettingsTabAlinement.SelectedIndexChanged += new System.EventHandler(this.comboSettingsTabAlinement_SelectedIndexChanged);
-            // 
-            // BottomLeftBox
-            // 
-            this.BottomLeftBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.BottomLeftBox.AutoSize = true;
-            this.BottomLeftBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.BottomLeftBox.ForeColor = System.Drawing.Color.Black;
-            this.BottomLeftBox.Location = new System.Drawing.Point(6, 74);
-            this.BottomLeftBox.Name = "BottomLeftBox";
-            this.BottomLeftBox.Size = new System.Drawing.Size(85, 18);
-            this.BottomLeftBox.TabIndex = 7;
-            this.BottomLeftBox.TabStop = true;
-            this.BottomLeftBox.Text = "Bottom Left";
-            this.BottomLeftBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.BottomLeftBox.UseVisualStyleBackColor = true;
-            this.BottomLeftBox.CheckedChanged += new System.EventHandler(this.BottomLeftBox_CheckedChanged);
-            // 
-            // BottomRightBox
-            // 
-            this.BottomRightBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.BottomRightBox.AutoSize = true;
-            this.BottomRightBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.BottomRightBox.ForeColor = System.Drawing.Color.Black;
-            this.BottomRightBox.Location = new System.Drawing.Point(104, 74);
-            this.BottomRightBox.Name = "BottomRightBox";
-            this.BottomRightBox.Size = new System.Drawing.Size(92, 18);
-            this.BottomRightBox.TabIndex = 8;
-            this.BottomRightBox.TabStop = true;
-            this.BottomRightBox.Text = "Bottom Right";
-            this.BottomRightBox.UseVisualStyleBackColor = true;
-            this.BottomRightBox.CheckedChanged += new System.EventHandler(this.BottomRightBox_CheckedChanged);
             // 
             // labelTheme
             // 
             this.labelTheme.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTheme.AutoSize = true;
-            this.labelTheme.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTheme.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTheme.ForeColor = System.Drawing.Color.Black;
-            this.labelTheme.Location = new System.Drawing.Point(49, 221);
+            this.labelTheme.Location = new System.Drawing.Point(60, 193);
             this.labelTheme.Name = "labelTheme";
-            this.labelTheme.Size = new System.Drawing.Size(98, 31);
+            this.labelTheme.Size = new System.Drawing.Size(71, 24);
             this.labelTheme.TabIndex = 0;
             this.labelTheme.Text = "Theme";
-            // 
-            // TopRightBox
-            // 
-            this.TopRightBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.TopRightBox.AutoSize = true;
-            this.TopRightBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.TopRightBox.ForeColor = System.Drawing.Color.Black;
-            this.TopRightBox.Location = new System.Drawing.Point(118, 19);
-            this.TopRightBox.Name = "TopRightBox";
-            this.TopRightBox.Size = new System.Drawing.Size(78, 18);
-            this.TopRightBox.TabIndex = 6;
-            this.TopRightBox.TabStop = true;
-            this.TopRightBox.Text = "Top Right";
-            this.TopRightBox.UseVisualStyleBackColor = true;
-            this.TopRightBox.CheckedChanged += new System.EventHandler(this.TopRightBox_CheckedChanged);
-            // 
-            // TopLeftBox
-            // 
-            this.TopLeftBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.TopLeftBox.AutoSize = true;
-            this.TopLeftBox.BackColor = System.Drawing.Color.Transparent;
-            this.TopLeftBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.TopLeftBox.ForeColor = System.Drawing.Color.Black;
-            this.TopLeftBox.Location = new System.Drawing.Point(6, 19);
-            this.TopLeftBox.Name = "TopLeftBox";
-            this.TopLeftBox.Size = new System.Drawing.Size(71, 18);
-            this.TopLeftBox.TabIndex = 5;
-            this.TopLeftBox.TabStop = true;
-            this.TopLeftBox.Text = "Top Left";
-            this.TopLeftBox.UseVisualStyleBackColor = false;
-            this.TopLeftBox.CheckedChanged += new System.EventHandler(this.TopLeftBox_CheckedChanged);
             // 
             // labelAppTittle
             // 
@@ -1360,11 +1312,7 @@
         private System.Windows.Forms.MonthCalendar mcTimeMachine;
         private System.Windows.Forms.GroupBox groupBoxDownloadDialog;
         private System.Windows.Forms.ComboBox ComboBoxTheme;
-        private System.Windows.Forms.RadioButton BottomLeftBox;
-        private System.Windows.Forms.RadioButton BottomRightBox;
         private System.Windows.Forms.Label labelTheme;
-        private System.Windows.Forms.RadioButton TopRightBox;
-        private System.Windows.Forms.RadioButton TopLeftBox;
         private System.Windows.Forms.Label labelAppTittle;
         private System.Windows.Forms.TabPage tabPageAccount;
         private System.Windows.Forms.Label AccountTittle;
@@ -1423,5 +1371,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ComboBox cbDownloadAlighment;
     }
 }

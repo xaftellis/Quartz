@@ -208,7 +208,7 @@ namespace Quartz
                 MouseDragger mouseDragger = new MouseDragger(this);
             }
 
-            if(Program.profileService.Get(ProfileService.Current).isDisposable == true)
+            if (Program.profileService.Get(ProfileService.Current).isDisposable == true)
             {
                 List<string> itemList = new List<string>
                 {
@@ -333,7 +333,7 @@ namespace Quartz
             }
 
             String theme;
-            if(SettingsService.GetAutoTheme() != null)
+            if (SettingsService.GetAutoTheme() != null)
             {
                 theme = SettingsService.GetAutoTheme();
             }
@@ -399,7 +399,7 @@ namespace Quartz
 
 
             this.Text = $"Settings - {Program.profileService.Get(ProfileService.Current).Name}";
-            
+
             switch (SettingsService.Get("TrackingPreventionLevel"))
             {
                 case "none":
@@ -497,14 +497,27 @@ namespace Quartz
 
             pictureBox1.BackgroundImage = FaviconHelper.GetFullResDefaultFaviconAsImage();
 
-            txtUpdate.Text = "Update"; 
+            txtUpdate.Text = "Update";
             await LoadingProgress.EnsureCoreWebView2Async();
             LoadingProgress.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
 
-            TopLeftBox.Checked = SettingsService.Get("DownloadAlignment") == "TopLeft";
-            TopRightBox.Checked = SettingsService.Get("DownloadAlignment") == "TopRight";
-            BottomLeftBox.Checked = SettingsService.Get("DownloadAlignment") == "BottomLeft";
-            BottomRightBox.Checked = SettingsService.Get("DownloadAlignment") == "BottomRight";
+            if (SettingsService.Get("DownloadAlignment") == "TopLeft")
+            {
+                cbDownloadAlighment.SelectedIndex = 1;
+            }
+            else if (SettingsService.Get("DownloadAlignment") == "TopRight")
+            {
+                cbDownloadAlighment.SelectedIndex = 0;
+            }
+            else if (SettingsService.Get("DownloadAlignment") == "BottomLeft")
+            {
+                cbDownloadAlighment.SelectedIndex = 3;
+            }
+            else if (SettingsService.Get("DownloadAlignment") == "BottomRight")
+            {
+                cbDownloadAlighment.SelectedIndex = 2;
+            }
+
             autofillCheckBox.Checked = SettingsService.Get("IsGeneralAutofillEnabled") == "true";
             autoSaveCheckBox.Checked = SettingsService.Get("IsPasswordAutosaveEnabled") == "true";
             checkBoxMemory.Checked = SettingsService.Get("MemoryUsage") == "low";
@@ -515,7 +528,7 @@ namespace Quartz
             cbDHP.Checked = SettingsService.Get("DefaultHomePage") == "true";
             cbDrag.Checked = SettingsService.Get("DraggableForms") == "true";
 
-            if(SettingsService.Get("Theme") == "dark")
+            if (SettingsService.Get("Theme") == "dark")
             {
                 txtTimeMachine.Size = new System.Drawing.Size(204, 20);
                 btnDown.Location = new System.Drawing.Point(222, 107);
@@ -570,42 +583,6 @@ namespace Quartz
             {
                 _browser.wvWebView1.CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
                 SettingsService.Set("IsGeneralAutofillEnabled", "false");
-            }
-        }
-
-        private void TopLeftBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (TopLeftBox.Checked)
-            {
-                _browser.wvWebView1.CoreWebView2.DefaultDownloadDialogCornerAlignment = CoreWebView2DefaultDownloadDialogCornerAlignment.TopLeft;
-                SettingsService.Set("DownloadAlignment", "TopLeft");
-            }
-        }
-
-        private void BottomLeftBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (BottomLeftBox.Checked)
-            {
-                _browser.wvWebView1.CoreWebView2.DefaultDownloadDialogCornerAlignment = CoreWebView2DefaultDownloadDialogCornerAlignment.BottomLeft;
-                SettingsService.Set("DownloadAlignment", "BottomLeft");
-            }
-        }
-
-        private void TopRightBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (TopRightBox.Checked)
-            {
-                _browser.wvWebView1.CoreWebView2.DefaultDownloadDialogCornerAlignment = CoreWebView2DefaultDownloadDialogCornerAlignment.TopRight;
-                SettingsService.Set("DownloadAlignment", "TopRight");
-            }
-        }
-
-        private void BottomRightBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (BottomRightBox.Checked)
-            {
-                _browser.wvWebView1.CoreWebView2.DefaultDownloadDialogCornerAlignment = CoreWebView2DefaultDownloadDialogCornerAlignment.BottomRight;
-                SettingsService.Set("DownloadAlignment", "BottomRight");
             }
         }
 
@@ -908,7 +885,7 @@ namespace Quartz
 
         private void cbSearchEngine_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(cbSearchEngine.SelectedIndex == 0)
+            if (cbSearchEngine.SelectedIndex == 0)
             {
                 SettingsService.Set("SearchEngine", "google");
                 cbDHP.Visible = true;
@@ -977,7 +954,7 @@ namespace Quartz
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if(checkBoxMemory.Checked)
+            if (checkBoxMemory.Checked)
             {
                 SettingsService.Set("MemoryUsage", "low");
                 _browser.wvWebView1.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
@@ -1031,7 +1008,7 @@ namespace Quartz
 
         private void cbDrag_CheckedChanged(object sender, EventArgs e)
         {
-            if(cbDrag.Checked)
+            if (cbDrag.Checked)
             {
                 SettingsService.Set("DraggableForms", "true");
             }
@@ -1057,7 +1034,7 @@ namespace Quartz
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            if(!mcTimeMachine.Visible)
+            if (!mcTimeMachine.Visible)
             {
                 if (SettingsService.Get("Animation") == "true")
                 {
@@ -1088,7 +1065,7 @@ namespace Quartz
         }
         private void txtTimeMachine_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter)
             {
                 try
                 {
@@ -1113,7 +1090,7 @@ namespace Quartz
                 txtTimeMachine.Enabled = true;
                 btnDown.Enabled = true;
 
-                if(SettingsService.Get("timeMachine") == null)
+                if (SettingsService.Get("timeMachine") == null)
                 {
                     SettingsService.Set("timeMachine", DateTime.Now.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", ""));
                 }
@@ -1325,7 +1302,7 @@ namespace Quartz
             int nextYear = currentYear + 1;
 
             DateTime currentEaster = CalculateEaster(currentYear);
-            DateTime nextEaster= CalculateEaster(nextYear);
+            DateTime nextEaster = CalculateEaster(nextYear);
 
             if (currentDate.Date == currentEaster.Date)
             {
@@ -1348,8 +1325,8 @@ namespace Quartz
             {
                 Animation.AnimateWindow(mnuTimeMachine.Handle, 100, Animation.AW_BLEND);
             }
-            
-            if(birthdayService.All().Count != 0)
+
+            if (birthdayService.All().Count != 0)
             {
                 birthdaysToolStripMenuItem.DropDown = mnuBirthdays;
                 birthdaysToolStripMenuItem.Text = "Birthdays";
@@ -1497,11 +1474,29 @@ namespace Quartz
 
             if (combDefaultFavicon.SelectedIndex == 0)
             {
-                DeleteFileIfExists(path);
+                //DeleteFileIfExists(path);
                 SettingsService.Set("defaultFavicon", "default");
             }
             else if (combDefaultFavicon.SelectedIndex == 1)
             {
+                if (File.Exists(path))
+                {
+                    DialogResult result = MessageBox.Show(
+                        "A custom favicon already exists for this profile.\n\n" +
+                        "Would you like to keep the current favicon or replace it with a new one?",
+                        "Existing Favicon Detected",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question
+                    );
+
+                    // Yes = keep existing favicon
+                    if (result == DialogResult.Yes)
+                    {
+                        SettingsService.Set("defaultFavicon", string.Format("custom - {0}", path));
+                        return;
+                    }
+                }
+
                 string file = OpenImageFileDialog();
                 if (string.IsNullOrEmpty(file) || !File.Exists(file))
                     return;
@@ -1537,11 +1532,11 @@ namespace Quartz
             }
         }
 
-        private void DeleteFileIfExists(string path)
-        {
-            if (File.Exists(path))
-                File.Delete(path);
-        }
+        //private void DeleteFileIfExists(string path)
+        //{
+        //    if (File.Exists(path))
+        //        File.Delete(path);
+        //}
 
         private string OpenImageFileDialog()
         {
@@ -1639,11 +1634,11 @@ namespace Quartz
                 }
 
                 e.Cancel = true;
-                    mnuBirthdays_Opening(sender, e);
+                mnuBirthdays_Opening(sender, e);
 
-                    //WAITS
-                    await Task.Delay(100);
-                    mnubClose = true;
+                //WAITS
+                await Task.Delay(100);
+                mnubClose = true;
             }
         }
 
@@ -1689,6 +1684,30 @@ namespace Quartz
             {
                 AddBirthday addBirthdayForm = new AddBirthday(this, true, model.Name, model.DOB, model.Id);
                 addBirthdayForm.ShowDialog();
+            }
+        }
+
+        private void cbDownloadAlighment_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbDownloadAlighment.SelectedIndex == 0)
+            {
+                _browser.wvWebView1.CoreWebView2.DefaultDownloadDialogCornerAlignment = CoreWebView2DefaultDownloadDialogCornerAlignment.TopRight;
+                SettingsService.Set("DownloadAlignment", "TopRight");
+            }
+            else if (cbDownloadAlighment.SelectedIndex == 1)
+            {
+                _browser.wvWebView1.CoreWebView2.DefaultDownloadDialogCornerAlignment = CoreWebView2DefaultDownloadDialogCornerAlignment.TopLeft;
+                SettingsService.Set("DownloadAlignment", "TopLeft");
+            }
+            else if (cbDownloadAlighment.SelectedIndex == 2)
+            {
+                _browser.wvWebView1.CoreWebView2.DefaultDownloadDialogCornerAlignment = CoreWebView2DefaultDownloadDialogCornerAlignment.BottomRight;
+                SettingsService.Set("DownloadAlignment", "BottomRight");
+            }
+            else if (cbDownloadAlighment.SelectedIndex == 3)
+            {
+                _browser.wvWebView1.CoreWebView2.DefaultDownloadDialogCornerAlignment = CoreWebView2DefaultDownloadDialogCornerAlignment.BottomLeft;
+                SettingsService.Set("DownloadAlignment", "BottomLeft");
             }
         }
     }

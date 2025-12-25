@@ -207,7 +207,7 @@ namespace Quartz
                 SettingsService.Set("IsPasswordAutosaveEnabled", "true");
                 SettingsService.Set("IsGeneralAutofillEnabled", "true");
                 SettingsService.Set("Zoom", "1.0");
-                SettingsService.Set("DownloadAlignment", "TopLeft");
+                SettingsService.Set("DownloadAlignment", "TopRight");
                 SettingsService.Set("Private", "false");
                 SettingsService.Set("TrackingPreventionLevel", "balanced");
                 SettingsService.Set("Animation", "true");
