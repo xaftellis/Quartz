@@ -305,8 +305,7 @@ namespace Quartz.Libs
             {
                 if (SettingsService.Get("defaultFavicon") == "chrome")
                 {
-                    // Use dark version if dark theme is enabled
-                    icon = SettingsService.Get("Theme") == "dark" ? Properties.Resources.default_favicon_dark : Properties.Resources.default_favicon;
+                    icon = SettingsService.Get("Theme") == "light" ? Properties.Resources.default_favicon : Properties.Resources.default_favicon_dark;
                 }
                 else
                 {
@@ -395,7 +394,7 @@ namespace Quartz.Libs
                 if (SettingsService.Get("defaultFavicon") == "chrome")
                 {
                     // Use dark version if dark theme is enabled
-                    icon = SettingsService.Get("Theme") == "dark" ? Properties.Resources.default_favicon_dark : Properties.Resources.default_favicon;
+                    icon = SettingsService.Get("Theme") == "light" ? Properties.Resources.default_favicon : Properties.Resources.default_favicon_dark;
                 }
                 else
                 {
