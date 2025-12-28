@@ -572,6 +572,8 @@
     <None Include="Resources\Blue_Close.png" />
     <None Include="Resources\Blue_CloseHover.png" />
     <None Include="Resources\default_favicon.ico" />
+    <None Include="Resources\default_favicon_dark.png" />
+    <None Include="Resources\default_favicon_dark.ico" />
     <Content Include="Resources\favicon.ico" />
     <None Include="Resources\UrlBoxRightAqua.png" />
     <None Include="Resources\UrlBoxLeftWhiteAqua.png" />

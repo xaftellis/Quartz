@@ -103,7 +103,7 @@ namespace Quartz
                 TabRenderer = new ChromeTabRenderer(this);
             }
 
-            Icon = FaviconHelper.GetFullResDefaultFavicon();
+            Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
 
             CustomWindow(barBackColor, textForeColor, windowOutline, Handle);
 

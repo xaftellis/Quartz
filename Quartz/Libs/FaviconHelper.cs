@@ -43,7 +43,7 @@ namespace Quartz.Libs
                 tcs.SetResult(true);
             };
 
-            webView.CoreWebView2.Navigate("https://example.com/");
+            webView.CoreWebView2.Navigate("about:blank");
 
             // Wait until navigation finishes
             await tcs.Task;
@@ -303,7 +303,15 @@ namespace Quartz.Libs
 
             if (SettingsService.Get("defaultFavicon") == "chrome" || SettingsService.Get("defaultFavicon").StartsWith("custom - "))
             {
-                icon = SettingsService.Get("defaultFavicon") == "chrome" ? Properties.Resources.default_favicon : new Icon(SettingsService.Get("defaultFavicon").Replace("custom - ", ""));
+                if (SettingsService.Get("defaultFavicon") == "chrome")
+                {
+                    // Use dark version if dark theme is enabled
+                    icon = SettingsService.Get("Theme") == "dark" ? Properties.Resources.default_favicon_dark : Properties.Resources.default_favicon;
+                }
+                else
+                {
+                    icon = new Icon(SettingsService.Get("defaultFavicon").Replace("custom - ", ""));
+                }
             }
             else
             {
@@ -384,7 +392,15 @@ namespace Quartz.Libs
 
             if (SettingsService.Get("defaultFavicon") == "chrome" || SettingsService.Get("defaultFavicon").StartsWith("custom - "))
             {
-                icon = SettingsService.Get("defaultFavicon") == "chrome" ? Properties.Resources.default_favicon : new Icon(SettingsService.Get("defaultFavicon").Replace("custom - ", ""));
+                if (SettingsService.Get("defaultFavicon") == "chrome")
+                {
+                    // Use dark version if dark theme is enabled
+                    icon = SettingsService.Get("Theme") == "dark" ? Properties.Resources.default_favicon_dark : Properties.Resources.default_favicon;
+                }
+                else
+                {
+                    icon = new Icon(SettingsService.Get("defaultFavicon").Replace("custom - ", ""));
+                }
             }
             else
             {

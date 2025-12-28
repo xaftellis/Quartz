@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <metadata name="mnuMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>306, 51</value>
+    <value>312, 49</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
@@ -210,7 +210,7 @@
     <value>Show favourites bar</value>
   </data>
   <data name="mnuMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 314</value>
+    <value>188, 292</value>
   </data>
   <data name="&gt;&gt;mnuMenu.Name" xml:space="preserve">
     <value>mnuMenu</value>
@@ -352,7 +352,7 @@
     <value>7</value>
   </data>
   <metadata name="mnuDownloadsDropDown.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>236, 14</value>
+    <value>236, 10</value>
   </metadata>
   <data name="locationToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>164, 22</value>
@@ -2491,7 +2491,7 @@
     <value>UserData</value>
   </data>
   <metadata name="mnuHistory.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>113, 16</value>
+    <value>105, 18</value>
   </metadata>
   <data name="historyToolStripMenuItem1.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+H</value>
