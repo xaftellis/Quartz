@@ -332,7 +332,7 @@ namespace Quartz
 
             NewControlThemeChanger.ChangeTheme(this);
             //if (GetRealTimeInZone.GetRealTimeInComputerTimeZone().Month == 12 && SettingsService.Get("Theme") == "black")
-            //{
+            //{ 
             //    NewControlThemeChanger.AnimateButtonImageFromResources(circularImageButton1);
             //}
 

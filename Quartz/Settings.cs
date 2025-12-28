@@ -1474,28 +1474,28 @@ namespace Quartz
 
             if (combDefaultFavicon.SelectedIndex == 0)
             {
-                //DeleteFileIfExists(path);
+                DeleteFileIfExists(path);
                 SettingsService.Set("defaultFavicon", "default");
             }
             else if (combDefaultFavicon.SelectedIndex == 1)
             {
-                if (File.Exists(path))
-                {
-                    DialogResult result = MessageBox.Show(
-                        "A custom favicon already exists for this profile.\n\n" +
-                        "Would you like to keep the current favicon or replace it with a new one?",
-                        "Existing Favicon Detected",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question
-                    );
+                //if (File.Exists(path))
+                //{
+                //    DialogResult result = MessageBox.Show(
+                //        "A custom favicon already exists for this profile.\n\n" +
+                //        "Would you like to keep the current favicon or replace it with a new one?",
+                //        "Existing Favicon Detected",
+                //        MessageBoxButtons.YesNo,
+                //        MessageBoxIcon.Question
+                //    );
 
-                    // Yes = keep existing favicon
-                    if (result == DialogResult.Yes)
-                    {
-                        SettingsService.Set("defaultFavicon", string.Format("custom - {0}", path));
-                        return;
-                    }
-                }
+                //    // Yes = keep existing favicon
+                //    if (result == DialogResult.Yes)
+                //    {
+                //        SettingsService.Set("defaultFavicon", string.Format("custom - {0}", path));
+                //        return;
+                //    }
+                //}
 
                 string file = OpenImageFileDialog();
                 if (string.IsNullOrEmpty(file) || !File.Exists(file))
@@ -1532,11 +1532,11 @@ namespace Quartz
             }
         }
 
-        //private void DeleteFileIfExists(string path)
-        //{
-        //    if (File.Exists(path))
-        //        File.Delete(path);
-        //}
+        private void DeleteFileIfExists(string path)
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+        }
 
         private string OpenImageFileDialog()
         {

@@ -583,13 +583,13 @@
             // 
             // label9
             // 
-            this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(7, 29);
+            this.label9.Location = new System.Drawing.Point(6, 29);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(189, 18);
+            this.label9.Size = new System.Drawing.Size(187, 18);
             this.label9.TabIndex = 18;
             this.label9.Text = "Download Dialog Alignment";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // cbDownloadAlighment
             // 
@@ -622,24 +622,24 @@
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.Black;
-            this.label7.Location = new System.Drawing.Point(6, 280);
+            this.label7.Location = new System.Drawing.Point(8, 260);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(182, 20);
+            this.label7.Size = new System.Drawing.Size(190, 20);
             this.label7.TabIndex = 14;
             this.label7.Text = "Settings Tab Alignment";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label8
             // 
-            this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(32, 102);
+            this.label8.Location = new System.Drawing.Point(6, 102);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(139, 24);
+            this.label8.Size = new System.Drawing.Size(187, 24);
             this.label8.TabIndex = 15;
             this.label8.Text = "Default Favicon";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // ComboBoxTheme
             // 
@@ -657,7 +657,7 @@
             "Dark",
             "Black",
             "Aqua"});
-            this.ComboBoxTheme.Location = new System.Drawing.Point(31, 220);
+            this.ComboBoxTheme.Location = new System.Drawing.Point(33, 211);
             this.ComboBoxTheme.Name = "ComboBoxTheme";
             this.ComboBoxTheme.Size = new System.Drawing.Size(140, 21);
             this.ComboBoxTheme.TabIndex = 13;
@@ -671,7 +671,7 @@
             "Left",
             "Right",
             "Bottom"});
-            this.comboSettingsTabAlinement.Location = new System.Drawing.Point(31, 303);
+            this.comboSettingsTabAlinement.Location = new System.Drawing.Point(33, 283);
             this.comboSettingsTabAlinement.Name = "comboSettingsTabAlinement";
             this.comboSettingsTabAlinement.Size = new System.Drawing.Size(140, 21);
             this.comboSettingsTabAlinement.TabIndex = 15;
@@ -681,14 +681,14 @@
             // 
             this.labelTheme.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelTheme.AutoSize = true;
             this.labelTheme.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTheme.ForeColor = System.Drawing.Color.Black;
-            this.labelTheme.Location = new System.Drawing.Point(60, 193);
+            this.labelTheme.Location = new System.Drawing.Point(8, 184);
             this.labelTheme.Name = "labelTheme";
-            this.labelTheme.Size = new System.Drawing.Size(71, 24);
+            this.labelTheme.Size = new System.Drawing.Size(185, 24);
             this.labelTheme.TabIndex = 0;
             this.labelTheme.Text = "Theme";
+            this.labelTheme.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // labelAppTittle
             // 
@@ -1270,7 +1270,6 @@
             this.mnuTimeMachine.ResumeLayout(false);
             this.mnuBirthdays.ResumeLayout(false);
             this.groupBoxDownloadDialog.ResumeLayout(false);
-            this.groupBoxDownloadDialog.PerformLayout();
             this.tabPageAccount.ResumeLayout(false);
             this.tabPageAccount.PerformLayout();
             this.GeneralPage.ResumeLayout(false);
