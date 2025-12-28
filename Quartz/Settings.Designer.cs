@@ -473,6 +473,7 @@
             // 
             this.mcTimeMachine.ContextMenuStrip = this.mnuTimeMachine;
             this.mcTimeMachine.Location = new System.Drawing.Point(17, 140);
+            this.mcTimeMachine.MaxSelectionCount = 1;
             this.mcTimeMachine.Name = "mcTimeMachine";
             this.mcTimeMachine.TabIndex = 10;
             this.mcTimeMachine.Visible = false;

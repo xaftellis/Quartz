@@ -163,5 +163,16 @@ namespace Quartz
             settings.birthdayService.SaveChanges();
             this.Close();
         }
+
+        private void AddBirthday_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (SettingsService.Get("escClose") == "true")
+            {
+                if (e.KeyCode == Keys.Escape)
+                {
+                    this.Close();
+                }
+            }
+        }
     }
 }

@@ -128,6 +128,7 @@
             this.Controls.Add(this.mcCalender);
             this.Controls.Add(this.txtExists);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AddBirthday";
@@ -135,6 +136,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Add Birthday";
             this.Load += new System.EventHandler(this.AddBirthday_Load);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.AddBirthday_KeyUp);
             this.ResumeLayout(false);
             this.PerformLayout();
 
