@@ -97,6 +97,7 @@
             // mcCalender
             // 
             this.mcCalender.Location = new System.Drawing.Point(49, 77);
+            this.mcCalender.MaxSelectionCount = 1;
             this.mcCalender.Name = "mcCalender";
             this.mcCalender.TabIndex = 2;
             this.mcCalender.Visible = false;

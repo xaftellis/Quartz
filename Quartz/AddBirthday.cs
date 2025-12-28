@@ -94,10 +94,18 @@ namespace Quartz
 
         private void mcCalender_DateChanged(object sender, DateRangeEventArgs e)
         {
+            // If future date selected → rewind to last valid date
+            if (e.Start > DateTime.Today)
+            {
+                txtDOB.Text = selectedDateString;
+                mcCalender.SelectionStart = selectedDate;
+                mcCalender.SelectionEnd = selectedDate;
+                return;
+            }
+
             mcCalender.AddBoldedDate(e.Start);
             mcCalender.SelectionStart = e.Start;
             mcCalender.SelectionEnd = e.Start;
-
             selectedDate = DateTime.Parse(mcCalender.SelectionStart.ToString("D").Replace(mcCalender.SelectionStart.DayOfWeek + ", ", ""));
             selectedDateString = mcCalender.SelectionStart.ToString("D").Replace(mcCalender.SelectionStart.DayOfWeek + ", ", "");
 
@@ -126,8 +134,8 @@ namespace Quartz
         private void button1_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtName.Text)
-                && string.IsNullOrEmpty(txtDOB.Text)
-                && selectedDate == null)
+                || string.IsNullOrEmpty(txtDOB.Text)
+                || selectedDate == null)
             {
                 txtExists.Visible = true;
                 return;

@@ -69,13 +69,13 @@
             this.addBirthdayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.groupBoxDownloadDialog = new System.Windows.Forms.GroupBox();
+            this.comboSettingsTabAlinement = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.cbDownloadAlighment = new System.Windows.Forms.ComboBox();
             this.combDefaultFavicon = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.ComboBoxTheme = new System.Windows.Forms.ComboBox();
-            this.comboSettingsTabAlinement = new System.Windows.Forms.ComboBox();
             this.labelTheme = new System.Windows.Forms.Label();
             this.labelAppTittle = new System.Windows.Forms.Label();
             this.tabPageAccount = new System.Windows.Forms.TabPage();
@@ -544,7 +544,6 @@
             this.addBirthdayToolStripMenuItem,
             this.toolStripSeparator3});
             this.mnuBirthdays.Name = "mnuBirthdays";
-            this.mnuBirthdays.OwnerItem = this.birthdaysToolStripMenuItem;
             this.mnuBirthdays.Size = new System.Drawing.Size(144, 32);
             this.mnuBirthdays.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.mnuBirthdays_Closing);
             this.mnuBirthdays.Opening += new System.ComponentModel.CancelEventHandler(this.mnuBirthdays_Opening);
@@ -580,6 +579,20 @@
             this.groupBoxDownloadDialog.TabIndex = 9;
             this.groupBoxDownloadDialog.TabStop = false;
             this.groupBoxDownloadDialog.Text = "Other Appearance Settings";
+            // 
+            // comboSettingsTabAlinement
+            // 
+            this.comboSettingsTabAlinement.FormattingEnabled = true;
+            this.comboSettingsTabAlinement.Items.AddRange(new object[] {
+            "Top (Default)",
+            "Left",
+            "Right",
+            "Bottom"});
+            this.comboSettingsTabAlinement.Location = new System.Drawing.Point(31, 286);
+            this.comboSettingsTabAlinement.Name = "comboSettingsTabAlinement";
+            this.comboSettingsTabAlinement.Size = new System.Drawing.Size(140, 21);
+            this.comboSettingsTabAlinement.TabIndex = 15;
+            this.comboSettingsTabAlinement.SelectedIndexChanged += new System.EventHandler(this.comboSettingsTabAlinement_SelectedIndexChanged);
             // 
             // label10
             // 
@@ -663,20 +676,6 @@
             this.ComboBoxTheme.Size = new System.Drawing.Size(140, 21);
             this.ComboBoxTheme.TabIndex = 13;
             this.ComboBoxTheme.SelectedIndexChanged += new System.EventHandler(this.ComboBoxTheme_SelectedIndexChanged);
-            // 
-            // comboSettingsTabAlinement
-            // 
-            this.comboSettingsTabAlinement.FormattingEnabled = true;
-            this.comboSettingsTabAlinement.Items.AddRange(new object[] {
-            "Top (Default)",
-            "Left",
-            "Right",
-            "Bottom"});
-            this.comboSettingsTabAlinement.Location = new System.Drawing.Point(31, 286);
-            this.comboSettingsTabAlinement.Name = "comboSettingsTabAlinement";
-            this.comboSettingsTabAlinement.Size = new System.Drawing.Size(140, 21);
-            this.comboSettingsTabAlinement.TabIndex = 15;
-            this.comboSettingsTabAlinement.SelectedIndexChanged += new System.EventHandler(this.comboSettingsTabAlinement_SelectedIndexChanged);
             // 
             // labelTheme
             // 

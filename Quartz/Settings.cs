@@ -1116,6 +1116,11 @@ namespace Quartz
                 }
                 txtTimeMachine.Enabled = false;
                 btnDown.Enabled = false;
+
+                //reset date
+                SettingsService.Set("timeMachine", DateTime.Now.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", ""));
+                txtTimeMachine.Text = SettingsService.Get("timeMachine");
+                mcTimeMachine.SelectionStart = DateTime.Parse(SettingsService.Get("timeMachine"));
             }
         }
         private void cbESC_CheckedChanged(object sender, EventArgs e)
