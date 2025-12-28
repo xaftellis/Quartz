@@ -1487,33 +1487,17 @@ namespace Quartz
             }
             else if (combDefaultFavicon.SelectedIndex == 2)
             {
-                //if (File.Exists(path))
-                //{
-                //    DialogResult result = MessageBox.Show(
-                //        "A custom favicon already exists for this profile.\n\n" +
-                //        "Would you like to keep the current favicon or replace it with a new one?",
-                //        "Existing Favicon Detected",
-                //        MessageBoxButtons.YesNo,
-                //        MessageBoxIcon.Question
-                //    );
-
-                //    // Yes = keep existing favicon
-                //    if (result == DialogResult.Yes)
-                //    {
-                //        SettingsService.Set("defaultFavicon", string.Format("custom - {0}", path));
-                //        return;
-                //    }
-                //}
-
                 string file = OpenImageFileDialog();
                 if (string.IsNullOrEmpty(file) || !File.Exists(file))
                     return;
 
+                Icon icon;
+
                 // Load image first to check if conversion/resizing is needed
-                using (Image image = Image.FromFile(file))
+                using (MagickImage magickImage = new MagickImage(file))
                 {
-                    bool isIcon = ImageFormat.Icon.Equals(image.RawFormat);
-                    bool is16x16 = image.Width == 16 && image.Height == 16;
+                    bool isIcon = ImageFormat.Icon.Equals(magickImage.Format);
+                    bool is16x16 = magickImage.Width == 16 && magickImage.Height == 16;
                     bool isMultiSized = IsMultiSizedIcon(file);
 
                     bool needsConversion = !(isIcon && is16x16) || isMultiSized;
@@ -1530,11 +1514,28 @@ namespace Quartz
 
                         if (result != DialogResult.OK)
                             return; // Stop if user clicks Cancel
+                       
+                        //resizes image if needed
+                        if (!is16x16)
+                        {
+                            magickImage.FilterType = FilterType.Lanczos;
+                            magickImage.Resize(16, 16);
+                        }
+
+                        magickImage.Format = MagickFormat.Ico;
+                        using (MemoryStream outStream = new MemoryStream())
+                        {
+                            magickImage.Write(outStream);
+                            outStream.Position = 0;
+                            icon = new Icon(outStream);
+                        }
+                    }
+                    else
+                    {
+                        icon = new Icon(file);
                     }
                 }
 
-                // If user agreed or no conversion needed, continue
-                Icon icon = LoadOrConvertToIcon(file);
                 SaveIconToFile(icon, path);
                 SettingsService.Set("defaultFavicon", string.Format("custom - {0}", path));
             }
@@ -1551,7 +1552,7 @@ namespace Quartz
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Title = "Select Default Favicon";
-                dialog.Filter = "Image & Icon Files (*.ico;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff)|*.ico;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff";
+                //dialog.Filter = "Image & Icon Files (*.ico;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff)|*.ico;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff";
                 dialog.Multiselect = false;
 
                 return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : null;
@@ -1563,41 +1564,6 @@ namespace Quartz
             using (var icoImages = new MagickImageCollection(path))
             {
                 return icoImages.Count > 1; // more than 1 frame → multi-sized
-            }
-        }
-
-        private Icon LoadOrConvertToIcon(string file)
-        {
-            using (Image image = Image.FromFile(file))
-            {
-                // Already valid 16x16 .ico?
-                if (ImageFormat.Icon.Equals(image.RawFormat) && image.Size == new Size(16, 16))
-                    return new Icon(file);
-
-                // Otherwise, convert & resize
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    image.Save(ms, image.RawFormat);
-                    ms.Position = 0;
-
-                    using (MagickImage magickImage = new MagickImage(ms))
-                    {
-                        if (image.Size != new Size(16, 16))
-                        {
-                            magickImage.FilterType = FilterType.Lanczos;
-                            magickImage.Resize(16, 16);
-                        }
-
-                        magickImage.Format = MagickFormat.Ico;
-
-                        using (MemoryStream outStream = new MemoryStream())
-                        {
-                            magickImage.Write(outStream);
-                            outStream.Position = 0;
-                            return new Icon(outStream);
-                        }
-                    }
-                }
             }
         }
 
