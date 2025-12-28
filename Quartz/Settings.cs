@@ -430,9 +430,13 @@ namespace Quartz
             {
                 combDefaultFavicon.SelectedIndex = 0;
             }
+            else if (SettingsService.Get("defaultFavicon") == "chrome")
+            {
+                combDefaultFavicon.SelectedIndex = 2;
+            }
             else if (SettingsService.Get("defaultFavicon").StartsWith("custom - "))
             {
-                combDefaultFavicon.SelectedIndex = 1;
+                combDefaultFavicon.SelectedIndex = 2;
             }
             combDefaultFavicon.SelectedIndexChanged += combDefaultFavicon_SelectedIndexChanged;
 
@@ -1479,6 +1483,10 @@ namespace Quartz
             }
             else if (combDefaultFavicon.SelectedIndex == 1)
             {
+                SettingsService.Set("defaultFavicon", "chrome");
+            }
+            else if (combDefaultFavicon.SelectedIndex == 2)
+            {
                 //if (File.Exists(path))
                 //{
                 //    DialogResult result = MessageBox.Show(
@@ -1543,7 +1551,7 @@ namespace Quartz
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Title = "Select Default Favicon";
-                dialog.Filter = "Icon Files (*.ico)|*.ico|Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff)|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff";
+                dialog.Filter = "Image & Icon Files (*.ico;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff)|*.ico;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff";
                 dialog.Multiselect = false;
 
                 return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : null;

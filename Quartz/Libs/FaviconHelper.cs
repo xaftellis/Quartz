@@ -57,7 +57,7 @@ namespace Quartz.Libs
                     defaultHash = ComputeSHA256(ms.ToArray());
                 }
             }
-            
+
             IsInitialized = true;
         }
 
@@ -80,7 +80,7 @@ namespace Quartz.Libs
         public static bool DoesFaviconFileExist(string address)
         {
             FaviconService faviconService = new FaviconService();
-            if(faviconService.Get(address) == null)
+            if (faviconService.Get(address) == null)
             {
                 return false;
             }
@@ -88,8 +88,8 @@ namespace Quartz.Libs
             string directory = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\Xaftellis\Quartz\UserData\cache\";
             string filename = $@"{faviconService.Get(address).Id}.ico";
             string path = directory + filename;
-            
-            if(File.Exists(path))
+
+            if (File.Exists(path))
             {
                 return true;
             }
@@ -107,7 +107,7 @@ namespace Quartz.Libs
             if (FaviconHelper.DoesFaviconFileExist(address))
                 return;
 
-            if(webView2.CoreWebView2 == null)
+            if (webView2.CoreWebView2 == null)
             {
                 //CoreWebView2Environment environment = await CoreWebView2Environment.CreateAsync(null, null, null);
                 //CoreWebView2ControllerOptions controllerOptions = environment.CreateCoreWebView2ControllerOptions();
@@ -153,7 +153,7 @@ namespace Quartz.Libs
 
         public static Icon GetFaviconFileExternal(string address)
         {
-            if(DoesFaviconFileExist(address))
+            if (DoesFaviconFileExist(address))
             {
                 return GetFaviconFile(address);
             }
@@ -197,7 +197,7 @@ namespace Quartz.Libs
                 Directory.CreateDirectory(directory);
             }
 
-            if(icon != null)
+            if (icon != null)
             {
                 using (FileStream fs = new FileStream(path, FileMode.Create))
                 {
@@ -284,9 +284,9 @@ namespace Quartz.Libs
             BirthdayService birthdayService = new BirthdayService();
             DateTime today = GetRealTimeInZone.GetRealTimeInComputerTimeZone();
 
-            foreach(BirthdayModel birthday in birthdayService.All())
+            foreach (BirthdayModel birthday in birthdayService.All())
             {
-                if(birthday.DOB.Day == today.Day 
+                if (birthday.DOB.Day == today.Day
                     && birthday.DOB.Month == today.Month)
                 {
                     isTodaySomeonesBirthday = true;
@@ -301,9 +301,9 @@ namespace Quartz.Libs
         {
             Icon icon;
 
-            if (SettingsService.Get("defaultFavicon").StartsWith("custom - "))
+            if (SettingsService.Get("defaultFavicon") == "chrome" || SettingsService.Get("defaultFavicon").StartsWith("custom - "))
             {
-                icon = new Icon(SettingsService.Get("defaultFavicon").Replace("custom - ", ""));
+                icon = SettingsService.Get("defaultFavicon") == "chrome" ? Properties.Resources.default_favicon : new Icon(SettingsService.Get("defaultFavicon").Replace("custom - ", ""));
             }
             else
             {
@@ -382,9 +382,9 @@ namespace Quartz.Libs
         {
             Icon icon;
 
-            if (SettingsService.Get("defaultFavicon").StartsWith("custom - "))
+            if (SettingsService.Get("defaultFavicon") == "chrome" || SettingsService.Get("defaultFavicon").StartsWith("custom - "))
             {
-                icon = new Icon(SettingsService.Get("defaultFavicon").Replace("custom - ", ""));
+                icon = SettingsService.Get("defaultFavicon") == "chrome" ? Properties.Resources.default_favicon : new Icon(SettingsService.Get("defaultFavicon").Replace("custom - ", ""));
             }
             else
             {

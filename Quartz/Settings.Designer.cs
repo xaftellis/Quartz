@@ -611,6 +611,7 @@
             this.combDefaultFavicon.FormattingEnabled = true;
             this.combDefaultFavicon.Items.AddRange(new object[] {
             "Default",
+            "Chrome",
             "(Custom)"});
             this.combDefaultFavicon.Location = new System.Drawing.Point(31, 140);
             this.combDefaultFavicon.Name = "combDefaultFavicon";
