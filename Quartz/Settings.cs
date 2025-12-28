@@ -20,8 +20,6 @@ using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media.TextFormatting;
-using Win32Interop.Enums;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace Quartz
 {
@@ -1496,7 +1494,7 @@ namespace Quartz
                 // Load image first to check if conversion/resizing is needed
                 using (MagickImage magickImage = new MagickImage(file))
                 {
-                    bool isIcon = ImageFormat.Icon.Equals(magickImage.Format);
+                    bool isIcon = magickImage.Format == MagickFormat.Icon || magickImage.Format == MagickFormat.Ico;
                     bool is16x16 = magickImage.Width == 16 && magickImage.Height == 16;
                     bool isMultiSized = IsMultiSizedIcon(file);
 
@@ -1552,7 +1550,10 @@ namespace Quartz
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Title = "Select Default Favicon";
-                //dialog.Filter = "Image & Icon Files (*.ico;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff)|*.ico;*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff";
+                dialog.Filter =
+                    "Image Files (*.ico;*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.tif;*.tiff;*.svg;*.webp;*.heic;*.avif)|" +
+                    "*.ico;*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.tif;*.tiff;*.svg;*.webp;*.heic;*.avif|" +
+                    "All Files (*.*)|*.*";
                 dialog.Multiselect = false;
 
                 return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : null;
