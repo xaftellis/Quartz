@@ -69,10 +69,10 @@
             this.addBirthdayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.groupBoxDownloadDialog = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.cbDownloadAlighment = new System.Windows.Forms.ComboBox();
             this.combDefaultFavicon = new System.Windows.Forms.ComboBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.ComboBoxTheme = new System.Windows.Forms.ComboBox();
             this.comboSettingsTabAlinement = new System.Windows.Forms.ComboBox();
@@ -565,13 +565,13 @@
             this.groupBoxDownloadDialog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxDownloadDialog.BackColor = System.Drawing.Color.White;
+            this.groupBoxDownloadDialog.Controls.Add(this.comboSettingsTabAlinement);
+            this.groupBoxDownloadDialog.Controls.Add(this.label10);
             this.groupBoxDownloadDialog.Controls.Add(this.label9);
             this.groupBoxDownloadDialog.Controls.Add(this.cbDownloadAlighment);
             this.groupBoxDownloadDialog.Controls.Add(this.combDefaultFavicon);
-            this.groupBoxDownloadDialog.Controls.Add(this.label7);
             this.groupBoxDownloadDialog.Controls.Add(this.label8);
             this.groupBoxDownloadDialog.Controls.Add(this.ComboBoxTheme);
-            this.groupBoxDownloadDialog.Controls.Add(this.comboSettingsTabAlinement);
             this.groupBoxDownloadDialog.Controls.Add(this.labelTheme);
             this.groupBoxDownloadDialog.ForeColor = System.Drawing.Color.Black;
             this.groupBoxDownloadDialog.Location = new System.Drawing.Point(593, 0);
@@ -580,6 +580,19 @@
             this.groupBoxDownloadDialog.TabIndex = 9;
             this.groupBoxDownloadDialog.TabStop = false;
             this.groupBoxDownloadDialog.Text = "Other Appearance Settings";
+            // 
+            // label10
+            // 
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.ForeColor = System.Drawing.Color.Black;
+            this.label10.Location = new System.Drawing.Point(6, 263);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(190, 20);
+            this.label10.TabIndex = 15;
+            this.label10.Text = "Settings Tab Alignment";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label9
             // 
@@ -618,19 +631,6 @@
             this.combDefaultFavicon.Size = new System.Drawing.Size(140, 21);
             this.combDefaultFavicon.TabIndex = 16;
             this.combDefaultFavicon.SelectedIndexChanged += new System.EventHandler(this.combDefaultFavicon_SelectedIndexChanged);
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.ForeColor = System.Drawing.Color.Black;
-            this.label7.Location = new System.Drawing.Point(8, 260);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(190, 20);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "Settings Tab Alignment";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label8
             // 
@@ -672,7 +672,7 @@
             "Left",
             "Right",
             "Bottom"});
-            this.comboSettingsTabAlinement.Location = new System.Drawing.Point(33, 283);
+            this.comboSettingsTabAlinement.Location = new System.Drawing.Point(33, 286);
             this.comboSettingsTabAlinement.Name = "comboSettingsTabAlinement";
             this.comboSettingsTabAlinement.Size = new System.Drawing.Size(140, 21);
             this.comboSettingsTabAlinement.TabIndex = 15;
@@ -1357,7 +1357,6 @@
         private System.Windows.Forms.ToolStripMenuItem goodFridayToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem easterToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboSettingsTabAlinement;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label CoppyRightLable;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
@@ -1373,5 +1372,6 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox cbDownloadAlighment;
+        private System.Windows.Forms.Label label10;
     }
 }

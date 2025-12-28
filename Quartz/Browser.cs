@@ -1434,7 +1434,10 @@ namespace Quartz
                     picFavicon.Image = icon.ToBitmap();
                 }
             }
-        } 
+            bool isCorrect = await FavouriteService.ValidatePanelAsync(pnlFavourites);
+            if (!isCorrect)
+                LoadFavourites();
+        }
 
         private void CoreWebView2_HistoryChanged(object sender, object e)
         {
