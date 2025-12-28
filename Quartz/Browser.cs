@@ -1364,7 +1364,7 @@ namespace Quartz
             return messagePages.Any(p => p.Equals(fileName, StringComparison.OrdinalIgnoreCase));
         }
 
-        private async void CoreWebView2_FaviconChanged(object sender, object e)
+        public async void CoreWebView2_FaviconChanged(object sender, object e)
         {
             // could add code that refreshes tab favicon to show changes.
             if (Uri.IsWellFormedUriString(wvWebView1.Source.AbsoluteUri, UriKind.Absolute))

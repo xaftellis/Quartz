@@ -589,7 +589,7 @@
             this.label10.ForeColor = System.Drawing.Color.Black;
             this.label10.Location = new System.Drawing.Point(6, 263);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(190, 20);
+            this.label10.Size = new System.Drawing.Size(187, 20);
             this.label10.TabIndex = 15;
             this.label10.Text = "Settings Tab Alignment";
             this.label10.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -635,7 +635,7 @@
             // label8
             // 
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(6, 102);
+            this.label8.Location = new System.Drawing.Point(6, 104);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(187, 24);
             this.label8.TabIndex = 15;
@@ -658,7 +658,7 @@
             "Dark",
             "Black",
             "Aqua"});
-            this.ComboBoxTheme.Location = new System.Drawing.Point(33, 211);
+            this.ComboBoxTheme.Location = new System.Drawing.Point(31, 211);
             this.ComboBoxTheme.Name = "ComboBoxTheme";
             this.ComboBoxTheme.Size = new System.Drawing.Size(140, 21);
             this.ComboBoxTheme.TabIndex = 13;
@@ -672,7 +672,7 @@
             "Left",
             "Right",
             "Bottom"});
-            this.comboSettingsTabAlinement.Location = new System.Drawing.Point(33, 286);
+            this.comboSettingsTabAlinement.Location = new System.Drawing.Point(31, 286);
             this.comboSettingsTabAlinement.Name = "comboSettingsTabAlinement";
             this.comboSettingsTabAlinement.Size = new System.Drawing.Size(140, 21);
             this.comboSettingsTabAlinement.TabIndex = 15;
@@ -684,9 +684,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTheme.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTheme.ForeColor = System.Drawing.Color.Black;
-            this.labelTheme.Location = new System.Drawing.Point(8, 184);
+            this.labelTheme.Location = new System.Drawing.Point(6, 184);
             this.labelTheme.Name = "labelTheme";
-            this.labelTheme.Size = new System.Drawing.Size(185, 24);
+            this.labelTheme.Size = new System.Drawing.Size(187, 24);
             this.labelTheme.TabIndex = 0;
             this.labelTheme.Text = "Theme";
             this.labelTheme.TextAlign = System.Drawing.ContentAlignment.TopCenter;

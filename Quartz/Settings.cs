@@ -430,7 +430,7 @@ namespace Quartz
             }
             else if (SettingsService.Get("defaultFavicon") == "chrome")
             {
-                combDefaultFavicon.SelectedIndex = 2;
+                combDefaultFavicon.SelectedIndex = 1;
             }
             else if (SettingsService.Get("defaultFavicon").StartsWith("custom - "))
             {
@@ -1467,7 +1467,7 @@ namespace Quartz
             mnuTimeMachine.Close();
         }
 
-        private void CDFSelectedIndexChanged()
+        private async void CDFSelectedIndexChanged()
         {
             string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                                             "Xaftellis", "Quartz", "UserData", "pictures");
@@ -1481,13 +1481,30 @@ namespace Quartz
             }
             else if (combDefaultFavicon.SelectedIndex == 1)
             {
+                DeleteFileIfExists(path);
                 SettingsService.Set("defaultFavicon", "chrome");
             }
             else if (combDefaultFavicon.SelectedIndex == 2)
             {
                 string file = OpenImageFileDialog();
                 if (string.IsNullOrEmpty(file) || !File.Exists(file))
+                {
+                    combDefaultFavicon.SelectedIndexChanged -= combDefaultFavicon_SelectedIndexChanged;
+                    if (SettingsService.Get("defaultFavicon") == "default")
+                    {
+                        combDefaultFavicon.SelectedIndex = 0;
+                    }
+                    else if (SettingsService.Get("defaultFavicon") == "chrome")
+                    {
+                        combDefaultFavicon.SelectedIndex = 1;
+                    }
+                    else if (SettingsService.Get("defaultFavicon").StartsWith("custom - "))
+                    {
+                        combDefaultFavicon.SelectedIndex = 2;
+                    }
+                    combDefaultFavicon.SelectedIndexChanged += combDefaultFavicon_SelectedIndexChanged;
                     return;
+                }
 
                 Icon icon;
 
@@ -1537,6 +1554,12 @@ namespace Quartz
                 SaveIconToFile(icon, path);
                 SettingsService.Set("defaultFavicon", string.Format("custom - {0}", path));
             }
+
+            bool isCorrect = await FavouriteService.ValidatePanelAsync(_browser.pnlFavourites);
+            if (!isCorrect)
+                _browser.LoadFavourites();
+
+            _browser.CoreWebView2_FaviconChanged(null, null);
         }
 
         private void DeleteFileIfExists(string path)
@@ -1556,7 +1579,14 @@ namespace Quartz
                     "All Files (*.*)|*.*";
                 dialog.Multiselect = false;
 
-                return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : null;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    return dialog.FileName;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
