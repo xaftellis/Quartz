@@ -313,7 +313,6 @@ namespace Quartz
                 mcTimeMachine.SelectionEnd = DateTime.Now.Date;
                 txtTimeMachine.Text = DateTime.Now.Date.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", "");
                 SettingsService.Set("timeMachine", DateTime.Now.Date.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", ""));
-
             }
 
             if (Quartz.Services.GetRealTimeInZone.GetRealTimeInComputerTimeZone().Month == 12)

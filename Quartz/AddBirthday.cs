@@ -72,6 +72,11 @@ namespace Quartz
 
         private void AddBirthday_Load(object sender, EventArgs e)
         {
+            if (SettingsService.Get("DraggableForms") == "true")
+            {
+                MouseDragger mouseDragger = new MouseDragger(this);
+            }
+
             NewControlThemeChanger.ChangeTheme(this);
             txtExists.ForeColor = Color.Red;
 
