@@ -150,14 +150,14 @@ namespace Quartz
 
             if (isModifying)
             {
-                settings.birthdayService.Get(id).Name = txtName.Text;
+                settings.birthdayService.Get(id).Name = txtName.Text.Trim();
                 settings.birthdayService.Get(id).DOB = selectedDate;
             }
             else
             {
                 var model = new Models.BirthdayModel
                 {
-                    Name = txtName.Text,
+                    Name = txtName.Text.Trim(),
                     DOB = selectedDate
                 };
 
