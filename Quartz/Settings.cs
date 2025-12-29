@@ -280,30 +280,12 @@ namespace Quartz
                 comboSettingsTabAlinement.SelectedIndex = 3;
             }
 
-
             if (SettingsService.Get("simulateDate") == "true")
             {
-                if (!string.IsNullOrEmpty(SettingsService.Get("timeMachine")))
-                {
-                    mcTimeMachine.AddBoldedDate(DateTime.Parse(SettingsService.Get("timeMachine")));
-                    mcTimeMachine.SelectionStart = DateTime.Parse(SettingsService.Get("timeMachine"));
-                    mcTimeMachine.SelectionEnd = DateTime.Parse(SettingsService.Get("timeMachine"));
-                    txtTimeMachine.Text = SettingsService.Get("timeMachine");
-                }
-                else
-                {
-                    mcTimeMachine.AddBoldedDate(DateTime.Now.Date);
-                    mcTimeMachine.SelectionStart = DateTime.Now.Date;
-                    mcTimeMachine.SelectionEnd = DateTime.Now.Date;
-                    txtTimeMachine.Text = DateTime.Now.Date.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", "");
-                }
-
                 cbtimeMachine.Checked = true;
                 txtTimeMachine.Enabled = true;
                 btnDown.Enabled = true;
-            }
-            else
-            {
+
                 if (!string.IsNullOrEmpty(SettingsService.Get("timeMachine")))
                 {
                     mcTimeMachine.AddBoldedDate(DateTime.Parse(SettingsService.Get("timeMachine")));
@@ -317,11 +299,21 @@ namespace Quartz
                     mcTimeMachine.SelectionStart = DateTime.Now.Date;
                     mcTimeMachine.SelectionEnd = DateTime.Now.Date;
                     txtTimeMachine.Text = DateTime.Now.Date.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", "");
+                    SettingsService.Set("timeMachine", DateTime.Now.Date.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", ""));
                 }
-
+            }
+            else
+            {
                 cbtimeMachine.Checked = false;
                 txtTimeMachine.Enabled = false;
                 btnDown.Enabled = false;
+
+                mcTimeMachine.AddBoldedDate(DateTime.Now.Date);
+                mcTimeMachine.SelectionStart = DateTime.Now.Date;
+                mcTimeMachine.SelectionEnd = DateTime.Now.Date;
+                txtTimeMachine.Text = DateTime.Now.Date.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", "");
+                SettingsService.Set("timeMachine", DateTime.Now.Date.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", ""));
+
             }
 
             if (Quartz.Services.GetRealTimeInZone.GetRealTimeInComputerTimeZone().Month == 12)
@@ -1099,7 +1091,6 @@ namespace Quartz
             }
             else
             {
-                SettingsService.Set("simulateDate", "false");
                 if (mcTimeMachine.Visible == true)
                 {
                     if (SettingsService.Get("Animation") == "true")
@@ -1117,10 +1108,10 @@ namespace Quartz
                 txtTimeMachine.Enabled = false;
                 btnDown.Enabled = false;
 
-                //reset date
-                SettingsService.Set("timeMachine", DateTime.Now.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", ""));
-                txtTimeMachine.Text = SettingsService.Get("timeMachine");
-                mcTimeMachine.SelectionStart = DateTime.Parse(SettingsService.Get("timeMachine"));
+                //reset UI to today
+                SettingsService.Set("simulateDate", "false");
+                txtTimeMachine.Text = DateTime.Now.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", "");
+                mcTimeMachine.SelectionStart = DateTime.Now;
             }
         }
         private void cbESC_CheckedChanged(object sender, EventArgs e)
@@ -1533,7 +1524,23 @@ namespace Quartz
                         );
 
                         if (result != DialogResult.OK)
-                            return; // Stop if user clicks Cancel
+                        {
+                            combDefaultFavicon.SelectedIndexChanged -= combDefaultFavicon_SelectedIndexChanged;
+                            if (SettingsService.Get("defaultFavicon") == "default")
+                            {
+                                combDefaultFavicon.SelectedIndex = 0;
+                            }
+                            else if (SettingsService.Get("defaultFavicon") == "chrome")
+                            {
+                                combDefaultFavicon.SelectedIndex = 1;
+                            }
+                            else if (SettingsService.Get("defaultFavicon").StartsWith("custom - "))
+                            {
+                                combDefaultFavicon.SelectedIndex = 2;
+                            }
+                            combDefaultFavicon.SelectedIndexChanged += combDefaultFavicon_SelectedIndexChanged;
+                            return;
+                        }
                        
                         //resizes image if needed
                         if (!is16x16)
