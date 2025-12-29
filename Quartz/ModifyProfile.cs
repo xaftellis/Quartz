@@ -120,7 +120,7 @@ namespace Quartz
 
                 var create = new Models.ProfileModel
                 {
-                    Name = txtName.Text,
+                    Name = txtName.Text.Trim(),
                     Password = txtPassword.Text,
                 };
 
@@ -264,7 +264,7 @@ namespace Quartz
                 NewControlThemeChanger.ChangeControlTheme(txtName);
 
 
-                Program.profileService.Get(_id).Name = txtName.Text;
+                Program.profileService.Get(_id).Name = txtName.Text.Trim();
                 Program.profileService.Get(_id).Password = txtPassword.Text;
 
                 if (profilePicture != null)
@@ -420,7 +420,7 @@ namespace Quartz
         {
             if (profileOptions == ProfileOptions.Edit)
             {
-                button.ButtonText = txtName.Text;
+                button.ButtonText = txtName.Text.Trim();
                 button.Invalidate();
             }
         }
