@@ -174,7 +174,7 @@
             this.CoppyRightLable.Name = "CoppyRightLable";
             this.CoppyRightLable.Size = new System.Drawing.Size(792, 20);
             this.CoppyRightLable.TabIndex = 0;
-            this.CoppyRightLable.Text = "© Daniel Xaftellis 2025. All rights reserved.";
+            this.CoppyRightLable.Text = "© Daniel Xaftellis 2026. All rights reserved.";
             this.CoppyRightLable.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // txtUpdate

@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -23,17 +24,27 @@ namespace Quartz.Libs
 {
     internal class FaviconHelper
     {
-        private static bool IsInitialized = false;
+        private static Task _defaultFaviconInitTask;
+        private static readonly object _initLock = new object();
         private static string defaultHash;
 
-        public static async Task EnsureDefaultFaviconInitializedAsync()
+        public static Task EnsureDefaultFaviconInitializedAsync()
         {
-            if (IsInitialized) return;
+            lock (_initLock)
+            {
+                // If already started, return the same task
+                if (_defaultFaviconInitTask != null)
+                    return _defaultFaviconInitTask;
 
+                // Create and store the task ONCE
+                _defaultFaviconInitTask = InitializeDefaultFaviconCoreAsync();
+                return _defaultFaviconInitTask;
+            }
+        }
+
+        private static async Task InitializeDefaultFaviconCoreAsync()
+        {
             var webView = new WebView2();
-
-            //CoreWebView2Environment environment = await CoreWebView2Environment.CreateAsync(null, null, null);
-            //CoreWebView2ControllerOptions controllerOptions = environment.CreateCoreWebView2ControllerOptions();
 
             await webView.EnsureCoreWebView2Async();
 
@@ -44,11 +55,10 @@ namespace Quartz.Libs
             };
 
             webView.CoreWebView2.Navigate("about:blank");
-
-            // Wait until navigation finishes
             await tcs.Task;
 
-            Stream stream = await webView.CoreWebView2.GetFaviconAsync(CoreWebView2FaviconImageFormat.Png);
+            Stream stream = await webView.CoreWebView2.GetFaviconAsync(
+                CoreWebView2FaviconImageFormat.Png);
             if (stream != null && stream.Length > 0)
             {
                 using (var ms = new MemoryStream())
@@ -58,7 +68,27 @@ namespace Quartz.Libs
                 }
             }
 
-            IsInitialized = true;
+            string userDataPath = webView.CoreWebView2.Environment.UserDataFolder;
+
+            // IMPORTANT: fully dispose WebView2
+            webView.Dispose();
+
+            bool cleanupSucceeded = await Task.Run(async () =>
+            {
+                await Task.Delay(100);
+                return await DeleteUserDataFolderAsync(userDataPath);
+            });
+
+            if (!cleanupSucceeded)
+            {
+                MessageBox.Show(
+                    "Some temporary files couldn’t be deleted and will be cleaned up on next launch.",
+                    "Cleanup",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                    );
+            }
+
         }
 
         public static Icon ConvertToIcon(Stream stream)
@@ -76,6 +106,29 @@ namespace Quartz.Libs
                 }
             }
         }
+
+
+        static async Task<bool> DeleteUserDataFolderAsync(string path)
+        {
+            if (!Directory.Exists(path))
+                return true;
+
+            for (int i = 0; i < 10; i++)
+            {
+                try
+                {
+                    Directory.Delete(path, true);
+                    return true;
+                }
+                catch
+                {
+                    await Task.Delay(100);
+                }
+            }
+
+            return false; // failed after retries
+        }
+
 
         public static bool DoesFaviconFileExist(string address)
         {
@@ -218,28 +271,15 @@ namespace Quartz.Libs
 
         public async static Task<bool> IsDefaultFaviconAsync(Stream stream)
         {
-            if (!IsInitialized) await EnsureDefaultFaviconInitializedAsync();
+            // Will wait if initialization is still running
+            await EnsureDefaultFaviconInitializedAsync();
 
-            using (MemoryStream memoryStream = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
-                await stream.CopyToAsync(memoryStream);
-                byte[] faviconBytes = memoryStream.ToArray();
+                await stream.CopyToAsync(ms);
 
-                // Compute the hash of the favicon
-
-                string currentHash = ComputeSHA256(faviconBytes);
-
-
-                if (currentHash == defaultHash)
-                {
-                    //MessageBox.Show("true");
-                    return true;
-                }
-                else
-                {
-                    //MessageBox.Show("false");
-                    return false;
-                }
+                string currentHash = ComputeSHA256(ms.ToArray());
+                return currentHash == defaultHash;
             }
         }
 
