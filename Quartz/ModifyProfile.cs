@@ -89,7 +89,7 @@ namespace Quartz
             if (profileOptions == ProfileOptions.Create)
             {
                 // Check if the name is not empty or whitespace
-                if (string.IsNullOrWhiteSpace(txtName.Text))
+                if (string.IsNullOrWhiteSpace(txtName.Text.Trim()))
                 {
                     // Name is empty or whitespace, show error message and hides other
                     LabelNameNull.Visible = true;
@@ -104,7 +104,7 @@ namespace Quartz
 
 
                 // Check if the new name already exists
-                if (Program.profileService.ExistsName(txtName.Text))
+                if (Program.profileService.ExistsName(txtName.Text.Trim()))
                 {
                     // Name exists, show error message and hide others
                     LabelNameNull.Visible = false;
@@ -234,7 +234,7 @@ namespace Quartz
             else if (profileOptions == ProfileOptions.Edit)
             {
                 // Check if the name is not empty or whitespace
-                if (string.IsNullOrWhiteSpace(txtName.Text))
+                if (string.IsNullOrWhiteSpace(txtName.Text.Trim()))
                 {
                     // Name is empty or whitespace, show error message and hides other
                     LabelNameNull.Visible = true;
@@ -249,7 +249,7 @@ namespace Quartz
 
 
                 // Check if the new name already exists
-                if (Program.profileService.EditExistsName(txtName.Text, Program.profileService.Get(_id).Name))
+                if (Program.profileService.EditExistsName(txtName.Text.Trim(), Program.profileService.Get(_id).Name))
                 {
                     // Name exists, show error message and hide others
                     LabelNameNull.Visible = false;

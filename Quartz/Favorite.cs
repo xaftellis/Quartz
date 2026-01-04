@@ -24,7 +24,8 @@ namespace Quartz
         private bool _modify;
         Button favButton;
 
-        public Favourite(Browser browser, string text, string webAddress, bool modify, Button button)
+        public 
+            Favourite(Browser browser, string text, string webAddress, bool modify, Button button)
         {
             _browser = browser;
             _text = text;
@@ -56,8 +57,7 @@ namespace Quartz
         {
             if (_modify == false)
             {
-                var rawUrl = AddressTextBox.Text;
-                if (Uri.IsWellFormedUriString(rawUrl, UriKind.Absolute))
+                if (Uri.IsWellFormedUriString(AddressTextBox.Text.Trim(), UriKind.Absolute))
                 {
                     txtURLBad.Visible = false;
                     NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
@@ -68,7 +68,7 @@ namespace Quartz
                     AddressTextBox.ForeColor = Color.Red;
                 }
 
-                if (string.IsNullOrEmpty(NameTextBox.Text))
+                if (string.IsNullOrEmpty(NameTextBox.Text.Trim()))
                 {
                     NameMessage.Visible = true;
                 }
@@ -77,7 +77,7 @@ namespace Quartz
                     NameMessage.Visible = false;
                 }
 
-                if (string.IsNullOrEmpty(AddressTextBox.Text))
+                if (string.IsNullOrEmpty(AddressTextBox.Text.Trim()))
                 {
                     NameMessage.Visible = true;
                 }
@@ -86,7 +86,7 @@ namespace Quartz
                     NameMessage.Visible = false;
                 }
 
-                if (_service.Exists(NameTextBox.Text))
+                if (_service.Exists(NameTextBox.Text.Trim()))
                 {
                     txtExist.Visible = true;
                     NameTextBox.ForeColor = Color.Red;
@@ -98,7 +98,7 @@ namespace Quartz
 
                 }
 
-                if (_service.ExistsAddress(AddressTextBox.Text))
+                if (_service.ExistsAddress(AddressTextBox.Text.Trim()))
                 {
                     txtExist.Visible = true;
                     AddressTextBox.ForeColor = Color.Red;
@@ -109,12 +109,16 @@ namespace Quartz
                     NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
                 }
 
-                if (NameTextBox.Text != string.Empty && AddressTextBox.Text != string.Empty && !_service.Exists(NameTextBox.Text) && !_service.ExistsAddress(AddressTextBox.Text) && Uri.IsWellFormedUriString(rawUrl, UriKind.Absolute))
+                if (NameTextBox.Text != string.Empty 
+                    && AddressTextBox.Text != string.Empty 
+                    && !_service.Exists(NameTextBox.Text.Trim()) 
+                    && !_service.ExistsAddress(AddressTextBox.Text.Trim()) 
+                    && Uri.IsWellFormedUriString(AddressTextBox.Text.Trim(), UriKind.Absolute))
                 {
                     var favourite = new Models.FavouriteModel
                     {
-                        Name = NameTextBox.Text,
-                        WebAddress = AddressTextBox.Text,
+                        Name = NameTextBox.Text.Trim(),
+                        WebAddress = AddressTextBox.Text.Trim(),
                     };
 
                     _service.Modify(favourite);
@@ -136,8 +140,7 @@ namespace Quartz
             }
             else
             {
-                var rawUrl = AddressTextBox.Text;
-                if (Uri.IsWellFormedUriString(rawUrl, UriKind.Absolute))
+                if (Uri.IsWellFormedUriString(AddressTextBox.Text, UriKind.Absolute))
                 {
                     txtURLBad.Visible = false;
                     NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
@@ -148,7 +151,7 @@ namespace Quartz
                     AddressTextBox.ForeColor = Color.Red;
                 }
 
-                if (string.IsNullOrEmpty(NameTextBox.Text))
+                if (string.IsNullOrEmpty(NameTextBox.Text.Trim()))
                 {
                     NameMessage.Visible = true;
                 }
@@ -157,7 +160,7 @@ namespace Quartz
                     NameMessage.Visible = false;
                 }
 
-                if (string.IsNullOrEmpty(AddressTextBox.Text))
+                if (string.IsNullOrEmpty(AddressTextBox.Text.Trim()))
                 {
                     NameMessage.Visible = true;
                 }
@@ -166,7 +169,7 @@ namespace Quartz
                     NameMessage.Visible = false;
                 }
 
-                if (_service.ExistsModify(NameTextBox.Text, _text))
+                if (_service.ExistsModify(NameTextBox.Text.Trim(), _text))
                 {
                     txtExist.Visible = true;
                     NameTextBox.ForeColor = Color.Red;
@@ -189,7 +192,10 @@ namespace Quartz
                     NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
                 }
 
-                if (NameTextBox.Text != string.Empty && AddressTextBox.Text != string.Empty && !_service.ExistsModify(NameTextBox.Text, _text) && !_service.ExistsAddressModify(AddressTextBox.Text, _service.Get(_text).WebAddress) && Uri.IsWellFormedUriString(rawUrl, UriKind.Absolute))
+                if (NameTextBox.Text != string.Empty && AddressTextBox.Text.Trim() != string.Empty 
+                    && !_service.ExistsModify(NameTextBox.Text.Trim(), _text) 
+                    && !_service.ExistsAddressModify(AddressTextBox.Text.Trim(), _service.Get(_text).WebAddress) 
+                    && Uri.IsWellFormedUriString(AddressTextBox.Text.Trim(), UriKind.Absolute))
                 {
                     _service.Edit(_text, NameTextBox.Text, AddressTextBox.Text);
                     _service.SaveChanges();

@@ -138,8 +138,8 @@ namespace Quartz
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtName.Text)
-                || string.IsNullOrEmpty(txtDOB.Text)
+            if (string.IsNullOrEmpty(txtName.Text.Trim())
+                || string.IsNullOrEmpty(txtDOB.Text.Trim())
                 || selectedDate == null)
             {
                 txtExists.Visible = true;
