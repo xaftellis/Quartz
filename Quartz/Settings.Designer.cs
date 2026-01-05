@@ -201,7 +201,7 @@
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(120, 24);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version 2.3.4";
+            this.labelVersion.Text = "Version 2.3.5";
             // 
             // LoadingProgress
             // 
@@ -545,6 +545,7 @@
             this.addBirthdayToolStripMenuItem,
             this.toolStripSeparator3});
             this.mnuBirthdays.Name = "mnuBirthdays";
+            this.mnuBirthdays.OwnerItem = this.birthdaysToolStripMenuItem;
             this.mnuBirthdays.Size = new System.Drawing.Size(144, 32);
             this.mnuBirthdays.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.mnuBirthdays_Closing);
             this.mnuBirthdays.Opening += new System.ComponentModel.CancelEventHandler(this.mnuBirthdays_Opening);
