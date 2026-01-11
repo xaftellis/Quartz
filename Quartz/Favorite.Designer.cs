@@ -57,6 +57,7 @@
             this.NameTextBox.Size = new System.Drawing.Size(326, 20);
             this.NameTextBox.TabIndex = 1;
             this.NameTextBox.TextChanged += new System.EventHandler(this.NameTextBox_TextChanged);
+            this.NameTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameTextBox_KeyUp);
             // 
             // SaveButton
             // 
@@ -90,6 +91,7 @@
             this.AddressTextBox.Name = "AddressTextBox";
             this.AddressTextBox.Size = new System.Drawing.Size(326, 20);
             this.AddressTextBox.TabIndex = 2;
+            this.AddressTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.AddressTextBox_KeyUp);
             // 
             // AddressLabel
             // 

@@ -189,5 +189,21 @@ namespace Quartz
                 _browser.UpdateFavBar();
             }
         }
+
+        private void NameTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+            {
+                SaveButton_Click(sender, e);
+            }
+        }
+
+        private void AddressTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                SaveButton_Click(sender, e);
+            }
+        }
     }
 }
