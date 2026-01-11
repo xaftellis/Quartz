@@ -233,11 +233,11 @@ namespace Quartz
             {
                 if (SettingsService.Get("showFavouriteIcon") == "true")
                 {
-                    favButton.Text = "      " + NameTextBox.Text;
+                    favButton.Text = "      " + NameTextBox.Text.Trim();
                 }
                 else
                 {
-                    favButton.Text = NameTextBox.Text;
+                    favButton.Text = NameTextBox.Text.Trim();
                 }
                 _browser.UpdateFavBar();
             }
