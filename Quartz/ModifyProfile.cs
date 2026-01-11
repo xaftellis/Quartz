@@ -441,6 +441,18 @@ namespace Quartz
                 txtPassword.UseSystemPasswordChar = true; // Hide password
                 txtPassword.Refresh();
             }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                btnCreate_Click(sender, e);
+            }
+        }
+
+        private void txtName_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnCreate_Click(sender, e);
+            }
         }
     }
 }

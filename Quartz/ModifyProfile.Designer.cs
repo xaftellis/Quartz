@@ -66,6 +66,7 @@
             this.txtName.Size = new System.Drawing.Size(326, 20);
             this.txtName.TabIndex = 1;
             this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
+            this.txtName.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtName_KeyUp);
             // 
             // txtExists
             // 
