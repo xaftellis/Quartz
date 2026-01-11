@@ -55,38 +55,34 @@ namespace Quartz
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
+            string name = NameTextBox.Text.Trim();
+            string address = AddressTextBox.Text.Trim();
+
+            if (Uri.IsWellFormedUriString(address, UriKind.Absolute))
+            {
+                txtURLBad.Visible = false;
+                NewControlThemeChanger.ChangeControlTheme(address);
+            }
+            else
+            {
+                txtURLBad.Visible = true;
+                AddressTextBox.ForeColor = Color.Red;
+            }
+
+            if (string.IsNullOrWhiteSpace(name)
+                   || string.IsNullOrWhiteSpace(address))
+            {
+                NameMessage.Visible = true;
+            }
+            else
+            {
+                NameMessage.Visible = false;
+            }
+
             if (_modify == false)
             {
-                if (Uri.IsWellFormedUriString(AddressTextBox.Text.Trim(), UriKind.Absolute))
-                {
-                    txtURLBad.Visible = false;
-                    NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
-                }
-                else
-                {
-                    txtURLBad.Visible = true;
-                    AddressTextBox.ForeColor = Color.Red;
-                }
-
-                if (string.IsNullOrEmpty(NameTextBox.Text.Trim()))
-                {
-                    NameMessage.Visible = true;
-                }
-                else
-                {
-                    NameMessage.Visible = false;
-                }
-
-                if (string.IsNullOrEmpty(AddressTextBox.Text.Trim()))
-                {
-                    NameMessage.Visible = true;
-                }
-                else
-                {
-                    NameMessage.Visible = false;
-                }
-
-                if (_service.Exists(NameTextBox.Text.Trim()))
+                if (_service.Exists(name)
+                    || _service.ExistsAddress(address))
                 {
                     txtExist.Visible = true;
                     NameTextBox.ForeColor = Color.Red;
@@ -98,27 +94,16 @@ namespace Quartz
 
                 }
 
-                if (_service.ExistsAddress(AddressTextBox.Text.Trim()))
-                {
-                    txtExist.Visible = true;
-                    AddressTextBox.ForeColor = Color.Red;
-                }
-                else
-                {
-                    txtExist.Visible = false;
-                    NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
-                }
-
-                if (NameTextBox.Text != string.Empty 
-                    && AddressTextBox.Text != string.Empty 
-                    && !_service.Exists(NameTextBox.Text.Trim()) 
-                    && !_service.ExistsAddress(AddressTextBox.Text.Trim()) 
-                    && Uri.IsWellFormedUriString(AddressTextBox.Text.Trim(), UriKind.Absolute))
+                if (!string.IsNullOrWhiteSpace(name)
+                    && !string.IsNullOrWhiteSpace(address)
+                    && !_service.Exists(name)
+                    && !_service.ExistsAddress(address)
+                    && Uri.IsWellFormedUriString(address, UriKind.Absolute))
                 {
                     var favourite = new Models.FavouriteModel
                     {
-                        Name = NameTextBox.Text.Trim(),
-                        WebAddress = AddressTextBox.Text.Trim(),
+                        Name = name,
+                        WebAddress = address,
                     };
 
                     _service.Modify(favourite);
@@ -130,46 +115,18 @@ namespace Quartz
                     }
                     else
                     {
-                        _service.Get(NameTextBox.Text).Index = _service.All().Count - 1;
+                        _service.Get(name).Index = _service.All().Count - 1;
                         _service.SaveChanges();
                     }
 
-                        this.Close();
+                    this.Close();
                     _browser.LoadFavourites();
                 }
             }
             else
             {
-                if (Uri.IsWellFormedUriString(AddressTextBox.Text, UriKind.Absolute))
-                {
-                    txtURLBad.Visible = false;
-                    NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
-                }
-                else
-                {
-                    txtURLBad.Visible = true;
-                    AddressTextBox.ForeColor = Color.Red;
-                }
-
-                if (string.IsNullOrEmpty(NameTextBox.Text.Trim()))
-                {
-                    NameMessage.Visible = true;
-                }
-                else
-                {
-                    NameMessage.Visible = false;
-                }
-
-                if (string.IsNullOrEmpty(AddressTextBox.Text.Trim()))
-                {
-                    NameMessage.Visible = true;
-                }
-                else
-                {
-                    NameMessage.Visible = false;
-                }
-
-                if (_service.ExistsModify(NameTextBox.Text.Trim(), _text))
+                if (_service.ExistsModify(name, _text)
+                    || _service.ExistsAddressModify(address, _service.Get(_text).WebAddress))
                 {
                     txtExist.Visible = true;
                     NameTextBox.ForeColor = Color.Red;
@@ -180,24 +137,14 @@ namespace Quartz
                     NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
 
                 }
-
-                if (_service.ExistsAddressModify(AddressTextBox.Text, _service.Get(_text).WebAddress))
+          
+                if (!string.IsNullOrWhiteSpace(name)
+                    && !string.IsNullOrWhiteSpace(address)
+                    && !_service.ExistsModify(name, _text) 
+                    && !_service.ExistsAddressModify(address, _service.Get(_text).WebAddress) 
+                    && Uri.IsWellFormedUriString(address, UriKind.Absolute))
                 {
-                    txtExist.Visible = true;
-                    AddressTextBox.ForeColor = Color.Red;
-                }
-                else
-                {
-                    txtExist.Visible = false;
-                    NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
-                }
-
-                if (NameTextBox.Text != string.Empty && AddressTextBox.Text.Trim() != string.Empty 
-                    && !_service.ExistsModify(NameTextBox.Text.Trim(), _text) 
-                    && !_service.ExistsAddressModify(AddressTextBox.Text.Trim(), _service.Get(_text).WebAddress) 
-                    && Uri.IsWellFormedUriString(AddressTextBox.Text.Trim(), UriKind.Absolute))
-                {
-                    _service.Edit(_text, NameTextBox.Text.Trim(), AddressTextBox.Text.Trim());
+                    _service.Edit(_text, name, address);
                     _service.SaveChanges();
                     this.Close();
                     _browser.LoadFavourites();
