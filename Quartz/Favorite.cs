@@ -197,7 +197,7 @@ namespace Quartz
                     && !_service.ExistsAddressModify(AddressTextBox.Text.Trim(), _service.Get(_text).WebAddress) 
                     && Uri.IsWellFormedUriString(AddressTextBox.Text.Trim(), UriKind.Absolute))
                 {
-                    _service.Edit(_text, NameTextBox.Text, AddressTextBox.Text);
+                    _service.Edit(_text, NameTextBox.Text.Trim(), AddressTextBox.Text.Trim());
                     _service.SaveChanges();
                     this.Close();
                     _browser.LoadFavourites();
