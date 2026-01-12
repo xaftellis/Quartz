@@ -187,13 +187,5 @@ namespace Quartz
                 button1_Click(sender, e);
             }
         }
-
-        private void txtDOB_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                button1_Click(sender, e);
-            }
-        }
     }
 }

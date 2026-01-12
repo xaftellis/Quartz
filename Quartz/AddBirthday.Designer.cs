@@ -94,7 +94,6 @@
             this.txtDOB.TabIndex = 2;
             this.txtDOB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtDOB.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtTimeMachine_KeyUp);
-            this.txtDOB.MouseUp += new System.Windows.Forms.MouseEventHandler(this.txtDOB_MouseUp);
             // 
             // mcCalender
             // 
