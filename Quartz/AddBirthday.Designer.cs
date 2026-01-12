@@ -43,7 +43,7 @@
             this.button1.Location = new System.Drawing.Point(201, 70);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
+            this.button1.TabIndex = 4;
             this.button1.Text = "Done";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -62,7 +62,8 @@
             this.txtName.Location = new System.Drawing.Point(49, 12);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(227, 20);
-            this.txtName.TabIndex = 4;
+            this.txtName.TabIndex = 1;
+            this.txtName.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtName_KeyUp);
             // 
             // label2
             // 
@@ -79,7 +80,7 @@
             this.btnDown.Location = new System.Drawing.Point(258, 38);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(20, 20);
-            this.btnDown.TabIndex = 15;
+            this.btnDown.TabIndex = 3;
             this.btnDown.Text = "▼";
             this.btnDown.UseVisualStyleBackColor = true;
             this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
@@ -90,9 +91,10 @@
             this.txtDOB.Location = new System.Drawing.Point(49, 38);
             this.txtDOB.Name = "txtDOB";
             this.txtDOB.Size = new System.Drawing.Size(208, 20);
-            this.txtDOB.TabIndex = 14;
+            this.txtDOB.TabIndex = 2;
             this.txtDOB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtDOB.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtTimeMachine_KeyUp);
+            this.txtDOB.MouseUp += new System.Windows.Forms.MouseEventHandler(this.txtDOB_MouseUp);
             // 
             // mcCalender
             // 
