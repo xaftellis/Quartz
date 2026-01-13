@@ -81,8 +81,7 @@ namespace Quartz
 
             if (_modify == false)
             {
-                if (_service.Exists(name)
-                    || _service.ExistsAddress(address))
+                if (_service.Exists(name))
                 {
                     txtExist.Visible = true;
                     NameTextBox.ForeColor = Color.Red;
@@ -90,8 +89,19 @@ namespace Quartz
                 else
                 {
                     txtExist.Visible = false;
-                    NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
+                    NewControlThemeChanger.ChangeControlTheme(NameTextBox);
 
+                }
+
+                if (_service.ExistsAddress(address))
+                {
+                    txtExist.Visible = true;
+                    AddressTextBox.ForeColor = Color.Red;
+                }
+                else
+                {
+                    txtExist.Visible = false;
+                    NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
                 }
 
                 if (!string.IsNullOrWhiteSpace(name)
@@ -125,8 +135,7 @@ namespace Quartz
             }
             else
             {
-                if (_service.ExistsModify(name, _text)
-                    || _service.ExistsAddressModify(address, _service.Get(_text).WebAddress))
+                if (_service.ExistsModify(name, _text))
                 {
                     txtExist.Visible = true;
                     NameTextBox.ForeColor = Color.Red;
@@ -134,10 +143,21 @@ namespace Quartz
                 else
                 {
                     txtExist.Visible = false;
-                    NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
+                    NewControlThemeChanger.ChangeControlTheme(NameTextBox);
 
                 }
-          
+
+                if (_service.ExistsAddressModify(address, _service.Get(_text).WebAddress))
+                {
+                    txtExist.Visible = true;
+                    AddressTextBox.ForeColor = Color.Red;
+                }
+                else
+                {
+                    txtExist.Visible = false;
+                    NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
+                }
+
                 if (!string.IsNullOrWhiteSpace(name)
                     && !string.IsNullOrWhiteSpace(address)
                     && !_service.ExistsModify(name, _text) 

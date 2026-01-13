@@ -42,22 +42,22 @@ namespace Quartz.Services
 
         public bool Exists(string name)
         {
-            return _items.Any(f => f.ProfileId == ProfileService.Current && f.Name == name);
+            return _items.Any(f => f.ProfileId == ProfileService.Current && f.Name.ToLower() == name.ToLower());
         }
 
         public bool ExistsAddress(string address)
         {
-            return _items.Any(f => f.ProfileId == ProfileService.Current && f.WebAddress == address);
+            return _items.Any(f => f.ProfileId == ProfileService.Current && f.WebAddress.ToLower() == address.ToLower());
         }
 
         public bool ExistsModify(string name, string Original)
         {
-            return _items.Any(f => f.ProfileId == ProfileService.Current && f.Name == name && f.Name != Original);
+            return _items.Any(f => f.ProfileId == ProfileService.Current && f.Name.ToLower() == name.ToLower() && f.Name.ToLower() != Original.ToLower());
         }
 
         public bool ExistsAddressModify(string address, string Original)
         {
-            return _items.Any(f => f.ProfileId == ProfileService.Current && f.WebAddress == address && f.WebAddress != Original);
+            return _items.Any(f => f.ProfileId == ProfileService.Current && f.WebAddress.ToLower() == address.ToLower() && f.WebAddress.ToLower() != Original.ToLower());
         }
 
         public void Add(FavouriteModel favourite)
