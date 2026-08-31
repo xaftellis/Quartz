@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36623.8 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.9.12120.119 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quartz", "Quartz\Quartz.csproj", "{C3852943-5254-4359-B294-450BC9302D19}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyTabs", "EasyTabs\EasyTabs.csproj", "{690BA0F7-D8FE-4EBE-BA39-8058086C7A09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuartzUpdater", "QuartzUpdater\QuartzUpdater.csproj", "{D779532F-7E30-4E21-AA95-76196C5E878A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,14 @@ Global
 		{690BA0F7-D8FE-4EBE-BA39-8058086C7A09}.Release|Any CPU.Build.0 = Release|Any CPU
 		{690BA0F7-D8FE-4EBE-BA39-8058086C7A09}.Release|x86.ActiveCfg = Release|x86
 		{690BA0F7-D8FE-4EBE-BA39-8058086C7A09}.Release|x86.Build.0 = Release|x86
+		{D779532F-7E30-4E21-AA95-76196C5E878A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D779532F-7E30-4E21-AA95-76196C5E878A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D779532F-7E30-4E21-AA95-76196C5E878A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D779532F-7E30-4E21-AA95-76196C5E878A}.Debug|x86.Build.0 = Debug|Any CPU
+		{D779532F-7E30-4E21-AA95-76196C5E878A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D779532F-7E30-4E21-AA95-76196C5E878A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D779532F-7E30-4E21-AA95-76196C5E878A}.Release|x86.ActiveCfg = Release|Any CPU
+		{D779532F-7E30-4E21-AA95-76196C5E878A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

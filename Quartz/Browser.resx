@@ -1080,7 +1080,7 @@
     <value>wvLoadingProgress</value>
   </data>
   <data name="&gt;&gt;wvLoadingProgress.Type" xml:space="preserve">
-    <value>Microsoft.Web.WebView2.WinForms.WebView2, Microsoft.Web.WebView2.WinForms, Version=1.0.3650.58, Culture=neutral, PublicKeyToken=2a8ab48044d2601e</value>
+    <value>Microsoft.Web.WebView2.WinForms.WebView2, Microsoft.Web.WebView2.WinForms, Version=1.0.4191.47, Culture=neutral, PublicKeyToken=2a8ab48044d2601e</value>
   </data>
   <data name="&gt;&gt;wvLoadingProgress.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -2854,7 +2854,7 @@
     <value>wvWebView1</value>
   </data>
   <data name="&gt;&gt;wvWebView1.Type" xml:space="preserve">
-    <value>Microsoft.Web.WebView2.WinForms.WebView2, Microsoft.Web.WebView2.WinForms, Version=1.0.3650.58, Culture=neutral, PublicKeyToken=2a8ab48044d2601e</value>
+    <value>Microsoft.Web.WebView2.WinForms.WebView2, Microsoft.Web.WebView2.WinForms, Version=1.0.4191.47, Culture=neutral, PublicKeyToken=2a8ab48044d2601e</value>
   </data>
   <data name="&gt;&gt;wvWebView1.Parent" xml:space="preserve">
     <value>pnlBottom</value>
