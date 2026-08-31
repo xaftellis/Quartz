@@ -366,6 +366,15 @@
   <data name="changeLocationToolStripMenuItem1.Text" xml:space="preserve">
     <value>Change Location</value>
   </data>
+  <data name="downloadsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>182, 22</value>
+  </data>
+  <data name="downloadsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Downloads</value>
+  </data>
+  <data name="mnuDownloadsDropDown.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
+  </data>
   <data name="mnuDownloadsDropDown.Size" type="System.Drawing.Size, System.Drawing">
     <value>165, 48</value>
   </data>
@@ -374,12 +383,6 @@
   </data>
   <data name="&gt;&gt;mnuDownloadsDropDown.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="downloadsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="downloadsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Downloads</value>
   </data>
   <data name="btnAddFavourite.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -2475,6 +2478,9 @@
   <data name="resetToolStripMenuItem1.Text" xml:space="preserve">
     <value>Reset</value>
   </data>
+  <data name="mnuUserData.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
+  </data>
   <data name="mnuUserData.Size" type="System.Drawing.Size, System.Drawing">
     <value>219, 54</value>
   </data>
@@ -2504,6 +2510,9 @@
   </data>
   <data name="toolStripSeparator10.Size" type="System.Drawing.Size, System.Drawing">
     <value>152, 6</value>
+  </data>
+  <data name="mnuHistory.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
   </data>
   <data name="mnuHistory.Size" type="System.Drawing.Size, System.Drawing">
     <value>156, 32</value>
@@ -2537,6 +2546,9 @@
   </data>
   <data name="webview2TaskManagerToolStripMenuItem.Text" xml:space="preserve">
     <value>Browser Task Manager</value>
+  </data>
+  <data name="mnuExperts.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
   </data>
   <data name="mnuExperts.Size" type="System.Drawing.Size, System.Drawing">
     <value>193, 48</value>
@@ -2591,6 +2603,15 @@
   </data>
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Exit</value>
+  </data>
+  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>25, 20</value>
+  </data>
+  <data name="toolStripMenuItem1.Text" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="SettingsMenuStrip.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
   </data>
   <data name="SettingsMenuStrip.Size" type="System.Drawing.Size, System.Drawing">
     <value>183, 309</value>
@@ -2791,12 +2812,6 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlTop.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 20</value>
-  </data>
-  <data name="toolStripMenuItem1.Text" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="pnlDivider.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -5558,7 +5573,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlBottom.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
