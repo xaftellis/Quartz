@@ -240,6 +240,7 @@
     <Compile Include="Services\LightTabRenderer.cs" />
     <Compile Include="Services\MouseDragger.cs" />
     <Compile Include="Services\NewControlThemeChanger.cs" />
+    <Compile Include="Services\QuartzUpdateStatus.cs" />
     <Compile Include="Services\SnowButtonAnimator.cs" />
     <Compile Include="Services\WhiteContextMenuRenderer.cs" />
     <Compile Include="Services\AquaTabRenderer.cs" />

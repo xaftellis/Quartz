@@ -5,6 +5,7 @@ using Quartz.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
@@ -73,6 +74,10 @@ namespace Quartz
             InitializeDefaultProfile().GetAwaiter().GetResult();
 
             HandleResetIfRequested();
+
+            Process.Start(
+                Path.Combine(Application.StartupPath, "QuartzUpdater.exe"),
+                "--check-only");
 
             bool runBrowser = MainSettingsService.Get("RunBrowser") == "true";
 
