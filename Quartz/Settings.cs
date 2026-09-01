@@ -123,8 +123,57 @@ namespace Quartz
             UpdateHiddenPDFSetting();
         }
 
-        private async void checkforupdates()
+        
+        private async void CheckingForUpdatesAnimation()
         {
+            // ----- Animate "Checking For Updates" -----
+            string baseText = "Checking For Updates";
+            string[] dots = { "", ".", "..", "..." };
+
+            while (updating)
+            {
+                foreach (string d in dots)
+                {
+                    if (!updating)
+                        break;
+
+                    txtUpdate.Text = baseText + d;
+                    await Task.Delay(500);
+                }
+            }
+
+            //// ----- Restore UI -----
+            //updating = false;
+
+            //buttonChech.Visible = true;
+            //txtUpdate.Visible = false;
+            //LoadingProgress.Visible = false;
+            //pictureBox1.Visible = true;
+
+            //// ----- Error / Retry dialog -----
+            //DialogResult dr = MessageBox.Show(
+            //    "Failed to connect to servers, please check your internet connection.",
+            //    "Something Went Wrong",
+            //    MessageBoxButtons.RetryCancel,
+            //    MessageBoxIcon.Error);
+
+            //if (dr == DialogResult.Retry)
+            //    checkforupdates();
+        }
+
+        private Browser _browser = null;
+        bool opentab = false;
+        public Settings(Browser browser, bool tab)
+        {
+            opentab = tab;
+            _browser = browser;
+            InitializeComponent();
+        }
+
+        public event EventHandler QuartzUpdaterClosed;
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            //preparing for animation
             updating = true;
 
             buttonChech.Visible = false;
@@ -150,53 +199,67 @@ namespace Quartz
             LoadingProgress.Reload();
             LoadingProgress.ZoomFactor = 1;
             LoadingProgress.Source = new Uri("file://" + path);
+            CheckingForUpdatesAnimation();
+            //end of segment
 
-            // ----- Animate "Checking For Updates" -----
-            string baseText = "Checking For Updates";
-            string[] dots = { "", ".", "..", "..." };
 
-            for (int i = 0; i < 5; i++)  // number of animation cycles
+            string updaterPath = Path.Combine(
+             Application.StartupPath,
+             "QuartzUpdater.exe");
+
+            if (!File.Exists(updaterPath))
             {
-                foreach (string d in dots)
-                {
-                    txtUpdate.Text = baseText + d;
-                    await Task.Delay(500);
-                }
+                MessageBox.Show(
+                    "QuartzUpdater.exe was not found beside Quartz.exe.",
+                    "Check for updates",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
             }
 
-            // ----- Restore UI -----
-            updating = false;
+            try
+            {
+                Process updater = Process.Start(new ProcessStartInfo
+                {
+                    FileName = updaterPath,
+                    Arguments = "--parent-pid " + Process.GetCurrentProcess().Id +
+          " --owner-hwnd " + Handle.ToInt64(),
+                    WorkingDirectory = Application.StartupPath,
+                    UseShellExecute = true
+                });
 
-            buttonChech.Visible = true;
-            txtUpdate.Visible = false;
-            LoadingProgress.Visible = false;
-            pictureBox1.Visible = true;
+                if (updater == null)
+                    return;
 
-            // ----- Error / Retry dialog -----
-            DialogResult dr = MessageBox.Show(
-                "Failed to connect to servers, please check your internet connection.",
-                "Something Went Wrong",
-                MessageBoxButtons.RetryCancel,
-                MessageBoxIcon.Error);
+                updater.Exited += (_sender, _args) =>
+                {
+                    if (IsDisposed || !IsHandleCreated)
+                        return;
 
-            if (dr == DialogResult.Retry)
-                checkforupdates();
-        }
+                    BeginInvoke(new Action(() =>
+                    {
+                        // ----- Restore UI -----
+                        updating = false;
 
-        private Browser _browser = null;
-        bool opentab = false;
-        public Settings(Browser browser, bool tab)
-        {
-            opentab = tab;
-            _browser = browser;
-            InitializeComponent();
-        }
+                        buttonChech.Visible = true;
+                        txtUpdate.Visible = false;
+                        LoadingProgress.Visible = false;
+                        pictureBox1.Visible = true;
 
+                        updater.Dispose();
+                    }));
+                };
 
-        private async void button1_Click(object sender, EventArgs e)
-        {
-            checkforupdates();
-
+                updater.EnableRaisingEvents = true;
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(
+                    "QuartzUpdater could not be opened. " + exception.Message,
+                    "Check for updates",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         private async void Settings_Load(object sender, EventArgs e)
