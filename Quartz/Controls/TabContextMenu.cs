@@ -38,10 +38,12 @@ namespace Quartz.Controls
             newTabRightStripMenuItem = new ToolStripMenuItem("New tab to the right");
             toolStripSeparator = new ToolStripSeparator();
             reloadTabToolStripMenuItem = new ToolStripMenuItem("Reload");
+            reloadTabToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.R;
             duplicateTabToolStripMenuItem = new ToolStripMenuItem("Duplicate");
             muteTabToolStripMenuItem = new ToolStripMenuItem("Mute tab");
             toolStripSeparator1 = new ToolStripSeparator();
             closeTabToolStripMenuItem = new ToolStripMenuItem("Close Tab");
+            closeTabToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.W;
             closeOtherToolStripMenuItem = new ToolStripMenuItem("Close other tabs");
             closeLeftToolStripMenuItem = new ToolStripMenuItem("Close tabs to the left");
             closeRightToolStripMenuItem = new ToolStripMenuItem("Close tabs to the right");

@@ -2709,5 +2709,16 @@ namespace Quartz
                 }
             }
         }
+
+        private void printToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            wvWebView1.CoreWebView2.ShowPrintUI();
+        }
+
+        private void findToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            wvWebView1.Focus();
+            SendKeys.SendWait("^f");
+        }
     }
 }

@@ -84,6 +84,8 @@
             this.autofillCheckBox = new System.Windows.Forms.CheckBox();
             this.autoSaveCheckBox = new System.Windows.Forms.CheckBox();
             this.GeneralPage = new System.Windows.Forms.TabPage();
+            this.label7 = new System.Windows.Forms.Label();
+            this.cbUpdateCheckFrequency = new System.Windows.Forms.ComboBox();
             this.HiddenPDFGroupBox = new System.Windows.Forms.GroupBox();
             this.cbPDFrotate = new System.Windows.Forms.CheckBox();
             this.cbPDFfullscreen = new System.Windows.Forms.CheckBox();
@@ -118,8 +120,6 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.tabPageAbout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LoadingProgress)).BeginInit();
@@ -787,7 +787,7 @@
             this.GeneralPage.BackColor = System.Drawing.Color.White;
             this.GeneralPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.GeneralPage.Controls.Add(this.label7);
-            this.GeneralPage.Controls.Add(this.comboBox1);
+            this.GeneralPage.Controls.Add(this.cbUpdateCheckFrequency);
             this.GeneralPage.Controls.Add(this.HiddenPDFGroupBox);
             this.GeneralPage.Controls.Add(this.cbStatusBar);
             this.GeneralPage.Controls.Add(this.label4);
@@ -810,6 +810,36 @@
             this.GeneralPage.Size = new System.Drawing.Size(792, 406);
             this.GeneralPage.TabIndex = 0;
             this.GeneralPage.Text = "General";
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.ForeColor = System.Drawing.Color.Black;
+            this.label7.Location = new System.Drawing.Point(261, 172);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(274, 24);
+            this.label7.TabIndex = 31;
+            this.label7.Text = "Automatically check for updates";
+            // 
+            // cbUpdateCheckFrequency
+            // 
+            this.cbUpdateCheckFrequency.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbUpdateCheckFrequency.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cbUpdateCheckFrequency.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cbUpdateCheckFrequency.FormattingEnabled = true;
+            this.cbUpdateCheckFrequency.Items.AddRange(new object[] {
+            "On startup",
+            "Daily (Default)",
+            "Weekly",
+            "Monthly",
+            "Never (Not recommended)"});
+            this.cbUpdateCheckFrequency.Location = new System.Drawing.Point(306, 199);
+            this.cbUpdateCheckFrequency.Name = "cbUpdateCheckFrequency";
+            this.cbUpdateCheckFrequency.Size = new System.Drawing.Size(185, 21);
+            this.cbUpdateCheckFrequency.TabIndex = 30;
+            this.cbUpdateCheckFrequency.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged_1);
             // 
             // HiddenPDFGroupBox
             // 
@@ -1243,35 +1273,6 @@
             this.contextMenuStrip1.Size = new System.Drawing.Size(108, 54);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening_1);
             // 
-            // comboBox1
-            // 
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.comboBox1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Never (Not recommended)",
-            "Daily (Default)",
-            "Weekly",
-            "Monthly",
-            "On startup"});
-            this.comboBox1.Location = new System.Drawing.Point(306, 199);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(185, 21);
-            this.comboBox1.TabIndex = 30;
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.ForeColor = System.Drawing.Color.Black;
-            this.label7.Location = new System.Drawing.Point(261, 172);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(274, 24);
-            this.label7.TabIndex = 31;
-            this.label7.Text = "Automatically check for updates";
-            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1407,7 +1408,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox cbDownloadAlighment;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox cbUpdateCheckFrequency;
         private System.Windows.Forms.Label label7;
     }
 }

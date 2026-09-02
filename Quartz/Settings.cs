@@ -200,8 +200,8 @@ namespace Quartz
             LoadingProgress.ZoomFactor = 1;
             LoadingProgress.Source = new Uri("file://" + path);
             CheckingForUpdatesAnimation();
+            await Task.Delay(1500);
             //end of segment
-
 
             string updaterPath = Path.Combine(
              Application.StartupPath,
@@ -325,6 +325,31 @@ namespace Quartz
             }
 
             cbStatusBar.Checked = SettingsService.Get("IsStatusBarEnabled") == "true";
+
+            string frequency = MainSettingsService.Get("UpdateCheckFrequency") ?? "daily";
+
+            switch (frequency)
+            {
+                case "startup":
+                    cbUpdateCheckFrequency.SelectedIndex = 0;
+                    break;
+
+                case "weekly":
+                    cbUpdateCheckFrequency.SelectedIndex = 2;
+                    break;
+
+                case "monthly":
+                    cbUpdateCheckFrequency.SelectedIndex = 3;
+                    break;
+
+                case "never":
+                    cbUpdateCheckFrequency.SelectedIndex = 4;
+                    break;
+
+                default:
+                    cbUpdateCheckFrequency.SelectedIndex = 1; // Daily
+                    break;
+            }
 
             if (SettingsService.Get("SettingsTabAlignment") == "top")
             {
@@ -1788,6 +1813,39 @@ namespace Quartz
                 _browser.wvWebView1.CoreWebView2.DefaultDownloadDialogCornerAlignment = CoreWebView2DefaultDownloadDialogCornerAlignment.BottomLeft;
                 SettingsService.Set("DownloadAlignment", "BottomLeft");
             }
+        }
+
+        private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            string frequency;
+
+            switch (cbUpdateCheckFrequency.SelectedIndex)
+            {
+                case 0:
+                    frequency = "startup";
+                    break;
+
+                case 1:
+                    frequency = "daily";
+                    break;
+
+                case 2:
+                    frequency = "weekly";
+                    break;
+
+                case 3:
+                    frequency = "monthly";
+                    break;
+
+                case 4:
+                    frequency = "never";
+                    break;
+
+                default:
+                    return;
+            }
+
+            MainSettingsService.Set("UpdateCheckFrequency", frequency);
         }
     }
 }
