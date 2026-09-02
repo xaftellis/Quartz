@@ -352,7 +352,7 @@ namespace Quartz
             NewControlThemeChanger.ChangeControlTheme(mnuSearch);
             NewControlThemeChanger.ChangeControlTheme(wvWebView1);
             NewControlThemeChanger.ChangeControlTheme(zoomToolStrip);
-
+            NewControlThemeChanger.ChangeControlTheme(mnuFavourites);
         }
 
         public void ChangeTheme(string theme)
@@ -2717,8 +2717,79 @@ namespace Quartz
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            wvWebView1.Focus();
+            //wvWebView1.Focus();
             SendKeys.SendWait("^f");
+        }
+
+        private async void mnuFavourites_Opening(object sender, CancelEventArgs e)
+        {
+            ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem("Add favourite");
+            toolStripMenuItem.Click += btnAddFavourite_Click;
+
+            ToolStripSeparator toolStripSeparator = new ToolStripSeparator();
+
+            mnuFavourites.Items.Clear();
+            mnuFavourites.Items.Add(toolStripMenuItem);
+            mnuFavourites.Items.Add(toolStripSeparator);
+
+
+
+            FavouriteService favouriteService = new FavouriteService();
+            foreach (var favourite in favouriteService.All().OrderBy(f => f.Index).ToList())
+            {
+                var menuItem = new ToolStripMenuItem
+                {
+                    Name = "smi" + favourite.Name,
+                    Text = favourite.Name,
+                    Tag = favourite.WebAddress,
+                };
+
+                if (SettingsService.Get("showFavouriteIcon") == "true")
+                {
+                    menuItem.Image = FaviconHelper.GetFaviconFileExternalAsImage(favourite.WebAddress);
+                }
+
+                menuItem.ToolTipText = favourite.Name + Environment.NewLine + favourite.WebAddress;
+
+                menuItem.Click += (_s, _e) =>
+                {
+                    SetSource(favourite.WebAddress);
+                };
+
+                menuItem.MouseUp += async (_s, _e) =>
+                {
+                    if (_e.Button == MouseButtons.Middle)
+                    {                        
+                        var browser = new Browser(favourite.WebAddress, true);
+                        browser.InitializeTab();
+
+                        var newTab = new TitleBarTab(ParentTabs) { Content = browser };
+
+                        void AddTab()
+                        {
+                            int index = ParentTabs.SelectedTabIndex + 1;
+                            ParentTabs.Tabs.Insert(index, newTab);
+                            ParentTabs.SelectedTabIndex = index;
+                            ParentTabs.RedrawTabs();
+                        }
+
+                        if (ParentTabs.InvokeRequired)
+                            ParentTabs.Invoke(new Action(AddTab));
+                        else
+                            AddTab();
+
+                        // Instant UI activation (0–1ms)
+                         await Task.Yield();
+                    }
+                };
+
+                mnuFavourites.Items.Add(menuItem);
+            }
+
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(mnuFavourites.Handle, 100, Animation.AW_BLEND);
+            }
         }
     }
 }
