@@ -75,9 +75,41 @@ namespace Quartz
 
             HandleResetIfRequested();
 
-            Process.Start(
-                Path.Combine(Application.StartupPath, "QuartzUpdater.exe"),
-                "--check-only");
+            string frequency = MainSettingsService.Get("UpdateCheckFrequency");
+            DateTime lastChecked = UpdateStatusService.Get().CheckedAtUtc;
+            DateTime now = DateTime.Now;
+
+            bool shouldCheck;
+            switch (frequency)
+            {
+                case "startup":
+                    shouldCheck = true;
+                    break;
+
+                case "daily":
+                    shouldCheck = now >= lastChecked.AddDays(1);
+                    break;
+
+                case "weekly":
+                    shouldCheck = now >= lastChecked.AddDays(7);
+                    break;
+
+                case "monthly":
+                    shouldCheck = now >= lastChecked.AddMonths(1);
+                    break;
+
+                case "never":
+                default:
+                    shouldCheck = false;
+                    break;
+            }
+
+            if (shouldCheck)
+            {
+                Process.Start(
+                    Path.Combine(Application.StartupPath, "QuartzUpdater.exe"),
+                    "--check-only");
+            }
 
             bool runBrowser = MainSettingsService.Get("RunBrowser") == "true";
 
@@ -356,6 +388,7 @@ namespace Quartz
         private static void SetDefaultSettings()
         {
             MainSettingsService.Set("RunBrowser", "true");
+            MainSettingsService.Set("UpdateCheckFrequency", "weekly");
 
             var settings = new Dictionary<string, string>
             {
@@ -387,7 +420,7 @@ namespace Quartz
                 { "defaultFavicon", "default" },
                 { "sortFavouritesBy", "alphabetically" },
                 { "displayFullURLs", "false" },
-                { "showFavouritesBar", "false" }
+                { "showFavouritesBar", "false" },
             };
 
             foreach (var kv in settings)

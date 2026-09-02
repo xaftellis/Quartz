@@ -61,13 +61,15 @@ namespace Quartz.Controls
 
             var sep2 = new ToolStripSeparator();
             taskManagerToolStripMenuItem = new ToolStripMenuItem("Task manager");
+            taskManagerToolStripMenuItem.ShortcutKeyDisplayString = "Shift+Esc";
             var sep3 = new ToolStripSeparator();
             closeToolStripMenuItem = new ToolStripMenuItem("Close");
+            closeToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
 
             this.Items.AddRange(new ToolStripItem[]
             {
                 restoreToolStripMenuItem,
-                moveToolStripMenuItem,
+                moveToolStripMenuItem,          
                 sizeToolStripMenuItem,
                 minimizeToolStripMenuItem,
                 maximizeToolStripMenuItem,

@@ -2791,5 +2791,11 @@ namespace Quartz
                 Animation.AnimateWindow(mnuFavourites.Handle, 100, Animation.AW_BLEND);
             }
         }
+
+        private void nameWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NameWindow form = new NameWindow((AppContainer)tabbedApp);
+            form.ShowDialog();
+        }
     }
 }

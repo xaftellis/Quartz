@@ -201,9 +201,9 @@
             this.labelVersion.ForeColor = System.Drawing.Color.Black;
             this.labelVersion.Location = new System.Drawing.Point(334, 72);
             this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(120, 24);
+            this.labelVersion.Size = new System.Drawing.Size(296, 24);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version 2.3.6";
+            this.labelVersion.Text = "Version 2.3.6 (Development Build)";
             // 
             // LoadingProgress
             // 
@@ -831,8 +831,8 @@
             this.cbUpdateCheckFrequency.FormattingEnabled = true;
             this.cbUpdateCheckFrequency.Items.AddRange(new object[] {
             "On startup",
-            "Daily (Default)",
-            "Weekly",
+            "Daily",
+            "Weekly (Default)",
             "Monthly",
             "Never (Not recommended)"});
             this.cbUpdateCheckFrequency.Location = new System.Drawing.Point(306, 199);
