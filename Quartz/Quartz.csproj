@@ -158,7 +158,9 @@
     <Compile Include="Browser.Designer.cs">
       <DependentUpon>Browser.cs</DependentUpon>
     </Compile>
-    <Compile Include="ClearHistory.cs" />
+    <Compile Include="ClearHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ClearHistory.Designer.cs">
       <DependentUpon>ClearHistory.cs</DependentUpon>
     </Compile>

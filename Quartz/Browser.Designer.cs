@@ -660,6 +660,7 @@
             // 
             this.deleteBrowsingDataToolStripMenuItem.Name = "deleteBrowsingDataToolStripMenuItem";
             resources.ApplyResources(this.deleteBrowsingDataToolStripMenuItem, "deleteBrowsingDataToolStripMenuItem");
+            this.deleteBrowsingDataToolStripMenuItem.Click += new System.EventHandler(this.deleteBrowsingDataToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 

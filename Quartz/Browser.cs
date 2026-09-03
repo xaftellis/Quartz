@@ -2797,5 +2797,11 @@ namespace Quartz
             NameWindow form = new NameWindow((AppContainer)tabbedApp);
             form.ShowDialog();
         }
+
+        private void deleteBrowsingDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ClearHistory clearHistoryForm = new ClearHistory(wvWebView1);
+            clearHistoryForm.ShowDialog();
+        }
     }
 }

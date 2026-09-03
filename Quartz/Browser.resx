@@ -2695,7 +2695,7 @@
     <value>Inherit</value>
   </data>
   <data name="SettingsMenuStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 391</value>
+    <value>191, 413</value>
   </data>
   <data name="SettingsMenuStrip.Text" xml:space="preserve">
     <value>Options</value>
