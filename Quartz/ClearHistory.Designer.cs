@@ -336,10 +336,12 @@
             this.Controls.Add(this.lblTimeRange);
             this.Controls.Add(this.lblSubtitle);
             this.Controls.Add(this.lblTitle);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ClearHistory";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "ClearHistory";
             this.Load += new System.EventHandler(this.ClearHistory_Load);
             this.pnlNotice.ResumeLayout(false);

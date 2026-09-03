@@ -95,15 +95,25 @@ namespace Quartz.Services
             _items = JsonConvert.DeserializeObject<List<HistoryModel>>(jsonString);
         }
 
-        public int CountProfileHistory(Guid profileId, DateTime? startTime, DateTime endTime)
+        public List<HistoryModel> GetProfileHistoryFromRange(
+      Guid profileId,
+      DateTime? startTime,
+      DateTime endTime)
         {
             IEnumerable<HistoryModel> profileHistory =
-                _items.Where(item => item.ProfileId == profileId && item.When <= endTime);
+                _items.Where(item =>
+                    item.ProfileId == profileId &&
+                    item.When <= endTime);
 
             if (startTime.HasValue)
-                profileHistory = profileHistory.Where(item => item.When >= startTime.Value);
+            {
+                profileHistory = profileHistory.Where(
+                    item => item.When >= startTime.Value);
+            }
 
-            return profileHistory.Count();
+            return profileHistory
+                .OrderByDescending(item => item.When)
+                .ToList();
         }
 
         public void DeleteProfileHistory(Guid profileId, DateTime? startTime = null, DateTime? endTime = null)

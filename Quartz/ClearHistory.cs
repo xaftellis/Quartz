@@ -1,6 +1,7 @@
 ﻿using Microsoft.Web.WebView2;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
+using Quartz.Models;
 using Quartz.Services;
 using System;
 using System.Collections.Generic;
@@ -32,9 +33,16 @@ namespace Quartz
             ApplyVisualFinishing();
         }
 
-        private void ClearHistory_Load(object sender, EventArgs e)
+        private async void ClearHistory_Load(object sender, EventArgs e)
         {
+            if (_webView.CoreWebView2 == null)
+            {
+                SetSelectionEnabled(false);
+                btnDelete.Enabled = false;
+                return;
+            }
 
+            await RefreshDataSummaryAsync();
         }
 
         private async void btnDelete_Click(object sender, EventArgs e)
@@ -92,7 +100,7 @@ namespace Quartz
                 case 2:
                     return endTime.AddDays(-7);
                 case 3:
-                    return endTime.AddMonths(-1);
+                    return endTime.AddDays(-28);
                 default:
                     return null;
             }
@@ -123,24 +131,45 @@ namespace Quartz
             return dataKinds;
         }
 
+        private void SetSelectionEnabled(bool enabled)
+        {
+            cboTimeRange.Enabled = enabled;
+            chkBrowsingHistory.Enabled = enabled;
+            chkDownloadHistory.Enabled = enabled;
+            chkCookies.Enabled = enabled;
+            chkCache.Enabled = enabled;
+            chkPasswords.Enabled = enabled;
+            chkAutofill.Enabled = enabled;
+        }
+
+        private async Task RefreshDataSummaryAsync()
+        {
+            lblStatus.Text = "Calculating data for this profile...";
+
+            UpdateHistorySummary();
+            //await UpdateCookieSummaryAsync();
+            //await UpdateCacheSummaryAsync();
+
+            lblStatus.Text = "Only data from this Quartz profile will be cleared.";
+        }
+
         private void UpdateHistorySummary()
         {
             try
             {
                 DateTime endTime = DateTime.Now;
                 DateTime? startTime = GetStartTime(endTime);
-                int count = new HistoryService().CountProfileHistory(
-                    ProfileService.Current,
-                    startTime,
-                    endTime);
+                List<HistoryModel> histories = new HistoryService().GetProfileHistoryFromRange(ProfileService.Current, startTime, endTime);
+                //_webView.CoreWebView2.down
+                if(histories.Count > 1)
+                    lblBrowsingHistoryInfo.Text = $"From {new Uri(histories.FirstOrDefault().WebAddress).Host} + {histories.Count} sites";
+                else
+                    lblBrowsingHistoryInfo.Text = $"From {new Uri(histories.FirstOrDefault().WebAddress).Host}";
 
-                lblBrowsingHistoryInfo.Text = count == 1
-                    ? "1 Quartz history entry in this time range"
-                    : count + " Quartz history entries in this time range";
             }
             catch
             {
-                lblBrowsingHistoryInfo.Text = "Pages visited in this Quartz profile";
+                lblBrowsingHistoryInfo.Text = "None";
             }
         }
 
