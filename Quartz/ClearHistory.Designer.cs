@@ -65,6 +65,7 @@
             this.btnDelete.TabIndex = 22;
             this.btnDelete.Text = "Delete data";
             this.btnDelete.UseVisualStyleBackColor = false;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // btnCancel
             // 
@@ -287,6 +288,7 @@
             this.cboTimeRange.Name = "cboTimeRange";
             this.cboTimeRange.Size = new System.Drawing.Size(225, 21);
             this.cboTimeRange.TabIndex = 15;
+            this.cboTimeRange.SelectedIndexChanged += new System.EventHandler(this.cboTimeRange_SelectedIndexChanged);
             // 
             // lblTimeRange
             // 
