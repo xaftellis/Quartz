@@ -51,6 +51,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.button2 = new System.Windows.Forms.Button();
+            this.pnlDivider = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -60,13 +61,11 @@
             // 
             // panel2
             // 
-            this.panel2.AutoSize = true;
-            this.panel2.BackColor = System.Drawing.Color.Transparent;
             this.panel2.Controls.Add(this.dataGridView1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 45);
+            this.panel2.Location = new System.Drawing.Point(0, 46);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(800, 405);
+            this.panel2.Size = new System.Drawing.Size(800, 404);
             this.panel2.TabIndex = 7;
             // 
             // dataGridView1
@@ -90,9 +89,10 @@
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dataGridView1.Size = new System.Drawing.Size(800, 405);
+            this.dataGridView1.Size = new System.Drawing.Size(800, 404);
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellMouseEnter);
             this.dataGridView1.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellMouseLeave);
@@ -262,6 +262,15 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.BtnCache_Click);
             // 
+            // pnlDivider
+            // 
+            this.pnlDivider.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.pnlDivider.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlDivider.Location = new System.Drawing.Point(0, 45);
+            this.pnlDivider.Name = "pnlDivider";
+            this.pnlDivider.Size = new System.Drawing.Size(800, 1);
+            this.pnlDivider.TabIndex = 9;
+            // 
             // History
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -269,6 +278,7 @@
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.panel2);
+            this.Controls.Add(this.pnlDivider);
             this.Controls.Add(this.panel1);
             this.KeyPreview = true;
             this.Name = "History";
@@ -286,7 +296,6 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -312,5 +321,6 @@
         private System.Windows.Forms.ToolStripMenuItem openInNewTabToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openInNewWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyLinkToolStripMenuItem;
+        private System.Windows.Forms.Panel pnlDivider;
     }
 }

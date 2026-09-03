@@ -20,8 +20,6 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.UI.WebControls;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Windows.Forms.VisualStyles;
@@ -47,18 +45,39 @@ namespace Quartz
         //List<DataGridViewRow> selectedCheckBoxes;
         Keys keyPressed;
 
+        public void LoadSeparatorTheme(Panel seporater)
+        {
+            string theme = SettingsService.Get("Theme");
+
+            Color dividerColor = Color.FromArgb(219, 220, 221);
+
+            if (theme == "dark")
+                dividerColor = Color.FromArgb(88, 88, 88);
+
+            if (theme == "black")
+                dividerColor = Color.FromArgb(128, 128, 128);
+
+            if (theme == "aqua")
+                dividerColor = Color.Blue;
+
+            if (theme == "xmas")
+                dividerColor = Color.Lime;
+
+            seporater.BackColor = dividerColor;
+        }
+
         public History(Browser browser)
         {
             InitializeComponent();
             _browser = browser;
             selectedRows = new List<DataGridViewRow>();
-            //selectedCheckBoxes = new List<DataGridViewRow>();
         }
 
         private async void History_Load(object sender, EventArgs e)
         {
             NewControlThemeChanger.ChangeTheme(this);
             NewControlThemeChanger.ChangeControlTheme(contextMenuStrip1);
+            LoadSeparatorTheme(pnlDivider);
 
             Rebind();
         }
@@ -702,6 +721,16 @@ namespace Quartz
                 }
             }
             Clipboard.SetText(urls);
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }
