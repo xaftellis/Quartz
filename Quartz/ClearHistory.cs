@@ -13,10 +13,10 @@ using System.Windows.Forms;
 
 namespace Quartz
 {
-    public partial class Delete : Form
+    public partial class ClearHistory : Form
     {
         WebView2 webView2;
-        public Delete(WebView2 WebView2)
+        public ClearHistory(WebView2 WebView2)
         {
             InitializeComponent();
             webView2 = WebView2;

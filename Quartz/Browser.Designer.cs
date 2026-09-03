@@ -574,6 +574,7 @@
             this.restartToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.SettingsMenuStrip.Name = "SettingsMenuStrip";
+            this.SettingsMenuStrip.OwnerItem = this.toolStripMenuItem1;
             this.SettingsMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             resources.ApplyResources(this.SettingsMenuStrip, "SettingsMenuStrip");
             this.SettingsMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.SettingsMenuStrip_Opening);
@@ -641,6 +642,7 @@
             this.addFavouritesToolStripMenuItem,
             this.toolStripSeparator8});
             this.mnuFavourites.Name = "contextMenuStrip1";
+            this.mnuFavourites.OwnerItem = this.favouritesToolStripMenuItem;
             resources.ApplyResources(this.mnuFavourites, "mnuFavourites");
             this.mnuFavourites.Opening += new System.ComponentModel.CancelEventHandler(this.mnuFavourites_Opening);
             // 

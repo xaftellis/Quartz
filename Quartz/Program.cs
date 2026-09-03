@@ -420,7 +420,7 @@ namespace Quartz
                 { "defaultFavicon", "default" },
                 { "sortFavouritesBy", "alphabetically" },
                 { "displayFullURLs", "false" },
-                { "showFavouritesBar", "false" },
+                { "showFavouritesBar", "false" }
             };
 
             foreach (var kv in settings)

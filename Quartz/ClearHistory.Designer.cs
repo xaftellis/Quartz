@@ -1,6 +1,6 @@
 ﻿namespace Quartz
 {
-    partial class Delete
+    partial class ClearHistory
     {
         /// <summary>
         /// Required designer variable.

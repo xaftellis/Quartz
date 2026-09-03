@@ -158,6 +158,10 @@
     <Compile Include="Browser.Designer.cs">
       <DependentUpon>Browser.cs</DependentUpon>
     </Compile>
+    <Compile Include="ClearHistory.cs" />
+    <Compile Include="ClearHistory.Designer.cs">
+      <DependentUpon>ClearHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CircularImageButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -172,12 +176,6 @@
     </Compile>
     <Compile Include="CustomMessageBox.Designer.cs">
       <DependentUpon>CustomMessageBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Delete.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Delete.Designer.cs">
-      <DependentUpon>Delete.cs</DependentUpon>
     </Compile>
     <Compile Include="Favorite.cs">
       <SubType>Form</SubType>
@@ -288,11 +286,11 @@
     <EmbeddedResource Include="Browser.resx">
       <DependentUpon>Browser.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ClearHistory.resx">
+      <DependentUpon>ClearHistory.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CustomMessageBox.resx">
       <DependentUpon>CustomMessageBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Delete.resx">
-      <DependentUpon>Delete.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ModifyProfile.resx">
       <DependentUpon>ModifyProfile.cs</DependentUpon>
