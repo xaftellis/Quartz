@@ -57,11 +57,14 @@ namespace Quartz.Controls
             g.CompositingQuality = CompositingQuality.HighQuality;
 
             Rectangle clientRect = this.ClientRectangle;
+            const TextFormatFlags textFlags = TextFormatFlags.WordBreak |
+                                              TextFormatFlags.TextBoxControl |
+                                              TextFormatFlags.HorizontalCenter;
 
             int textHeight = 0;
             if (!string.IsNullOrEmpty(ButtonText))
             {
-                textHeight = TextRenderer.MeasureText(ButtonText, this.Font, new Size(clientRect.Width, int.MaxValue), TextFormatFlags.WordBreak).Height;
+                textHeight = TextRenderer.MeasureText(ButtonText, this.Font, new Size(clientRect.Width, int.MaxValue), textFlags).Height;
             }
 
             int totalHeight = CircularImageSize + (string.IsNullOrEmpty(ButtonText) ? 0 : CircularImageToTextGapping + textHeight);
@@ -90,7 +93,7 @@ namespace Quartz.Controls
             {
                 int textY = CircularImage != null ? imageY + CircularImageSize + CircularImageToTextGapping : (clientRect.Height - textHeight) / 2;
                 Rectangle textRect = new Rectangle(clientRect.X, textY, clientRect.Width, textHeight);
-                TextRenderer.DrawText(g, ButtonText, this.Font, textRect, this.ForeColor, TextFormatFlags.WordBreak | TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, ButtonText, this.Font, textRect, this.ForeColor, textFlags);
             }
 
             if (isMouseOver && ActionButtonImage != null)
