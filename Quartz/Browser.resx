@@ -352,7 +352,7 @@
     <value>7</value>
   </data>
   <metadata name="mnuDownloadsDropDown.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>238, 14</value>
+    <value>257, 19</value>
   </metadata>
   <data name="locationToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>164, 22</value>
@@ -2893,7 +2893,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlTop.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="pnlDivider.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -5654,7 +5654,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlBottom.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

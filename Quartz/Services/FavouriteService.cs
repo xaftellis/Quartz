@@ -167,18 +167,21 @@ namespace Quartz.Services
                     var expectedIcon = FaviconHelper.GetFaviconFileExternalAsImage(fav.WebAddress);
 
                     return buttons.Any(b =>
-                        b.Text.Trim() == fav.Name &&
-                        b.Tag?.ToString() == fav.WebAddress &&
+                        b.Tag is FavouriteModel buttonFavourite &&
+                        buttonFavourite.Name == fav.Name &&
+                        buttonFavourite.WebAddress == fav.WebAddress &&
                         CheckIcon(b.Image, expectedIcon)
                     );
                 });
 
                 bool noExtra = buttons.All(btn =>
                 {
-                    string name = btn.Text.Trim();
-                    string url = btn.Tag?.ToString();
+                    var buttonFavourite = btn.Tag as FavouriteModel;
+                    if (buttonFavourite == null) return false;
 
-                    var match = expected.FirstOrDefault(f => f.Name == name && f.WebAddress == url);
+                    var match = expected.FirstOrDefault(f =>
+                        f.Name == buttonFavourite.Name &&
+                        f.WebAddress == buttonFavourite.WebAddress);
                     if (match == null) return false;
 
                     // expected icon

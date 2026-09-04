@@ -42,6 +42,9 @@ namespace Quartz
 {
     public partial class Browser : Form
     {
+        private const int MaximumFavouriteButtonWidth = 150;
+        private const int FavouriteButtonHeight = 23;
+
         #region Declarations
         public AppContainer tabbedApp;
 
@@ -363,79 +366,99 @@ namespace Quartz
 
         public void LoadFavourites()
         {
-            if (SettingsService.Get("showFavouriteIcon") == "true")
+            bool showFavouriteIcon = SettingsService.Get("showFavouriteIcon") == "true";
+            var service = new FavouriteService();
+
+            pnlFavourites.Controls.Clear();
+
+            foreach (var favourite in service.All().OrderBy(f => f.Index))
             {
-                pnlFavourites.Controls.Clear();
-
-                var service = new FavouriteService();
-
-                foreach (var favourite in service.All().OrderBy(f => f.Index).ToList())
+                var button = new Button
                 {
-                    var button = new Button
-                    {
-                        Name = "btn" + favourite.Name,
-                        Text = "      " + favourite.Name,
-                        Tag = favourite.WebAddress,
-                        ContextMenuStrip = mnuMenu,
-                        AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                        ImageAlign = ContentAlignment.MiddleLeft,
-                        TextAlign = ContentAlignment.MiddleCenter,
-                        MaximumSize = new Size(0, 23),
-                        AutoSize = true,
-                        Font = new Font("Segoe UI", 8)
-                    };
+                    Name = "btn" + favourite.Name,
+                    Text = favourite.Name,
+                    Tag = favourite,
+                    AccessibleName = favourite.Name,
+                    ContextMenuStrip = mnuMenu,
+                    AutoSize = true,
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                    ImageAlign = ContentAlignment.MiddleLeft,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    TextImageRelation = TextImageRelation.ImageBeforeText,
+                    UseMnemonic = false
+                };
 
-                    Uri address = new Uri(favourite.WebAddress);
+                NewControlThemeChanger.ChangeControlTheme(button);
 
-                    NewControlThemeChanger.ChangeControlTheme(button);
-
-                    button.Image = FaviconHelper.GetFaviconFileExternalAsImage(address.AbsoluteUri);
-
-                    var toolTip = new ToolTip();
-                    toolTip.SetToolTip(button, favourite.Name + Environment.NewLine + favourite.WebAddress);
-
-                    pnlFavourites.Controls.Add(button);
-                    button.MouseDown += Button_MouseDown;
-                    button.MouseMove += Button_MouseMove;
-                    button.MouseUp += Button_MouseUp;
-                    button.Click += btnGotoFavourite_Click;
+                if (showFavouriteIcon)
+                {
+                    button.Font = new Font("Segoe UI", 8);
+                    button.Image = FaviconHelper.GetFaviconFileExternalAsImage(favourite.WebAddress);
                 }
+
+                button.Text = FitFavouriteButtonText(button, favourite.Name, MaximumFavouriteButtonWidth);
+                button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
+
+                var toolTip = new ToolTip();
+                toolTip.SetToolTip(button, favourite.Name + Environment.NewLine + favourite.WebAddress);
+
+                button.MouseDown += Button_MouseDown;
+                button.MouseMove += Button_MouseMove;
+                button.MouseUp += Button_MouseUp;
+                button.Click += btnGotoFavourite_Click;
+
+                pnlFavourites.Controls.Add(button);
             }
-            else
+        }
+
+        private static string FitFavouriteButtonText(Button button, string fullText, int maximumWidth)
+        {
+            Size originalMaximumSize = button.MaximumSize;
+            button.MaximumSize = Size.Empty;
+
+            try
             {
-                pnlFavourites.Controls.Clear();
+                button.Text = fullText;
+                if (button.GetPreferredSize(Size.Empty).Width <= maximumWidth)
+                    return fullText;
 
-                var service = new FavouriteService();
+                const string ellipsis = "...";
+                int minimum = 0;
+                int maximum = fullText.Length;
 
-                foreach (var favourite in service.All().OrderBy(f => f.Index).ToList())
+                while (minimum < maximum)
                 {
-                    var button = new Button
-                    {
-                        Name = "btn" + favourite.Name,
-                        Text = favourite.Name,
-                        Tag = favourite.WebAddress,
-                        ContextMenuStrip = mnuMenu,
-                        AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                        ImageAlign = ContentAlignment.MiddleLeft,
-                        TextAlign = ContentAlignment.MiddleCenter,
-                        MaximumSize = new Size(0, 23),
-                        AutoSize = true
-                    };
+                    int length = (minimum + maximum + 1) / 2;
+                    button.Text = fullText.Substring(0, length) + ellipsis;
 
-                    Uri address = new Uri(favourite.WebAddress);
-
-                    NewControlThemeChanger.ChangeControlTheme(button);
-
-                    var toolTip = new ToolTip();
-                    toolTip.SetToolTip(button, favourite.Name + Environment.NewLine + favourite.WebAddress);
-
-                    pnlFavourites.Controls.Add(button);
-                    button.MouseDown += Button_MouseDown;
-                    button.MouseMove += Button_MouseMove;
-                    button.MouseUp += Button_MouseUp;
-                    button.Click += btnGotoFavourite_Click;
+                    if (button.GetPreferredSize(Size.Empty).Width <= maximumWidth)
+                        minimum = length;
+                    else
+                        maximum = length - 1;
                 }
+
+                return fullText.Substring(0, minimum) + ellipsis;
             }
+            finally
+            {
+                button.MaximumSize = originalMaximumSize;
+            }
+        }
+
+        internal void UpdateFavouriteButtonPreview(Button button, string name)
+        {
+            if (button == null)
+                return;
+
+            button.AccessibleName = name;
+            button.Text = FitFavouriteButtonText(button, name, MaximumFavouriteButtonWidth);
+            button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
+            UpdateFavBar();
+        }
+
+        private static FavouriteModel GetFavourite(Button button)
+        {
+            return button.Tag as FavouriteModel;
         }
 
         bool mouseReleased = false;
@@ -497,9 +520,9 @@ namespace Quartz
             if (e.Button == MouseButtons.Middle)
             {
                 var button = (System.Windows.Forms.Button)sender;
-
-                var favourite = new FavouriteService()
-                    .Get(button.Text.Trim());
+                var favourite = GetFavourite(button);
+                if (favourite == null)
+                    return;
 
                 var browser = new Browser(favourite.WebAddress, true);
                 browser.InitializeTab();
@@ -531,9 +554,12 @@ namespace Quartz
                 FavouriteService favouriteService = new FavouriteService();
                 foreach (Button button in pnlFavourites.Controls)
                 {
-                    favouriteService.Get(button.Text.Replace("      ", "")).Index = pnlFavourites.Controls.GetChildIndex(button);
-                    favouriteService.SaveChanges();
+                    var favourite = GetFavourite(button);
+                    var storedFavourite = favourite == null ? null : favouriteService.Get(favourite.Name);
+                    if (storedFavourite != null)
+                        storedFavourite.Index = pnlFavourites.Controls.GetChildIndex(button);
                 }
+                favouriteService.SaveChanges();
 
                 int newButtonIndex = pnlFavourites.Controls.GetChildIndex(sender as Button);
                 if (originalButtonIndex != newButtonIndex)
@@ -547,9 +573,7 @@ namespace Quartz
             if (sender is Button && !isDragging)
             {
                 var button = (Button)sender;
-
-                var service = new FavouriteService();
-                var favourite = service.Get(button.Text.Replace("      ", ""));
+                var favourite = GetFavourite(button);
                 if (favourite != null)
                 {
                     SetSource(favourite.WebAddress);
@@ -1577,9 +1601,13 @@ namespace Quartz
                     Button button = (Button)owner.SourceControl;
 
                     var FavouriteService = new FavouriteService();
-                    FavouriteService.Remove(button.Text.Replace("      ", ""));
-                    FavouriteService.SaveChanges();
-                    LoadFavourites();
+                    var favourite = GetFavourite(button);
+                    if (favourite != null)
+                    {
+                        FavouriteService.Remove(favourite.Name);
+                        FavouriteService.SaveChanges();
+                        LoadFavourites();
+                    }
                 }
             }
         }
@@ -1776,8 +1804,7 @@ namespace Quartz
             removeToolStripMenuItem.Enabled = !(mnuMenu.SourceControl is Panel);
             copyToolStripMenuItem.Enabled = !(mnuMenu.SourceControl is Panel);
             cutToolStripMenuItem1.Enabled = !(mnuMenu.SourceControl is Panel);
-
-            pasteToolStripMenuItem1.Enabled = !string.IsNullOrEmpty(Clipboard.GetText());
+            pasteToolStripMenuItem1.Enabled = Uri.TryCreate(Clipboard.GetText(), UriKind.Absolute, out Uri uri);
 
             if (!(mnuMenu.SourceControl is Panel))
             {
@@ -1892,10 +1919,13 @@ namespace Quartz
                     // Get the control that is displaying this context menu
                     Button button = (Button)owner.SourceControl;
 
-                    var FavouriteService = new FavouriteService();
-                    var form = new Favourite(this, button.Text.Replace("      ", ""), FavouriteService.Get(button.Text.Replace("      ", "")).WebAddress, true, button);
-                    form.Owner = this;
-                    form.ShowDialog();
+                    var favourite = GetFavourite(button);
+                    if (favourite != null)
+                    {
+                        var form = new Favourite(this, favourite.Name, favourite.WebAddress, true, button);
+                        form.Owner = this;
+                        form.ShowDialog();
+                    }
                 }
             }
         }
@@ -1994,7 +2024,9 @@ namespace Quartz
             // Get the control that is displaying this context menu
             Button button = (Button)mnuMenu.SourceControl;
 
-            Clipboard.SetText(button.Text.Replace("      ", ""));
+            var favourite = GetFavourite(button);
+            if (favourite != null)
+                Clipboard.SetText(favourite.Name);
         }
 
         private void copyAddressToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2002,9 +2034,9 @@ namespace Quartz
             // Get the contol that is displaying this context menu
             Button button = (Button)mnuMenu.SourceControl;
 
-            var FavouriteService = new FavouriteService();
-            var fav = FavouriteService.Get(button.Text.Replace("      ", ""));
-            Clipboard.SetText(fav.WebAddress);
+            var favourite = GetFavourite(button);
+            if (favourite != null)
+                Clipboard.SetText(favourite.WebAddress);
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2518,8 +2550,9 @@ namespace Quartz
                     {
                         // Get the control that is displaying this context menu
                         Button button = (Button)owner.SourceControl;
-
-                        Program.OpenNewAppContainer(button.Tag.ToString());
+                        var favourite = GetFavourite(button);
+                        if (favourite != null)
+                            Program.OpenNewAppContainer(favourite.WebAddress);
                     }
                     else
                     {
@@ -2527,7 +2560,9 @@ namespace Quartz
                         List<string> addreses = new List<string>();
                         foreach (Button _button in pnlFavourites.Controls)
                         {
-                            addreses.Add(_button.Tag.ToString());
+                            var favourite = GetFavourite(_button);
+                            if (favourite != null)
+                                addreses.Add(favourite.WebAddress);
                         }
 
                         await Program.OpenNewWindowWithTabsFast(addreses);
@@ -2548,8 +2583,9 @@ namespace Quartz
                 {
                     // Get the control that is displaying this context menu
                     Button button = (Button)owner.SourceControl;
-
-                    Clipboard.SetText(button.Tag.ToString());
+                    var favourite = GetFavourite(button);
+                    if (favourite != null)
+                        Clipboard.SetText(favourite.WebAddress);
                 }
             }
         }
@@ -2750,14 +2786,17 @@ namespace Quartz
                 {
                     // Get the control that is displaying this context menu
                     Button button = (Button)owner.SourceControl;
+                    var favourite = GetFavourite(button);
+                    if (favourite != null)
+                    {
+                        Clipboard.SetText(favourite.WebAddress);
 
-                    Clipboard.SetText(button.Tag.ToString());
+                        FavouriteService favouriteService = new FavouriteService();
+                        favouriteService.Remove(favourite.Name);
+                        favouriteService.SaveChanges();
 
-                    FavouriteService favouriteService = new FavouriteService();
-                    favouriteService.Remove(button.Text.Replace("      ", ""));
-                    favouriteService.SaveChanges();
-
-                    LoadFavourites();
+                        LoadFavourites();
+                    }
                 }
             }
         }
@@ -2854,6 +2893,23 @@ namespace Quartz
         {
             ClearHistory clearHistoryForm = new ClearHistory(wvWebView1);
             clearHistoryForm.ShowDialog();
+        }
+
+        private void pasteToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (Uri.TryCreate(Clipboard.GetText(), UriKind.Absolute, out Uri uri))
+            {
+                var service = new FavouriteService();
+
+                service.Add(new Models.FavouriteModel
+                {
+                    Name = Clipboard.GetText(),
+                    WebAddress = Clipboard.GetText()
+                });
+
+                service.SaveChanges();
+                LoadFavourites();
+            }
         }
     }
 }

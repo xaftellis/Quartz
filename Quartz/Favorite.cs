@@ -196,18 +196,7 @@ namespace Quartz
 
         private void NameTextBox_TextChanged(object sender, EventArgs e)
         {
-            if(favButton != null)
-            {
-                if (SettingsService.Get("showFavouriteIcon") == "true")
-                {
-                    favButton.Text = "      " + NameTextBox.Text.Trim();
-                }
-                else
-                {
-                    favButton.Text = NameTextBox.Text.Trim();
-                }
-                _browser.UpdateFavBar();
-            }
+            _browser.UpdateFavouriteButtonPreview(favButton, NameTextBox.Text.Trim());
         }
 
         private void NameTextBox_KeyUp(object sender, KeyEventArgs e)

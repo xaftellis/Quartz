@@ -52,7 +52,6 @@
             // NameTextBox
             // 
             this.NameTextBox.Location = new System.Drawing.Point(55, 13);
-            this.NameTextBox.MaxLength = 50;
             this.NameTextBox.Name = "NameTextBox";
             this.NameTextBox.Size = new System.Drawing.Size(326, 20);
             this.NameTextBox.TabIndex = 1;
@@ -87,7 +86,6 @@
             // AddressTextBox
             // 
             this.AddressTextBox.Location = new System.Drawing.Point(55, 39);
-            this.AddressTextBox.MaxLength = 10000;
             this.AddressTextBox.Name = "AddressTextBox";
             this.AddressTextBox.Size = new System.Drawing.Size(326, 20);
             this.AddressTextBox.TabIndex = 2;
