@@ -1163,70 +1163,121 @@ namespace Quartz
             }
         }
 
+        private ulong _activeNavigationId;
         private void wvWebView1_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
+            _activeNavigationId = e.NavigationId;
+
             Cursor = Cursors.AppStarting;
             picFavicon.Visible = false;
             wvLoadingProgress.Visible = true;
-            var theme = SettingsService.Get("Theme");
-            if (theme == "xmas")
-            {
-                wvLoadingProgress.Source = new Uri("file://" + Path.Combine(new string[] { Environment.CurrentDirectory + "\\assets\\throbber\\", $"throbber_small_xmas_red.svg" }));
-            }
-            else
-            {
-                wvLoadingProgress.Source = new Uri("file://" + Path.Combine(new string[] { Environment.CurrentDirectory + "\\assets\\throbber\\", $"throbber_small_{theme}.svg" }));
-            }
+
+            string theme = SettingsService.Get("Theme");
+
+            if (string.IsNullOrWhiteSpace(theme))
+                theme = "black";
+
+            string fileName = string.Equals(theme, "xmas", StringComparison.OrdinalIgnoreCase) ? "throbber_small_xmas_red.svg" : $"throbber_small_{theme}.svg";
+            string throbberPath = Path.Combine(Application.StartupPath, "assets", "throbber", fileName);
+            wvLoadingProgress.Source = new Uri(throbberPath);
+
             btnRefresh.Visible = false;
             btnStop.Visible = true;
-            //UpdateTitleWithEvent("NavigationStarting");
         }
 
         private void wvWebView1_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
+            // Ignore completion from an older, superseded navigation.
+            if (e.NavigationId != _activeNavigationId)
+                return;
+
             if (loadnum == 0)
-            {
                 loadnum++;
-            }
 
             Cursor = Cursors.Default;
-
-
             btnRefresh.Visible = true;
             btnStop.Visible = false;
-            //UpdateTitleWithEvent("NavigationCompleted");
             wvLoadingProgress.Visible = false;
             picFavicon.Visible = true;
-            if (!e.IsSuccess)
+
+            if (e.IsSuccess)
             {
-                switch (e.WebErrorStatus)
-                {
-                    // Real network failures only
-                    case CoreWebView2WebErrorStatus.CannotConnect:
-                    case CoreWebView2WebErrorStatus.ConnectionReset:
-                    case CoreWebView2WebErrorStatus.Disconnected:
-                    case CoreWebView2WebErrorStatus.HostNameNotResolved:
-                    case CoreWebView2WebErrorStatus.RedirectFailed:
-                    case CoreWebView2WebErrorStatus.ServerUnreachable:
-                    case CoreWebView2WebErrorStatus.Timeout:
-                    case CoreWebView2WebErrorStatus.UnexpectedError:
-                        wvWebView1.Source = new Uri($"https://quartz.com/{SettingsService.Get("Theme")}/error.html");
-                        break;
-
-                    // Certificate issues
-                    case CoreWebView2WebErrorStatus.CertificateCommonNameIsIncorrect:
-                    case CoreWebView2WebErrorStatus.CertificateExpired:
-                    case CoreWebView2WebErrorStatus.CertificateIsInvalid:
-                    case CoreWebView2WebErrorStatus.CertificateRevoked:
-                    case CoreWebView2WebErrorStatus.ClientCertificateContainsErrors:
-                        wvWebView1.Source = new Uri($"https://quartz.com/{SettingsService.Get("Theme")}/Safety.html");
-                        break;
-
-                    default:
-                        // Unknown, HTTP errors, Google robot pages → do nothing
-                        break;
-                }
+                SaveCurrentPageToHistory();
+                return;
             }
+
+            // Prevent a loop if Quartz's error page itself cannot load.
+            if (wvWebView1.Source != null &&
+                isQuartzDotComErrorPages(wvWebView1.Source))
+            {
+                return;
+            }
+
+            string theme = SettingsService.Get("Theme");
+
+            if (string.IsNullOrWhiteSpace(theme))
+                theme = "black";
+
+            switch (e.WebErrorStatus)
+            {
+                case CoreWebView2WebErrorStatus.CannotConnect:
+                case CoreWebView2WebErrorStatus.ConnectionReset:
+                case CoreWebView2WebErrorStatus.Disconnected:
+                case CoreWebView2WebErrorStatus.HostNameNotResolved:
+                case CoreWebView2WebErrorStatus.RedirectFailed:
+                case CoreWebView2WebErrorStatus.ServerUnreachable:
+                case CoreWebView2WebErrorStatus.Timeout:
+                case CoreWebView2WebErrorStatus.ErrorHttpInvalidServerResponse:
+                case CoreWebView2WebErrorStatus.UnexpectedError:
+                    wvWebView1.Source =
+                        new Uri($"https://quartz.com/{theme}/error.html");
+                    break;
+
+                case CoreWebView2WebErrorStatus.CertificateCommonNameIsIncorrect:
+                case CoreWebView2WebErrorStatus.CertificateExpired:
+                case CoreWebView2WebErrorStatus.CertificateIsInvalid:
+                case CoreWebView2WebErrorStatus.CertificateRevoked:
+                case CoreWebView2WebErrorStatus.ClientCertificateContainsErrors:
+                    wvWebView1.Source =
+                        new Uri($"https://quartz.com/{theme}/Safety.html");
+                    break;
+            }
+        }
+
+        private void SaveCurrentPageToHistory()
+        {
+            Uri currentUri = wvWebView1.Source;
+
+            if (currentUri == null)
+                return;
+
+            bool isHistoryPage =
+                currentUri.Scheme.Equals(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase) ||
+                currentUri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase) ||
+                currentUri.Scheme.Equals(Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase);
+
+            if (!isHistoryPage || isQuartzDotCom(currentUri))
+                return;
+
+            var currentProfile = Program.profileService.Get(ProfileService.Current);
+            if (currentProfile == null || currentProfile.isDisposable)
+                return;
+
+            string title = wvWebView1.CoreWebView2.DocumentTitle;
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                title = currentUri.IsFile
+                    ? Path.GetFileName(currentUri.LocalPath)
+                    : currentUri.Host;
+            }
+
+            var service = new HistoryService();
+            service.Add(new Models.HistoryModel()
+            {
+                Title = title,
+                WebAddress = currentUri.AbsoluteUri,
+            });
+            service.SaveChanges();
         }
 
         private Color GetBackColor()
@@ -1463,20 +1514,6 @@ namespace Quartz
             {
                 if (tabbedApp._windowName == string.Empty)
                     tabbedApp.Text = this.Text;
-            }
-
-            //UpdateTitleWithEvent("DocumentTitleChanged");
-
-            var service = new HistoryService();
-
-            if (wvWebView1.Source.Scheme.ToLower().StartsWith("http"))
-            {
-                service.Add(new Models.HistoryModel()
-                {
-                    Title = wvWebView1.CoreWebView2.DocumentTitle,
-                    WebAddress = wvWebView1.Source.AbsoluteUri,
-                });
-                service.SaveChanges();
             }
         }
 
