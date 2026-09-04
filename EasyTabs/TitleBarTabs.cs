@@ -70,7 +70,6 @@ namespace EasyTabs
 			_previousWindowState = null;
 			ExitOnLastTabClose = true;
 			InitializeComponent();
-			SetWindowThemeAttributes(WTNCA.NODRAWCAPTION | WTNCA.NODRAWICON);
 
 			_tabs.CollectionModified += _tabs_CollectionModified;
 
@@ -85,6 +84,16 @@ namespace EasyTabs
 			};
 
 			ShowTooltips = true;
+		}
+
+		/// <summary>
+		/// Applies the title-bar theme after derived windows have had a chance to
+		/// configure their startup bounds and state.
+		/// </summary>
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			SetWindowThemeAttributes(WTNCA.NODRAWCAPTION | WTNCA.NODRAWICON);
 		}
 
 		/// <summary>Flag indicating whether composition is enabled on the desktop.</summary>

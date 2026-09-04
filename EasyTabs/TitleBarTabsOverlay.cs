@@ -23,6 +23,17 @@ namespace EasyTabs
 	/// </summary>
 	public class TitleBarTabsOverlay : Form
 	{
+		private const int DwmwaTransitionsForcedDisabled = 3;
+
+		[DllImport("dwmapi.dll")]
+		private static extern int DwmSetWindowAttribute(IntPtr windowHandle, int attribute, ref int attributeValue, int attributeSize);
+
+		private static void SetWindowTransitionsEnabled(Form window, bool enabled)
+		{
+			int transitionsDisabled = enabled ? 0 : 1;
+			DwmSetWindowAttribute(window.Handle, DwmwaTransitionsForcedDisabled, ref transitionsDisabled, sizeof(int));
+		}
+
         protected Timer showTooltipTimer;
 
 		/// <summary>All of the parent forms and their overlays so that we don't create duplicate overlays across the application domain.</summary>
@@ -31,8 +42,23 @@ namespace EasyTabs
 		/// <summary>Tab that has been torn off from this window and is being dragged.</summary>
 		protected static TitleBarTab _tornTab;
 
-		/// <summary>Thumbnail representation of <see cref="_tornTab" /> used when dragging.</summary>
-		protected static TornTabForm _tornTabForm;
+		/// <summary>Live window containing <see cref="_tornTab" /> while it is being dragged.</summary>
+		protected static TitleBarTabs _tornTabWindow;
+
+		/// <summary>Overlay that owns the current cross-window tab drag.</summary>
+		protected static TitleBarTabsOverlay _tornTabDragOwner;
+
+		/// <summary>Cursor offset inside <see cref="_tornTabWindow" /> while dragging.</summary>
+		protected static Point _tornTabWindowCursorOffset;
+
+		/// <summary>Latest horizontal cursor position waiting to be applied to the live torn-tab window.</summary>
+		protected static int _latestTornTabCursorX;
+
+		/// <summary>Latest vertical cursor position waiting to be applied to the live torn-tab window.</summary>
+		protected static int _latestTornTabCursorY;
+
+		/// <summary>Prevents mouse moves from queuing faster than the UI thread can display them.</summary>
+		protected static int _tornTabMoveQueued;
 
 		/// <summary>
 		/// Flag used in <see cref="WndProc" /> and <see cref="MouseHookCallback" /> to track whether the user was click/dragging when a particular event
@@ -192,10 +218,19 @@ namespace EasyTabs
 			{
 				RECT windowRectangle;
 				User32.GetWindowRect(_parentForm.Handle, out windowRectangle);
+				Rectangle tabDragArea = _parentForm.TabRenderer == null
+					? Rectangle.Empty
+					: _parentForm.TabRenderer.MaxTabArea;
+				int left = tabDragArea.Width > 0
+					? tabDragArea.Left
+					: windowRectangle.left + SystemInformation.HorizontalResizeBorderThickness;
+				int width = tabDragArea.Width > 0
+					? tabDragArea.Width
+					: ClientRectangle.Width;
 
 				return new Rectangle(
-					windowRectangle.left + SystemInformation.HorizontalResizeBorderThickness, windowRectangle.top + SystemInformation.VerticalResizeBorderThickness,
-					ClientRectangle.Width, _parentForm.NonClientAreaHeight - SystemInformation.VerticalResizeBorderThickness);
+					left, windowRectangle.top + SystemInformation.VerticalResizeBorderThickness,
+					width, _parentForm.NonClientAreaHeight - SystemInformation.VerticalResizeBorderThickness);
 			}
 		}
 
@@ -368,6 +403,174 @@ namespace EasyTabs
 			}
 		}
 
+		/// <summary>Moves a tab into a real window as soon as it leaves its current tab strip.</summary>
+		private void CreateLiveTornTabWindow(Point cursorPosition)
+		{
+			TitleBarTab tab = _parentForm.SelectedTab;
+			if (tab == null)
+			{
+				return;
+			}
+
+			Rectangle sourceTabArea = tab.Area;
+			int sourceTabAreaWidth = Math.Max(1, _parentForm.TabRenderer.MaxTabArea.Width);
+			Rectangle sourceDropArea = TabDropArea;
+			bool preserveTabOffset = cursorPosition.X >= sourceDropArea.Left && cursorPosition.X < sourceDropArea.Right;
+
+			Point relativeCursorPosition = GetRelativeCursorPosition(cursorPosition);
+			Point dragClickOffset = _parentForm.TabRenderer.TabDragClickOffset ?? new Point(
+				relativeCursorPosition.X - sourceTabArea.Left,
+				relativeCursorPosition.Y - sourceTabArea.Top);
+			Point cursorOffsetWithinTab = new Point(
+				Math.Max(0, Math.Min(dragClickOffset.X, sourceTabArea.Width)),
+				Math.Max(0, Math.Min(dragClickOffset.Y, sourceTabArea.Height)));
+
+			Rectangle sourceBounds = _parentForm.WindowState == FormWindowState.Normal
+				? _parentForm.Bounds
+				: _parentForm.RestoreBounds;
+
+			TitleBarTabs newWindow = (TitleBarTabs) Activator.CreateInstance(_parentForm.GetType());
+			newWindow.StartPosition = FormStartPosition.Manual;
+			newWindow.WindowState = FormWindowState.Normal;
+
+			int width = Math.Max(newWindow.MinimumSize.Width, sourceBounds.Width);
+			int height = Math.Max(newWindow.MinimumSize.Height, sourceBounds.Height);
+			if (width <= 0 || height <= 0)
+			{
+				width = Math.Max(newWindow.MinimumSize.Width, _parentForm.Width);
+				height = Math.Max(newWindow.MinimumSize.Height, _parentForm.Height);
+			}
+
+			_tornTabWindowCursorOffset = new Point(
+				Math.Max(0, Math.Min(cursorPosition.X - _parentForm.Left, Math.Max(0, width - 100))),
+				Math.Max(0, Math.Min(cursorPosition.Y - _parentForm.Top, _parentForm.NonClientAreaHeight)));
+			Rectangle draggedWindowBounds = new Rectangle(
+				cursorPosition.X - _tornTabWindowCursorOffset.X,
+				cursorPosition.Y - _tornTabWindowCursorOffset.Y,
+				width,
+				height);
+			newWindow.Bounds = draggedWindowBounds;
+
+			_tornTab = tab;
+			_tornTabWindow = newWindow;
+			_tornTabDragOwner = this;
+			Interlocked.Exchange(ref _tornTabMoveQueued, 0);
+
+			SetWindowTransitionsEnabled(newWindow, false);
+			_parentForm.ApplicationContext.OpenWindow(newWindow);
+			newWindow.Show();
+			newWindow.WindowState = FormWindowState.Normal;
+			newWindow.Bounds = draggedWindowBounds;
+
+			tab.ClearSubscriptions();
+			_parentForm.SelectedTabIndex = _parentForm.SelectedTabIndex == _parentForm.Tabs.Count - 1
+				? _parentForm.SelectedTabIndex - 1
+				: _parentForm.SelectedTabIndex + 1;
+			_parentForm.Tabs.Remove(tab);
+
+			tab.Parent = newWindow;
+			newWindow.Tabs.Add(tab);
+			newWindow.SelectedTabIndex = 0;
+			newWindow.ResizeTabContents();
+			newWindow.RedrawTabs();
+
+			int normalTabX = tab.Area.Left;
+			int targetTabAreaWidth = Math.Max(1, newWindow.TabRenderer.MaxTabArea.Width);
+			int detachedTabWidth = Math.Max(1, Math.Min(sourceTabArea.Width, targetTabAreaWidth));
+			int detachedTabX = normalTabX;
+
+			// Chrome keeps the current tab offset when detaching above or below the strip,
+			// but starts at the beginning when detaching from either side.
+			if (preserveTabOffset)
+			{
+				detachedTabX = sourceTabArea.Left;
+				if (targetTabAreaWidth < sourceTabAreaWidth)
+				{
+					int sourceLeadingSpace = Math.Max(0, sourceTabArea.Left - normalTabX);
+					detachedTabX = normalTabX + Convert.ToInt32(
+						Math.Round(sourceLeadingSpace * (targetTabAreaWidth / Convert.ToDouble(sourceTabAreaWidth))));
+				}
+
+				int maximumTabX = normalTabX + Math.Max(0, targetTabAreaWidth - detachedTabWidth);
+				detachedTabX = Math.Max(normalTabX, Math.Min(detachedTabX, maximumTabX));
+			}
+
+			int detachedTabCursorOffsetX = Math.Min(cursorOffsetWithinTab.X, detachedTabWidth);
+			newWindow.TabRenderer.BeginDetachedWindowDrag(detachedTabX, detachedTabWidth);
+			_tornTabWindowCursorOffset = new Point(
+				(newWindow._overlay.Left - newWindow.Left) + detachedTabX + detachedTabCursorOffsetX,
+				(newWindow._overlay.Top - newWindow.Top) + tab.Area.Top + cursorOffsetWithinTab.Y);
+			MoveLiveTornTabWindow(cursorPosition);
+			newWindow.RedrawTabs();
+
+			if (_parentForm.Tabs.Count == 0)
+			{
+				_parentForm.Hide();
+			}
+
+			_dropAreas = (from window in _parentForm.ApplicationContext.OpenWindows
+						  where window != newWindow && window.Tabs.Count > 0
+						  select new Tuple<TitleBarTabs, Rectangle>(window, window.TabDropArea)).ToArray();
+		}
+
+		/// <summary>Keeps the live torn-tab window underneath the cursor.</summary>
+		private void MoveLiveTornTabWindow(Point cursorPosition)
+		{
+			if (_tornTabWindow == null || _tornTabWindow.IsDisposed)
+			{
+				return;
+			}
+
+			_tornTabWindow.Location = new Point(
+				cursorPosition.X - _tornTabWindowCursorOffset.X,
+				cursorPosition.Y - _tornTabWindowCursorOffset.Y);
+		}
+
+		/// <summary>Moves the live window asynchronously while discarding superseded mouse positions.</summary>
+		private void QueueLiveTornTabWindowMove(Point cursorPosition)
+		{
+			Interlocked.Exchange(ref _latestTornTabCursorX, cursorPosition.X);
+			Interlocked.Exchange(ref _latestTornTabCursorY, cursorPosition.Y);
+
+			if (Interlocked.CompareExchange(ref _tornTabMoveQueued, 1, 0) != 0)
+			{
+				return;
+			}
+
+			TitleBarTabs window = _tornTabWindow;
+			if (window == null || window.IsDisposed || !window.IsHandleCreated)
+			{
+				Interlocked.Exchange(ref _tornTabMoveQueued, 0);
+				return;
+			}
+
+			try
+			{
+				window.BeginInvoke(new Action(ProcessQueuedTornTabWindowMove));
+			}
+			catch (InvalidOperationException)
+			{
+				Interlocked.Exchange(ref _tornTabMoveQueued, 0);
+			}
+		}
+
+		/// <summary>Applies one current cursor position and schedules another only if it changed meanwhile.</summary>
+		private void ProcessQueuedTornTabWindowMove()
+		{
+			int cursorX = Interlocked.CompareExchange(ref _latestTornTabCursorX, 0, 0);
+			int cursorY = Interlocked.CompareExchange(ref _latestTornTabCursorY, 0, 0);
+
+			MoveLiveTornTabWindow(new Point(cursorX, cursorY));
+			Interlocked.Exchange(ref _tornTabMoveQueued, 0);
+
+			int latestX = Interlocked.CompareExchange(ref _latestTornTabCursorX, 0, 0);
+			int latestY = Interlocked.CompareExchange(ref _latestTornTabCursorY, 0, 0);
+			if (_tornTab != null && (latestX != cursorX || latestY != cursorY))
+			{
+				QueueLiveTornTabWindowMove(new Point(latestX, latestY));
+			}
+		}
+
 		/// <summary>Consumer method that processes mouse events in <see cref="_mouseEvents" /> that are recorded by <see cref="MouseHookCallback" />.</summary>
 		protected void InterpretMouseEvents()
 		{
@@ -379,15 +582,20 @@ namespace EasyTabs
 
 				if (nCode >= 0 && (int) WM.WM_MOUSEMOVE == (int) wParam)
 				{
-					HideTooltip();
-
 					// ReSharper disable PossibleInvalidOperationException
 					Point cursorPosition = new Point(hookStruct.Value.pt.x, hookStruct.Value.pt.y);
 					// ReSharper restore PossibleInvalidOperationException
 					bool reRender = false;
 
+					if (_tornTab != null && _tornTabDragOwner != this)
+					{
+						continue;
+					}
+
 					if (_tornTab != null && _dropAreas != null)
 					{
+						QueueLiveTornTabWindowMove(cursorPosition);
+
 						// ReSharper disable ForCanBeConvertedToForeach
 						for (int i = 0; i < _dropAreas.Length; i++)
 						// ReSharper restore ForCanBeConvertedToForeach
@@ -408,7 +616,12 @@ namespace EasyTabs
 
 								if (tabToCombine != null)
 								{
-									int i1 = i;
+									TitleBarTabs targetWindow = _dropAreas[i].Item1;
+									TitleBarTabs tornTabWindow = _tornTabWindow;
+									_tornTabWindow = null;
+									_tornTabDragOwner = null;
+									_dropAreas = null;
+									Interlocked.Exchange(ref _tornTabMoveQueued, 0);
 
 									// In all cases where we need to affect the UI, we call Invoke so that those changes are made on the main UI thread since
 									// we are on a separate processing thread in this case
@@ -416,24 +629,38 @@ namespace EasyTabs
 										new Action(
 											() =>
 											{
-												_dropAreas[i1].Item1.TabRenderer.CombineTab(tabToCombine, cursorPosition);
+												tabToCombine.ClearSubscriptions();
+												if (tornTabWindow != null && !tornTabWindow.IsDisposed)
+												{
+													tornTabWindow.Tabs.Remove(tabToCombine);
+												}
 
-												tabToCombine = null;
-												_tornTabForm.Close();
-												_tornTabForm = null;
+												targetWindow.TabRenderer.CombineTab(tabToCombine, cursorPosition);
+
+												if (tornTabWindow != null && !tornTabWindow.IsDisposed)
+												{
+													tornTabWindow.Close();
+												}
 
 												if (_parentForm.Tabs.Count == 0)
 												{
 													_parentForm.Close();
 												}
 											}));
+
+									break;
 								}
 							}
 						}
+
+						// A live cross-window drag has its own move path. Do not also run the old
+						// window's synchronous hover and redraw path for the same mouse event.
+						continue;
 					}
 
 					else if (!_parentForm.TabRenderer.IsTabRepositioning)
 					{
+						HideTooltip();
 						StartTooltipTimer();
 
                         Point relativeCursorPosition = GetRelativeCursorPosition(cursorPosition);
@@ -511,35 +738,13 @@ namespace EasyTabs
 									{
 										lock (_tornTabLock)
 										{
-											if (_tornTab == null)
-											{
-												_parentForm.TabRenderer.IsTabRepositioning = false;
-
-												// Clear the event handler subscriptions from the tab and then create a thumbnail representation of it to use when dragging
-												_tornTab = _parentForm.SelectedTab;
-												_tornTab.ClearSubscriptions();
-												_tornTabForm = new TornTabForm(_tornTab, _parentForm.TabRenderer);
-											}
-										}
-
-										if (_tornTab != null)
-										{
-											_parentForm.SelectedTabIndex = (_parentForm.SelectedTabIndex == _parentForm.Tabs.Count - 1
-												? _parentForm.SelectedTabIndex - 1
-												: _parentForm.SelectedTabIndex + 1);
-											_parentForm.Tabs.Remove(_tornTab);
-
-											// If this tab was the only tab in the window, hide the parent window
-											if (_parentForm.Tabs.Count == 0)
-											{
-												_parentForm.Hide();
-											}
-
-											_tornTabForm.Show();
-											_dropAreas = (from window in _parentForm.ApplicationContext.OpenWindows.Where(w => w.Tabs.Count > 0)
-														  select new Tuple<TitleBarTabs, Rectangle>(window, window.TabDropArea)).ToArray();
-										}
+									if (_tornTab == null)
+									{
+										_parentForm.TabRenderer.IsTabRepositioning = false;
+										CreateLiveTornTabWindow(cursorPosition);
 									}
+								}
+							}
 								}));
 					}
 
@@ -584,7 +789,12 @@ namespace EasyTabs
 
 				else if (nCode >= 0 && (int) WM.WM_LBUTTONUP == (int) wParam)
 				{
-					// If we released the mouse button while we were dragging a torn tab, put that tab into a new window
+					if (_tornTab != null && _tornTabDragOwner != this)
+					{
+						continue;
+					}
+
+					// The torn tab is already in a live window; releasing the mouse simply finishes the drag.
 					if (_tornTab != null)
 					{
 						TitleBarTab tabToRelease = null;
@@ -600,41 +810,23 @@ namespace EasyTabs
 
 						if (tabToRelease != null)
 						{
+							TitleBarTabs releasedWindow = _tornTabWindow;
+							_tornTabWindow = null;
+							_tornTabDragOwner = null;
+							_dropAreas = null;
+							Interlocked.Exchange(ref _tornTabMoveQueued, 0);
+
 							Invoke(
 								new Action(
 									() =>
 									{
-										TitleBarTabs newWindow = (TitleBarTabs) Activator.CreateInstance(_parentForm.GetType());
-
-										// Set the initial window position and state properly
-										if (newWindow.WindowState == FormWindowState.Maximized)
+										if (releasedWindow != null && !releasedWindow.IsDisposed)
 										{
-											Screen screen = Screen.AllScreens.First(s => s.WorkingArea.Contains(Cursor.Position));
-
-											newWindow.StartPosition = FormStartPosition.Manual;
-											newWindow.WindowState = FormWindowState.Normal;
-											newWindow.Left = screen.WorkingArea.Left;
-											newWindow.Top = screen.WorkingArea.Top;
-											newWindow.Width = screen.WorkingArea.Width;
-											newWindow.Height = screen.WorkingArea.Height;
+											releasedWindow.TabRenderer.EndDetachedWindowDrag();
+											releasedWindow.Activate();
+											releasedWindow.RedrawTabs();
+											SetWindowTransitionsEnabled(releasedWindow, true);
 										}
-
-										else
-										{
-											newWindow.Left = Cursor.Position.X;
-											newWindow.Top = Cursor.Position.Y;
-										}
-
-										tabToRelease.Parent = newWindow;
-										_parentForm.ApplicationContext.OpenWindow(newWindow);
-
-										newWindow.Show();
-										newWindow.Tabs.Add(tabToRelease);
-										newWindow.SelectedTabIndex = 0;
-										newWindow.ResizeTabContents();
-
-										_tornTabForm.Close();
-										_tornTabForm = null;
 
 										if (_parentForm.Tabs.Count == 0)
 										{
@@ -668,7 +860,12 @@ namespace EasyTabs
 				mouseEvent.MouseData = (MSLLHOOKSTRUCT) Marshal.PtrToStructure(lParam, typeof (MSLLHOOKSTRUCT));
 			}
 
-			_mouseEvents.Add(mouseEvent);
+			// Rendering a drag can take longer than Windows' mouse sampling interval.
+			// Keep at most one move waiting so stale positions are not replayed later.
+			if ((int) WM.WM_MOUSEMOVE != (int) wParam || _mouseEvents.Count == 0)
+			{
+				_mouseEvents.Add(mouseEvent);
+			}
 
             if (nCode >= 0 && (int) WM.WM_LBUTTONDOWN == (int) wParam)
             {
