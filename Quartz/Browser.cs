@@ -935,7 +935,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.3.6";
+            notifyIcon1.Text = "Quartz v2.4.0";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -2090,14 +2090,29 @@ namespace Quartz
             else
             {
                 ToolStripMenuItem lohItem = new ToolStripMenuItem();
-                lohItem.Text = "History will appear here once you start browsing.";
+                lohItem.Text = "No recent pages";
+                lohItem.Enabled = false;
                 mnuHistory.Items.Add(lohItem);
             }
+
+            ToolStripSeparator separatorItem2 = new ToolStripSeparator();
+            mnuHistory.Items.Add(separatorItem2);
+
+
+            ToolStripMenuItem clearHistoryItem = new ToolStripMenuItem("Clear browsing data...");
+            clearHistoryItem.Click += ClearHistoryItem_Click; ;
+            mnuHistory.Items.Add(clearHistoryItem);
 
             if (SettingsService.Get("Animation") == "true")
             {
                 Animation.AnimateWindow(mnuHistory.Handle, 100, Animation.AW_BLEND);
             }
+        }
+
+        private void ClearHistoryItem_Click(object sender, EventArgs e)
+        {
+            ClearHistory clearHistoryForm = new ClearHistory(wvWebView1);
+            clearHistoryForm.ShowDialog();
         }
 
         private void MenuItem_MouseUp(object sender, MouseEventArgs e)

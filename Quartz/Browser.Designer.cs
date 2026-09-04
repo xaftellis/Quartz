@@ -91,18 +91,13 @@
             this.mnuFavourites = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addFavouritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            this.deleteBrowsingDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.zoomToolStrip = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileInBrowserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.userDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuUserData = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.resetToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteBrowsingDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expertsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuExperts = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.nameWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -112,14 +107,19 @@
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.inspectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.userDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuUserData = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.resetToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.UrlBox = new System.Windows.Forms.PictureBox();
             this.UrlLeft = new System.Windows.Forms.PictureBox();
             this.UrlRight = new System.Windows.Forms.PictureBox();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlDivider = new System.Windows.Forms.Panel();
             this.wvWebView1 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -137,8 +137,8 @@
             this.SettingsMenuStrip.SuspendLayout();
             this.mnuHistory.SuspendLayout();
             this.mnuFavourites.SuspendLayout();
-            this.mnuUserData.SuspendLayout();
             this.mnuExperts.SuspendLayout();
+            this.mnuUserData.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.UrlBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlLeft)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).BeginInit();
@@ -559,21 +559,22 @@
             this.historyToolStripMenuItem,
             this.favouritesToolStripMenuItem,
             this.downloadsToolStripMenuItem,
-            this.deleteBrowsingDataToolStripMenuItem,
             this.toolStripSeparator2,
             this.zoomToolStrip,
             this.toolStripSeparator1,
             this.findToolStripMenuItem,
             this.printToolStripMenuItem,
             this.openFileInBrowserToolStripMenuItem,
-            this.userDataToolStripMenuItem,
+            this.deleteBrowsingDataToolStripMenuItem,
             this.expertsToolStripMenuItem,
             this.toolStripSeparator7,
+            this.userDataToolStripMenuItem,
             this.settingsToolStripMenuItem,
             this.toolStripSeparator16,
             this.restartToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.SettingsMenuStrip.Name = "SettingsMenuStrip";
+            this.SettingsMenuStrip.OwnerItem = this.toolStripMenuItem1;
             this.SettingsMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             resources.ApplyResources(this.SettingsMenuStrip, "SettingsMenuStrip");
             this.SettingsMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.SettingsMenuStrip_Opening);
@@ -641,6 +642,7 @@
             this.addFavouritesToolStripMenuItem,
             this.toolStripSeparator8});
             this.mnuFavourites.Name = "contextMenuStrip1";
+            this.mnuFavourites.OwnerItem = this.favouritesToolStripMenuItem;
             resources.ApplyResources(this.mnuFavourites, "mnuFavourites");
             this.mnuFavourites.Opening += new System.ComponentModel.CancelEventHandler(this.mnuFavourites_Opening);
             // 
@@ -653,12 +655,6 @@
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
             resources.ApplyResources(this.toolStripSeparator8, "toolStripSeparator8");
-            // 
-            // deleteBrowsingDataToolStripMenuItem
-            // 
-            this.deleteBrowsingDataToolStripMenuItem.Name = "deleteBrowsingDataToolStripMenuItem";
-            resources.ApplyResources(this.deleteBrowsingDataToolStripMenuItem, "deleteBrowsingDataToolStripMenuItem");
-            this.deleteBrowsingDataToolStripMenuItem.Click += new System.EventHandler(this.deleteBrowsingDataToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -697,39 +693,11 @@
             resources.ApplyResources(this.openFileInBrowserToolStripMenuItem, "openFileInBrowserToolStripMenuItem");
             this.openFileInBrowserToolStripMenuItem.Click += new System.EventHandler(this.openFileInBrowserToolStripMenuItem_Click);
             // 
-            // userDataToolStripMenuItem
+            // deleteBrowsingDataToolStripMenuItem
             // 
-            this.userDataToolStripMenuItem.DropDown = this.mnuUserData;
-            this.userDataToolStripMenuItem.Name = "userDataToolStripMenuItem";
-            resources.ApplyResources(this.userDataToolStripMenuItem, "userDataToolStripMenuItem");
-            // 
-            // mnuUserData
-            // 
-            this.mnuUserData.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openFolderToolStripMenuItem,
-            this.toolStripSeparator6,
-            this.resetToolStripMenuItem1});
-            this.mnuUserData.Name = "mnuUserData";
-            this.mnuUserData.OwnerItem = this.userDataToolStripMenuItem;
-            resources.ApplyResources(this.mnuUserData, "mnuUserData");
-            this.mnuUserData.Opening += new System.ComponentModel.CancelEventHandler(this.mnuUserData_Opening);
-            // 
-            // openFolderToolStripMenuItem
-            // 
-            this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            resources.ApplyResources(this.openFolderToolStripMenuItem, "openFolderToolStripMenuItem");
-            this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            resources.ApplyResources(this.toolStripSeparator6, "toolStripSeparator6");
-            // 
-            // resetToolStripMenuItem1
-            // 
-            this.resetToolStripMenuItem1.Name = "resetToolStripMenuItem1";
-            resources.ApplyResources(this.resetToolStripMenuItem1, "resetToolStripMenuItem1");
-            this.resetToolStripMenuItem1.Click += new System.EventHandler(this.resetToolStripMenuItem1_Click);
+            this.deleteBrowsingDataToolStripMenuItem.Name = "deleteBrowsingDataToolStripMenuItem";
+            resources.ApplyResources(this.deleteBrowsingDataToolStripMenuItem, "deleteBrowsingDataToolStripMenuItem");
+            this.deleteBrowsingDataToolStripMenuItem.Click += new System.EventHandler(this.deleteBrowsingDataToolStripMenuItem_Click);
             // 
             // expertsToolStripMenuItem
             // 
@@ -747,6 +715,7 @@
             this.toolStripSeparator13,
             this.inspectToolStripMenuItem});
             this.mnuExperts.Name = "mnuExperts";
+            this.mnuExperts.OwnerItem = this.expertsToolStripMenuItem;
             resources.ApplyResources(this.mnuExperts, "mnuExperts");
             this.mnuExperts.Opening += new System.ComponentModel.CancelEventHandler(this.mnuExperts_Opening);
             // 
@@ -788,6 +757,40 @@
             this.toolStripSeparator7.Name = "toolStripSeparator7";
             resources.ApplyResources(this.toolStripSeparator7, "toolStripSeparator7");
             // 
+            // userDataToolStripMenuItem
+            // 
+            this.userDataToolStripMenuItem.DropDown = this.mnuUserData;
+            this.userDataToolStripMenuItem.Name = "userDataToolStripMenuItem";
+            resources.ApplyResources(this.userDataToolStripMenuItem, "userDataToolStripMenuItem");
+            // 
+            // mnuUserData
+            // 
+            this.mnuUserData.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openFolderToolStripMenuItem,
+            this.toolStripSeparator6,
+            this.resetToolStripMenuItem1});
+            this.mnuUserData.Name = "mnuUserData";
+            this.mnuUserData.OwnerItem = this.userDataToolStripMenuItem;
+            resources.ApplyResources(this.mnuUserData, "mnuUserData");
+            this.mnuUserData.Opening += new System.ComponentModel.CancelEventHandler(this.mnuUserData_Opening);
+            // 
+            // openFolderToolStripMenuItem
+            // 
+            this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
+            resources.ApplyResources(this.openFolderToolStripMenuItem, "openFolderToolStripMenuItem");
+            this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            resources.ApplyResources(this.toolStripSeparator6, "toolStripSeparator6");
+            // 
+            // resetToolStripMenuItem1
+            // 
+            this.resetToolStripMenuItem1.Name = "resetToolStripMenuItem1";
+            resources.ApplyResources(this.resetToolStripMenuItem1, "resetToolStripMenuItem1");
+            this.resetToolStripMenuItem1.Click += new System.EventHandler(this.resetToolStripMenuItem1_Click);
+            // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
@@ -811,12 +814,6 @@
             resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.DropDown = this.SettingsMenuStrip;
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
-            // 
             // UrlBox
             // 
             resources.ApplyResources(this.UrlBox, "UrlBox");
@@ -837,6 +834,12 @@
             this.UrlRight.BackColor = System.Drawing.Color.Transparent;
             this.UrlRight.Name = "UrlRight";
             this.UrlRight.TabStop = false;
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDown = this.SettingsMenuStrip;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
             // 
             // pnlDivider
             // 
@@ -915,8 +918,8 @@
             this.SettingsMenuStrip.ResumeLayout(false);
             this.mnuHistory.ResumeLayout(false);
             this.mnuFavourites.ResumeLayout(false);
-            this.mnuUserData.ResumeLayout(false);
             this.mnuExperts.ResumeLayout(false);
+            this.mnuUserData.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.UrlBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlLeft)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.UrlRight)).EndInit();
@@ -1015,7 +1018,6 @@
         private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteBrowsingDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nameWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem proformanceToolStripMenuItem;
@@ -1025,6 +1027,7 @@
         private System.Windows.Forms.ToolStripMenuItem addFavouritesToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
+        private System.Windows.Forms.ToolStripMenuItem deleteBrowsingDataToolStripMenuItem;
     }
 }
 

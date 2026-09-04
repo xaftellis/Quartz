@@ -375,6 +375,9 @@
   <data name="downloadsToolStripMenuItem.Text" xml:space="preserve">
     <value>Downloads</value>
   </data>
+  <data name="mnuDownloadsDropDown.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
+  </data>
   <data name="mnuDownloadsDropDown.Size" type="System.Drawing.Size, System.Drawing">
     <value>165, 48</value>
   </data>
@@ -2484,6 +2487,9 @@
   <data name="toolStripSeparator10.Size" type="System.Drawing.Size, System.Drawing">
     <value>152, 6</value>
   </data>
+  <data name="mnuHistory.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
+  </data>
   <data name="mnuHistory.Size" type="System.Drawing.Size, System.Drawing">
     <value>156, 32</value>
   </data>
@@ -2511,6 +2517,9 @@
   <data name="toolStripSeparator8.Size" type="System.Drawing.Size, System.Drawing">
     <value>143, 6</value>
   </data>
+  <data name="mnuFavourites.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
+  </data>
   <data name="mnuFavourites.Size" type="System.Drawing.Size, System.Drawing">
     <value>147, 32</value>
   </data>
@@ -2525,12 +2534,6 @@
   </data>
   <data name="favouritesToolStripMenuItem.Text" xml:space="preserve">
     <value>Favourites</value>
-  </data>
-  <data name="deleteBrowsingDataToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
-  </data>
-  <data name="deleteBrowsingDataToolStripMenuItem.Text" xml:space="preserve">
-    <value>Delete browsing data</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
     <value>187, 6</value>
@@ -2565,38 +2568,11 @@
   <data name="openFileInBrowserToolStripMenuItem.Text" xml:space="preserve">
     <value>Open File In Browser</value>
   </data>
-  <metadata name="mnuUserData.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>958, 58</value>
-  </metadata>
-  <data name="openFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>218, 22</value>
-  </data>
-  <data name="openFolderToolStripMenuItem.Text" xml:space="preserve">
-    <value>Open Folder in File Explorer</value>
-  </data>
-  <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>215, 6</value>
-  </data>
-  <data name="resetToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>218, 22</value>
-  </data>
-  <data name="resetToolStripMenuItem1.Text" xml:space="preserve">
-    <value>Reset</value>
-  </data>
-  <data name="mnuUserData.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 54</value>
-  </data>
-  <data name="&gt;&gt;mnuUserData.Name" xml:space="preserve">
-    <value>mnuUserData</value>
-  </data>
-  <data name="&gt;&gt;mnuUserData.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="userDataToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="deleteBrowsingDataToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 22</value>
   </data>
-  <data name="userDataToolStripMenuItem.Text" xml:space="preserve">
-    <value>UserData</value>
+  <data name="deleteBrowsingDataToolStripMenuItem.Text" xml:space="preserve">
+    <value>Delete browsing data</value>
   </data>
   <metadata name="mnuExperts.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>592, 62</value>
@@ -2631,6 +2607,9 @@
   <data name="inspectToolStripMenuItem.Text" xml:space="preserve">
     <value>Developer Tools</value>
   </data>
+  <data name="mnuExperts.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
+  </data>
   <data name="mnuExperts.Size" type="System.Drawing.Size, System.Drawing">
     <value>161, 104</value>
   </data>
@@ -2648,6 +2627,42 @@
   </data>
   <data name="toolStripSeparator7.Size" type="System.Drawing.Size, System.Drawing">
     <value>187, 6</value>
+  </data>
+  <metadata name="mnuUserData.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>958, 58</value>
+  </metadata>
+  <data name="openFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>218, 22</value>
+  </data>
+  <data name="openFolderToolStripMenuItem.Text" xml:space="preserve">
+    <value>Open Folder in File Explorer</value>
+  </data>
+  <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>215, 6</value>
+  </data>
+  <data name="resetToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>218, 22</value>
+  </data>
+  <data name="resetToolStripMenuItem1.Text" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="mnuUserData.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
+  </data>
+  <data name="mnuUserData.Size" type="System.Drawing.Size, System.Drawing">
+    <value>219, 54</value>
+  </data>
+  <data name="&gt;&gt;mnuUserData.Name" xml:space="preserve">
+    <value>mnuUserData</value>
+  </data>
+  <data name="&gt;&gt;mnuUserData.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="userDataToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>190, 22</value>
+  </data>
+  <data name="userDataToolStripMenuItem.Text" xml:space="preserve">
+    <value>UserData</value>
   </data>
   <data name="settingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 22</value>
@@ -2669,6 +2684,15 @@
   </data>
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Exit</value>
+  </data>
+  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>25, 20</value>
+  </data>
+  <data name="toolStripMenuItem1.Text" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="SettingsMenuStrip.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>Inherit</value>
   </data>
   <data name="SettingsMenuStrip.Size" type="System.Drawing.Size, System.Drawing">
     <value>191, 391</value>
@@ -2869,12 +2893,6 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlTop.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 20</value>
-  </data>
-  <data name="toolStripMenuItem1.Text" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="pnlDivider.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -5636,7 +5654,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlBottom.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -8576,12 +8594,6 @@
   <data name="&gt;&gt;toolStripSeparator8.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;deleteBrowsingDataToolStripMenuItem.Name" xml:space="preserve">
-    <value>deleteBrowsingDataToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;deleteBrowsingDataToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
     <value>toolStripSeparator2</value>
   </data>
@@ -8618,28 +8630,10 @@
   <data name="&gt;&gt;openFileInBrowserToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;userDataToolStripMenuItem.Name" xml:space="preserve">
-    <value>userDataToolStripMenuItem</value>
+  <data name="&gt;&gt;deleteBrowsingDataToolStripMenuItem.Name" xml:space="preserve">
+    <value>deleteBrowsingDataToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;userDataToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;openFolderToolStripMenuItem.Name" xml:space="preserve">
-    <value>openFolderToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;openFolderToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator6.Name" xml:space="preserve">
-    <value>toolStripSeparator6</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator6.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;resetToolStripMenuItem1.Name" xml:space="preserve">
-    <value>resetToolStripMenuItem1</value>
-  </data>
-  <data name="&gt;&gt;resetToolStripMenuItem1.Type" xml:space="preserve">
+  <data name="&gt;&gt;deleteBrowsingDataToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;expertsToolStripMenuItem.Name" xml:space="preserve">
@@ -8689,6 +8683,30 @@
   </data>
   <data name="&gt;&gt;toolStripSeparator7.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;userDataToolStripMenuItem.Name" xml:space="preserve">
+    <value>userDataToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;userDataToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;openFolderToolStripMenuItem.Name" xml:space="preserve">
+    <value>openFolderToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;openFolderToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator6.Name" xml:space="preserve">
+    <value>toolStripSeparator6</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator6.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;resetToolStripMenuItem1.Name" xml:space="preserve">
+    <value>resetToolStripMenuItem1</value>
+  </data>
+  <data name="&gt;&gt;resetToolStripMenuItem1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;settingsToolStripMenuItem.Name" xml:space="preserve">
     <value>settingsToolStripMenuItem</value>
