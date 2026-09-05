@@ -145,6 +145,7 @@ namespace Quartz
         public Browser(string address, bool newtabrequest)
         {
             InitializeComponent();
+            InitializeSiteInfo();
             _newtab = newtabrequest;
             _tabAddress = address;
             //lstSuggestions.View = View.Details;
@@ -363,6 +364,7 @@ namespace Quartz
             NewControlThemeChanger.ChangeControlTheme(wvWebView1);
             NewControlThemeChanger.ChangeControlTheme(zoomToolStrip);
             NewControlThemeChanger.ChangeControlTheme(mnuFavourites);
+            _siteInfoController?.ApplyTheme(txtWebAddress.BackColor, txtWebAddress.ForeColor);
         }
 
         public void ChangeTheme(string theme)
@@ -799,19 +801,12 @@ namespace Quartz
                 options.ProfileName = ProfileService.Current.ToString();
                 options.IsInPrivateModeEnabled = Program.profileService.Get(ProfileService.Current).isDisposable;
 
-                //sys webview
-                var sysenv = await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\", null);
-                var sysoptions = sysenv.CreateCoreWebView2ControllerOptions();
-
                 if (wvWebView1.CoreWebView2 == null)
                 {
                     await wvWebView1.EnsureCoreWebView2Async(env, options);
                 }
 
-                if (wvLoadingProgress.CoreWebView2 == null)
-                {
-                    await wvLoadingProgress.EnsureCoreWebView2Async(sysenv, sysoptions);
-                }
+                await _siteInfoController.InitializeAsync();
 
                 if (Program.profileService.Get(ProfileService.Current).isDisposable)
                 {
@@ -898,13 +893,11 @@ namespace Quartz
             if (SettingsService.Get("MemoryUsage") == "low")
             {
                 wvWebView1.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
-                wvLoadingProgress.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
 
             }
             else
             {
                 wvWebView1.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Normal;
-                wvLoadingProgress.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
             }
 
             if (SettingsService.Get("Zoom") != null)
@@ -966,7 +959,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.4.0";
+            notifyIcon1.Text = "Quartz v3.0.0 (Developer Build)";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -1061,10 +1054,6 @@ namespace Quartz
                                 uri = new Uri("https://www.google.com/maps/search/" + String.Join("+", Uri.EscapeDataString(rawUrl).Split(new string[] { "%20" }, StringSplitOptions.RemoveEmptyEntries)));
                                 break;
 
-                            //case "favicon":
-                            //    uri = new Uri("https://www.google.com/s2/favicons?domain=" + String.Join("", Uri.EscapeDataString(rawUrl).Split(new string[] { "" }, StringSplitOptions.RemoveEmptyEntries)));
-                            //    break;
-
                             case "ebay":
                                 uri = new Uri("https://www.ebay.com/sch/?_nkw=" + String.Join("+", Uri.EscapeDataString(rawUrl).Split(new string[] { "%20" }, StringSplitOptions.RemoveEmptyEntries)));
                                 break;
@@ -1122,10 +1111,6 @@ namespace Quartz
                         case "googlemaps":
                             uri = new Uri("https://www.google.com/maps/search/" + String.Join("+", Uri.EscapeDataString(rawUrl).Split(new string[] { "%20" }, StringSplitOptions.RemoveEmptyEntries)));
                             break;
-
-                        //case "favicon":
-                        //    uri = new Uri("https://www.google.com/s2/favicons?domain=" + String.Join("", Uri.EscapeDataString(rawUrl).Split(new string[] { "" }, StringSplitOptions.RemoveEmptyEntries)));
-                        //    break;
 
                         case "ebay":
                             uri = new Uri("https://www.ebay.com/sch/?_nkw=" + String.Join("+", Uri.EscapeDataString(rawUrl).Split(new string[] { "%20" }, StringSplitOptions.RemoveEmptyEntries)));
@@ -1213,17 +1198,6 @@ namespace Quartz
             SetTabLoading(!e.Cancel);
 
             Cursor = Cursors.AppStarting;
-            picFavicon.Visible = false;
-            wvLoadingProgress.Visible = true;
-
-            string theme = SettingsService.Get("Theme");
-
-            if (string.IsNullOrWhiteSpace(theme))
-                theme = "black";
-
-            string fileName = string.Equals(theme, "xmas", StringComparison.OrdinalIgnoreCase) ? "throbber_small_xmas_red.svg" : $"throbber_small_{theme}.svg";
-            string throbberPath = Path.Combine(Application.StartupPath, "assets", "throbber", fileName);
-            wvLoadingProgress.Source = new Uri(throbberPath);
 
             btnRefresh.Visible = false;
             btnStop.Visible = true;
@@ -1243,8 +1217,6 @@ namespace Quartz
             Cursor = Cursors.Default;
             btnRefresh.Visible = true;
             btnStop.Visible = false;
-            wvLoadingProgress.Visible = false;
-            picFavicon.Visible = true;
 
             if (e.IsSuccess)
             {
@@ -1366,7 +1338,6 @@ namespace Quartz
 
             if (isQuartzDotCom(currentUri))
             {
-                picFavicon.Image = null;
                 this.ShowIcon = false;
                 FaviconHelper.UpdateCurrentTab(ParentTabs, this);
             }
@@ -1474,7 +1445,6 @@ namespace Quartz
 
                 if (isQuartzDotCom(wvWebView1.Source))
                 {
-                    picFavicon.Image = null;
                     this.ShowIcon = false;
                     FaviconHelper.UpdateCurrentTab(ParentTabs, this);
                     return;
@@ -1503,7 +1473,6 @@ namespace Quartz
                             Icon = icon;
                             FaviconHelper.UpdateCurrentTab(ParentTabs, this);
 
-                            picFavicon.Image = icon.ToBitmap();
 
                             FaviconHelper.SaveToFile(icon, wvWebView1.Source.AbsoluteUri);
                         }
@@ -1518,7 +1487,6 @@ namespace Quartz
                             Icon icon = FaviconHelper.GetDefaultFavicon16();
                             Icon = icon;
                             FaviconHelper.UpdateCurrentTab(ParentTabs, this);
-                            picFavicon.Image = icon.ToBitmap();
                         }
                     }
                 }
@@ -1528,7 +1496,6 @@ namespace Quartz
                     Icon = icon;
                     FaviconHelper.UpdateCurrentTab(ParentTabs, this);
 
-                    picFavicon.Image = icon.ToBitmap();
                 }
             }
             bool isCorrect = await FavouriteService.ValidatePanelAsync(pnlFavourites);

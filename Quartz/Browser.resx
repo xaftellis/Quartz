@@ -2227,7 +2227,7 @@
     <value>Zoom</value>
   </data>
   <data name="picFavicon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>145, 14</value>
+    <value>148, 11</value>
   </data>
   <data name="picFavicon.Size" type="System.Drawing.Size, System.Drawing">
     <value>16, 16</value>
