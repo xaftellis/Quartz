@@ -106,6 +106,8 @@
     <Compile Include="ChromeTabRenderer.cs" />
     <Compile Include="ContextMenuProvider.cs" />
     <Compile Include="DisplayType.cs" />
+    <Compile Include="ITabLoadingState.cs" />
+    <Compile Include="TabLoadingIndicator.cs" />
     <Compile Include="ListItemEventArgs.cs" />
     <Compile Include="ListModification.cs" />
     <Compile Include="ListModificationEventArgs.cs" />

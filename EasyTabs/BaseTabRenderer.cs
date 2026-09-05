@@ -25,6 +25,9 @@ namespace EasyTabs
 		//<summary>Color of the title text. To change colors of the entire tab, change it from resource actively or permanently. </summary>
 		protected Color ForeColor = Color.Black;
 
+		/// <summary>Colour of the indicator drawn in place of a loading tab's favicon.</summary>
+		public Color LoadingIndicatorColor { get; set; } = Color.FromArgb(66, 133, 244);
+
 		/// <summary>Image to display on the left side of an active tab.</summary>
 		protected Image _activeLeftSideImage;
 
@@ -840,20 +843,28 @@ namespace EasyTabs
 				tab.TabImage, area, 0, 0, tab.TabImage.Width, tab.TabImage.Height,
 				GraphicsUnit.Pixel);
 
-			// Render the icon for the tab's content, if it exists and there's room for it in the tab's content area
-			if (tab.Content.ShowIcon && tabContentWidth > 16 + IconMarginLeft + (tab.ShowCloseButton
+			// Loading uses the favicon's existing rectangle and caption spacing, including for background tabs.
+			bool showIcon = tab.IsLoading || tab.Content.ShowIcon;
+			if (showIcon && tabContentWidth > 16 + IconMarginLeft + (tab.ShowCloseButton
 				? CloseButtonMarginLeft +
 				  tab.CloseButtonArea.Width +
 				  CloseButtonMarginRight
 				: 0))
 			{
-				graphicsContext.DrawIcon(
-					new Icon(tab.Content.Icon, 16, 16),
-					new Rectangle(area.X + OverlapWidth + IconMarginLeft, IconMarginTop + area.Y, 16, 16));
+				Rectangle iconArea = new Rectangle(area.X + OverlapWidth + IconMarginLeft, IconMarginTop + area.Y, 16, 16);
+				if (tab.IsLoading)
+				{
+					TabLoadingIndicator.Draw(graphicsContext, iconArea, LoadingIndicatorColor, tab.LoadingElapsedMilliseconds);
+				}
+				else
+				{
+					using (Icon icon = new Icon(tab.Content.Icon, 16, 16))
+						graphicsContext.DrawIcon(icon, iconArea);
+				}
 			}
 
 			// Render the caption for the tab's content if there's room for it in the tab's content area
-			if (tabContentWidth > (tab.Content.ShowIcon
+			if (tabContentWidth > (showIcon
 				? 16 + IconMarginLeft + IconMarginRight
 				: 0) + CaptionMarginLeft + CaptionMarginRight + (tab.ShowCloseButton
 					? CloseButtonMarginLeft +
@@ -861,26 +872,25 @@ namespace EasyTabs
 					  CloseButtonMarginRight
 					: 0))
 			{
+				using (SolidBrush captionBrush = new SolidBrush(ForeColor))
+				using (StringFormat captionFormat = new StringFormat(StringFormatFlags.NoWrap) { Trimming = StringTrimming.EllipsisCharacter })
 				graphicsContext.DrawString(
-					tab.Caption, CaptionFont, new SolidBrush(ForeColor),
+					tab.Caption, CaptionFont, captionBrush,
 					new Rectangle(
-						area.X + OverlapWidth + CaptionMarginLeft + (tab.Content.ShowIcon
+						area.X + OverlapWidth + CaptionMarginLeft + (showIcon
 							? IconMarginLeft +
 							  16 +
 							  IconMarginRight
 							: 0),
 						CaptionMarginTop + area.Y,
-						tabContentWidth - (tab.Content.ShowIcon
+						tabContentWidth - (showIcon
 							? IconMarginLeft + 16 + IconMarginRight
 							: 0) - (tab.ShowCloseButton
 								? _closeButtonImage.Width +
 								  CloseButtonMarginRight +
 								  CloseButtonMarginLeft
 								: 0), tab.TabImage.Height),
-					new StringFormat(StringFormatFlags.NoWrap)
-					{
-						Trimming = StringTrimming.EllipsisCharacter
-					});
+					captionFormat);
 			}
 		}
 

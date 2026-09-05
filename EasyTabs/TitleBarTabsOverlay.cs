@@ -25,6 +25,50 @@ namespace EasyTabs
 	{
 		private const int DwmwaTransitionsForcedDisabled = 3;
 
+		// A lone tab uses the parent's native caption move loop. Only its owner checks
+		// merge targets while Windows handles movement, restore-from-maximized and snap.
+		private static volatile TitleBarTabsOverlay _singleTabDragOwner;
+		private TitleBarTabs _singleTabDropTarget;
+		private Point _singleTabDragStart;
+		private Point _singleTabDropPoint;
+		private bool _singleTabMergeHidden;
+
+		[DllImport("user32.dll", EntryPoint = "SendMessageW")]
+		private static extern IntPtr SendWindowDragMessage(IntPtr window, int message, IntPtr wParam, IntPtr lParam);
+
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool ReleaseCapture();
+
+		private System.Windows.Forms.Timer _loadingAnimationTimer;
+
+		private void UpdateLoadingAnimation()
+		{
+			if (_loadingAnimationTimer == null) return;
+			_loadingAnimationTimer.Enabled = !IsDisposed && !Disposing && !_parentForm.IsDisposed &&
+				!_parentForm.Disposing && _parentForm.Visible &&
+				_parentForm.WindowState != FormWindowState.Minimized &&
+				_parentForm.Tabs.Any(tab => tab.IsLoading && !tab.Content.IsDisposed);
+		}
+
+		private void LoadingAnimation_Tick(object sender, EventArgs e)
+		{
+			UpdateLoadingAnimation();
+			// Reuse cached tab backgrounds; loading must never force their recreation every frame.
+			if (_loadingAnimationTimer.Enabled) Render();
+		}
+
+		/// <summary>Releases the window's shared animation timer.</summary>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_loadingAnimationTimer?.Dispose();
+				_loadingAnimationTimer = null;
+			}
+			base.Dispose(disposing);
+		}
+
 		[DllImport("dwmapi.dll")]
 		private static extern int DwmSetWindowAttribute(IntPtr windowHandle, int attribute, ref int attributeValue, int attributeSize);
 
@@ -125,6 +169,8 @@ namespace EasyTabs
 		protected TitleBarTabsOverlay(TitleBarTabs parentForm)
 		{
 			_parentForm = parentForm;
+			_loadingAnimationTimer = new System.Windows.Forms.Timer { Interval = 16 };
+			_loadingAnimationTimer.Tick += LoadingAnimation_Tick;
 
 			// We don't want this window visible in the taskbar
 			ShowInTaskbar = false;
@@ -403,6 +449,98 @@ namespace EasyTabs
 			}
 		}
 
+		private bool CanDragSingleTabWindow(TitleBarTab tab, Point relativeCursor)
+		{
+			return tab != null && _parentForm.Tabs.Count == 1 && _tornTab == null &&
+				_singleTabDragOwner == null &&
+				!_parentForm.TabRenderer.IsOverCloseButton(tab, relativeCursor) &&
+				!_parentForm.TabRenderer.IsOverAddButton(relativeCursor);
+		}
+
+		private void DragSingleTabWindow(TitleBarTab tab, Point cursorPosition)
+		{
+			HideTooltip();
+			_parentForm.TabRenderer.IsTabRepositioning = false;
+			_singleTabDragStart = cursorPosition;
+			_singleTabDropTarget = null;
+			_singleTabDragOwner = this;
+			try
+			{
+				ReleaseCapture();
+				int packedPoint = (cursorPosition.X & 0xffff) | ((cursorPosition.Y & 0xffff) << 16);
+				SendWindowDragMessage(_parentForm.Handle, (int)WM.WM_NCLBUTTONDOWN,
+					new IntPtr((int)HT.HTCAPTION), new IntPtr(packedPoint));
+				_singleTabDragOwner = null;
+
+				// Chromium also exits the native move loop before attaching to another strip.
+				TitleBarTabs target = _singleTabDropTarget;
+				_singleTabDropTarget = null;
+				if (target == null || target.IsDisposed || target.Disposing || !target.Visible ||
+					target.WindowState == FormWindowState.Minimized || target.Tabs.Count == 0 ||
+					_parentForm.IsDisposed || _parentForm.Tabs.Count != 1 || !_parentForm.Tabs.Contains(tab))
+					return;
+
+				// The target must deselect its current tab when this one is inserted.
+				tab.Active = false;
+				tab.ClearSubscriptions();
+				_parentForm.Tabs.Remove(tab);
+				TitleBarTabsOverlay targetOverlay = target._overlay;
+				target.TabRenderer.CombineTab(tab, targetOverlay.GetRelativeCursorPosition(_singleTabDropPoint));
+				target.TabRenderer.Overlay_MouseDown(targetOverlay,
+					new MouseEventArgs(MouseButtons.Left, 1, _singleTabDropPoint.X, _singleTabDropPoint.Y, 0));
+				if ((Control.MouseButtons & MouseButtons.Left) == 0)
+					target.TabRenderer.Overlay_MouseUp(targetOverlay,
+						new MouseEventArgs(MouseButtons.Left, 1, _singleTabDropPoint.X, _singleTabDropPoint.Y, 0));
+				target.Activate();
+				_parentForm.Close();
+			}
+			finally
+			{
+				_singleTabDragOwner = null;
+				// A target can disappear while the move loop exits, or closing can be cancelled.
+				// In either case, do not leave a surviving source window hidden.
+				if (_singleTabMergeHidden && !_parentForm.IsDisposed && !IsDisposed)
+				{
+					_parentForm.Show();
+					if (!Visible) Show(_parentForm);
+					SetWindowTransitionsEnabled(_parentForm, true);
+					SetWindowTransitionsEnabled(this, true);
+				}
+				_singleTabMergeHidden = false;
+			}
+		}
+
+		private void CheckSingleTabWindowDrop(Point cursorPosition)
+		{
+			if (_singleTabDragOwner != this || _singleTabDropTarget != null ||
+				_parentForm.IsDisposed || _parentForm.Tabs.Count != 1)
+				return;
+			Size dragSize = SystemInformation.DragSize;
+			if (Math.Abs(cursorPosition.X - _singleTabDragStart.X) < Math.Max(1, dragSize.Width / 2) &&
+				Math.Abs(cursorPosition.Y - _singleTabDragStart.Y) < Math.Max(1, dragSize.Height / 2))
+				return;
+			_wasDragging = true;
+			var context = _parentForm.ApplicationContext;
+			if (context == null) return;
+			TitleBarTabs target = context.OpenWindows.FirstOrDefault(window => window != _parentForm &&
+				!window.IsDisposed && !window.Disposing && window.Visible &&
+				window.WindowState != FormWindowState.Minimized && window.Tabs.Count > 0 &&
+				window.TabDropArea.Contains(cursorPosition));
+			if (target == null) return;
+			_singleTabDropTarget = target;
+			_singleTabDropPoint = cursorPosition;
+			// Ending the Windows move loop can restore the source to its starting bounds.
+			// Hide both native windows first, as Chromium does, so that restore and the
+			// temporarily empty source are never presented during the handoff.
+			_singleTabMergeHidden = true;
+			SetWindowTransitionsEnabled(_parentForm, false);
+			SetWindowTransitionsEnabled(this, false);
+			Hide();
+			_parentForm.Hide();
+			// WM_CANCELMODE ends the move loop; the live tab is transferred after it returns.
+			SendWindowDragMessage(_parentForm.Handle, 0x001F, IntPtr.Zero, IntPtr.Zero);
+		}
+
 		/// <summary>Moves a tab into a real window as soon as it leaves its current tab strip.</summary>
 		private void CreateLiveTornTabWindow(Point cursorPosition)
 		{
@@ -579,6 +717,16 @@ namespace EasyTabs
 				int nCode = mouseEvent.nCode;
 				IntPtr wParam = mouseEvent.wParam;
 				MSLLHOOKSTRUCT? hookStruct = mouseEvent.MouseData;
+
+				if (_singleTabDragOwner != null)
+				{
+					if (_singleTabDragOwner == this && nCode >= 0 && (int)wParam == (int)WM.WM_MOUSEMOVE)
+					{
+						Point nativeCursor = new Point(hookStruct.Value.pt.x, hookStruct.Value.pt.y);
+						Invoke(new Action(() => CheckSingleTabWindowDrop(nativeCursor)));
+					}
+					continue;
+				}
 
 				if (nCode >= 0 && (int) WM.WM_MOUSEMOVE == (int) wParam)
 				{
@@ -936,18 +1084,19 @@ namespace EasyTabs
 				rightMargin += SystemInformation.CaptionButtonSize.Width;
 			}
 
-			LinearGradientBrush gradient = new LinearGradientBrush(
-				new Point(24, 0), new Point(fillArea.Width - rightMargin + 1, 0), TitleBarColor, TitleBarGradientColor);
-
+			using (LinearGradientBrush gradient = new LinearGradientBrush(
+				new Point(24, 0), new Point(fillArea.Width - rightMargin + 1, 0), TitleBarColor, TitleBarGradientColor))
+			using (SolidBrush backgroundBrush = new SolidBrush(TitleBarColor))
+			using (SolidBrush gradientBrush = new SolidBrush(TitleBarGradientColor))
 			using (BufferedGraphics bufferedGraphics = BufferedGraphicsManager.Current.Allocate(graphics, fillArea))
 			{
-				bufferedGraphics.Graphics.FillRectangle(new SolidBrush(TitleBarColor), fillArea);
+				bufferedGraphics.Graphics.FillRectangle(backgroundBrush, fillArea);
 				bufferedGraphics.Graphics.FillRectangle(
-					new SolidBrush(TitleBarGradientColor),
+					gradientBrush,
 					new Rectangle(new Point(fillArea.Location.X + fillArea.Width - rightMargin, fillArea.Location.Y), new Size(rightMargin, fillArea.Height)));
 				bufferedGraphics.Graphics.FillRectangle(
 					gradient, new Rectangle(fillArea.Location, new Size(fillArea.Width - rightMargin, fillArea.Height)));
-				bufferedGraphics.Graphics.FillRectangle(new SolidBrush(TitleBarColor), new Rectangle(fillArea.Location, new Size(24, fillArea.Height)));
+				bufferedGraphics.Graphics.FillRectangle(backgroundBrush, new Rectangle(fillArea.Location, new Size(24, fillArea.Height)));
 
 				bufferedGraphics.Render(graphics);
 			}
@@ -973,6 +1122,7 @@ namespace EasyTabs
 		/// <param name="e">Arguments associated with the event.</param>
 		private void _parentForm_Refresh(object sender, EventArgs e)
 		{
+			UpdateLoadingAnimation();
 			if (_parentForm.WindowState == FormWindowState.Minimized)
 			{
 				Visible = false;
@@ -1037,6 +1187,7 @@ namespace EasyTabs
 		/// <param name="forceRedraw">Flag indicating whether a full render should be forced.</param>
 		public void Render(Point cursorPosition, bool forceRedraw = false)
 		{
+			UpdateLoadingAnimation();
 			if (!IsDisposed && _parentForm.TabRenderer != null && _parentForm.WindowState != FormWindowState.Minimized && _parentForm.ClientRectangle.Width > 0)
 			{
 				cursorPosition = GetRelativeCursorPosition(cursorPosition);
@@ -1082,7 +1233,7 @@ namespace EasyTabs
 
 							graphics.CompositingMode = CompositingMode.SourceCopy;
 							graphics.FillRectangle(
-								new SolidBrush(Color.Transparent), Width - boxWidth, 0, boxWidth, SystemInformation.CaptionButtonSize.Height);
+								Brushes.Transparent, Width - boxWidth, 0, boxWidth, SystemInformation.CaptionButtonSize.Height);
 							graphics.CompositingMode = oldCompositingMode;
 						}
 
@@ -1217,6 +1368,12 @@ namespace EasyTabs
 
 						if (clickedTab != null)
 						{
+							if (CanDragSingleTabWindow(clickedTab, relativeCursorPosition))
+							{
+								DragSingleTabWindow(clickedTab, Cursor.Position);
+								return;
+							}
+
 							// If the user clicked the close button, remove the tab from the list
 							if (!_parentForm.TabRenderer.IsOverCloseButton(clickedTab, relativeCursorPosition))
 							{
@@ -1365,6 +1522,8 @@ namespace EasyTabs
 		/// <param name="e">Arguments associated with the event.</param>
 		private void _parentForm_Disposed(object sender, EventArgs e)
 		{
+			_loadingAnimationTimer?.Dispose();
+			_loadingAnimationTimer = null;
 		}
 
 		/// <summary>

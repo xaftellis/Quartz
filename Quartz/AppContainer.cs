@@ -123,6 +123,12 @@ namespace Quartz
                 TabRenderer = new ChromeTabRenderer(this);
             }
 
+            // Light uses the blue throbber; the other themes use their existing foreground colour.
+            TabRenderer.LoadingIndicatorColor = theme == "light" ||
+                !(theme == "dark" || theme == "black" || theme == "aqua" || theme == "xmas")
+                ? System.Drawing.Color.FromArgb(66, 133, 244)
+                : textForeColor;
+
             Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
 
             CustomWindow(barBackColor, textForeColor, windowOutline, Handle);

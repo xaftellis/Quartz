@@ -40,8 +40,18 @@ using Win32Interop.Structs;
 
 namespace Quartz
 {
-    public partial class Browser : Form
+    public partial class Browser : Form, ITabLoadingState
     {
+        public bool IsLoading { get; private set; }
+        public event EventHandler LoadingStateChanged;
+
+        private void SetTabLoading(bool loading)
+        {
+            if (IsLoading == loading) return;
+            IsLoading = loading;
+            LoadingStateChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         private const int MaximumFavouriteButtonWidth = 150;
         private const int FavouriteButtonHeight = 23;
 
@@ -1159,6 +1169,16 @@ namespace Quartz
             wvWebView1.CoreWebView2.DownloadStarting += CoreViewView2__DownloadStarting;
             wvWebView1.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
             wvWebView1.CoreWebView2.FaviconChanged += CoreWebView2_FaviconChanged;
+            wvWebView1.CoreWebView2.ProcessFailed += CoreWebView2_ProcessFailed;
+        }
+
+        private void CoreWebView2_ProcessFailed(object sender, CoreWebView2ProcessFailedEventArgs e)
+        {
+            // An unrelated GPU or subframe failure does not mean this page has finished loading.
+            if (e.ProcessFailedKind == CoreWebView2ProcessFailedKind.BrowserProcessExited ||
+                e.ProcessFailedKind == CoreWebView2ProcessFailedKind.RenderProcessExited ||
+                e.ProcessFailedKind == CoreWebView2ProcessFailedKind.RenderProcessUnresponsive)
+                SetTabLoading(false);
         }
 
         private void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
@@ -1191,6 +1211,7 @@ namespace Quartz
         private void wvWebView1_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
             _activeNavigationId = e.NavigationId;
+            SetTabLoading(!e.Cancel);
 
             Cursor = Cursors.AppStarting;
             picFavicon.Visible = false;
@@ -1214,6 +1235,8 @@ namespace Quartz
             // Ignore completion from an older, superseded navigation.
             if (e.NavigationId != _activeNavigationId)
                 return;
+
+            SetTabLoading(false);
 
             if (loadnum == 0)
                 loadnum++;
