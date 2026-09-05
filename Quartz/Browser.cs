@@ -102,13 +102,16 @@ namespace Quartz
             get { return fullScreen; }
             set
             {
+                if (fullScreen == value) return;
+
                 fullScreen = value;
                 if (value)
                 {
-
                     _windowState = tabbedApp.WindowState;
-                    size = tabbedApp.Size;
-                    point = tabbedApp.Location;
+                    Rectangle normalBounds = _windowState == FormWindowState.Normal
+                        ? tabbedApp.Bounds : tabbedApp.RestoreBounds;
+                    size = normalBounds.Size;
+                    point = normalBounds.Location;
                     tabbedApp.OverlayVisible = false;
                     tabbedApp.WindowState = FormWindowState.Normal;
                     tabbedApp.FormBorderStyle = FormBorderStyle.None;
@@ -119,23 +122,17 @@ namespace Quartz
                 }
                 else
                 {
-                    if (_windowState != FormWindowState.Maximized)
-                    {
-                        tabbedApp.WindowState = _windowState;
-                        tabbedApp.Size = size;
-                        Location = point;
-                    }
-                    else
-                    {
-                        tabbedApp.WindowState = FormWindowState.Maximized;
-                    }
-                    tabbedApp.OverlayVisible = true;
+                    tabbedApp.WindowState = FormWindowState.Normal;
                     tabbedApp.FormBorderStyle = FormBorderStyle.Sizable;
+                    tabbedApp.Bounds = new Rectangle(point, size);
+                    tabbedApp.WindowState = _windowState;
+                    tabbedApp.OverlayVisible = true;
                     pnlTop.Visible = true;
                     pnlDivider.Visible = true;
                     tabbedApp.TopMost = false;
                     wvWebView1.Focus();
                 }
+                tabbedApp.ResizeTabContents();
             }
         }
         #endregion
