@@ -1087,6 +1087,7 @@ namespace Quartz
                         }
                     }
                     SetSource(uri);
+                    wvWebView1.Focus();
                 }
                 catch
                 {
@@ -1147,6 +1148,7 @@ namespace Quartz
                             break;
                     }
                     SetSource(uri);
+                    wvWebView1.Focus();
                 }
                 #endregion
             }
