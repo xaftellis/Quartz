@@ -6,6 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
@@ -34,6 +35,8 @@ namespace Quartz
         private static CancellationTokenSource _pipeServerCts;
         // Queue messages that arrive before EasyTabsContext is ready
         private static readonly ConcurrentQueue<string> _pendingUrls = new ConcurrentQueue<string>();
+        private const int WindowCascadeOffset = 10;
+        private const int MinimumVisibleWindowEdge = 30;
 
         [STAThread]
         static void Main(string[] args)
@@ -234,6 +237,7 @@ namespace Quartz
             if (EasyTabsContext == null) return;
 
             var container = new AppContainer();
+            PositionNewAppContainer(container);
             var browser = string.IsNullOrEmpty(address) ? new Browser(null, false) : new Browser(address, true);
             browser.InitializeTab();
 
@@ -249,6 +253,7 @@ namespace Quartz
                 return;
 
             var container = new AppContainer();
+            PositionNewAppContainer(container);
 
             EasyTabsContext.Start(container);
 
@@ -269,6 +274,55 @@ namespace Quartz
                 // Allow UI to process ONE frame → almost instant
                 await Task.Yield();
             }
+        }
+
+        private static void PositionNewAppContainer(AppContainer container)
+        {
+            AppContainer referenceWindow = Form.ActiveForm as AppContainer;
+            if (referenceWindow == null || referenceWindow.IsDisposed ||
+                referenceWindow.WindowState == FormWindowState.Minimized)
+            {
+                referenceWindow = EasyTabsContext.OpenWindows
+                    .OfType<AppContainer>()
+                    .LastOrDefault(window => !window.IsDisposed && window.Visible &&
+                                             window.WindowState != FormWindowState.Minimized);
+            }
+
+            if (referenceWindow == null)
+                return;
+
+            Rectangle referenceBounds = referenceWindow.WindowState == FormWindowState.Normal
+                ? referenceWindow.Bounds
+                : referenceWindow.RestoreBounds;
+            if (referenceBounds.Width <= 0 || referenceBounds.Height <= 0)
+                return;
+
+            Rectangle cascadedBounds = new Rectangle(
+                referenceBounds.X + WindowCascadeOffset,
+                referenceBounds.Y + WindowCascadeOffset,
+                referenceBounds.Width,
+                referenceBounds.Height);
+            cascadedBounds = KeepCascadedWindowVisible(
+                cascadedBounds,
+                Screen.FromRectangle(cascadedBounds).WorkingArea);
+
+            FormWindowState targetState = referenceWindow.WindowState;
+            container.WindowState = FormWindowState.Normal;
+            container.StartPosition = FormStartPosition.Manual;
+            container.Bounds = cascadedBounds;
+            if (targetState == FormWindowState.Maximized)
+                container.WindowState = FormWindowState.Maximized;
+        }
+
+        private static Rectangle KeepCascadedWindowVisible(Rectangle bounds, Rectangle workingArea)
+        {
+            int minimumX = workingArea.Left + MinimumVisibleWindowEdge - bounds.Width;
+            int maximumX = workingArea.Right - MinimumVisibleWindowEdge;
+            int maximumY = workingArea.Bottom - MinimumVisibleWindowEdge;
+
+            bounds.X = Math.Max(minimumX, Math.Min(bounds.X, maximumX));
+            bounds.Y = Math.Max(workingArea.Top, Math.Min(bounds.Y, maximumY));
+            return bounds;
         }
 
         #endregion
