@@ -36,7 +36,14 @@ namespace Quartz
         int checkboxIndex = 0;
         List<DataGridViewRow> selectedRows;
 
-        private bool rebindingAll;
+        private bool updatingRows;
+        private bool syncingSelection;
+        private List<HistoryModel> matchingData = new List<HistoryModel>();
+        private Dictionary<string, Guid> faviconIds;
+        private readonly Dictionary<Guid, Image> faviconImages = new Dictionary<Guid, Image>();
+        private Image defaultFavicon;
+        private string historyTheme;
+        private readonly System.Windows.Forms.Timer searchTimer;
 
         private int currentOffset = 0;
         private const int pageSize = 25;
@@ -71,6 +78,9 @@ namespace Quartz
             InitializeComponent();
             _browser = browser;
             selectedRows = new List<DataGridViewRow>();
+            searchTimer = new System.Windows.Forms.Timer(components) { Interval = 200 };
+            searchTimer.Tick += (sender, e) => { searchTimer.Stop(); Rebind(); };
+            Disposed += (sender, e) => ClearFaviconImages();
         }
 
         private async void History_Load(object sender, EventArgs e)
@@ -88,8 +98,6 @@ namespace Quartz
             {
                 _service.Clear();
                 _service.SaveChanges();
-
-                bindingSource1.ResetBindings(false);
 
                 Rebind();
 
@@ -129,57 +137,70 @@ namespace Quartz
 
         private void Rebind()
         {
-            rebindingAll = true;
+            searchTimer.Stop();
+            updatingRows = true;
             dataGridView1.Scroll -= dataGridView1_Scroll;
+            try
+            {
+                _service.Reload();
+                int takeAmount = currentOffset > 0 ? currentOffset : pageSize;
 
-            _service.Reload();
+                // Sort once per refresh/search; scrolling only takes the next page.
+                matchingData = (string.IsNullOrEmpty(txtSearch.Text)
+                    ? _service.All()
+                    : _service.Find(txtSearch.Text))
+                    .OrderByDescending(i => i.When)
+                    .ToList();
 
-            _allData.Clear(); // wipe old results
+                _allData.RaiseListChangedEvents = false;
+                _allData.Clear(); // wipe old results
+                selectedRows.Clear();
+                ClearFaviconImages();
+                historyTheme = SettingsService.Get("Theme");
 
-            int takeAmount = currentOffset > 0 ? currentOffset : pageSize;
+                foreach (var item in matchingData.Take(takeAmount))
+                    _allData.Add(item);
 
-            // Load the first "page"
-            var initialData = (string.IsNullOrEmpty(txtSearch.Text)
-                ? _service.All()
-                : _service.Find(txtSearch.Text))
-                .OrderByDescending(i => i.When)
-                .Take(takeAmount)
-                .ToList();
+                _allData.RaiseListChangedEvents = true;
+                if (bindingSource1.DataSource == null)
+                    bindingSource1.DataSource = _allData;
+                else
+                    bindingSource1.ResetBindings(false);
 
-            foreach (var item in initialData)
-                _allData.Add(item);
-
-            if (bindingSource1.DataSource == null)
-                bindingSource1.DataSource = _allData;
-
-
-            currentOffset = currentOffset > 0 ? currentOffset + 0 : currentOffset += pageSize;
-
-            dataGridView1.Scroll += dataGridView1_Scroll;
-
-            SetDataLook();
+                currentOffset = _allData.Count;
+                SetDataLook();
+            }
+            finally
+            {
+                _allData.RaiseListChangedEvents = true;
+                updatingRows = false;
+                dataGridView1.Scroll += dataGridView1_Scroll;
+            }
+            dataGridView1_SelectionChanged(this, EventArgs.Empty);
         }
 
         private void LoadMoreRows()
         {
-            rebindingAll = false;
+            if (updatingRows || searchTimer.Enabled || currentOffset >= matchingData.Count) return;
 
-            var moreData = (string.IsNullOrEmpty(txtSearch.Text)
-                ? _service.All()
-                : _service.Find(txtSearch.Text))
-                .OrderByDescending(i => i.When)
+            int firstNewRow = _allData.Count;
+            var moreData = matchingData
                 .Skip(currentOffset)
                 .Take(pageSize)
                 .ToList();
 
-            foreach (var item in moreData)
-                _allData.Add(item);
-
-            if (moreData.Count > 0)
+            updatingRows = true;
+            try
             {
-                currentOffset += pageSize;
+                foreach (var item in moreData)
+                    _allData.Add(item);
 
-                SetDataLook();
+                currentOffset = _allData.Count;
+                SetDataLook(firstNewRow);
+            }
+            finally
+            {
+                updatingRows = false;
             }
 
             dataGridView1.Focus();
@@ -187,33 +208,21 @@ namespace Quartz
 
         #endregion
 
-        private void SetDataLook()
+        private void SetDataLook(int firstRow = 0)
         {
-            // Determine which rows to process
-            IEnumerable<DataGridViewRow> rowsToProcess;
-            if (rebindingAll)
-            {
-                // Process all rows
-                rowsToProcess = dataGridView1.Rows.Cast<DataGridViewRow>();
-            }
-            else
-            {
-                // Only process newly added rows
-                rowsToProcess = dataGridView1.Rows
-                    .Cast<DataGridViewRow>()
-                    .Skip(currentOffset - pageSize); // Skip existing rows
-            }
+            // Rebind styles all rows; scrolling styles only the new page, including a partial final page.
+            var rowsToProcess = dataGridView1.Rows.Cast<DataGridViewRow>().Skip(firstRow);
 
             foreach (DataGridViewRow row in rowsToProcess)
             {
-                var webAddress = row.Cells["WebAddress"].Value.ToString();
-                var title = row.Cells["Title"].Value.ToString();
+                var webAddress = Convert.ToString(row.Cells["WebAddress"].Value);
+                var title = Convert.ToString(row.Cells["Title"].Value);
                 if (!string.IsNullOrEmpty(webAddress) && Uri.IsWellFormedUriString(webAddress, UriKind.Absolute))
                 {
-                    var favicon = FaviconHelper.GetFaviconFileExternalAsImage(webAddress);
+                    var favicon = GetHistoryFavicon(webAddress);
                     row.Cells["FaviconColumn"].Value = favicon;
 
-                    string theme = SettingsService.Get("Theme");
+                    string theme = historyTheme;
                     if (theme == "light")
                     {
                         row.Cells["Delete"].Value = Properties.Resources.Close;
@@ -251,7 +260,51 @@ namespace Quartz
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             currentOffset = 0;
-            Rebind();
+            searchTimer.Stop();
+            searchTimer.Start();
+        }
+
+        private Image GetHistoryFavicon(string webAddress)
+        {
+            // Read the favicon index once, not once or twice for every history row.
+            if (faviconIds == null)
+                faviconIds = new FaviconService().All()
+                    .Where(item => !string.IsNullOrEmpty(item.WebAddress))
+                    .GroupBy(item => item.WebAddress)
+                    .ToDictionary(group => group.Key, group => group.First().Id);
+
+            if (defaultFavicon == null)
+                defaultFavicon = FaviconHelper.GetDefaultFavicon16().ToBitmap();
+
+            Guid id;
+            if (!faviconIds.TryGetValue(webAddress, out id)) return defaultFavicon;
+
+            Image image;
+            if (!faviconImages.TryGetValue(id, out image))
+            {
+                image = defaultFavicon;
+                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    @"Xaftellis\Quartz\UserData\cache", id + ".ico");
+                try
+                {
+                    if (File.Exists(path))
+                        using (var icon = new Icon(path)) image = icon.ToBitmap();
+                }
+                catch (IOException) { } // A cache file can disappear while the history window is open.
+                catch (ArgumentException) { } // Use the default for an invalid cached icon.
+                faviconImages[id] = image;
+            }
+            return image;
+        }
+
+        private void ClearFaviconImages()
+        {
+            foreach (var image in faviconImages.Values.Distinct())
+                if (!ReferenceEquals(image, defaultFavicon)) image.Dispose();
+            faviconImages.Clear();
+            defaultFavicon?.Dispose();
+            defaultFavicon = null;
+            faviconIds = null;
         }
 
   
@@ -263,7 +316,7 @@ namespace Quartz
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             //if checkboxcell was clicked, disale selectionchange event before it runs.
-            if (dataGridView1.Columns[e.ColumnIndex].Name == "CheckBox")
+            if (e.ColumnIndex >= 0 && e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex].Name == "CheckBox")
             {
                 dataGridView1.SelectionChanged -= dataGridView1_SelectionChanged;
             }
@@ -271,88 +324,104 @@ namespace Quartz
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            if (dataGridView1.CurrentCell != null && dataGridView1.CurrentCell.OwningColumn.Name == "CheckBox")
+            if (updatingRows || syncingSelection) return;
+            syncingSelection = true;
+            try
             {
-                for (int i = 0; i < selectedRows.Count; i++)
+                if (dataGridView1.CurrentCell != null && dataGridView1.CurrentCell.OwningColumn.Name == "CheckBox")
                 {
-                    selectedRows[i].Selected = true;  // Safe to modify because you're not using foreach
-                }
-
-                foreach (DataGridViewRow row in dataGridView1.Rows)
-                {
-                    if(!selectedRows.Contains(row))
+                    var checkedRows = new HashSet<DataGridViewRow>(selectedRows);
+                    for (int i = 0; i < selectedRows.Count; i++)
                     {
-                        row.Selected = false;
+                        if (!selectedRows[i].Selected) selectedRows[i].Selected = true;
                     }
+
+                    foreach (DataGridViewRow row in dataGridView1.SelectedRows.Cast<DataGridViewRow>().ToList())
+                    {
+                        if(!checkedRows.Contains(row))
+                        {
+                            row.Selected = false;
+                        }
+                    }
+
+                    return;
                 }
 
-                return;
+                SelectRowsWithAnySelectedCell();
+
+                selectedRows.Clear();
+                foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+                {
+                    selectedRows.Add(row);
+                }
+                //MessageBox.Show(selectedRows.Count.ToString(), "SelectionChanged");
             }
-
-            SelectRowsWithAnySelectedCell();
-
-            selectedRows.Clear();
-            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            finally
             {
-                selectedRows.Add(row);
+                syncingSelection = false;
             }
-            //MessageBox.Show(selectedRows.Count.ToString(), "SelectionChanged");
         }
 
         void SelectRowsWithAnySelectedCell ()
         {
-            // List of column names to be ignored during selection counting (like "CheckBox")
-            var columnsToIgnore = new List<string> { "" };
+            // Only visit the current and previous selection, not every cell in the history grid.
+            var rowsWithSelectedCells = new HashSet<DataGridViewRow>(dataGridView1.SelectedCells
+                .Cast<DataGridViewCell>().Select(cell => cell.OwningRow));
 
-            // Loop through each row in DataGridView
-            foreach (DataGridViewRow row in dataGridView1.Rows)
+            foreach (DataGridViewRow row in selectedRows)
             {
-                bool rowSelected = false;
-
-                // Check each cell in the current row, ignoring the checkbox column
-                foreach (DataGridViewCell cell in row.Cells)
+                if (!rowsWithSelectedCells.Contains(row))
                 {
-                    if (columnsToIgnore.Contains(cell.OwningColumn.Name))
-                        continue; // Skip the checkbox column
-
-                    if (cell.Selected)  // If any other cell in the row is selected
-                    {
-                        rowSelected = true;
-                        break; // No need to check further once we find a selected cell
-                    }
+                    if (row.Selected) row.Selected = false;
+                    if (Equals(row.Cells["CheckBox"].Value, true)) row.Cells["CheckBox"].Value = false;
                 }
+            }
 
-                // If any cell (excluding the checkbox column) is selected, mark the row as selected
-                row.Selected = rowSelected;
-                row.Cells["CheckBox"].Value = rowSelected;
+            foreach (DataGridViewRow row in rowsWithSelectedCells)
+            {
+                if (!row.Selected) row.Selected = true;
+                if (!Equals(row.Cells["CheckBox"].Value, true)) row.Cells["CheckBox"].Value = true;
             }
         }
 
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
+            if (updatingRows || syncingSelection || e.ColumnIndex < 0 || e.RowIndex < 0) return;
             if (dataGridView1.Columns[e.ColumnIndex].Name == "CheckBox")
             {
-                //MessageBox.Show(keyPressed.ToString());
-                DataGridViewRow changedRow = dataGridView1.Rows[e.RowIndex];
-                bool isChecked = (bool)changedRow.Cells["CheckBox"].Value;
+                syncingSelection = true;
+                try
+                {
+                    clickedCheckbox = false;
+                    //MessageBox.Show(keyPressed.ToString());
+                    DataGridViewRow changedRow = dataGridView1.Rows[e.RowIndex];
+                    bool isChecked = Equals(changedRow.Cells["CheckBox"].Value, true);
 
-                if (isChecked)
-                {
-                    if (!selectedRows.Contains(changedRow))
+                    if (isChecked)
                     {
-                        selectedRows.Add(changedRow);
-                        clickedCheckbox = true;
+                        if (!selectedRows.Contains(changedRow))
+                        {
+                            selectedRows.Add(changedRow);
+                            clickedCheckbox = true;
+                        }
+                        changedRow.Selected = true; // Immediately select the row when checkbox is checked
                     }
-                    changedRow.Selected = true; // Immediately select the row when checkbox is checked
+                    else
+                    {
+                        if (selectedRows.Contains(changedRow))
+                        {
+                            selectedRows.Remove(changedRow);
+                            clickedCheckbox = true;
+                        }
+                        changedRow.Selected = false; // Unselect the row when checkbox is unchecked
+                    }
                 }
-                else
+                finally
                 {
-                    if (selectedRows.Contains(changedRow))
-                    {
-                        selectedRows.Remove(changedRow);
-                        clickedCheckbox = true;
-                    }
-                    changedRow.Selected = false; // Unselect the row when checkbox is unchecked
+                    syncingSelection = false;
+                    // Keep exactly one handler, including keyboard checkbox changes without CellClick.
+                    dataGridView1.SelectionChanged -= dataGridView1_SelectionChanged;
+                    dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
                 }
 
                 if (clickedCheckbox)
@@ -360,8 +429,6 @@ namespace Quartz
                     // Manually trigger the SelectionChanged event
                     dataGridView1_SelectionChanged(this, EventArgs.Empty);
 
-                    // Re-enable the SelectionChanged event
-                    dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
                 }
             }
         }
@@ -378,6 +445,7 @@ namespace Quartz
         int rowIndex;
         private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
             if (dataGridView1.Columns[e.ColumnIndex].Name == "CheckBox")
             {
 
@@ -388,8 +456,6 @@ namespace Quartz
 
                 _service.Remove(id);
                 _service.SaveChanges();
-
-                bindingSource1.ResetBindings(false);
 
                 Rebind();
             }
@@ -470,12 +536,13 @@ namespace Quartz
             }
             
 
-            if(IsAtBottom(dataGridView1))
+            if(!updatingRows && !searchTimer.Enabled && currentOffset < matchingData.Count && IsAtBottom(dataGridView1))
             {
                 int currentScrollingRowIndex = dataGridView1.FirstDisplayedScrollingRowIndex;
                 LoadMoreRows();
 
-                dataGridView1.FirstDisplayedScrollingRowIndex = currentScrollingRowIndex;
+                if (currentScrollingRowIndex >= 0 && currentScrollingRowIndex < dataGridView1.RowCount)
+                    dataGridView1.FirstDisplayedScrollingRowIndex = currentScrollingRowIndex;
             }
         }
 
@@ -516,12 +583,11 @@ namespace Quartz
                     var id = Guid.Parse(row.Cells[0].Value.ToString());
 
                     _service.Remove(id);
-                    _service.SaveChanges();
                 }
             }
 
             // Reset bindings and rebind after deletion
-            bindingSource1.ResetBindings(false);
+            _service.SaveChanges();
             Rebind();
         }
 
@@ -554,12 +620,11 @@ namespace Quartz
                         var id = Guid.Parse(row.Cells[0].Value.ToString());
 
                         _service.Remove(id);
-                        _service.SaveChanges();
                     }
                 }
 
                 // Reset bindings and rebind after deletion
-                bindingSource1.ResetBindings(false);
+                _service.SaveChanges();
                 Rebind();
             }
 
@@ -568,9 +633,9 @@ namespace Quartz
 
         private void dataGridView1_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 6)
+            if (e.ColumnIndex == 6 && e.RowIndex >= 0)
             {
-                string theme = SettingsService.Get("Theme");
+                string theme = historyTheme;
                 if (theme == "light")
                 {
                     dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.Close;
@@ -596,9 +661,9 @@ namespace Quartz
 
         private void dataGridView1_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 6)
+            if (e.ColumnIndex == 6 && e.RowIndex >= 0)
             {
-                string theme = SettingsService.Get("Theme");
+                string theme = historyTheme;
                 if (theme == "light")
                 {
                     dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.CloseHover;
