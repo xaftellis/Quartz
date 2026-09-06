@@ -536,7 +536,12 @@ namespace Quartz
                 var browser = new Browser(favourite.WebAddress, true);
                 browser.InitializeTab();
 
-                var newTab = new TitleBarTab(ParentTabs) { Content = browser };
+                var newTab = new TitleBarTab(ParentTabs)
+                {
+                    Content = browser,
+                    Caption = "Loading...",
+                    IsLoading = true
+                };
 
                 void AddTab()
                 {
@@ -1170,7 +1175,12 @@ namespace Quartz
             e.Handled = true;
             Browser browser = new Browser(e.Uri, true);
             browser.InitializeTab();
-            var newtab = new TitleBarTab(ParentTabs) { Content = browser };
+            var newtab = new TitleBarTab(ParentTabs)
+            { 
+                Content = browser,
+                Caption = "Loading...",
+                IsLoading = true
+            };
 
             if (ParentTabs.InvokeRequired)
             {
@@ -2036,7 +2046,12 @@ namespace Quartz
         {
             Browser browser = new Browser(null, false);
             browser.InitializeTab();
-            var newtab = new TitleBarTab(ParentTabs) { Content = browser };
+            var newtab = new TitleBarTab(ParentTabs)
+            {
+                Content = browser,
+                Caption = "New Tab",
+                IsLoading = true
+            };
             if (ParentTabs.InvokeRequired)
             {
                 ParentTabs.Invoke(new Action(() =>
@@ -2183,7 +2198,13 @@ namespace Quartz
 
                 Browser browser = new Browser(menuItem.Tag.ToString(), true);
                 browser.InitializeTab();
-                var newtab = new TitleBarTab(ParentTabs) { Content = browser };
+                var newtab = new TitleBarTab(ParentTabs)
+                {
+                    Content = browser,
+                    Caption = "Loading...",
+                    IsLoading = true
+                };
+
                 if (ParentTabs.InvokeRequired)
                 {
                     ParentTabs.Invoke(new Action(() =>
@@ -2797,7 +2818,7 @@ namespace Quartz
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //wvWebView1.Focus();
+            wvWebView1.Focus();
             SendKeys.SendWait("^f");
         }
 
@@ -2843,7 +2864,12 @@ namespace Quartz
                         var browser = new Browser(favourite.WebAddress, true);
                         browser.InitializeTab();
 
-                        var newTab = new TitleBarTab(ParentTabs) { Content = browser };
+                        var newTab = new TitleBarTab(ParentTabs)
+                        {
+                            Content = browser,
+                            Caption = "Loading...",
+                            IsLoading = true
+                        };
 
                         void AddTab()
                         {
@@ -2899,6 +2925,11 @@ namespace Quartz
                 service.SaveChanges();
                 LoadFavourites();
             }
+        }
+
+        private void picFavicon_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

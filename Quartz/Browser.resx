@@ -121,6 +121,15 @@
     <value>325, 58</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="mnuMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 292</value>
+  </data>
+  <data name="&gt;&gt;mnuMenu.Name" xml:space="preserve">
+    <value>mnuMenu</value>
+  </data>
+  <data name="&gt;&gt;mnuMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>187, 22</value>
   </data>
@@ -208,15 +217,6 @@
   </data>
   <data name="showFavouritesBarToolStripMenuItem.Text" xml:space="preserve">
     <value>Show favourites bar</value>
-  </data>
-  <data name="mnuMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 292</value>
-  </data>
-  <data name="&gt;&gt;mnuMenu.Name" xml:space="preserve">
-    <value>mnuMenu</value>
-  </data>
-  <data name="&gt;&gt;mnuMenu.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="btnDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1299,6 +1299,15 @@
   <metadata name="mnuSearch.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>188, 50</value>
   </metadata>
+  <data name="mnuSearch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>192, 248</value>
+  </data>
+  <data name="&gt;&gt;mnuSearch.Name" xml:space="preserve">
+    <value>mnuSearch</value>
+  </data>
+  <data name="&gt;&gt;mnuSearch.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="emojiToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>191, 22</value>
   </data>
@@ -1370,15 +1379,6 @@
   </data>
   <data name="alwaysShowFullURLsToolStripMenuItem.Text" xml:space="preserve">
     <value>Always show full URLs</value>
-  </data>
-  <data name="mnuSearch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>192, 248</value>
-  </data>
-  <data name="&gt;&gt;mnuSearch.Name" xml:space="preserve">
-    <value>mnuSearch</value>
-  </data>
-  <data name="&gt;&gt;mnuSearch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="btnRefresh.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -2226,8 +2226,11 @@
   <data name="picFavicon.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Zoom</value>
   </data>
+  <data name="picFavicon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="picFavicon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>148, 11</value>
+    <value>145, 14</value>
   </data>
   <data name="picFavicon.Size" type="System.Drawing.Size, System.Drawing">
     <value>16, 16</value>
@@ -2508,20 +2511,23 @@
   <metadata name="mnuFavourites.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>435, 58</value>
   </metadata>
+  <data name="addFavouritesToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+D</value>
+  </data>
   <data name="addFavouritesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 22</value>
+    <value>188, 22</value>
   </data>
   <data name="addFavouritesToolStripMenuItem.Text" xml:space="preserve">
     <value>Add favourite</value>
   </data>
   <data name="toolStripSeparator8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>143, 6</value>
+    <value>185, 6</value>
   </data>
   <data name="mnuFavourites.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
     <value>Inherit</value>
   </data>
   <data name="mnuFavourites.Size" type="System.Drawing.Size, System.Drawing">
-    <value>147, 32</value>
+    <value>189, 32</value>
   </data>
   <data name="&gt;&gt;mnuFavourites.Name" xml:space="preserve">
     <value>mnuFavourites</value>

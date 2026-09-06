@@ -294,7 +294,8 @@ namespace Quartz
 
             return new TitleBarTab(this)
             {
-                Content = browser
+                Content = browser,
+                IsLoading = true,
             };
         }
 

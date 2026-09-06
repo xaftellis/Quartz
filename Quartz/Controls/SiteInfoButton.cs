@@ -54,7 +54,7 @@ namespace Quartz.Controls
                 }
             }
 
-            float size = 16f * DeviceDpi / 96f;
+            float size = 20f * DeviceDpi / 96f;
             var saved = e.Graphics.Save();
             e.Graphics.TranslateTransform((Width - size) / 2, (Height - size) / 2);
             e.Graphics.ScaleTransform(size / 16, size / 16);

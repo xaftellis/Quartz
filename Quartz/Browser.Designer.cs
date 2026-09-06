@@ -510,6 +510,7 @@
             resources.ApplyResources(this.picFavicon, "picFavicon");
             this.picFavicon.Name = "picFavicon";
             this.picFavicon.TabStop = false;
+            this.picFavicon.Click += new System.EventHandler(this.picFavicon_Click);
             // 
             // pnlFavourites
             // 
@@ -1009,7 +1010,6 @@
         private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
-        public System.Windows.Forms.PictureBox picFavicon;
         public System.Windows.Forms.RichTextBox txtWebAddress;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem1;
@@ -1029,6 +1029,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
         private System.Windows.Forms.ToolStripMenuItem deleteBrowsingDataToolStripMenuItem;
+        public System.Windows.Forms.PictureBox picFavicon;
     }
 }
 

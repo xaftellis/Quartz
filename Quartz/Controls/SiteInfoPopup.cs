@@ -782,6 +782,14 @@ namespace Quartz.Controls
             var area = Screen.FromPoint(_anchor).WorkingArea;
             int preferred = _content.Controls.Cast<Control>().Sum(c => c.Height + c.Margin.Vertical) + ScalePixels(32) + 2;
             int height = Math.Min(Math.Max(ScalePixels(180), preferred), Math.Min(ScalePixels(660), area.Height - ScalePixels(24)));
+            if (preferred > height)
+            {
+                _content.AutoScrollMinSize = new Size(0, preferred);
+            }
+            else
+            {
+                _content.AutoScrollMinSize = Size.Empty;
+            }
             ClientSize = new Size(ScalePixels(360) + (preferred > height ? SystemInformation.VerticalScrollBarWidth : 0), height);
             Location = new Point(Math.Max(area.Left, Math.Min(_anchor.X, area.Right - Width)), Math.Max(area.Top, Math.Min(_anchor.Y, area.Bottom - Height)));
         }

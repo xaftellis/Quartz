@@ -16,7 +16,8 @@ namespace Quartz
             picFavicon.Visible = false;
             wvLoadingProgress.Visible = false;
             Rectangle bounds = picFavicon.Bounds;
-            bounds.Inflate(4, 4);
+            int buttonPadding = (int)Math.Round(6f * DeviceDpi / 96f);
+            bounds.Inflate(buttonPadding, buttonPadding);
             _siteInfoButton = new SiteInfoButton
             {
                 Name = "btnSiteInformation",
