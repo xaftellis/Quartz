@@ -80,7 +80,7 @@ namespace Quartz
 
             if (theme == "light")
             {
-                TabRenderer = new LightTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this) { Theme = ChromiumTabTheme.Light };
 
                 barBackColor = System.Drawing.Color.FromArgb(222, 225, 230);
                 textForeColor = System.Drawing.Color.Black;
@@ -88,7 +88,13 @@ namespace Quartz
             }
             else if (theme == "dark")
             {
-                TabRenderer = new DarkTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this)
+                {
+                    Theme = new ChromiumTabTheme(System.Drawing.Color.FromArgb(88, 88, 88),
+                        System.Drawing.Color.FromArgb(35, 35, 35),
+                        activeForeground: System.Drawing.Color.FromArgb(195, 195, 195),
+                        inactiveForeground: System.Drawing.Color.FromArgb(195, 195, 195))
+                };
 
                 barBackColor = System.Drawing.Color.FromArgb(88, 88, 88);
                 textForeColor = System.Drawing.Color.FromArgb(195, 195, 195);
@@ -96,7 +102,11 @@ namespace Quartz
             }
             else if (theme == "black")
             {
-                TabRenderer = new BlackTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this)
+                {
+                    Theme = new ChromiumTabTheme(System.Drawing.Color.Black, System.Drawing.Color.Black,
+                        activeForeground: System.Drawing.Color.White, inactiveForeground: System.Drawing.Color.White)
+                };
 
                 barBackColor = System.Drawing.Color.Black;
                 textForeColor = System.Drawing.Color.White;
@@ -104,7 +114,10 @@ namespace Quartz
             }
             else if (theme == "aqua")
             {
-                TabRenderer = new AquaTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this)
+                {
+                    Theme = new ChromiumTabTheme(System.Drawing.Color.Blue, System.Drawing.Color.Aqua)
+                };
 
                 barBackColor = System.Drawing.Color.Blue;
                 textForeColor = System.Drawing.Color.Aqua;
@@ -112,7 +125,10 @@ namespace Quartz
             }
             else if (theme == "xmas")
             {
-                TabRenderer = new XmasTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this)
+                {
+                    Theme = new ChromiumTabTheme(System.Drawing.Color.Lime, System.Drawing.Color.Red)
+                };
 
                 barBackColor = System.Drawing.Color.Lime;
                 textForeColor = System.Drawing.Color.Red;
@@ -120,7 +136,7 @@ namespace Quartz
             }
             else
             {
-                TabRenderer = new ChromeTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this);
             }
 
             // Light uses the blue throbber; the other themes use their existing foreground colour.

@@ -228,15 +228,14 @@
     <Compile Include="NameWindow.Designer.cs">
       <DependentUpon>NameWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Omnibox\OmniBoxTheme.cs" />
-    <Compile Include="Omnibox\OmniBoxUI.cs" />
-    <Compile Include="Omnibox\QueryAnalyzer.cs" />
-    <Compile Include="Omnibox\SearchSuggestions.cs" />
     <Compile Include="Libs\FileLockChecker.cs" />
     <Compile Include="Libs\Power.cs" />
     <Compile Include="Libs\ThemeHelper.cs" />
     <Compile Include="Models\MainSetting.cs" />
     <Compile Include="Libs\Animation.cs" />
+    <Compile Include="Omnibox\OmniBoxTheme.cs" />
+    <Compile Include="Omnibox\QueryAnalyzer.cs" />
+    <Compile Include="Omnibox\SearchSuggestions.cs" />
     <Compile Include="Password.cs">
       <SubType>Form</SubType>
     </Compile>

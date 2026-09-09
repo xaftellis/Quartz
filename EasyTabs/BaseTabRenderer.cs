@@ -1,8 +1,10 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Win32Interop.Enums;
 
@@ -12,9 +14,30 @@ namespace EasyTabs
 	/// Provides the base functionality for any tab renderer, taking care of actually rendering and detecting whether the cursor is over a tab.  Any custom
 	/// tab renderer needs to inherit from this class, just as <see cref="ChromeTabRenderer" /> does.
 	/// </summary>
-	public abstract class BaseTabRenderer
+	public abstract class BaseTabRenderer : IDisposable
 	{
 		bool? _isWindows10 = null;
+		private readonly TabLayoutAnimation _layoutAnimation = new TabLayoutAnimation();
+		private readonly Stopwatch _layoutClock = Stopwatch.StartNew();
+		private readonly object _addButtonAnimationKey = new object();
+		private readonly HashSet<TitleBarTab> _hoveredCloseButtons = new HashSet<TitleBarTab>();
+
+		/// <summary>Animate tab layout changes while retaining the existing renderer and artwork.</summary>
+		public bool AnimationsEnabled { get; set; } = true;
+
+		internal virtual bool IsLayoutAnimating { get { return _layoutAnimation.IsAnimating; } }
+		internal virtual bool RequiresHoverRedraw(Point cursor) { return false; }
+
+		[DllImport("user32.dll", EntryPoint = "SystemParametersInfoW")]
+		private static extern bool GetSystemAnimationSetting(uint action, uint parameter,
+			[MarshalAs(UnmanagedType.Bool)] out bool enabled, uint flags);
+
+		protected bool ShouldAnimateLayout()
+		{
+			bool enabled;
+			return AnimationsEnabled && !SystemInformation.HighContrast &&
+				(!GetSystemAnimationSetting(0x1042, 0, out enabled, 0) || enabled);
+		}
 
 		/// <summary>
 		/// Background of the content area for the tab when the tab is active; its width also determines how wide the default content area for the tab
@@ -414,7 +437,7 @@ namespace EasyTabs
 		/// </summary>
 		/// <param name="sender">List of tabs in the <see cref="_parentWindow" />.</param>
 		/// <param name="e">Arguments associated with the event.</param>
-		private void Tabs_CollectionModified(object sender, ListModificationEventArgs e)
+		protected virtual void Tabs_CollectionModified(object sender, ListModificationEventArgs e)
 		{
 			ListWithEvents<TitleBarTab> tabs = (ListWithEvents<TitleBarTab>) sender;
 
@@ -453,6 +476,17 @@ namespace EasyTabs
 		/// <param name="tabs">The list of tabs that we should check.</param>
 		/// <param name="cursor">The relative position of the cursor within the window.</param>
 		/// <returns>The tab within <paramref name="tabs" /> that the <paramref name="cursor" /> is over; if none, then null is returned.</returns>
+		public virtual void Dispose()
+		{
+			_parentWindow.Tabs.CollectionModified -= Tabs_CollectionModified;
+			if (_parentWindow._overlay != null)
+			{
+				_parentWindow._overlay.MouseMove -= Overlay_MouseMove;
+				_parentWindow._overlay.MouseUp -= Overlay_MouseUp;
+				_parentWindow._overlay.MouseDown -= Overlay_MouseDown;
+			}
+		}
+
 		public virtual TitleBarTab OverTab(IEnumerable<TitleBarTab> tabs, Point cursor)
 		{
 			TitleBarTab overTab = null;
@@ -578,8 +612,15 @@ namespace EasyTabs
 
 			if (tabs == null || tabs.Count == 0)
 			{
+				_layoutAnimation.Reset();
+				_hoveredCloseButtons.Clear();
 				return;
 			}
+
+			_layoutAnimation.BeginFrame(tabs.Cast<object>().Concat(ShowAddButton
+				? new[] { _addButtonAnimationKey } : new object[0]),
+				_layoutClock.Elapsed.TotalMilliseconds, ShouldAnimateLayout());
+			_hoveredCloseButtons.RemoveWhere(tab => !tabs.Contains(tab));
 
 			Point screenCoordinates = _parentWindow.PointToScreen(_parentWindow.ClientRectangle.Location);
 
@@ -676,10 +717,11 @@ namespace EasyTabs
 						_parentWindow.Tabs.Remove(tab);
 						_parentWindow.Tabs.Insert(dropIndex, tab);
 						_parentWindow.Tabs.ResumeEvents();
+						selectedIndex = dropIndex;
 					}
 				}
 
-				activeTabs.Add(new Tuple<TitleBarTab, int, Rectangle>(tabs[selectedIndex], selectedIndex, tabArea));
+				activeTabs.Add(new Tuple<TitleBarTab, int, Rectangle>(selectedTab, selectedIndex, tabArea));
 			}
 
 			// Loop through the tabs in reverse order since we need the ones farthest on the left to overlap those to their right
@@ -702,12 +744,15 @@ namespace EasyTabs
 				// If we need to redraw the tab image, null out the property so that it will be recreated in the call to Render() below
 				if (redraw)
 				{
+					tab.TabImage?.Dispose();
 					tab.TabImage = null;
 				}
 
 				// In this first pass, we only render the inactive tabs since we need the active tabs to show up on top of everything else
 				if (!tab.Active)
 				{
+					tabArea = _layoutAnimation.GetBounds(tab, tabArea, false,
+						tabLeftImage.Width + tabRightImage.Width + 1);
 					Render(graphicsContext, tab, i, tabArea, cursor, tabLeftImage, tabCenterImage, tabRightImage);
 				}
 
@@ -721,7 +766,10 @@ namespace EasyTabs
 				tabCenterImage = GetTabCenterImage(tab.Item1);
 				Image tabRightImage = GetTabRightImage(tab.Item1);
 
-				Render(graphicsContext, tab.Item1, tab.Item2, tab.Item3, cursor, tabLeftImage, tabCenterImage, tabRightImage);
+				Rectangle animatedArea = _layoutAnimation.GetBounds(tab.Item1, tab.Item3,
+					IsTabRepositioning || _detachedTabX.HasValue,
+					tabLeftImage.Width + tabRightImage.Width + 1);
+				Render(graphicsContext, tab.Item1, tab.Item2, animatedArea, cursor, tabLeftImage, tabCenterImage, tabRightImage);
 			}
 
 			_previousTabCount = tabs.Count;
@@ -740,6 +788,7 @@ namespace EasyTabs
 					((tabs.Count - 1) * (tabWidth - OverlapWidth)) + tabWidth + tabContentRemainder;
 				int maximumAddButtonX = _addButtonArea.X +
 					(SystemInformation.BorderSize.Width + offset.X + _maxTabArea.Width - normalRightmostTabEdge);
+				int trailingButtonGap = _addButtonArea.X - normalRightmostTabEdge;
 
 				if (IsTabRepositioning)
 				{
@@ -755,6 +804,11 @@ namespace EasyTabs
 
 				// Like Chromium, the add button follows the trailing tab until the fixed tab boundary is full, then stays put.
 				_addButtonArea.X = Math.Min(_addButtonArea.X, maximumAddButtonX);
+				_addButtonArea = _layoutAnimation.GetBounds(_addButtonAnimationKey, _addButtonArea,
+					IsTabRepositioning || _detachedTabX.HasValue, _addButtonArea.Width);
+				// Keep the button clear of the tabs as widths interpolate.
+				_addButtonArea.X = Math.Min(maximumAddButtonX,
+					Math.Max(_addButtonArea.X, tabs.Max(tab => tab.Area.Right) + trailingButtonGap));
 
 				bool cursorOverAddButton = !IsTabRepositioning && IsOverAddButton(cursor);
 
@@ -787,6 +841,20 @@ namespace EasyTabs
 
 			int tabContentWidth = Math.Max(0, area.Width - tabLeftImage.Width - tabRightImage.Width);
 			int tabImageWidth = Math.Max(1, area.Width);
+			// Hit testing must use the currently drawn rectangle, including during
+			// animation when the mouse itself has not moved.
+			tab.Area = area;
+			tab.CloseButtonArea = new Rectangle(
+				area.Width - tabRightImage.Width - CloseButtonMarginRight - _closeButtonImage.Width,
+				CloseButtonMarginTop, _closeButtonImage.Width, _closeButtonImage.Height);
+			bool closeHovered = tab.ShowCloseButton && IsOverCloseButton(tab, cursor);
+			if (closeHovered != _hoveredCloseButtons.Contains(tab))
+			{
+				if (closeHovered) _hoveredCloseButtons.Add(tab);
+				else _hoveredCloseButtons.Remove(tab);
+				tab.TabImage?.Dispose();
+				tab.TabImage = null;
+			}
 
 			// If we need to redraw the tab image
 			if (tab.TabImage == null || tab.TabImage.Width != tabImageWidth)

@@ -20,6 +20,8 @@ namespace Quartz.Controls
         private readonly Color _secondaryTextColor;
         private readonly Color _borderColor;
         private readonly Color _linkColor;
+        private readonly Color _hoverColor;
+        private readonly Color _pressedColor;
         private readonly Font _headingFont = new Font("Segoe UI", 12f, FontStyle.Bold);
         private readonly Font _sectionFont = new Font("Segoe UI", 9f, FontStyle.Bold);
         private readonly float _dpiScale;
@@ -34,10 +36,12 @@ namespace Quartz.Controls
         private bool _reloadNeeded;
         private Label _securityTitle;
         private Label _securityDescription;
+        private Label _noticeLabel;
+        private Button _reloadButton;
         private Form _anchorOwner;
         private Point _anchor;
 
-        public SiteInfoPopup(SiteInfoController controller, SiteInfoSnapshot snapshot, bool dark, float scale = 1f)
+        public SiteInfoPopup(SiteInfoController controller, SiteInfoSnapshot snapshot, Color background, Color foreground, float scale = 1f)
         {
             _controller = controller;
             _snapshot = snapshot;
@@ -49,11 +53,14 @@ namespace Quartz.Controls
             KeyPreview = true;
             Text = "Site information — " + snapshot.DisplayName;
             Font = new Font("Segoe UI", 9f);
-            BackColor = dark ? Color.FromArgb(41, 42, 45) : Color.White;
-            _textColor = dark ? Color.FromArgb(232, 234, 237) : Color.FromArgb(32, 33, 36);
-            _secondaryTextColor = dark ? Color.FromArgb(174, 178, 184) : Color.FromArgb(95, 99, 104);
-            _borderColor = dark ? Color.FromArgb(72, 74, 78) : Color.FromArgb(228, 230, 233);
-            _linkColor = dark ? Color.FromArgb(138, 180, 248) : Color.FromArgb(26, 115, 232);
+            // Browser.LoadTheme supplies Quartz's actual form colours for every theme.
+            BackColor = background;
+            _textColor = foreground;
+            _secondaryTextColor = foreground;
+            _linkColor = foreground;
+            _borderColor = BlendThemeColor(30);
+            _hoverColor = BlendThemeColor(10);
+            _pressedColor = BlendThemeColor(20);
             ForeColor = _textColor;
             Padding = new Padding(1);
             ClientSize = new Size(ScalePixels(360), ScalePixels(360));
@@ -90,6 +97,15 @@ namespace Quartz.Controls
         {
             // Keep the same proportions when Windows display scaling is above 100%.
             return (int)Math.Round(value * _dpiScale);
+        }
+
+        private Color BlendThemeColor(int foregroundPercent)
+        {
+            int backgroundPercent = 100 - foregroundPercent;
+            return Color.FromArgb(
+                (BackColor.R * backgroundPercent + _textColor.R * foregroundPercent) / 100,
+                (BackColor.G * backgroundPercent + _textColor.G * foregroundPercent) / 100,
+                (BackColor.B * backgroundPercent + _textColor.B * foregroundPercent) / 100);
         }
 
         private int ContentWidth
@@ -257,6 +273,8 @@ namespace Quartz.Controls
 
             _content.Controls.Clear();
             _securityTitle = _securityDescription = null;
+            _noticeLabel = null;
+            _reloadButton = null;
             var header = new Panel
             {
                 Size = new Size(ContentWidth, ScalePixels(38)),
@@ -273,13 +291,13 @@ namespace Quartz.Controls
                 Size = new Size(ContentWidth - ScalePixels(subpage ? 62 : 32), ScalePixels(28))
             };
             header.Controls.Add(title);
-            var close = SmallButton("×", "Close site information");
+            var close = SmallButton(SiteInfoIcon.Close, "Close site information");
             close.Location = new Point(ContentWidth - ScalePixels(28), 0);
             close.Click += (s, e) => Close();
             header.Controls.Add(close);
             if (subpage)
             {
-                var back = SmallButton("‹", "Back to site information");
+                var back = SmallButton(SiteInfoIcon.Back, "Back to site information");
                 back.Click += (s, e) => Navigate("home");
                 header.Controls.Add(back);
             }
@@ -288,11 +306,6 @@ namespace Quartz.Controls
             if (_snapshot.IsWebsite)
             {
                 AddText(_snapshot.Origin, false, _secondaryTextColor);
-            }
-
-            if (!string.IsNullOrEmpty(_notice))
-            {
-                AddText(_notice, false, _linkColor);
             }
 
             if (_page == "connection")
@@ -312,19 +325,53 @@ namespace Quartz.Controls
                 BuildHome();
             }
 
-            if (_reloadNeeded)
+            // Set the final bounds before AutoScroll lays out the rebuilt controls.
+            UpdateStatus();
+            _content.ResumeLayout(true);
+        }
+
+        private void UpdateStatus()
+        {
+            if (IsDisposed || Disposing)
             {
-                Separator();
-                AddText("Reload this page to apply your changes.");
-                AddAction("Reload", () =>
-                {
-                    _controller.Reload(_snapshot);
-                    return Task.CompletedTask;
-                });
+                return;
             }
 
-            _content.ResumeLayout(true);
-            FitToScreen();
+            Point scroll = _content.AutoScrollPosition;
+            _content.SuspendLayout();
+            try
+            {
+                if (!string.IsNullOrEmpty(_notice))
+                {
+                    if (_noticeLabel == null)
+                    {
+                        _noticeLabel = AddText(_notice, false, _linkColor);
+                        _content.Controls.SetChildIndex(_noticeLabel, _snapshot.IsWebsite ? 2 : 1);
+                    }
+                    else
+                    {
+                        _noticeLabel.Text = _notice;
+                    }
+                }
+
+                if (_reloadNeeded && _reloadButton == null)
+                {
+                    Separator();
+                    AddText("Reload this page to apply your changes.");
+                    _reloadButton = AddAction("Reload", () =>
+                    {
+                        _controller.Reload(_snapshot);
+                        return Task.CompletedTask;
+                    });
+                }
+
+                FitToScreen();
+            }
+            finally
+            {
+                _content.ResumeLayout(true);
+            }
+            _content.AutoScrollPosition = new Point(-scroll.X, -scroll.Y);
         }
 
         private string PageTitle()
@@ -491,8 +538,20 @@ namespace Quartz.Controls
                 await _controller.ResetPermissionsAsync(_snapshot.Origin);
                 _reloadNeeded = true;
                 _permissions = await _controller.GetPermissionsAsync(_snapshot.Origin);
+                if (IsDisposed)
+                {
+                    return;
+                }
+
+                foreach (Control row in _content.Controls)
+                {
+                    foreach (ComboBox choice in row.Controls.OfType<ComboBox>())
+                    {
+                        choice.SelectedIndex = PermissionIndex((CoreWebView2PermissionKind)choice.Tag);
+                    }
+                }
                 _notice = "Site permissions reset.";
-                BuildPage();
+                UpdateStatus();
             });
         }
 
@@ -515,24 +574,18 @@ namespace Quartz.Controls
             {
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 FlatStyle = FlatStyle.Flat,
+                DrawMode = DrawMode.OwnerDrawFixed,
+                ItemHeight = Font.Height + ScalePixels(4),
                 Location = new Point(ScalePixels(202), ScalePixels(4)),
                 Width = ScalePixels(124),
                 BackColor = BackColor,
                 ForeColor = _textColor,
+                Tag = kind,
                 AccessibleName = PermissionName(kind) + " permission"
             };
+            choice.DrawItem += PermissionChoice_DrawItem;
             choice.Items.AddRange(new object[] { "Default", "Allow", "Block" });
-            _permissions.TryGetValue(kind, out CoreWebView2PermissionState state);
-            int savedIndex = 0;
-            if (state == CoreWebView2PermissionState.Allow)
-            {
-                savedIndex = 1;
-            }
-            else if (state == CoreWebView2PermissionState.Deny)
-            {
-                savedIndex = 2;
-            }
-            choice.SelectedIndex = savedIndex;
+            choice.SelectedIndex = PermissionIndex(kind);
             choice.SelectionChangeCommitted += async (s, e) =>
             {
                 int selected = choice.SelectedIndex;
@@ -552,16 +605,15 @@ namespace Quartz.Controls
 
                         await _controller.SetPermissionAsync(_snapshot.Origin, kind, next);
                         _permissions[kind] = next;
-                        savedIndex = selected;
                         _reloadNeeded = true;
                         _notice = PermissionName(kind) + " updated.";
-                        BuildPage();
+                        UpdateStatus();
                     }
                     catch
                     {
                         if (!choice.IsDisposed)
                         {
-                            choice.SelectedIndex = savedIndex;
+                            choice.SelectedIndex = PermissionIndex(kind);
                         }
 
                         throw;
@@ -573,6 +625,40 @@ namespace Quartz.Controls
             _content.Controls.Add(row);
         }
 
+        private int PermissionIndex(CoreWebView2PermissionKind kind)
+        {
+            _permissions.TryGetValue(kind, out CoreWebView2PermissionState state);
+            if (state == CoreWebView2PermissionState.Allow)
+            {
+                return 1;
+            }
+            if (state == CoreWebView2PermissionState.Deny)
+            {
+                return 2;
+            }
+            return 0;
+        }
+
+        private void PermissionChoice_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0)
+            {
+                return;
+            }
+
+            ComboBox choice = (ComboBox)sender;
+            bool selected = (e.State & DrawItemState.Selected) != 0;
+            using (var brush = new SolidBrush(selected ? _pressedColor : BackColor))
+            {
+                e.Graphics.FillRectangle(brush, e.Bounds);
+            }
+
+            Rectangle textBounds = Rectangle.Inflate(e.Bounds, -ScalePixels(4), 0);
+            TextRenderer.DrawText(e.Graphics, choice.Items[e.Index].ToString(), choice.Font,
+                textBounds, _textColor, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix);
+            e.DrawFocusRectangle();
+        }
+
         private void BuildCookies()
         {
             AddText("Cookies available to this host, including all paths and shared parent-domain cookies. Embedded third-party sites are not included.", false, _secondaryTextColor);
@@ -582,7 +668,7 @@ namespace Quartz.Controls
                 return;
             }
 
-            AddText("Site storage: " + (_usage.HasValue ? FormatBytes(_usage.Value) : "Unavailable"), true);
+            var storage = AddText("Site storage: " + (_usage.HasValue ? FormatBytes(_usage.Value) : "Unavailable"), true);
             AddText("Storage includes databases, service workers and cached site data. Some storage types may not be included in the reported size.", false, _secondaryTextColor);
             if (_cookies == null)
             {
@@ -596,6 +682,7 @@ namespace Quartz.Controls
                 FullRowSelect = true,
                 MultiSelect = false,
                 HideSelection = false,
+                OwnerDraw = true,
                 Size = new Size(ContentWidth, ScalePixels(190)),
                 BackColor = BackColor,
                 ForeColor = _textColor,
@@ -603,8 +690,21 @@ namespace Quartz.Controls
                 Margin = new Padding(0, 0, 0, ScalePixels(8)),
                 AccessibleName = "Site cookies"
             };
+            list.DrawColumnHeader += CookieList_DrawColumnHeader;
+            list.DrawSubItem += CookieList_DrawSubItem;
             list.Columns.Add("Name", ScalePixels(152));
             list.Columns.Add("Domain", ScalePixels(148));
+            list.ClientSizeChanged += (s, e) =>
+            {
+                // Resizing can also fire while the page's controls are being disposed.
+                if (list.Disposing || list.IsDisposed || list.Columns.Count < 2)
+                {
+                    return;
+                }
+
+                list.Columns[1].Width = Math.Max(1, list.ClientSize.Width - list.Columns[0].Width);
+            };
+            list.Columns[1].Width = Math.Max(1, list.ClientSize.Width - list.Columns[0].Width);
             foreach (var cookie in _cookies)
             {
                 list.Items.Add(new ListViewItem(new[] { cookie.Name, cookie.Domain }) { Tag = cookie });
@@ -619,7 +719,8 @@ namespace Quartz.Controls
                     return;
                 }
 
-                var cookie = (CoreWebView2Cookie)list.SelectedItems[0].Tag;
+                var item = list.SelectedItems[0];
+                var cookie = (CoreWebView2Cookie)item.Tag;
                 if (!Confirm("Remove this cookie? This may sign you out or reset a site preference."))
                 {
                     return;
@@ -628,14 +729,25 @@ namespace Quartz.Controls
                 await _controller.DeleteCookieAsync(cookie);
                 _cookies.Remove(cookie);
                 _reloadNeeded = true;
-                BuildPage();
+                if (list.IsDisposed)
+                {
+                    return;
+                }
+                item.Remove();
+                UpdateStatus();
             });
             remove.Enabled = false;
             list.SelectedIndexChanged += (s, e) =>
             {
+                if (list.Disposing || list.IsDisposed)
+                {
+                    return;
+                }
                 remove.Enabled = list.SelectedItems.Count > 0;
                 if (list.SelectedItems.Count == 0)
                 {
+                    details.Text = "Select a cookie to inspect its details.";
+                    FitToScreen();
                     return;
                 }
 
@@ -653,8 +765,67 @@ namespace Quartz.Controls
                 await _controller.ClearSiteDataAsync(_snapshot.Uri);
                 _reloadNeeded = true;
                 _notice = "Site data cleared.";
-                await LoadDetailsAsync();
+                // Read back the actual data: a live page can create cookies again.
+                _cookies = await _controller.GetCookiesAsync(_snapshot.Uri);
+                try
+                {
+                    _usage = await _controller.GetStorageUsageAsync(_snapshot.Origin);
+                }
+                catch (Exception ex)
+                {
+                    _usage = null;
+                    SiteInfoController.Report("read storage", ex);
+                }
+                if (list.IsDisposed)
+                {
+                    return;
+                }
+                list.BeginUpdate();
+                try
+                {
+                    list.Items.Clear();
+                    foreach (var cookie in _cookies)
+                    {
+                        list.Items.Add(new ListViewItem(new[] { cookie.Name, cookie.Domain }) { Tag = cookie });
+                    }
+                }
+                finally
+                {
+                    list.EndUpdate();
+                }
+                storage.Text = "Site storage: " + (_usage.HasValue ? FormatBytes(_usage.Value) : "Unavailable");
+                UpdateStatus();
             });
+        }
+
+        private void CookieList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            DrawCookieCell(e.Graphics, e.Bounds, e.Header.Text, _hoverColor);
+            using (var pen = new Pen(_borderColor))
+            {
+                e.Graphics.DrawLine(pen, e.Bounds.Left, e.Bounds.Bottom - 1, e.Bounds.Right, e.Bounds.Bottom - 1);
+            }
+        }
+
+        private void CookieList_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        {
+            DrawCookieCell(e.Graphics, e.Bounds, e.SubItem.Text, e.Item.Selected ? _pressedColor : BackColor);
+            if (e.ColumnIndex == 0 && e.Item.Focused && ((ListView)sender).Focused)
+            {
+                e.DrawFocusRectangle(e.Bounds);
+            }
+        }
+
+        private void DrawCookieCell(Graphics graphics, Rectangle bounds, string text, Color background)
+        {
+            using (var brush = new SolidBrush(background))
+            {
+                graphics.FillRectangle(brush, bounds);
+            }
+
+            Rectangle textBounds = Rectangle.Inflate(bounds, -ScalePixels(4), 0);
+            TextRenderer.DrawText(graphics, text, Font, textBounds, _textColor,
+                TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
         }
 
         private async Task RunActionAsync(Func<Task> action)
@@ -665,6 +836,8 @@ namespace Quartz.Controls
             }
 
             _busy = true;
+            Control focusedControl = ActiveControl;
+            Point scroll = _content.AutoScrollPosition;
             _content.Enabled = false;
             try
             {
@@ -676,7 +849,7 @@ namespace Quartz.Controls
                 if (!IsDisposed)
                 {
                     _notice = "Couldn't finish that action. Some changes may have applied. Reopen this panel to refresh.";
-                    BuildPage();
+                    UpdateStatus();
                 }
             }
             finally
@@ -685,6 +858,11 @@ namespace Quartz.Controls
                 if (!IsDisposed)
                 {
                     _content.Enabled = true;
+                    if (focusedControl != null && !focusedControl.IsDisposed && focusedControl.CanFocus)
+                    {
+                        focusedControl.Focus();
+                        _content.AutoScrollPosition = new Point(-scroll.X, -scroll.Y);
+                    }
                 }
             }
         }
@@ -719,16 +897,19 @@ namespace Quartz.Controls
             return label;
         }
 
-        private Button SmallButton(string text, string accessible)
+        private Button SmallButton(SiteInfoIcon icon, string accessible)
         {
-            Button button = new Button();
-            button.Text = text;
+            SiteInfoButton button = new SiteInfoButton();
+            button.IconKind = icon;
             button.AccessibleName = accessible;
             button.FlatStyle = FlatStyle.Flat;
             button.Size = new Size(ScalePixels(28), ScalePixels(28));
             button.ForeColor = _secondaryTextColor;
             button.BackColor = BackColor;
+            button.UseVisualStyleBackColor = false;
             button.FlatAppearance.BorderSize = 0;
+            button.FlatAppearance.MouseOverBackColor = _hoverColor;
+            button.FlatAppearance.MouseDownBackColor = _pressedColor;
             button.TabStop = true;
             return button;
         }
@@ -743,19 +924,47 @@ namespace Quartz.Controls
                 FlatStyle = FlatStyle.Flat,
                 ForeColor = _linkColor,
                 BackColor = BackColor,
+                UseVisualStyleBackColor = false,
                 Size = new Size(ContentWidth, ScalePixels(38)),
                 Margin = new Padding(0, 0, 0, ScalePixels(4)),
                 Padding = new Padding(ScalePixels(4), 0, 0, 0),
                 FlatAppearance =
                 {
                     BorderSize = 0,
-                    MouseOverBackColor = _borderColor
+                    MouseOverBackColor = _hoverColor,
+                    MouseDownBackColor = _pressedColor
                 },
                 Cursor = Cursors.Hand
             };
+            button.Paint += PopupButton_Paint;
             button.Click += async (s, e) => await RunActionAsync(action);
             _content.Controls.Add(button);
             return button;
+        }
+
+        private void PopupButton_Paint(object sender, PaintEventArgs e)
+        {
+            Button button = (Button)sender;
+            if (button.Enabled)
+            {
+                return;
+            }
+
+            // WinForms' default disabled text can disappear on the black theme.
+            using (var brush = new SolidBrush(BackColor))
+            {
+                e.Graphics.FillRectangle(brush, button.ClientRectangle);
+            }
+
+            TextFormatFlags alignment = TextFormatFlags.Left;
+            if (button.TextAlign == ContentAlignment.MiddleCenter)
+            {
+                alignment = TextFormatFlags.HorizontalCenter;
+            }
+
+            Rectangle textBounds = Rectangle.Inflate(button.ClientRectangle, -ScalePixels(4), 0);
+            TextRenderer.DrawText(e.Graphics, button.Text, button.Font, textBounds, BlendThemeColor(65),
+                alignment | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
         }
 
         private void AddNavigation(string label, string page)
@@ -780,7 +989,10 @@ namespace Quartz.Controls
         private void FitToScreen()
         {
             var area = Screen.FromPoint(_anchor).WorkingArea;
-            int preferred = _content.Controls.Cast<Control>().Sum(c => c.Height + c.Margin.Vertical) + ScalePixels(32) + 2;
+            // Auto-sized labels have not received their final height during a rebuild.
+            int preferred = _content.Controls.Cast<Control>().Sum(c =>
+                (c.AutoSize ? c.GetPreferredSize(new Size(ContentWidth, 0)).Height : c.Height)
+                + c.Margin.Vertical) + ScalePixels(32) + 2;
             int height = Math.Min(Math.Max(ScalePixels(180), preferred), Math.Min(ScalePixels(660), area.Height - ScalePixels(24)));
             if (preferred > height)
             {

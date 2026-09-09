@@ -74,7 +74,7 @@
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.pnlTop = new System.Windows.Forms.Panel();
-            this.picFavicon = new System.Windows.Forms.PictureBox();
+            this.btnSiteInformation = new Quartz.Controls.SiteInfoButton();
             this.pnlFavourites = new System.Windows.Forms.FlowLayoutPanel();
             this.txtWebAddress = new System.Windows.Forms.RichTextBox();
             this.btnSettings = new System.Windows.Forms.Button();
@@ -133,7 +133,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.wvLoadingProgress)).BeginInit();
             this.mnuSearch.SuspendLayout();
             this.pnlTop.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picFavicon)).BeginInit();
             this.SettingsMenuStrip.SuspendLayout();
             this.mnuHistory.SuspendLayout();
             this.mnuFavourites.SuspendLayout();
@@ -486,7 +485,7 @@
             // pnlTop
             // 
             this.pnlTop.BackColor = System.Drawing.Color.Transparent;
-            this.pnlTop.Controls.Add(this.picFavicon);
+            this.pnlTop.Controls.Add(this.btnSiteInformation);
             this.pnlTop.Controls.Add(this.wvLoadingProgress);
             this.pnlTop.Controls.Add(this.pnlFavourites);
             this.pnlTop.Controls.Add(this.txtWebAddress);
@@ -504,13 +503,14 @@
             this.pnlTop.ForeColor = System.Drawing.Color.Transparent;
             this.pnlTop.Name = "pnlTop";
             // 
-            // picFavicon
+            // btnSiteInformation
             // 
-            this.picFavicon.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.picFavicon, "picFavicon");
-            this.picFavicon.Name = "picFavicon";
-            this.picFavicon.TabStop = false;
-            this.picFavicon.Click += new System.EventHandler(this.picFavicon_Click);
+            resources.ApplyResources(this.btnSiteInformation, "btnSiteInformation");
+            this.btnSiteInformation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.btnSiteInformation.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSiteInformation.ForeColor = System.Drawing.Color.Black;
+            this.btnSiteInformation.Name = "btnSiteInformation";
+            this.btnSiteInformation.UseVisualStyleBackColor = false;
             // 
             // pnlFavourites
             // 
@@ -831,7 +831,6 @@
             // 
             // UrlLeft
             // 
-            this.UrlLeft.BackColor = System.Drawing.Color.Transparent;
             resources.ApplyResources(this.UrlLeft, "UrlLeft");
             this.UrlLeft.Name = "UrlLeft";
             this.UrlLeft.TabStop = false;
@@ -916,7 +915,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.wvLoadingProgress)).EndInit();
             this.mnuSearch.ResumeLayout(false);
             this.pnlTop.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picFavicon)).EndInit();
             this.SettingsMenuStrip.ResumeLayout(false);
             this.mnuHistory.ResumeLayout(false);
             this.mnuFavourites.ResumeLayout(false);
@@ -1029,7 +1027,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
         private System.Windows.Forms.ToolStripMenuItem deleteBrowsingDataToolStripMenuItem;
-        public System.Windows.Forms.PictureBox picFavicon;
+        private Quartz.Controls.SiteInfoButton btnSiteInformation;
     }
 }
 

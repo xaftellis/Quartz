@@ -36,6 +36,8 @@ namespace Quartz.Libs
         {
             _webView = view;
             _siteInfoButton = button;
+            _tooltip.OwnerDraw = true;
+            _tooltip.Draw += Tooltip_Draw;
             button.Click += Button_Click;
             view.VisibleChanged += View_VisibleChanged;
         }
@@ -91,7 +93,21 @@ namespace Quartz.Libs
             _siteInfoButton.BackColor = addressBackground;
             _siteInfoButton.ForeColor = foreground;
             _siteInfoButton.Invalidate();
+            Form browser = _siteInfoButton.FindForm();
+            _tooltip.BackColor = browser?.BackColor ?? SystemColors.Window;
+            _tooltip.ForeColor = browser?.ForeColor ?? SystemColors.WindowText;
             ClosePopup();
+        }
+
+        private void Tooltip_Draw(object sender, DrawToolTipEventArgs e)
+        {
+            e.DrawBackground();
+            using (var pen = new Pen(_tooltip.ForeColor))
+            {
+                e.Graphics.DrawRectangle(pen, 0, 0, e.Bounds.Width - 1, e.Bounds.Height - 1);
+            }
+
+            e.DrawText();
         }
 
         private void NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
@@ -310,7 +326,17 @@ namespace Quartz.Libs
                 return;
             }
 
-            _siteInfoPopup = new SiteInfoPopup(this, GetSnapshot(), _siteInfoButton.BackColor.GetBrightness() < .45f, _siteInfoButton.DeviceDpi / 96f);
+            Form browser = _siteInfoButton.FindForm();
+            Color popupBackground = browser?.BackColor ?? SystemColors.Window;
+            Color popupForeground = browser?.ForeColor ?? SystemColors.WindowText;
+            _siteInfoPopup = new SiteInfoPopup(this, GetSnapshot(), popupBackground, popupForeground, _siteInfoButton.DeviceDpi / 96f);
+            _siteInfoPopup.VisibleChanged += (s, args) =>
+            {
+                if (ReferenceEquals(_siteInfoPopup, s) && !_siteInfoButton.IsDisposed)
+                {
+                    _siteInfoButton.IsPopupOpen = _siteInfoPopup.Visible;
+                }
+            };
             _siteInfoPopup.FormClosed += (s, args) =>
             {
                 if (_siteInfoButton.ClientRectangle.Contains(_siteInfoButton.PointToClient(Cursor.Position)))
@@ -321,6 +347,10 @@ namespace Quartz.Libs
                 if (ReferenceEquals(_siteInfoPopup, s))
                 {
                     _siteInfoPopup = null;
+                    if (!_siteInfoButton.IsDisposed)
+                    {
+                        _siteInfoButton.IsPopupOpen = false;
+                    }
                 }
             };
             Point location = _siteInfoButton.PointToScreen(new Point(-10, _siteInfoButton.Height + 8));

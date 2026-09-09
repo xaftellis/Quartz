@@ -48,13 +48,15 @@ namespace EasyTabs
 			_loadingAnimationTimer.Enabled = !IsDisposed && !Disposing && !_parentForm.IsDisposed &&
 				!_parentForm.Disposing && _parentForm.Visible &&
 				_parentForm.WindowState != FormWindowState.Minimized &&
-				_parentForm.Tabs.Any(tab => tab.IsLoading && !tab.Content.IsDisposed);
+				(_parentForm.Tabs.Any(tab => tab.IsLoading && !tab.Content.IsDisposed) ||
+					(_parentForm.TabRenderer != null && _parentForm.TabRenderer.IsLayoutAnimating));
 		}
 
 		private void LoadingAnimation_Tick(object sender, EventArgs e)
 		{
 			UpdateLoadingAnimation();
-			// Reuse cached tab backgrounds; loading must never force their recreation every frame.
+			// Share the loading timer with layout easing. Position-only animation
+			// reuses tab backgrounds and the timer stops once both kinds are idle.
 			if (_loadingAnimationTimer.Enabled) Render();
 		}
 
@@ -716,13 +718,12 @@ namespace EasyTabs
 			{
 				int nCode = mouseEvent.nCode;
 				IntPtr wParam = mouseEvent.wParam;
-				MSLLHOOKSTRUCT? hookStruct = mouseEvent.MouseData;
 
 				if (_singleTabDragOwner != null)
 				{
 					if (_singleTabDragOwner == this && nCode >= 0 && (int)wParam == (int)WM.WM_MOUSEMOVE)
 					{
-						Point nativeCursor = new Point(hookStruct.Value.pt.x, hookStruct.Value.pt.y);
+						Point nativeCursor = Cursor.Position;
 						Invoke(new Action(() => CheckSingleTabWindowDrop(nativeCursor)));
 					}
 					continue;
@@ -730,10 +731,10 @@ namespace EasyTabs
 
 				if (nCode >= 0 && (int) WM.WM_MOUSEMOVE == (int) wParam)
 				{
-					// ReSharper disable PossibleInvalidOperationException
-					Point cursorPosition = new Point(hookStruct.Value.pt.x, hookStruct.Value.pt.y);
-					// ReSharper restore PossibleInvalidOperationException
-					bool reRender = false;
+					// Hook points are physical pixels. Use the same DPI-virtualized screen
+					// coordinates as mouse-down events, overlay bounds and tab drop areas.
+					Point cursorPosition = Cursor.Position;
+					bool reRender = _parentForm.TabRenderer.RequiresHoverRedraw(GetRelativeCursorPosition(cursorPosition));
 
 					if (_tornTab != null && _tornTabDragOwner != this)
 					{
@@ -1208,6 +1209,7 @@ namespace EasyTabs
 
 						// Render the tabs into the bitmap
 						_parentForm.TabRenderer.Render(_parentForm.Tabs, graphics, offset, cursorPosition, forceRedraw);
+						UpdateLoadingAnimation();
 
 						// Cut out a hole in the background so that the control box on the underlying window can be shown
 						if (DisplayType == DisplayType.Classic && (_parentForm.ControlBox || _parentForm.MaximizeBox || _parentForm.MinimizeBox))

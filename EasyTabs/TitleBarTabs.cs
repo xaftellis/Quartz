@@ -181,6 +181,8 @@ namespace EasyTabs
 
 			set
 			{
+				if (ReferenceEquals(_tabRenderer, value)) return;
+				_tabRenderer?.Dispose();
 				_tabRenderer = value;
 				SetFrameSize();
 			}

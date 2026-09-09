@@ -342,8 +342,6 @@ namespace Quartz
             //PANNELS
             pnlDivider.BackColor = PanelbackColor;
 
-            picFavicon.BackColor = PanelbackColor;
-
             pnlDivider.BackColor = dividerColor;
 
             //TEXTBOXS
