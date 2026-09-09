@@ -67,6 +67,8 @@ namespace EasyTabs
             return Math.Abs(next - target) < .25f ? target : next;
         }
 
+        internal void Forget(object item) => _bounds.Remove(item);
+
         internal void Reset()
         {
             _bounds.Clear();

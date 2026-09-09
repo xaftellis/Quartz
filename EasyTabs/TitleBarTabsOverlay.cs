@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,6 +41,17 @@ namespace EasyTabs
 		private static extern bool ReleaseCapture();
 
 		private System.Windows.Forms.Timer _loadingAnimationTimer;
+		private readonly LayeredWindowBuffer _surface = new LayeredWindowBuffer();
+		private bool _renderPending, _forceRenderPending, _rendering;
+
+		// Called on the UI thread. Mouse events share the animation clock instead
+		// of presenting another full frame between every pair of timer ticks.
+		private void RequestRender(bool forceRedraw = false)
+		{
+			_renderPending = true;
+			_forceRenderPending |= forceRedraw;
+			UpdateLoadingAnimation();
+		}
 
 		private void UpdateLoadingAnimation()
 		{
@@ -48,25 +59,26 @@ namespace EasyTabs
 			_loadingAnimationTimer.Enabled = !IsDisposed && !Disposing && !_parentForm.IsDisposed &&
 				!_parentForm.Disposing && _parentForm.Visible &&
 				_parentForm.WindowState != FormWindowState.Minimized &&
-				(_parentForm.Tabs.Any(tab => tab.IsLoading && !tab.Content.IsDisposed) ||
+				(_renderPending || _parentForm.Tabs.Any(tab => tab.IsLoading && !tab.Content.IsDisposed) ||
 					(_parentForm.TabRenderer != null && _parentForm.TabRenderer.IsLayoutAnimating));
 		}
 
 		private void LoadingAnimation_Tick(object sender, EventArgs e)
 		{
 			UpdateLoadingAnimation();
-			// Share the loading timer with layout easing. Position-only animation
-			// reuses tab backgrounds and the timer stops once both kinds are idle.
+			// Render samples the latest pointer once for the shared frame. The timer
+			// stops when loading, animations and pending mouse feedback are all idle.
 			if (_loadingAnimationTimer.Enabled) Render();
 		}
 
-		/// <summary>Releases the window's shared animation timer.</summary>
+		/// <summary>Releases the shared frame timer and native drawing surface.</summary>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
 				_loadingAnimationTimer?.Dispose();
 				_loadingAnimationTimer = null;
+				_surface.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -897,17 +909,12 @@ namespace EasyTabs
 								}));
 					}
 
-					Invoke(new Action(() => OnMouseMove(new MouseEventArgs(MouseButtons.None, 0, cursorPosition.X, cursorPosition.Y, 0))));
-
-					if (_parentForm.TabRenderer.IsTabRepositioning)
+					Invoke(new Action(() =>
 					{
-						reRender = true;
-					}
-
-					if (reRender)
-					{
-						Invoke(new Action(() => Render(cursorPosition, true)));
-					}
+						OnMouseMove(new MouseEventArgs(MouseButtons.None, 0, cursorPosition.X, cursorPosition.Y, 0));
+						if (reRender || _parentForm.TabRenderer.IsTabRepositioning)
+							RequestRender(!(_parentForm.TabRenderer is ChromiumTabRenderer));
+					}));
 				}
 
                 else if (nCode >= 0 && (int) WM.WM_LBUTTONDBLCLK == (int) wParam)
@@ -1188,119 +1195,75 @@ namespace EasyTabs
 		/// <param name="forceRedraw">Flag indicating whether a full render should be forced.</param>
 		public void Render(Point cursorPosition, bool forceRedraw = false)
 		{
-			UpdateLoadingAnimation();
-			if (!IsDisposed && _parentForm.TabRenderer != null && _parentForm.WindowState != FormWindowState.Minimized && _parentForm.ClientRectangle.Width > 0)
+			// Layout/model callbacks may request a repaint during rendering. Defer
+			// those requests so they cannot resize or overwrite the shared surface.
+			if (_rendering)
+			{
+				_renderPending = true;
+				_forceRenderPending |= forceRedraw;
+				return;
+			}
+			if (IsDisposed || Disposing || _parentForm.TabRenderer == null ||
+				_parentForm.WindowState == FormWindowState.Minimized || _parentForm.ClientRectangle.Width <= 0 || Width <= 0 || Height <= 0)
+			{
+				UpdateLoadingAnimation();
+				return;
+			}
+
+			_rendering = true;
+			forceRedraw |= _forceRenderPending;
+			_renderPending = _forceRenderPending = false;
+			try
 			{
 				cursorPosition = GetRelativeCursorPosition(cursorPosition);
-
-				using (Bitmap bitmap = new Bitmap(Width, Height, PixelFormat.Format32bppArgb))
+				_surface.EnsureSize(Width, Height);
+				Graphics graphics = _surface.Graphics;
+				GraphicsState state = graphics.Save();
+				try
 				{
-					using (Graphics graphics = Graphics.FromImage(bitmap))
+					graphics.Clear(Color.Transparent);
+					DrawTitleBarBackground(graphics);
+
+					// Preserve the existing offsets for classic and partial-titlebar renderers.
+					Point offset = _parentForm.WindowState != FormWindowState.Maximized && DisplayType == DisplayType.Classic && !_parentForm.TabRenderer.RendersEntireTitleBar
+						? new Point(0, SystemInformation.CaptionButtonSize.Height)
+						: _parentForm.WindowState != FormWindowState.Maximized && !_parentForm.TabRenderer.RendersEntireTitleBar
+							? new Point(0, SystemInformation.VerticalResizeBorderThickness - SystemInformation.BorderSize.Height)
+							: Point.Empty;
+					_parentForm.TabRenderer.Render(_parentForm.Tabs, graphics, offset, cursorPosition, forceRedraw);
+
+					// Retain the transparent hole for the underlying classic control box.
+					if (DisplayType == DisplayType.Classic && (_parentForm.ControlBox || _parentForm.MaximizeBox || _parentForm.MinimizeBox))
 					{
-						DrawTitleBarBackground(graphics);
-
-						// Since classic mode themes draw over the *entire* titlebar, not just the area immediately behind the tabs, we have to offset the tabs
-						// when rendering in the window
-						Point offset = _parentForm.WindowState != FormWindowState.Maximized && DisplayType == DisplayType.Classic && !_parentForm.TabRenderer.RendersEntireTitleBar
-							? new Point(0, SystemInformation.CaptionButtonSize.Height)
-							: _parentForm.WindowState != FormWindowState.Maximized && !_parentForm.TabRenderer.RendersEntireTitleBar
-                                ? new Point(0, SystemInformation.VerticalResizeBorderThickness - SystemInformation.BorderSize.Height)
-								: new Point(0, 0);
-
-						// Render the tabs into the bitmap
-						_parentForm.TabRenderer.Render(_parentForm.Tabs, graphics, offset, cursorPosition, forceRedraw);
-						UpdateLoadingAnimation();
-
-						// Cut out a hole in the background so that the control box on the underlying window can be shown
-						if (DisplayType == DisplayType.Classic && (_parentForm.ControlBox || _parentForm.MaximizeBox || _parentForm.MinimizeBox))
-						{
-							int boxWidth = 0;
-
-							if (_parentForm.ControlBox)
-							{
-								boxWidth += SystemInformation.CaptionButtonSize.Width;
-							}
-
-							if (_parentForm.MinimizeBox)
-							{
-								boxWidth += SystemInformation.CaptionButtonSize.Width;
-							}
-
-							if (_parentForm.MaximizeBox)
-							{
-								boxWidth += SystemInformation.CaptionButtonSize.Width;
-							}
-
-							CompositingMode oldCompositingMode = graphics.CompositingMode;
-
-							graphics.CompositingMode = CompositingMode.SourceCopy;
-							graphics.FillRectangle(
-								Brushes.Transparent, Width - boxWidth, 0, boxWidth, SystemInformation.CaptionButtonSize.Height);
-							graphics.CompositingMode = oldCompositingMode;
-						}
-
-						IntPtr screenDc = User32.GetDC(IntPtr.Zero);
-						IntPtr memDc = Gdi32.CreateCompatibleDC(screenDc);
-						IntPtr oldBitmap = IntPtr.Zero;
-						IntPtr bitmapHandle = IntPtr.Zero;
-
-						try
-						{
-							// Copy the contents of the bitmap into memDc
-							bitmapHandle = bitmap.GetHbitmap(Color.FromArgb(0));
-							oldBitmap = Gdi32.SelectObject(memDc, bitmapHandle);
-
-							SIZE size = new SIZE
-							{
-								cx = bitmap.Width,
-								cy = bitmap.Height
-							};
-
-							POINT pointSource = new POINT
-							{
-								x = 0,
-								y = 0
-							};
-							POINT topPos = new POINT
-							{
-								x = Left,
-								y = Top
-							};
-							BLENDFUNCTION blend = new BLENDFUNCTION
-							{
-								// We want to blend the bitmap's content with the screen content under it
-								BlendOp = Convert.ToByte((int) AC.AC_SRC_OVER),
-								BlendFlags = 0,
-								// Follow the parent forms' opacity level
-								SourceConstantAlpha = (byte)(_parentForm.Opacity * 255),
-								// We use the bitmap's alpha channel for blending instead of a pre-defined transparency key
-								AlphaFormat = Convert.ToByte((int) AC.AC_SRC_ALPHA)
-							};
-
-							// Blend the tab content with the underlying content
-							if (!User32.UpdateLayeredWindow(
-								Handle, screenDc, ref topPos, ref size, memDc, ref pointSource, 0, ref blend, ULW.ULW_ALPHA))
-							{
-								int error = Marshal.GetLastWin32Error();
-								throw new Win32Exception(error, "Error while calling UpdateLayeredWindow().");
-							}
-						}
-
-						// Clean up after ourselves
-						finally
-						{
-							User32.ReleaseDC(IntPtr.Zero, screenDc);
-
-							if (bitmapHandle != IntPtr.Zero)
-							{
-								Gdi32.SelectObject(memDc, oldBitmap);
-								Gdi32.DeleteObject(bitmapHandle);
-							}
-
-							Gdi32.DeleteDC(memDc);
-						}
+						int boxes = (_parentForm.ControlBox ? 1 : 0) + (_parentForm.MinimizeBox ? 1 : 0) + (_parentForm.MaximizeBox ? 1 : 0);
+						int boxWidth = boxes * SystemInformation.CaptionButtonSize.Width;
+						graphics.CompositingMode = CompositingMode.SourceCopy;
+						graphics.FillRectangle(Brushes.Transparent, Width - boxWidth, 0, boxWidth, SystemInformation.CaptionButtonSize.Height);
 					}
 				}
+				finally { graphics.Restore(state); }
+
+				// GDI+ draws directly into the selected premultiplied DIB. Finish its
+				// writes before Windows reads it; no GetHbitmap allocation/copy is needed.
+				graphics.Flush(FlushIntention.Sync);
+				SIZE size = new SIZE { cx = _surface.Bitmap.Width, cy = _surface.Bitmap.Height };
+				POINT pointSource = new POINT { x = 0, y = 0 };
+				POINT topPos = new POINT { x = Left, y = Top };
+				BLENDFUNCTION blend = new BLENDFUNCTION
+				{
+					BlendOp = Convert.ToByte((int)AC.AC_SRC_OVER),
+					BlendFlags = 0,
+					SourceConstantAlpha = (byte)(_parentForm.Opacity * 255),
+					AlphaFormat = Convert.ToByte((int)AC.AC_SRC_ALPHA)
+				};
+				if (!User32.UpdateLayeredWindow(Handle, IntPtr.Zero, ref topPos, ref size,
+					_surface.DeviceContext, ref pointSource, 0, ref blend, ULW.ULW_ALPHA))
+					throw new Win32Exception(Marshal.GetLastWin32Error(), "Error while calling UpdateLayeredWindow().");
+			}
+			finally
+			{
+				_rendering = false;
+				UpdateLoadingAnimation();
 			}
 		}
 

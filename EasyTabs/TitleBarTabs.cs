@@ -875,6 +875,7 @@ namespace EasyTabs
 			int removeIndex = Tabs.IndexOf(closingTab);
 			int selectedTabIndex = SelectedTabIndex;
 
+			TabRenderer?.BeginTabClose(closingTab);
 			Tabs.Remove(closingTab);
 
 			if (selectedTabIndex > removeIndex)

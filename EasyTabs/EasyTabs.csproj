@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseTabRenderer.cs" />
+    <Compile Include="LayeredWindowBuffer.cs" />
     <Compile Include="TabLayoutAnimation.cs" />
     <Compile Include="ChromeTabRenderer.cs" />
     <Compile Include="ChromiumTabRenderer.cs" />

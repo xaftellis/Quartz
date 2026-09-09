@@ -28,6 +28,7 @@ namespace EasyTabs
 		internal virtual bool IsLayoutAnimating { get { return _layoutAnimation.IsAnimating; } }
 		internal virtual bool RequiresHoverRedraw(Point cursor) { return false; }
 		internal virtual void ButtonPointerDown(Point cursor) { }
+		internal virtual void BeginTabClose(TitleBarTab tab) { }
 
 		[DllImport("user32.dll", EntryPoint = "SystemParametersInfoW")]
 		private static extern bool GetSystemAnimationSetting(uint action, uint parameter,

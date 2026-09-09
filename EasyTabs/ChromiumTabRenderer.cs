@@ -21,8 +21,64 @@ namespace EasyTabs
             internal Rectangle Bounds, Target;
             internal float Hover;
             internal Point HoverPoint;
+            internal bool Closing, HasIcon;
+            internal Visual Previous;
             internal readonly ButtonFeedback CloseFeedback = new ButtonFeedback();
-            public void Dispose() { Geometry?.Dispose(); CloseFeedback.Dispose(); }
+            internal readonly ContentCache Content = new ContentCache();
+            public void Dispose() { Geometry?.Dispose(); CloseFeedback.Dispose(); Content.Dispose(); }
+        }
+
+        // Text shaping and favicon conversion are expensive. Keep their transparent
+        // pixels until their inputs change; hover, position and neighbour clipping
+        // are applied when composing the frame and do not invalidate this cache.
+        private sealed class ContentCache : IDisposable
+        {
+            internal SKBitmap Pixels;
+            private Bitmap _bitmap;
+            private Graphics _graphics;
+            private string _caption;
+            private Icon _icon;
+            private Rectangle _iconBounds, _titleBounds;
+            private Color _foreground;
+            private float _scale;
+
+            internal void Update(Size size, string caption, Icon icon, Rectangle iconBounds,
+                Rectangle titleBounds, Color foreground, float scale, Font font, bool force)
+            {
+                if (Pixels == null || Pixels.Width != size.Width || Pixels.Height != size.Height)
+                {
+                    Dispose();
+                    Pixels = new SKBitmap(new SKImageInfo(size.Width, size.Height, SKColorType.Bgra8888, SKAlphaType.Premul));
+                    _bitmap = new Bitmap(size.Width, size.Height, Pixels.RowBytes, PixelFormat.Format32bppPArgb, Pixels.GetPixels());
+                    _graphics = Graphics.FromImage(_bitmap);
+                    _graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                    force = true;
+                }
+                if (!force && _caption == caption && ReferenceEquals(_icon, icon) &&
+                    _iconBounds == iconBounds && _titleBounds == titleBounds && _foreground == foreground && _scale == scale) return;
+
+                _graphics.Clear(Color.Transparent);
+                if (icon != null) _graphics.DrawIcon(icon, iconBounds);
+                if (titleBounds.Width > 0)
+                {
+                    using (var brush = new SolidBrush(foreground))
+                    using (var format = new StringFormat(StringFormat.GenericTypographic)
+                    { FormatFlags = StringFormatFlags.NoWrap, Trimming = StringTrimming.EllipsisCharacter, LineAlignment = StringAlignment.Center })
+                        _graphics.DrawString(caption, font, brush, titleBounds, format);
+                }
+                _graphics.Flush(System.Drawing.Drawing2D.FlushIntention.Sync);
+                Pixels.NotifyPixelsChanged();
+                _caption = caption; _icon = icon; _iconBounds = iconBounds; _titleBounds = titleBounds;
+                _foreground = foreground; _scale = scale;
+            }
+
+            public void Dispose()
+            {
+                _graphics?.Dispose(); _graphics = null;
+                _bitmap?.Dispose(); _bitmap = null;
+                Pixels?.Dispose(); Pixels = null;
+                _icon = null; // Borrowed from the tab's form, never owned here.
+            }
         }
 
         // Chrome 86 uses a 16% hover highlight and 14% ink drop. Close-button
@@ -206,6 +262,24 @@ namespace EasyTabs
                     _addHovered || IsOverAddButton(cursor));
         }
 
+        internal override void BeginTabClose(TitleBarTab tab)
+        {
+            lock (_sync)
+            {
+                Visual visual;
+                int index = _parentWindow.Tabs.IndexOf(tab);
+                if (_disposed || index < 0 || !ShouldAnimateLayout() ||
+                    (_parentWindow.Tabs.Count == 1 && _parentWindow.ExitOnLastTabClose) ||
+                    !_visuals.TryGetValue(tab, out visual) || visual.Geometry == null || visual.Content.Pixels == null) return;
+                visual.Closing = true;
+                visual.Previous = null;
+                if (index > 0) _visuals.TryGetValue(_parentWindow.Tabs[index - 1], out visual.Previous);
+                visual.Hover = 0;
+                visual.CloseFeedback.Cancel();
+                if (_pressedFeedback == visual.CloseFeedback) _pressedFeedback = null;
+            }
+        }
+
         internal override void ButtonPointerDown(Point cursor)
         {
             lock (_sync)
@@ -320,12 +394,17 @@ namespace EasyTabs
                 float step = (float)Math.Max(0, Math.Min(64, now - _lastPaint)) / 200f;
                 _lastPaint = now;
                 bool animate = ShouldAnimateLayout();
-                _animation.BeginFrame(tabs.Cast<object>().Concat(ShowAddButton ? new[] { _addKey } : new object[0]), now, animate);
                 foreach (TitleBarTab removed in _visuals.Keys.Where(t => !tabs.Contains(t)).ToArray())
                 {
+                    Visual visual = _visuals[removed];
+                    if (visual.Closing && animate && !IsTabRepositioning && !_detachedTabX.HasValue &&
+                        visual.Geometry.Scale == scale && visual.Bounds.Y == offset.Y + TopPadding) continue;
                     if (_pressedFeedback == _visuals[removed].CloseFeedback) _pressedFeedback = null;
                     _visuals[removed].Dispose(); _visuals.Remove(removed);
                 }
+                TitleBarTab[] closingTabs = _visuals.Where(pair => pair.Value.Closing).Select(pair => pair.Key).ToArray();
+                _animation.BeginFrame(tabs.Cast<object>().Concat(closingTabs)
+                    .Concat(ShowAddButton ? new[] { _addKey } : new object[0]), now, animate);
 
                 Point screenOrigin = _parentWindow.PointToScreen(Point.Empty);
                 int startX = SystemInformation.BorderSize.Width + offset.X;
@@ -381,6 +460,33 @@ namespace EasyTabs
                     }
                 }
 
+                int closingRight = startX;
+                foreach (TitleBarTab tab in closingTabs)
+                {
+                    Visual visual = _visuals[tab];
+                    Visual previous = visual.Previous;
+                    while (previous != null && previous.Closing) previous = previous.Previous;
+                    // Chromium closes to the overlap width, matching the distance
+                    // the following tabs travel. Only cached pixels are retained;
+                    // the content form has already followed its normal close path.
+                    visual.Target = new Rectangle(previous == null ? startX : previous.Target.Right - OverlapWidth,
+                        y, OverlapWidth, Scale(ChromiumTabMetrics.Height));
+                    visual.Bounds = _animation.GetBounds(tab, visual.Target, false, OverlapWidth);
+                    if (visual.Bounds == visual.Target)
+                    {
+                        visual.Dispose(); _visuals.Remove(tab); _animation.Forget(tab);
+                        continue;
+                    }
+                    ChromiumTabGeometry geometry = visual.Geometry;
+                    if (geometry.Width != visual.Bounds.Width)
+                    {
+                        visual.Geometry = new ChromiumTabGeometry(visual.Bounds.Width, visual.Bounds.Height,
+                            scale, geometry.Stroke, geometry.ExtendHit, geometry.First);
+                        geometry.Dispose();
+                    }
+                    closingRight = Math.Max(closingRight, visual.Bounds.Right);
+                }
+
                 _paintOrder = tabs.OrderBy(t => t.Active ? float.MaxValue : _visuals[t].Hover + (t == _hoveredTab ? 2 : 0))
                     .ThenByDescending(t => tabs.IndexOf(t)).ToList();
                 _hoveredTab = IsTabRepositioning ? null : FindTab(cursor);
@@ -405,8 +511,11 @@ namespace EasyTabs
                     // the area below the trailing tabs and the new-tab button.
                     using (var paint = new SKPaint { Color = ToSkia(Theme.ActiveTab) })
                         canvas.DrawRect(0, y + Scale(34), _pixels.Width, Scale(1), paint);
-                    foreach (TitleBarTab tab in _paintOrder) PaintTab(canvas, tab, tabs, cursor, now, animate);
-                    PaintAddButton(canvas, tabs, startX, y, cursor, now, animate);
+                    // Closing visuals are never added to the mouse hit-test order.
+                    foreach (TitleBarTab tab in closingTabs)
+                        if (_visuals.ContainsKey(tab)) PaintTab(canvas, tab, tabs, cursor, now, animate, false);
+                    foreach (TitleBarTab tab in _paintOrder) PaintTab(canvas, tab, tabs, cursor, now, animate, forceRedraw);
+                    PaintAddButton(canvas, tabs, startX, y, cursor, now, animate, closingRight);
                     canvas.Flush();
                 }
                 graphics.DrawImageUnscaled(_buffer, 0, 0);
@@ -424,20 +533,20 @@ namespace EasyTabs
             _buffer = new Bitmap(width, height, _pixels.RowBytes, PixelFormat.Format32bppPArgb, _pixels.GetPixels());
         }
 
-        private void PaintTab(SKCanvas canvas, TitleBarTab tab, List<TitleBarTab> tabs, Point cursor, double now, bool animate)
+        private void PaintTab(SKCanvas canvas, TitleBarTab tab, List<TitleBarTab> tabs, Point cursor, double now, bool animate, bool forceRedraw)
         {
             Visual visual = _visuals[tab];
             ChromiumTabGeometry geometry = visual.Geometry;
             int index = tabs.IndexOf(tab);
             float scale = geometry.Scale;
-            float leading = SeparatorOpacity(tab, index > 0 ? tabs[index - 1] : null, true);
-            float trailing = SeparatorOpacity(tab, index + 1 < tabs.Count ? tabs[index + 1] : null, false);
+            float leading = visual.Closing ? 0 : SeparatorOpacity(tab, index > 0 ? tabs[index - 1] : null, true);
+            float trailing = visual.Closing ? 0 : SeparatorOpacity(tab, index + 1 < tabs.Count ? tabs[index + 1] : null, false);
             float t = ChromiumTabMetrics.Clamp((geometry.Width / scale - 256) / (32 - 256f), 0, 1);
             float hoverOpacity = (Theme.HoverMinimum + (Theme.HoverMaximum - Theme.HoverMinimum) * t * t) * visual.Hover;
             Color background = tab.Active ? Theme.ActiveTab : ChromiumTabTheme.Blend(Theme.InactiveTab, Theme.ActiveTab, hoverOpacity);
             Color foreground = tab.Active || hoverOpacity > .5f ? Theme.ActiveForeground : Theme.InactiveForeground;
             canvas.Save();
-            canvas.Translate(tab.Area.X, tab.Area.Y);
+            canvas.Translate(visual.Bounds.X, visual.Bounds.Y);
             using (var paint = new SKPaint { IsAntialias = true, Color = ToSkia(background) })
             {
                 canvas.DrawPath(geometry.Fill, paint);
@@ -468,8 +577,9 @@ namespace EasyTabs
             // glyph box; Chromium's larger touch-only border isn't a mouse target.
             float contentsWidth = geometry.Width / scale - 32;
             bool roomy = contentsWidth >= 68;
-            bool close = tab.ShowCloseButton && (tab.Active || roomy);
-            bool hasIcon = tab.IsLoading || (tab.Content.ShowIcon && tab.Content.Icon != null);
+            bool close = tab.ShowCloseButton && (tab.Active || roomy) && (!visual.Closing || contentsWidth >= 16);
+            if (!visual.Closing) visual.HasIcon = tab.IsLoading || (tab.Content.ShowIcon && tab.Content.Icon != null);
+            bool hasIcon = visual.HasIcon;
             bool icon = hasIcon && (!tab.Active || contentsWidth - (close ? 16 : 0) >= 16);
             bool centerIcon = icon && !tab.Active && contentsWidth < 16;
             int contentStart = Scale(roomy ? 20 : 16);
@@ -479,43 +589,45 @@ namespace EasyTabs
             tab.CloseButtonArea = close ? new Rectangle(closeX, centerY, Scale(16), Scale(16)) : Rectangle.Empty;
             if (close)
             {
-                bool hovered = !IsTabRepositioning && IsOverCloseButton(tab, cursor);
+                bool hovered = !visual.Closing && !IsTabRepositioning && IsOverCloseButton(tab, cursor);
                 visual.CloseFeedback.Update(hovered, now, animate);
                 _buttonAnimating |= visual.CloseFeedback.IsAnimating;
                 visual.CloseFeedback.Paint(canvas, closeX + 8 * scale, centerY + 8 * scale, 8 * scale, background);
                 PaintClose(canvas, closeX, centerY, scale, foreground);
             }
             else { visual.CloseFeedback.Cancel(); visual.CloseFeedback.Update(false, now, false); }
-            canvas.Restore(); canvas.Flush();
-
-            // Preserve Windows text fallback/shaping and the existing SVG/favicon
-            // loader. Skia owns the tab shapes; GDI draws content into the same pixels.
-            using (Graphics content = Graphics.FromImage(_buffer))
+            int titleLeft = icon ? Math.Max(contentStart, iconX + Scale(24)) : contentStart;
+            int titleRight = close ? closeX - Scale(4) : geometry.Width - Scale(16);
+            if (_font == null || _fontScale != scale)
             {
-                RectangleF clip = geometry.ContentClip(leading, trailing);
-                clip.Offset(tab.Area.Location);
-                content.SetClip(clip);
-                if (icon)
+                _font?.Dispose(); _font = new Font("Segoe UI", 12 * scale, FontStyle.Regular, GraphicsUnit.Pixel); _fontScale = scale;
+            }
+            var iconBounds = new Rectangle(iconX, centerY, Scale(16), Scale(16));
+            var titleBounds = new Rectangle(titleLeft, Scale(geometry.Stroke), Math.Max(0, titleRight - titleLeft),
+                geometry.Height - Scale(1 + geometry.Stroke * 2));
+            if (!visual.Closing)
+                visual.Content.Update(tab.Area.Size, tab.Caption, icon && !tab.IsLoading ? tab.Content.Icon : null,
+                    iconBounds, titleBounds, foreground, scale, _font, forceRedraw);
+            RectangleF clip = geometry.ContentClip(leading, trailing);
+            if (visual.Closing && close)
+                clip.Width = Math.Max(0, Math.Min(clip.Right, titleRight) - clip.Left);
+            canvas.Save();
+            canvas.ClipRect(new SKRect(clip.Left, clip.Top, clip.Right, clip.Bottom));
+            canvas.DrawBitmap(visual.Content.Pixels, 0, 0, new SKSamplingOptions(SKFilterMode.Nearest));
+            canvas.Restore();
+            canvas.Restore();
+
+            // The loading indicator changes every frame; keep it out of the static
+            // content cache, while retaining its existing rendering and timing.
+            if (!visual.Closing && icon && tab.IsLoading)
+            {
+                canvas.Flush();
+                using (Graphics content = Graphics.FromImage(_buffer))
                 {
-                    var iconBounds = new Rectangle(tab.Area.X + iconX, tab.Area.Y + centerY, Scale(16), Scale(16));
-                    if (tab.IsLoading) TabLoadingIndicator.Draw(content, iconBounds, LoadingIndicatorColor, tab.LoadingElapsedMilliseconds);
-                    else content.DrawIcon(tab.Content.Icon, iconBounds);
-                }
-                int titleLeft = icon ? Math.Max(contentStart, iconX + Scale(24)) : contentStart;
-                int titleRight = close ? closeX - Scale(4) : geometry.Width - Scale(16);
-                if (titleRight > titleLeft)
-                {
-                    if (_font == null || _fontScale != scale)
-                    {
-                        _font?.Dispose(); _font = new Font("Segoe UI", 12 * scale, FontStyle.Regular, GraphicsUnit.Pixel); _fontScale = scale;
-                    }
-                    content.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-                    using (var brush = new SolidBrush(foreground))
-                    using (var format = new StringFormat(StringFormat.GenericTypographic)
-                    { FormatFlags = StringFormatFlags.NoWrap, Trimming = StringTrimming.EllipsisCharacter, LineAlignment = StringAlignment.Center })
-                        content.DrawString(tab.Caption, _font, brush,
-                            new RectangleF(tab.Area.X + titleLeft, tab.Area.Y + Scale(geometry.Stroke), titleRight - titleLeft,
-                                geometry.Height - Scale(1 + geometry.Stroke * 2)), format);
+                    clip.Offset(tab.Area.Location);
+                    content.SetClip(clip);
+                    iconBounds.Offset(tab.Area.Location);
+                    TabLoadingIndicator.Draw(content, iconBounds, LoadingIndicatorColor, tab.LoadingElapsedMilliseconds);
                 }
             }
         }
@@ -542,7 +654,7 @@ namespace EasyTabs
             }
         }
 
-        private void PaintAddButton(SKCanvas canvas, List<TitleBarTab> tabs, int startX, int y, Point cursor, double now, bool animate)
+        private void PaintAddButton(SKCanvas canvas, List<TitleBarTab> tabs, int startX, int y, Point cursor, double now, bool animate, int closingRight)
         {
             if (!ShowAddButton)
             {
@@ -553,11 +665,20 @@ namespace EasyTabs
                 if (_pressedFeedback == _addFeedback) _pressedFeedback = null;
                 return;
             }
-            int right = tabs.Count == 0 ? startX : tabs.Max(t => t.Area.Right);
-            int x = Math.Min(startX + _maxTabArea.Width, right);
+            // Anchor to the normal layout, so reordering cannot pull the button
+            // inward. A drag only pushes it out when tabs enter unused strip space.
+            int right = tabs.Count == 0 ? startX : _visuals[tabs[tabs.Count - 1]].Target.Right;
+            int visibleRight = tabs.Count == 0 ? startX : tabs.Max(t => t.Area.Right);
+            visibleRight = Math.Max(visibleRight, closingRight);
+            bool dragging = IsTabRepositioning || _detachedTabX.HasValue;
+            if (dragging) right = Math.Max(right, visibleRight);
+            int maximumX = startX + _maxTabArea.Width;
+            int x = Math.Min(maximumX, right);
             var target = new Rectangle(x, y + Scale(3), Scale(28), Scale(28));
-            _addButtonArea = _animation.GetBounds(_addKey, target, IsTabRepositioning || _detachedTabX.HasValue, target.Width);
-            _addButtonArea.X = Math.Max(_addButtonArea.X, x);
+            _addButtonArea = _animation.GetBounds(_addKey, target, dragging, target.Width);
+            // Stay clear of opening/closing tabs, but never cross the fixed limit,
+            // including while the window is shrinking or tab widths are animating.
+            _addButtonArea.X = Math.Min(maximumX, Math.Max(_addButtonArea.X, visibleRight));
             float cx = _addButtonArea.X + _addButtonArea.Width / 2f;
             float cy = _addButtonArea.Y + _addButtonArea.Height / 2f;
             _addHovered = !IsTabRepositioning && IsOverAddButton(cursor);
@@ -584,6 +705,7 @@ namespace EasyTabs
                 _parentWindow.Deactivate -= ParentDeactivated;
                 foreach (Visual visual in _visuals.Values) visual.Dispose();
                 _visuals.Clear(); _paintOrder.Clear();
+                _animation.Reset();
                 _buffer?.Dispose(); _pixels?.Dispose(); _font?.Dispose();
                 _addFeedback.Dispose(); _pressedFeedback = null;
                 _sizingBoxes.Dispose();
