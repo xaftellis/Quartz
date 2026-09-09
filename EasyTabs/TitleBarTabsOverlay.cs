@@ -1355,6 +1355,7 @@ namespace EasyTabs
 				case WM.WM_NCLBUTTONDOWN:
 				case WM.WM_LBUTTONDOWN:
 					Point relativeCursorPosition = GetRelativeCursorPosition(Cursor.Position);
+					_parentForm.TabRenderer.ButtonPointerDown(relativeCursorPosition);
 
 					// If we were over a tab, set the capture state for the window so that we'll actually receive a WM_LBUTTONUP message
 					if (_parentForm.TabRenderer.OverTab(_parentForm.Tabs, relativeCursorPosition) == null &&

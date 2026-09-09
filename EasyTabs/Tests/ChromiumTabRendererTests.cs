@@ -35,6 +35,7 @@ internal static class ChromiumTabRendererTests
             {
                 TestGeometry(scale);
                 TestRenderer(scale, output);
+                TestButtonFeedback(scale);
             }
             Console.WriteLine("PASS: " + checks + " Chromium geometry, layout, painting and interaction checks.");
             return 0;
@@ -135,6 +136,78 @@ internal static class ChromiumTabRendererTests
         }
     }
 
+    private static void TestButtonFeedback(float scale)
+    {
+        using (var host = new TestHost(ChromiumTabMetrics.Pixel(1100 * scale)))
+        using (var renderer = new ProbeRenderer(host, scale))
+        using (var bitmap = new Bitmap(host.ClientSize.Width, ChromiumTabMetrics.Pixel(90 * scale)))
+        using (Graphics graphics = Graphics.FromImage(bitmap))
+        {
+            renderer.Time = 0;
+            renderer.AnimationsEnabled = false;
+            host.TabRenderer = renderer;
+            for (int i = 0; i < 3; i++) host.Tabs.Add(host.CreateTab());
+            host.SelectedTabIndex = 0;
+            Point cursor = new Point(-100, -100);
+            Action paint = () => renderer.Render(host.Tabs, graphics, Point.Empty, cursor, true);
+            paint();
+            renderer.AnimationsEnabled = true;
+            Rectangle originalTab = Area(host.SelectedTab);
+            Point add = renderer.AddCentre;
+            Check(renderer.NeedsHoverRedraw(add), "entering plus schedules the first hover frame");
+            cursor = add; renderer.Time = 1000; paint();
+            Check(renderer.Feedback(null, "HoverOpacity") == 0 && renderer.Moving, "hover fades from zero after idle");
+            renderer.Time = 1100; paint();
+            float half = renderer.Feedback(null, "HoverOpacity");
+            Check(half > 0 && half < .16f, "plus hover has an intermediate frame");
+            paint();
+            Check(renderer.Feedback(null, "HoverOpacity") == half, "extra repaints do not accelerate the fade");
+            renderer.Time = 1200; paint();
+            Check(renderer.Feedback(null, "HoverOpacity") == .16f && !renderer.Moving, "settled hover stops its timer");
+
+            renderer.Press(add); paint();
+            renderer.Time = 1280; paint();
+            Check(renderer.Feedback(null, "InkOpacity") > 0, "press adds an ink layer");
+            Check(renderer.Feedback(null, "InkProgress") > 0 && renderer.Feedback(null, "InkProgress") < 1, "pressed ripple expands");
+            renderer.Time = 1450; paint();
+            Check(!renderer.Moving && renderer.Feedback(null, "InkOpacity") > 0, "holding a settled button does not keep repainting");
+            renderer.Release(); paint();
+            renderer.Time = 1530; paint();
+            Check(renderer.Feedback(null, "InkOpacity") > 0 && renderer.Feedback(null, "InkOpacity") < .14f, "release fades the ink");
+            Check(renderer.NeedsHoverRedraw(new Point(-100, -100)), "leaving plus schedules fade-out");
+            cursor = new Point(-100, -100); paint();
+            renderer.Time = 1800; paint();
+            Check(!renderer.Moving && renderer.Feedback(null, "HoverOpacity") == 0 && renderer.Feedback(null, "InkOpacity") == 0, "exit and release settle completely");
+            Check(Area(host.SelectedTab) == originalTab && renderer.AddCentre == add, "feedback never moves the buttons or tabs");
+
+            TitleBarTab tab = host.SelectedTab;
+            Rectangle bounds = Area(tab), close = Close(tab);
+            cursor = new Point(bounds.X + close.X + close.Width / 2, bounds.Y + close.Y + close.Height / 2);
+            renderer.Time = 2000; paint();
+            renderer.Time = 2100; paint();
+            Check(renderer.Feedback(tab, "HoverOpacity") > 0 && renderer.Feedback(tab, "HoverOpacity") < .16f, "close button has the requested hover fade");
+            renderer.Press(cursor);
+            renderer.DragButtonPointer(cursor);
+            Check(!renderer.IsTabRepositioning, "close-button press cannot start a tab drag");
+            paint();
+            renderer.Time = 2180; paint();
+            Check(renderer.Feedback(tab, "InkOpacity") > 0, "close press has ink feedback");
+            cursor = new Point(-100, -100); paint(); renderer.Release();
+            renderer.Time = 2450; paint();
+            Check(renderer.Feedback(tab, "InkOpacity") == 0 && !renderer.Moving, "release outside clears the pressed state");
+
+            cursor = add; renderer.Time = 2600; paint(); renderer.Press(cursor); paint();
+            renderer.CancelPress(); paint();
+            Check(renderer.Feedback(null, "InkOpacity") == 0, "deactivation cancels a held button");
+            renderer.ShowAddButton = false; paint();
+            Check(!renderer.Moving && renderer.Feedback(null, "HoverOpacity") == 0, "hiding plus clears all feedback");
+            renderer.ShowAddButton = true;
+            renderer.AnimationsEnabled = false;
+            cursor = add; paint();
+            Check(renderer.Feedback(null, "HoverOpacity") == .16f && !renderer.Moving, "disabled animations retain immediate hover feedback");
+        }
+    }
+
     private static void Settle(ProbeRenderer renderer, Action paint)
     {
         paint();
@@ -155,6 +228,30 @@ internal static class ChromiumTabRendererTests
         private readonly float scale;
         internal ProbeRenderer(TitleBarTabs parent, float scale) : base(parent) { this.scale = scale; }
         protected override float RenderScale => scale;
+        protected override bool ShouldAnimateLayout() => AnimationsEnabled;
+        internal double? Time;
+        protected override double AnimationTimeMilliseconds => Time ?? base.AnimationTimeMilliseconds;
+        internal bool NeedsHoverRedraw(Point cursor) => (bool)typeof(ChromiumTabRenderer).GetMethod("RequiresHoverRedraw", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(this, new object[] { cursor });
+        internal void Press(Point cursor) => typeof(ChromiumTabRenderer).GetMethod("ButtonPointerDown", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(this, new object[] { cursor });
+        internal void Release() => base.Overlay_MouseUp(this, new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
+        internal void CancelPress() => typeof(ChromiumTabRenderer).GetMethod("ParentDeactivated", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(this, new object[] { this, EventArgs.Empty });
+        internal void DragButtonPointer(Point cursor)
+        {
+            base.Overlay_MouseDown(this, new MouseEventArgs(MouseButtons.Left, 1, cursor.X, cursor.Y, 0));
+            base.Overlay_MouseMove(this, new MouseEventArgs(MouseButtons.Left, 0, cursor.X + 100, cursor.Y + 100, 0));
+        }
+        internal float Feedback(TitleBarTab tab, string property)
+        {
+            object feedback;
+            if (tab == null) feedback = typeof(ChromiumTabRenderer).GetField("_addFeedback", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(this);
+            else
+            {
+                var visuals = (System.Collections.IDictionary)typeof(ChromiumTabRenderer).GetField("_visuals", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(this);
+                object visual = visuals[tab];
+                feedback = visual.GetType().GetField("CloseFeedback", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(visual);
+            }
+            return (float)feedback.GetType().GetProperty(property, BindingFlags.Instance | BindingFlags.NonPublic).GetValue(feedback);
+        }
         internal Point AddCentre => new Point(_addButtonArea.X + _addButtonArea.Width / 2, _addButtonArea.Y + _addButtonArea.Height / 2);
         internal bool Moving => (bool)typeof(ChromiumTabRenderer).GetProperty("IsLayoutAnimating", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(this);
         internal object PixelBuffer => typeof(ChromiumTabRenderer).GetField("_pixels", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(this);

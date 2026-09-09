@@ -21,7 +21,118 @@ namespace EasyTabs
             internal Rectangle Bounds, Target;
             internal float Hover;
             internal Point HoverPoint;
-            public void Dispose() { Geometry?.Dispose(); }
+            internal readonly ButtonFeedback CloseFeedback = new ButtonFeedback();
+            public void Dispose() { Geometry?.Dispose(); CloseFeedback.Dispose(); }
+        }
+
+        // Chrome 86 uses a 16% hover highlight and 14% ink drop. Close-button
+        // fading is a Quartz extension: upstream deliberately disables that fade.
+        private sealed class ButtonFeedback : IDisposable
+        {
+            private float _hoverFrom, _hoverTarget;
+            private double _hoverStarted;
+            private double? _pressedAt, _releasedAt;
+            private bool _held, _inside;
+            private SKPath _clip;
+            private float _clipRadius;
+            internal float HoverOpacity { get; private set; }
+            internal float InkOpacity { get; private set; }
+            internal float InkProgress { get; private set; }
+            internal PointF Origin { get; private set; }
+            internal bool IsAnimating { get; private set; }
+
+            private static float Progress(double elapsed, double duration) =>
+                (float)Math.Max(0, Math.Min(1, elapsed / duration));
+            private float HoverAt(double now)
+            {
+                float t = Progress(now - _hoverStarted, 200);
+                t = t * t * (3 - 2 * t);
+                return _hoverFrom + (_hoverTarget - _hoverFrom) * t;
+            }
+
+            internal void Press(double now, PointF origin)
+            {
+                _pressedAt = now;
+                _releasedAt = null;
+                _held = _inside = true;
+                Origin = origin;
+                IsAnimating = true;
+            }
+
+            internal void Release(double now)
+            {
+                if (!_held) return; // The native message and global hook may both release.
+                _held = false;
+                if (_inside) _releasedAt = now;
+                else _pressedAt = _releasedAt = null;
+            }
+
+            internal void Cancel()
+            {
+                _held = false;
+                _pressedAt = _releasedAt = null;
+                InkOpacity = 0;
+            }
+
+            internal void Update(bool hovered, double now, bool animate)
+            {
+                _inside = hovered;
+                float target = hovered ? 1 : 0;
+                if (target != _hoverTarget)
+                {
+                    _hoverFrom = HoverAt(now);
+                    _hoverTarget = target;
+                    _hoverStarted = now;
+                }
+                if (!animate) _hoverFrom = _hoverTarget;
+                HoverOpacity = .16f * HoverAt(now);
+                IsAnimating = animate && HoverAt(now) != _hoverTarget;
+                InkOpacity = 0;
+                if (!_pressedAt.HasValue) return;
+
+                float grow = animate ? Progress(now - _pressedAt.Value, 225) : 1;
+                InkProgress = 1 - (float)Math.Pow(1 - grow, 3);
+                float fade = _releasedAt.HasValue ? (animate ? Progress(now - _releasedAt.Value, 160) : 1) : 0;
+                if (fade == 1)
+                {
+                    _pressedAt = _releasedAt = null;
+                    return;
+                }
+                InkOpacity = _held && !hovered ? 0 : .14f * (1 - fade);
+                IsAnimating |= animate && (grow < 1 || _releasedAt.HasValue);
+            }
+
+            internal void Paint(SKCanvas canvas, float cx, float cy, float radius, Color background)
+            {
+                if (HoverOpacity == 0 && InkOpacity == 0) return;
+                double luminance = ChromiumTabTheme.Luminance(background);
+                SKColor ink = (luminance + .05) / .05 >= 1.05 / (luminance + .05) ? SKColors.Black : SKColors.White;
+                using (var paint = new SKPaint { IsAntialias = true, Color = ink.WithAlpha((byte)(255 * HoverOpacity)) })
+                {
+                    canvas.DrawCircle(cx, cy, radius, paint);
+                    if (InkOpacity == 0) return;
+                    if (_clip == null || _clipRadius != radius)
+                    {
+                        _clip?.Dispose();
+                        using (var path = new SKPathBuilder())
+                        {
+                            path.AddCircle(0, 0, radius, SKPathDirection.Clockwise);
+                            _clip = path.Detach();
+                        }
+                        _clipRadius = radius;
+                    }
+                    canvas.Save();
+                    canvas.Translate(cx, cy);
+                    canvas.ClipPath(_clip, SKClipOperation.Intersect, true);
+                    float x = Origin.X * radius, y = Origin.Y * radius;
+                    float fullRadius = radius + (float)Math.Sqrt(x * x + y * y);
+                    paint.Color = ink.WithAlpha((byte)(255 * InkOpacity));
+                    canvas.DrawCircle(x, y, fullRadius * (.15f + .85f * InkProgress), paint);
+                    canvas.Restore();
+                }
+            }
+
+            public void Dispose() { _clip?.Dispose(); }
         }
 
         private readonly object _sync = new object();
@@ -29,6 +140,8 @@ namespace EasyTabs
         private readonly TabLayoutAnimation _animation = new TabLayoutAnimation();
         private readonly Stopwatch _clock = Stopwatch.StartNew();
         private readonly object _addKey = new object();
+        private readonly ButtonFeedback _addFeedback = new ButtonFeedback();
+        private ButtonFeedback _pressedFeedback;
         private readonly WindowsSizingBoxes _sizingBoxes;
         private readonly Size _originalMinimum;
         private List<TitleBarTab> _paintOrder = new List<TitleBarTab>();
@@ -37,7 +150,7 @@ namespace EasyTabs
         private Font _font;
         private float _fontScale;
         private double _lastPaint;
-        private bool _hoverAnimating, _disposed;
+        private bool _hoverAnimating, _buttonAnimating, _addHovered, _disposed;
         private Point _lastCursor = new Point(int.MinValue, int.MinValue);
         private TitleBarTab _hoveredTab;
         private ChromiumTabTheme _theme = ChromiumTabTheme.Light;
@@ -48,6 +161,7 @@ namespace EasyTabs
             _originalMinimum = parentWindow.MinimumSize;
             AddButtonMarginRight = 45; // Preserve Quartz's draggable caption space.
             parentWindow.Disposed += ParentDisposed;
+            parentWindow.Deactivate += ParentDeactivated;
         }
 
         public ChromiumTabTheme Theme
@@ -68,7 +182,8 @@ namespace EasyTabs
         public override int TabHeight => Scale(ChromiumTabMetrics.Height) + TopPadding;
         public override int OverlapWidth => Scale(ChromiumTabMetrics.Overlap);
         public override bool RendersEntireTitleBar => IsWindows10;
-        internal override bool IsLayoutAnimating => _animation.IsAnimating || _hoverAnimating;
+        internal override bool IsLayoutAnimating => _animation.IsAnimating || _hoverAnimating || _buttonAnimating;
+        protected virtual double AnimationTimeMilliseconds => _clock.Elapsed.TotalMilliseconds;
 
         public override bool IsOverSizingBox(Point cursor) => _sizingBoxes.Contains(cursor);
         public override HT NonClientHitTest(Message message, Point cursor)
@@ -87,7 +202,69 @@ namespace EasyTabs
         internal override bool RequiresHoverRedraw(Point cursor)
         {
             lock (_sync)
-                return cursor != _lastCursor && (_hoveredTab != null || FindTab(cursor) != null);
+                return cursor != _lastCursor && (_hoveredTab != null || FindTab(cursor) != null ||
+                    _addHovered || IsOverAddButton(cursor));
+        }
+
+        internal override void ButtonPointerDown(Point cursor)
+        {
+            lock (_sync)
+            {
+                if (_disposed || IsTabRepositioning) return;
+                _pressedFeedback?.Cancel();
+                _pressedFeedback = null;
+                Rectangle bounds = Rectangle.Empty;
+                TitleBarTab tab = FindTab(cursor);
+                if (tab != null && IsOverCloseButton(tab, cursor))
+                {
+                    _pressedFeedback = _visuals[tab].CloseFeedback;
+                    bounds = tab.CloseButtonArea;
+                    bounds.Offset(tab.Area.Location);
+                }
+                else if (IsOverAddButton(cursor))
+                {
+                    _pressedFeedback = _addFeedback;
+                    bounds = _addButtonArea;
+                }
+                if (_pressedFeedback == null) return;
+                var origin = new PointF(
+                    ChromiumTabMetrics.Clamp((cursor.X - bounds.Left) * 2f / bounds.Width - 1, -1, 1),
+                    ChromiumTabMetrics.Clamp((cursor.Y - bounds.Top) * 2f / bounds.Height - 1, -1, 1));
+                _pressedFeedback.Press(AnimationTimeMilliseconds, origin);
+                _buttonAnimating = true;
+            }
+            _parentWindow.RedrawTabs();
+        }
+
+        protected internal override void Overlay_MouseDown(object sender, MouseEventArgs e)
+        {
+            // A close-button press must not arm the tab's drag operation.
+            if (_pressedFeedback != null) return;
+            base.Overlay_MouseDown(sender, e);
+        }
+
+        protected internal override void Overlay_MouseUp(object sender, MouseEventArgs e)
+        {
+            base.Overlay_MouseUp(sender, e);
+            bool redraw;
+            lock (_sync)
+            {
+                redraw = _pressedFeedback != null;
+                _pressedFeedback?.Release(AnimationTimeMilliseconds);
+                _pressedFeedback = null;
+            }
+            if (redraw) _parentWindow.RedrawTabs();
+        }
+
+        private void ParentDeactivated(object sender, EventArgs e)
+        {
+            lock (_sync)
+            {
+                if (_pressedFeedback == null) return;
+                _pressedFeedback.Cancel();
+                _pressedFeedback = null;
+            }
+            _parentWindow.RedrawTabs();
         }
 
         public override TitleBarTab OverTab(IEnumerable<TitleBarTab> tabs, Point cursor)
@@ -139,13 +316,14 @@ namespace EasyTabs
             {
                 float scale = RenderScale;
                 _sizingBoxes.Scale = scale;
-                double now = _clock.Elapsed.TotalMilliseconds;
+                double now = AnimationTimeMilliseconds;
                 float step = (float)Math.Max(0, Math.Min(64, now - _lastPaint)) / 200f;
                 _lastPaint = now;
                 bool animate = ShouldAnimateLayout();
                 _animation.BeginFrame(tabs.Cast<object>().Concat(ShowAddButton ? new[] { _addKey } : new object[0]), now, animate);
                 foreach (TitleBarTab removed in _visuals.Keys.Where(t => !tabs.Contains(t)).ToArray())
                 {
+                    if (_pressedFeedback == _visuals[removed].CloseFeedback) _pressedFeedback = null;
                     _visuals[removed].Dispose(); _visuals.Remove(removed);
                 }
 
@@ -219,6 +397,7 @@ namespace EasyTabs
                     .ThenByDescending(t => tabs.IndexOf(t)).ToList();
 
                 EnsureBuffer(Math.Max(1, _parentWindow.ClientSize.Width), Math.Max(1, TabHeight + offset.Y));
+                _buttonAnimating = false;
                 using (var canvas = new SKCanvas(_pixels))
                 {
                     canvas.Clear(ToSkia(Theme.Frame));
@@ -226,8 +405,8 @@ namespace EasyTabs
                     // the area below the trailing tabs and the new-tab button.
                     using (var paint = new SKPaint { Color = ToSkia(Theme.ActiveTab) })
                         canvas.DrawRect(0, y + Scale(34), _pixels.Width, Scale(1), paint);
-                    foreach (TitleBarTab tab in _paintOrder) PaintTab(canvas, tab, tabs, cursor);
-                    PaintAddButton(canvas, tabs, startX, y, cursor);
+                    foreach (TitleBarTab tab in _paintOrder) PaintTab(canvas, tab, tabs, cursor, now, animate);
+                    PaintAddButton(canvas, tabs, startX, y, cursor, now, animate);
                     canvas.Flush();
                 }
                 graphics.DrawImageUnscaled(_buffer, 0, 0);
@@ -245,7 +424,7 @@ namespace EasyTabs
             _buffer = new Bitmap(width, height, _pixels.RowBytes, PixelFormat.Format32bppPArgb, _pixels.GetPixels());
         }
 
-        private void PaintTab(SKCanvas canvas, TitleBarTab tab, List<TitleBarTab> tabs, Point cursor)
+        private void PaintTab(SKCanvas canvas, TitleBarTab tab, List<TitleBarTab> tabs, Point cursor, double now, bool animate)
         {
             Visual visual = _visuals[tab];
             ChromiumTabGeometry geometry = visual.Geometry;
@@ -301,8 +480,12 @@ namespace EasyTabs
             if (close)
             {
                 bool hovered = !IsTabRepositioning && IsOverCloseButton(tab, cursor);
-                PaintClose(canvas, closeX, centerY, scale, foreground, hovered);
+                visual.CloseFeedback.Update(hovered, now, animate);
+                _buttonAnimating |= visual.CloseFeedback.IsAnimating;
+                visual.CloseFeedback.Paint(canvas, closeX + 8 * scale, centerY + 8 * scale, 8 * scale, background);
+                PaintClose(canvas, closeX, centerY, scale, foreground);
             }
+            else { visual.CloseFeedback.Cancel(); visual.CloseFeedback.Update(false, now, false); }
             canvas.Restore(); canvas.Flush();
 
             // Preserve Windows text fallback/shaping and the existing SVG/favicon
@@ -347,16 +530,10 @@ namespace EasyTabs
             return 1 - Math.Max(visual.Hover, otherHover);
         }
 
-        private static void PaintClose(SKCanvas canvas, float x, float y, float scale, Color foreground, bool hovered)
+        private static void PaintClose(SKCanvas canvas, float x, float y, float scale, Color foreground)
         {
             using (var paint = new SKPaint { IsAntialias = true, Color = ToSkia(foreground) })
             {
-                if (hovered)
-                {
-                    paint.Color = ToSkia(foreground).WithAlpha(40);
-                    canvas.DrawCircle(x + 8 * scale, y + 8 * scale, 8 * scale, paint);
-                    paint.Color = ToSkia(foreground);
-                }
                 // TabCloseButton::OnPaint: 16-DIP glyph box, 1.5-DIP rounded stroke.
                 paint.Style = SKPaintStyle.Stroke; paint.StrokeWidth = 1.5f * scale; paint.StrokeCap = SKStrokeCap.Round;
                 float inset = 4.75f * scale, end = 11.25f * scale;
@@ -365,9 +542,17 @@ namespace EasyTabs
             }
         }
 
-        private void PaintAddButton(SKCanvas canvas, List<TitleBarTab> tabs, int startX, int y, Point cursor)
+        private void PaintAddButton(SKCanvas canvas, List<TitleBarTab> tabs, int startX, int y, Point cursor, double now, bool animate)
         {
-            if (!ShowAddButton) { _addButtonArea = Rectangle.Empty; return; }
+            if (!ShowAddButton)
+            {
+                _addButtonArea = Rectangle.Empty;
+                _addHovered = false;
+                _addFeedback.Cancel();
+                _addFeedback.Update(false, now, false);
+                if (_pressedFeedback == _addFeedback) _pressedFeedback = null;
+                return;
+            }
             int right = tabs.Count == 0 ? startX : tabs.Max(t => t.Area.Right);
             int x = Math.Min(startX + _maxTabArea.Width, right);
             var target = new Rectangle(x, y + Scale(3), Scale(28), Scale(28));
@@ -375,13 +560,12 @@ namespace EasyTabs
             _addButtonArea.X = Math.Max(_addButtonArea.X, x);
             float cx = _addButtonArea.X + _addButtonArea.Width / 2f;
             float cy = _addButtonArea.Y + _addButtonArea.Height / 2f;
+            _addHovered = !IsTabRepositioning && IsOverAddButton(cursor);
+            _addFeedback.Update(_addHovered, now, animate);
+            _buttonAnimating |= _addFeedback.IsAnimating;
+            _addFeedback.Paint(canvas, cx, cy, Scale(14), Theme.Frame);
             using (var paint = new SKPaint { IsAntialias = true, Color = ToSkia(Theme.InactiveForeground) })
             {
-                if (!IsTabRepositioning && IsOverAddButton(cursor))
-                {
-                    paint.Color = paint.Color.WithAlpha(41); canvas.DrawCircle(cx, cy, Scale(14), paint);
-                    paint.Color = ToSkia(Theme.InactiveForeground);
-                }
                 paint.Style = SKPaintStyle.Stroke; paint.StrokeWidth = 2 * RenderScale; paint.StrokeCap = SKStrokeCap.Round;
                 canvas.DrawLine(cx - Scale(5), cy, cx + Scale(5), cy, paint);
                 canvas.DrawLine(cx, cy - Scale(5), cx, cy + Scale(5), paint);
@@ -397,9 +581,11 @@ namespace EasyTabs
                 if (_disposed) return;
                 _disposed = true;
                 _parentWindow.Disposed -= ParentDisposed;
+                _parentWindow.Deactivate -= ParentDeactivated;
                 foreach (Visual visual in _visuals.Values) visual.Dispose();
                 _visuals.Clear(); _paintOrder.Clear();
                 _buffer?.Dispose(); _pixels?.Dispose(); _font?.Dispose();
+                _addFeedback.Dispose(); _pressedFeedback = null;
                 _sizingBoxes.Dispose();
                 base.Dispose();
             }

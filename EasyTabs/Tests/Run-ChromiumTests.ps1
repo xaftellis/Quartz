@@ -4,7 +4,8 @@ $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $vswherePath = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
 $buildPath = & $vswherePath -latest -products '*' -requires Microsoft.Component.MSBuild -find 'MSBuild/**/Bin/MSBuild.exe' | Select-Object -First 1
 if (!$buildPath) { throw 'MSBuild was not found.' }
-& $buildPath (Join-Path $projectRoot 'EasyTabs.csproj') /t:Build "/p:Configuration=$Configuration" /p:Platform=AnyCPU /nologo /v:minimal
+$solutionRoot = (Resolve-Path (Join-Path $projectRoot '..')).Path + [IO.Path]::DirectorySeparatorChar
+& $buildPath (Join-Path $projectRoot 'EasyTabs.csproj') /t:Build "/p:SolutionDir=$solutionRoot" "/p:Configuration=$Configuration" /p:Platform=AnyCPU /nologo /v:minimal
 if ($LASTEXITCODE) { throw 'EasyTabs build failed.' }
 $compiler = Join-Path (Split-Path $buildPath) 'Roslyn/csc.exe'
 $buildDirectory = Join-Path $projectRoot "bin/$Configuration"
