@@ -15,6 +15,10 @@ release, click suppression and recovery, middle-click delivery, keyboard tab ord
 Escape, outside drops, capture loss, resizing, scrolling, reduced motion, disposal,
 profile isolation, stale data, add/paste/edit/bulk-update ordering, alphabetical
 sorting, failed writes, and order/icon validation.
+Duplicate-favourite checks cover matching names, matching URLs, exact copies,
+independent editing/deletion, stable sorting and drag order after reopening,
+and distinct button identities. Legacy files receive repeatable IDs without a
+write on read; the next normal save persists those IDs.
 Alphabetical-sort checks cover intermediate movement, reusing buttons, scroll
 position, retargeting during animation, dragging during sorting, reduced motion,
 and keeping programmatic sorting separate from custom-order saves.

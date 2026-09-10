@@ -29,6 +29,7 @@ namespace EasyTabs
 		internal virtual bool RequiresHoverRedraw(Point cursor) { return false; }
 		internal virtual void ButtonPointerDown(Point cursor) { }
 		internal virtual void BeginTabClose(TitleBarTab tab) { }
+		internal virtual void BeginPinnedTabAnimation() { }
 		internal void OffsetWindowPosition(int x, int y) { _maxTabArea.Offset(x, y); }
 
 		[DllImport("user32.dll", EntryPoint = "SystemParametersInfoW")]
@@ -599,7 +600,7 @@ namespace EasyTabs
 		/// <returns>True if the <paramref name="tab" />'s <see cref="TitleBarTab.CloseButtonArea" /> contains <paramref name="cursor" />, false otherwise.</returns>
 		public virtual bool IsOverCloseButton(TitleBarTab tab, Point cursor)
 		{
-			if (!tab.ShowCloseButton || _wasTabRepositioning)
+			if (tab.IsPinned || !tab.ShowCloseButton || _wasTabRepositioning)
 			{
 				return false;
 			}
@@ -1065,7 +1066,7 @@ namespace EasyTabs
 			// Resume rendering
 			_suspendRendering = false;
 
-			_parentWindow.SelectedTabIndex = dropIndex;
+			_parentWindow.SelectedTab = tab;
 			_parentWindow.ResizeTabContents();
 		}
 	}

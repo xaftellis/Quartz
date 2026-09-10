@@ -147,6 +147,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="TitleBarTab.cs" />
+    <Compile Include="TitleBarTabCollection.cs" />
     <Compile Include="TitleBarTabCancelEventArgs.cs" />
     <Compile Include="TitleBarTabEventArgs.cs" />
     <Compile Include="TitleBarTabs.cs">

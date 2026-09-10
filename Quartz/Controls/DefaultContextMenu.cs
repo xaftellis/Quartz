@@ -118,7 +118,7 @@ namespace Quartz.Controls
                         WebAddress = browser.wvWebView1.Source.AbsoluteUri
                     };
 
-                    favouriteService.Modify(favourite);
+                    favouriteService.Add(favourite);
                 }
             }
 

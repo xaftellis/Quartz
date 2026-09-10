@@ -403,7 +403,7 @@ namespace Quartz
                 {
                     var model = GetFavourite(candidate);
                     return model != null && model.ProfileId == favourite.ProfileId &&
-                        model.Name == favourite.Name && model.WebAddress == favourite.WebAddress;
+                        model.Id == favourite.Id;
                 });
                 if (button == null)
                 {
@@ -421,7 +421,7 @@ namespace Quartz
                     button.Click += btnGotoFavourite_Click;
                 }
                 else available.Remove(button);
-                button.Name = "btn" + favourite.Name;
+                button.Name = "btn" + favourite.Id.ToString("N");
                 button.Tag = favourite;
                 button.AccessibleName = favourite.Name;
                 buttons.Add(button);
@@ -533,8 +533,7 @@ namespace Quartz
                         FavouriteModel candidateFavourite = GetFavourite(candidate);
                         return candidateFavourite != null &&
                             candidateFavourite.ProfileId == favourite.ProfileId &&
-                            candidateFavourite.Name == favourite.Name &&
-                            candidateFavourite.WebAddress == favourite.WebAddress;
+                            candidateFavourite.Id == favourite.Id;
                     }) ?? button;
                 }
             }
@@ -574,7 +573,7 @@ namespace Quartz
                 {
                     int index = ParentTabs.SelectedTabIndex + 1;
                     ParentTabs.Tabs.Insert(index, newTab);
-                    ParentTabs.SelectedTabIndex = index;
+                    ParentTabs.SelectedTab = newTab;
                     ParentTabs.RedrawTabs();
                 }
 
@@ -1163,14 +1162,14 @@ namespace Quartz
                 ParentTabs.Invoke(new Action(() =>
                 {
                     ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                    ParentTabs.SelectedTabIndex++;
+                    ParentTabs.SelectedTab = newtab;
                     ParentTabs.RedrawTabs();
                 }));
             }
             else
             {
                 ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                ParentTabs.SelectedTabIndex++;
+                ParentTabs.SelectedTab = newtab;
                 ParentTabs.RedrawTabs();
             }
         }
@@ -1569,7 +1568,7 @@ namespace Quartz
                     var favourite = GetFavourite(button);
                     if (favourite != null)
                     {
-                        FavouriteService.Remove(favourite.Name);
+                        FavouriteService.Remove(favourite.Id);
                         FavouriteService.SaveChanges();
                         LoadFavourites();
                     }
@@ -2023,14 +2022,14 @@ namespace Quartz
                 ParentTabs.Invoke(new Action(() =>
                 {
                     ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                    ParentTabs.SelectedTabIndex++;
+                    ParentTabs.SelectedTab = newtab;
                     ParentTabs.RedrawTabs();
                 }));
             }
             else
             {
                 ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                ParentTabs.SelectedTabIndex++;
+                ParentTabs.SelectedTab = newtab;
                 ParentTabs.RedrawTabs();
             }
         }
@@ -2174,14 +2173,14 @@ namespace Quartz
                     ParentTabs.Invoke(new Action(() =>
                     {
                         ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                        ParentTabs.SelectedTabIndex++;
+                        ParentTabs.SelectedTab = newtab;
                         ParentTabs.RedrawTabs();
                     }));
                 }
                 else
                 {
                     ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                    ParentTabs.SelectedTabIndex++;
+                    ParentTabs.SelectedTab = newtab;
                     ParentTabs.RedrawTabs();
                 }
             }
@@ -2453,6 +2452,7 @@ namespace Quartz
                 {
                     var model = GetFavourite(button);
                     return model != null && model.ProfileId == favourite.ProfileId &&
+                        model.Id == favourite.Id &&
                         model.Name == favourite.Name && model.WebAddress == favourite.WebAddress;
                 })).Cast<Control>().ToList();
 
@@ -2768,7 +2768,7 @@ namespace Quartz
                         Clipboard.SetText(favourite.WebAddress);
 
                         FavouriteService favouriteService = new FavouriteService();
-                        favouriteService.Remove(favourite.Name);
+                        favouriteService.Remove(favourite.Id);
                         favouriteService.SaveChanges();
 
                         LoadFavourites();
@@ -2806,7 +2806,7 @@ namespace Quartz
             {
                 var menuItem = new ToolStripMenuItem
                 {
-                    Name = "smi" + favourite.Name,
+                    Name = "smi" + favourite.Id.ToString("N"),
                     Text = favourite.Name,
                     Tag = favourite.WebAddress,
                 };
@@ -2841,7 +2841,7 @@ namespace Quartz
                         {
                             int index = ParentTabs.SelectedTabIndex + 1;
                             ParentTabs.Tabs.Insert(index, newTab);
-                            ParentTabs.SelectedTabIndex = index;
+                            ParentTabs.SelectedTab = newTab;
                             ParentTabs.RedrawTabs();
                         }
 

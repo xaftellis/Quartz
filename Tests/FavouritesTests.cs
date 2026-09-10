@@ -80,7 +80,7 @@ internal static partial class FavouritesTests
             ProgrammaticOrderSafety, IconVisibilityAnimation, RapidIconChanges,
             AddRemoveAnimation, MembershipAnimationSafety, SingleLabelFrames, MembershipFrames, UnequalWidths, CancelPaths,
             SuppressedClickAndKeyboard, NativeRelease, ScrollAndResize, CollectionChange,
-            Persistence, AddEditAndSort, FailedSave, Validation };
+            Persistence, AddEditAndSort, DuplicateFavourites, LegacyFavouriteIds, DuplicateButtonIdentity, FailedSave, Validation };
         int failures = 0;
         foreach (Action test in tests)
         {
@@ -539,7 +539,7 @@ internal static partial class FavouritesTests
     }
 
     private static FavouriteModel Favourite(Guid profile, string name, int index) =>
-        new FavouriteModel { ProfileId = profile, Name = name, Index = index, WebAddress = "https://example.test/" + name };
+        new FavouriteModel { Id = Guid.NewGuid(), ProfileId = profile, Name = name, Index = index, WebAddress = "https://example.test/" + name };
 
     private static void WithFile(Action<string, FavouriteModel[]> test)
     {
@@ -564,7 +564,7 @@ internal static partial class FavouritesTests
             string before = File.ReadAllText(path);
             Check(!new FavouriteService(path).TryReorder(new[] { items[0], items[0] }), "Duplicates must be rejected.");
             Check(!new FavouriteService(path).TryReorder(new[] { items[0] }), "Stale membership must be rejected.");
-            var changed = Favourite(items[1].ProfileId, "B", 1); changed.WebAddress += "/edited";
+            var changed = Favourite(items[1].ProfileId, "B", 1); changed.Id = items[1].Id; changed.WebAddress += "/edited";
             Check(!new FavouriteService(path).TryReorder(new[] { changed, items[0] }), "Stale edits must be rejected.");
             Check(!new FavouriteService(path).TryReorder(new[] { items[2], items[0] }), "Cross-profile drops must be rejected.");
             Check(File.ReadAllText(path) == before, "Rejected orders must not write storage.");
@@ -593,18 +593,18 @@ internal static partial class FavouritesTests
         WithFile((path, items) =>
         {
             var service = new FavouriteService(path);
-            service.Get("A").Index = 7;
-            service.Get("B").Index = 12;
-            service.Add(Favourite(ProfileService.Current, "C", 0));
+            service.Get(items[0].Id).Index = 7;
+            service.Get(items[1].Id).Index = 12;
+            var c = service.Add(Favourite(ProfileService.Current, "C", 0));
             Check(string.Concat(service.All().OrderBy(f => f.Index).Select(f => f.Name)) == "ABC",
                 "Adding/pasting after legacy index gaps must append.");
             Check(service.All().Select(f => f.Index).Distinct().Count() == 3, "Append must remove index collisions.");
-            service.Remove("A");
+            service.Remove(items[0].Id);
             service.Add(Favourite(ProfileService.Current, "D", 0));
-            service.Modify(Favourite(ProfileService.Current, "C", 0));
+            service.Edit(c.Id, "C", "https://example.test/C");
             Check(string.Concat(service.All().OrderBy(f => f.Index).Select(f => f.Name)) == "BCD",
-                "Deletion and Favourite-all updates must preserve existing custom order.");
-            service.Edit("C", "Z", "https://example.test/Z");
+                "Deletion and edits must preserve existing custom order.");
+            service.Edit(c.Id, "Z", "https://example.test/Z");
             Check(string.Concat(service.All().OrderBy(f => f.Index).Select(f => f.Name)) == "BZD",
                 "Renaming in custom mode must retain position.");
             service.SortAlphabetically(); service.SaveChanges();
@@ -613,6 +613,105 @@ internal static partial class FavouritesTests
             Check(JsonConvert.DeserializeObject<FavouriteModel[]>(File.ReadAllText(path))
                 .Single(f => f.Name == "Other").Index == 42, "Add/edit/sort must preserve other profiles.");
         });
+    }
+
+    private static void DuplicateFavourites()
+    {
+        WithFile((path, items) =>
+        {
+            var service = new FavouriteService(path);
+            var original = service.Get(items[0].Id);
+            var sameName = service.Add(new FavouriteModel { Name = original.Name, WebAddress = "https://example.test/other" });
+            var sameUrl = service.Add(new FavouriteModel { Name = "Another name", WebAddress = original.WebAddress });
+            var identical = service.Add(original);
+            var copiedAgain = service.Add(original);
+            Check(service.All().Count == 6 && service.All().Select(f => f.Id).Distinct().Count() == 6 &&
+                service.All().All(f => f.Id != Guid.Empty), "Same name, URL, and exact copies must each have independent identities.");
+            Check(service.Get(items[0].Id) == original && original.Index == 0 && identical != original,
+                "Adding a stored model must create a copy without changing the original.");
+            service.Edit(sameName.Id, original.Name, original.WebAddress);
+            Check(service.Get(sameName.Id).WebAddress == original.WebAddress && sameName.Index == 2,
+                "Editing to an existing name and URL must be allowed and retain the selected slot.");
+            service.SaveChanges();
+
+            service = new FavouriteService(path);
+            var reversed = service.All().OrderByDescending(f => f.Index).ToList();
+            Check(service.TryReorder(reversed), "Rearranging identical favourites must save successfully.");
+            var reopened = new FavouriteService(path);
+            Check(reopened.All().OrderBy(f => f.Index).Select(f => f.Id).SequenceEqual(reversed.Select(f => f.Id)),
+                "Every duplicate's exact order must survive reopening.");
+            var tiedOrder = reopened.All().Where(f => f.Name == "A").OrderBy(f => f.Index).Select(f => f.Id).ToList();
+            reopened.SortAlphabetically(); reopened.SaveChanges();
+            Check(reopened.All().Where(f => f.Name == "A").OrderBy(f => f.Index).Select(f => f.Id).SequenceEqual(tiedOrder),
+                "Alphabetical sorting must preserve the relative order of identical names.");
+            reopened.Edit(identical.Id, "Edited copy", "https://example.test/edited");
+            Check(reopened.Get(original.Id).Name == "A" && reopened.Get(copiedAgain.Id).Name == "A" &&
+                reopened.Get(identical.Id).Name == "Edited copy", "Editing must affect only the chosen copy.");
+            reopened.Remove(sameName.Id); reopened.SaveChanges();
+            service = new FavouriteService(path);
+            Check(service.Get(sameName.Id) == null && service.Get(original.Id) != null &&
+                service.Get(copiedAgain.Id) != null && service.Get(sameUrl.Id) != null && service.All().Count == 5,
+                "Delete/cut must remove only the selected duplicate.");
+            Check(!service.TryReorder(reversed), "An order from before a duplicate was removed must remain stale.");
+            Check(service.Get(items[2].Id) == null && JsonConvert.DeserializeObject<FavouriteModel[]>(File.ReadAllText(path))
+                .Single(f => f.Id == items[2].Id).Index == 42, "Duplicate operations must stay within the active profile.");
+        });
+    }
+
+    private static void LegacyFavouriteIds()
+    {
+        WithFile((path, items) =>
+        {
+            var legacy = Newtonsoft.Json.Linq.JArray.FromObject(items);
+            foreach (Newtonsoft.Json.Linq.JObject item in legacy) item.Remove("Id");
+            legacy.Add(legacy[0].DeepClone());
+            File.WriteAllText(path, legacy.ToString());
+            string before = File.ReadAllText(path);
+            FavouriteService first, second;
+            File.SetAttributes(path, FileAttributes.ReadOnly);
+            try { first = new FavouriteService(path); second = new FavouriteService(path); }
+            finally { File.SetAttributes(path, FileAttributes.Normal); }
+            var initialIds = first.All().Select(f => f.Id).ToList();
+            Check(initialIds.All(id => id != Guid.Empty) && initialIds.Distinct().Count() == initialIds.Count &&
+                initialIds.SequenceEqual(second.All().Select(f => f.Id)) && File.ReadAllText(path) == before,
+                "Legacy identities must agree across tabs, including identical records, without writing on read.");
+            var reverse = first.All().OrderBy(f => f.Index).Reverse().ToList();
+            Check(second.TryReorder(reverse), "Legacy buttons must still reorder against a fresh service.");
+            first = new FavouriteService(path);
+            first.Edit(initialIds[0], "Migrated", "https://example.test/migrated");
+            first.SaveChanges();
+            Check(new FavouriteService(path).All().Select(f => f.Id).SequenceEqual(initialIds),
+                "First-save IDs must survive edits and subsequent reloads.");
+
+            // Imports containing reused IDs are separated too; keep the first ID.
+            var imported = JsonConvert.DeserializeObject<FavouriteModel[]>(File.ReadAllText(path));
+            imported[1].Id = imported[0].Id;
+            File.WriteAllText(path, JsonConvert.SerializeObject(imported));
+            first = new FavouriteService(path); second = new FavouriteService(path);
+            Check(first.All().Select(f => f.Id).Distinct().Count() == first.All().Count &&
+                first.All().Select(f => f.Id).SequenceEqual(second.All().Select(f => f.Id)) && first.All()[0].Id == initialIds[0],
+                "Repeated imported IDs must be repaired consistently without conflating records.");
+        });
+    }
+
+    private static void DuplicateButtonIdentity()
+    {
+        using (var row = new Row(90, 90))
+        {
+            Guid profile = Guid.NewGuid();
+            var expected = new[] { Favourite(profile, "Same", 0), Favourite(profile, "Same", 1) };
+            row.Buttons[0].Tag = expected[0]; row.Buttons[1].Tag = expected[1];
+            Check(FavouriteService.ValidateButtons(row.Bar, expected, false, address => null),
+                "Two identical favourites must be valid distinct buttons.");
+            row.Bar.Controls.SetChildIndex(row.Buttons[1], 0);
+            Check(!FavouriteService.ValidateButtons(row.Bar, expected, false, address => null),
+                "Refresh validation must detect swapped identical favourites by identity.");
+            Check(row.Bar.TryAnimateOrder(new Control[] { row.Buttons[0], row.Buttons[1] }),
+                "Identical labels must still support animated sorting with distinct controls.");
+            row.Settle();
+            Check(row.Bar.Controls[0] == row.Buttons[0] && row.Bar.Controls[1] == row.Buttons[1],
+                "Sorting identical labels must retain both buttons.");
+        }
     }
 
     private static void Validation()

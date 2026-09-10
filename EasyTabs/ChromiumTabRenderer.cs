@@ -283,6 +283,19 @@ namespace EasyTabs
             _parentWindow.MinimumSize = _originalMinimum;
         }
 
+        internal override void BeginPinnedTabAnimation()
+        {
+            lock (_sync)
+            {
+                if (_disposed) return;
+                // BoundsAnimator uses the same 200 ms EASE_OUT clock for pinning
+                // and insertion. Snapshot displayed bounds so reversals do not jump.
+                _animation.StartInsertion(AnimationTimeMilliseconds);
+                _pressedFeedback?.Cancel();
+                _pressedFeedback = null;
+            }
+        }
+
         internal override bool RequiresHoverRedraw(Point cursor)
         {
             lock (_sync)
@@ -471,7 +484,8 @@ namespace EasyTabs
                     }
                     _animation.StartInsertion(now);
                 }
-                int[] widths = ChromiumTabMetrics.LayoutWidths(tabs.Count, activeIndex, _maxTabArea.Width, scale);
+                int pinnedCount = _parentWindow.PinnedTabCount;
+                int[] widths = ChromiumTabMetrics.LayoutWidths(tabs.Count, pinnedCount, activeIndex, _maxTabArea.Width, scale);
                 if (_detachedTabWidth.HasValue && tabs.Count == 1) widths[0] = _detachedTabWidth.Value;
                 _tabContentWidth = widths.Length == 0 ? 0 : Math.Max(0, widths[0] - Scale(16));
 
@@ -481,9 +495,29 @@ namespace EasyTabs
                 {
                     int width = widths[activeIndex];
                     UpdateTabDragOffset(new Size(width, Scale(ChromiumTabMetrics.Height)));
-                    draggedX = Math.Max(startX, Math.Min(startX + _maxTabArea.Width - width, cursor.X - _tabClickOffset.Value));
-                    int drop = Math.Max(0, Math.Min(tabs.Count - 1, (int)Math.Round(
-                        (draggedX.Value - startX - TabRepositionDragDistance) / (double)Math.Max(1, width - OverlapWidth))));
+                    bool pinned = tabs[activeIndex].IsPinned;
+                    int first = pinned ? 0 : pinnedCount;
+                    int last = pinned ? pinnedCount - 1 : tabs.Count - 1;
+                    int sectionStart = startX;
+                    for (int i = 0; i < first; i++) sectionStart += widths[i] - OverlapWidth;
+                    int sectionEnd = pinned ? sectionStart + pinnedCount * (width - OverlapWidth) + OverlapWidth
+                        : startX + _maxTabArea.Width;
+                    draggedX = Math.Max(sectionStart, Math.Min(sectionEnd - width, cursor.X - _tabClickOffset.Value));
+                    // Compare against model slot centers, never animating neighbour
+                    // positions: a stationary pointer must not repeatedly reorder.
+                    // In a crowded strip the active slot is wider. Calculate each
+                    // candidate's leading edge from the preceding inactive widths,
+                    // independent of where the active tab currently sits.
+                    int[] slotWidths = pinned ? widths : ChromiumTabMetrics.LayoutWidths(
+                        tabs.Count, pinnedCount, last, _maxTabArea.Width, scale);
+                    int drop = first;
+                    int slotX = sectionStart;
+                    for (int i = first; i < last; i++)
+                    {
+                        int nextSlot = slotX + slotWidths[i] - OverlapWidth;
+                        if (draggedX.Value - TabRepositionDragDistance > (slotX + nextSlot) / 2) drop = i + 1;
+                        slotX = nextSlot;
+                    }
                     if (drop != activeIndex)
                     {
                         TitleBarTab tab = tabs[activeIndex];
@@ -491,7 +525,7 @@ namespace EasyTabs
                         try { _parentWindow.Tabs.Remove(tab); _parentWindow.Tabs.Insert(drop, tab); }
                         finally { _parentWindow.Tabs.ResumeEvents(); }
                         activeIndex = drop;
-                        widths = ChromiumTabMetrics.LayoutWidths(tabs.Count, activeIndex, _maxTabArea.Width, scale);
+                        widths = ChromiumTabMetrics.LayoutWidths(tabs.Count, pinnedCount, activeIndex, _maxTabArea.Width, scale);
                     }
                 }
 
@@ -640,13 +674,23 @@ namespace EasyTabs
             // glyph box; Chromium's larger touch-only border isn't a mouse target.
             float contentsWidth = geometry.Width / scale - 32;
             bool roomy = contentsWidth >= 68;
-            bool close = tab.ShowCloseButton && (tab.Active || roomy) && (!visual.Closing || contentsWidth >= 16);
+            bool close = !tab.IsPinned && tab.ShowCloseButton && (tab.Active || roomy) && (!visual.Closing || contentsWidth >= 16);
             if (!visual.Closing) visual.HasIcon = tab.IsLoading || (tab.Content.ShowIcon && tab.Content.Icon != null);
             bool hasIcon = visual.HasIcon;
-            bool icon = hasIcon && (!tab.Active || contentsWidth - (close ? 16 : 0) >= 16);
+            bool icon = hasIcon && (tab.IsPinned || !tab.Active || contentsWidth - (close ? 16 : 0) >= 16);
             bool centerIcon = icon && !tab.Active && contentsWidth < 16;
-            int contentStart = Scale(roomy ? 20 : 16);
+            int contentStart = Scale(!tab.IsPinned && roomy ? 20 : 16);
             int iconX = centerIcon ? (geometry.Width - Scale(16)) / 2 : contentStart;
+            bool normalContents = !tab.IsPinned || geometry.Width >= Scale(ChromiumTabMetrics.PinnedWidth + ChromiumTabMetrics.PinnedTitleThreshold);
+            if (tab.IsPinned && !normalContents)
+            {
+                // Tab::MaybeAdjustLeftForPinnedTab: interpolate only in the last
+                // 30 DIP of contraction; keep the favicon at native size.
+                float progress = ChromiumTabMetrics.Clamp(1 - (geometry.Width / scale - ChromiumTabMetrics.PinnedWidth) /
+                    ChromiumTabMetrics.PinnedTitleThreshold, 0, 1);
+                int centered = (Scale(ChromiumTabMetrics.PinnedWidth) - Scale(16)) / 2;
+                iconX += ChromiumTabMetrics.Pixel(progress * (centered - iconX));
+            }
             int centerY = Scale(geometry.Stroke) + (geometry.Height - Scale(1 + geometry.Stroke * 2) - Scale(16)) / 2;
             int closeX = Math.Max(geometry.Width - Scale(32), (geometry.Width - Scale(16)) / 2);
             tab.CloseButtonArea = close ? new Rectangle(closeX, centerY, Scale(16), Scale(16)) : Rectangle.Empty;
@@ -672,6 +716,7 @@ namespace EasyTabs
             if (!visual.Closing)
             {
                 titleBounds = AnimateTitle(visual, titleBounds, icon, now, animate);
+                if (!normalContents) titleBounds = Rectangle.Empty;
                 Icon favicon = icon && tab.Content.ShowIcon ? tab.Content.Icon : null;
                 bool realFavicon = favicon != null && !((tab.Content as ITabFaviconState)?.IsDefaultFavicon ?? false);
                 bool waiting = (tab.Content as ITabLoadingPhase)?.IsWaiting ?? false;

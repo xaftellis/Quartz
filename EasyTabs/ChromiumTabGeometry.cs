@@ -18,6 +18,7 @@ namespace EasyTabs
         internal const int StandardWidth = 240 + Overlap - SeparatorWidth;
         internal const int ContentsInset = CornerRadius * 2;
         internal const int PinnedWidth = 23 + ContentsInset * 2;
+        internal const int PinnedTitleThreshold = 30;
         internal const int MinimumActiveWidth = 16 + ContentsInset * 2;
         internal const int MinimumInactiveWidth = 16 - SeparatorWidth + Overlap;
         internal const int NewTabButtonSize = 28;
@@ -47,6 +48,19 @@ namespace EasyTabs
             // the host clips overflow instead of producing inverted paths/hit areas.
             for (int i = 0; i < count; i++)
                 widths[i] = Math.Max(Pixel(MinimumInactiveWidth * scale), widths[i]);
+            return widths;
+        }
+
+        internal static int[] LayoutWidths(int count, int pinnedCount, int activeIndex, int available, float scale)
+        {
+            int pinnedWidth = Pixel(PinnedWidth * scale);
+            int pinnedAdvance = pinnedWidth - Pixel(Overlap * scale);
+            int[] normal = LayoutWidths(count - pinnedCount,
+                activeIndex < pinnedCount ? -1 : activeIndex - pinnedCount,
+                available - pinnedCount * pinnedAdvance, scale);
+            var widths = new int[count];
+            for (int i = 0; i < pinnedCount; i++) widths[i] = pinnedWidth;
+            Array.Copy(normal, 0, widths, pinnedCount, normal.Length);
             return widths;
         }
     }

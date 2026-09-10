@@ -21,6 +21,19 @@ namespace EasyTabs
 
 		private readonly Stopwatch _loadingClock = new Stopwatch();
 		private bool _isLoading;
+		private bool _isPinned;
+
+		/// <summary>Pinned tabs form a fixed-width prefix of their window's tab strip.</summary>
+		public bool IsPinned
+		{
+			get { return _isPinned; }
+			set
+			{
+				if (_isPinned == value) return;
+				_isPinned = value;
+				if (Parent != null && Parent.Tabs.Contains(this)) Parent.UpdatePinnedTab(this);
+			}
+		}
 
 		// Remember completion even when loading starts and stops between two frames.
 		internal int LoadingCompletionVersion { get; private set; }

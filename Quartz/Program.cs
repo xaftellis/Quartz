@@ -412,7 +412,7 @@ namespace Quartz
 
             foreach (var fav in favourites)
             {
-                favouriteService.Modify(fav);
+                favouriteService.Add(fav);
                 favouriteService.SaveChanges();
 
                 //await FaviconHelper.DownloadAndSaveFaviconAsync(fav.WebAddress);

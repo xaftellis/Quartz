@@ -22,6 +22,7 @@ namespace Quartz
         private string _text;
         private string _webAddress;
         private bool _modify;
+        private readonly Guid _favouriteId;
         Button favButton;
 
         public 
@@ -32,6 +33,7 @@ namespace Quartz
             _webAddress = webAddress;
             _modify = modify;
             favButton = button;
+            _favouriteId = (button?.Tag as Models.FavouriteModel)?.Id ?? Guid.Empty;
             InitializeComponent();
         }
 
@@ -48,132 +50,43 @@ namespace Quartz
 
             NewControlThemeChanger.ChangeTheme(this);
 
-            txtExist.ForeColor = Color.Red;
             txtURLBad.ForeColor = Color.Red;
             NameMessage.ForeColor = Color.Red;
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            // Another tab/window may have reordered favourites while this editor
-            // was open. Save against current storage, not the opening snapshot.
+            // Re-read storage so another tab's additions/reordering survive this save.
             _service = new FavouriteService();
-            if (_modify && _service.Get(_text) == null)
+            if (_modify)
             {
-                MessageBox.Show(this, "This favourite has been removed or renamed. Please reopen it to edit.",
-                    "Favourite", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Close();
-                return;
+                var original = _service.Get(_favouriteId);
+                if (original == null || original.Name != _text || original.WebAddress != _webAddress)
+                {
+                    MessageBox.Show(this, "This favourite has been removed or changed. Please reopen it to edit.",
+                        "Favourite", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Close();
+                    return;
+                }
             }
+
             string name = NameTextBox.Text.Trim();
             string address = AddressTextBox.Text.Trim();
+            bool missing = string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(address);
+            bool validAddress = Uri.IsWellFormedUriString(address, UriKind.Absolute);
+            NameMessage.Visible = missing;
+            txtURLBad.Visible = !missing && !validAddress;
+            NewControlThemeChanger.ChangeControlTheme(NameTextBox);
+            NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
+            if (!validAddress) AddressTextBox.ForeColor = Color.Red;
+            if (missing || !validAddress) return;
 
-            if (Uri.IsWellFormedUriString(address, UriKind.Absolute))
-            {
-                txtURLBad.Visible = false;
-                NewControlThemeChanger.ChangeControlTheme(address);
-            }
-            else
-            {
-                txtURLBad.Visible = true;
-                AddressTextBox.ForeColor = Color.Red;
-            }
-
-            if (string.IsNullOrWhiteSpace(name)
-                   || string.IsNullOrWhiteSpace(address))
-            {
-                NameMessage.Visible = true;
-            }
-            else
-            {
-                NameMessage.Visible = false;
-            }
-
-            if (_modify == false)
-            {
-                if (_service.Exists(name))
-                {
-                    txtExist.Visible = true;
-                    NameTextBox.ForeColor = Color.Red;
-                }
-                else
-                {
-                    txtExist.Visible = false;
-                    NewControlThemeChanger.ChangeControlTheme(NameTextBox);
-
-                }
-
-                if (_service.ExistsAddress(address))
-                {
-                    txtExist.Visible = true;
-                    AddressTextBox.ForeColor = Color.Red;
-                }
-                else
-                {
-                    txtExist.Visible = false;
-                    NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
-                }
-
-                if (!string.IsNullOrWhiteSpace(name)
-                    && !string.IsNullOrWhiteSpace(address)
-                    && !_service.Exists(name)
-                    && !_service.ExistsAddress(address)
-                    && Uri.IsWellFormedUriString(address, UriKind.Absolute))
-                {
-                    var favourite = new Models.FavouriteModel
-                    {
-                        Name = name,
-                        WebAddress = address,
-                    };
-
-                    _service.Modify(favourite);
-                    if (SettingsService.Get("sortFavouritesBy") == "alphabetically")
-                        _service.SortAlphabetically();
-                    _service.SaveChanges();
-
-                    this.Close();
-                    _browser.LoadFavourites();
-                }
-            }
-            else
-            {
-                if (_service.ExistsModify(name, _text))
-                {
-                    txtExist.Visible = true;
-                    NameTextBox.ForeColor = Color.Red;
-                }
-                else
-                {
-                    txtExist.Visible = false;
-                    NewControlThemeChanger.ChangeControlTheme(NameTextBox);
-
-                }
-
-                if (_service.ExistsAddressModify(address, _service.Get(_text).WebAddress))
-                {
-                    txtExist.Visible = true;
-                    AddressTextBox.ForeColor = Color.Red;
-                }
-                else
-                {
-                    txtExist.Visible = false;
-                    NewControlThemeChanger.ChangeControlTheme(AddressTextBox);
-                }
-
-                if (!string.IsNullOrWhiteSpace(name)
-                    && !string.IsNullOrWhiteSpace(address)
-                    && !_service.ExistsModify(name, _text) 
-                    && !_service.ExistsAddressModify(address, _service.Get(_text).WebAddress) 
-                    && Uri.IsWellFormedUriString(address, UriKind.Absolute))
-                {
-                    _service.Edit(_text, name, address);
-                    if (SettingsService.Get("sortFavouritesBy") == "alphabetically")
-                        _service.SortAlphabetically();
-                    _service.SaveChanges();
-                    this.Close();
-                    _browser.LoadFavourites();
-                }
-            }
+            if (_modify) _service.Edit(_favouriteId, name, address);
+            else _service.Add(new Models.FavouriteModel { Name = name, WebAddress = address });
+            if (SettingsService.Get("sortFavouritesBy") == "alphabetically")
+                _service.SortAlphabetically();
+            _service.SaveChanges();
+            Close();
         }
 
         private void Favourite_Leave(object sender, EventArgs e)

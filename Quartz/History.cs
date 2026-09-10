@@ -489,14 +489,14 @@ namespace Quartz
                         ParentTabs.Invoke(new Action(() =>
                         {
                             ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                            ParentTabs.SelectedTabIndex++;
+                            ParentTabs.SelectedTab = newtab;
                             ParentTabs.RedrawTabs();
                         }));
                     }
                     else
                     {
                         ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                        ParentTabs.SelectedTabIndex++;
+                        ParentTabs.SelectedTab = newtab;
                         ParentTabs.RedrawTabs();
                     }
 
@@ -720,7 +720,7 @@ namespace Quartz
                     {
                         int index = _browser.ParentTabs.SelectedTabIndex + 1;
                         _browser.ParentTabs.Tabs.Insert(index, newTab);
-                        _browser.ParentTabs.SelectedTabIndex = index;
+                        _browser.ParentTabs.SelectedTab = newTab;
                         _browser.ParentTabs.RedrawTabs();
                     }
 

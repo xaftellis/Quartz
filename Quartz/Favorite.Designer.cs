@@ -34,7 +34,6 @@
             this.NameMessage = new System.Windows.Forms.Label();
             this.AddressTextBox = new System.Windows.Forms.TextBox();
             this.AddressLabel = new System.Windows.Forms.Label();
-            this.txtExist = new System.Windows.Forms.Label();
             this.txtURLBad = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -102,18 +101,6 @@
             this.AddressLabel.TabIndex = 4;
             this.AddressLabel.Text = "Address:";
             // 
-            // txtExist
-            // 
-            this.txtExist.AutoSize = true;
-            this.txtExist.BackColor = System.Drawing.Color.Transparent;
-            this.txtExist.ForeColor = System.Drawing.Color.Red;
-            this.txtExist.Location = new System.Drawing.Point(52, 62);
-            this.txtExist.Name = "txtExist";
-            this.txtExist.Size = new System.Drawing.Size(120, 13);
-            this.txtExist.TabIndex = 6;
-            this.txtExist.Text = "Favourite already exists.";
-            this.txtExist.Visible = false;
-            // 
             // txtURLBad
             // 
             this.txtURLBad.AutoSize = true;
@@ -140,7 +127,6 @@
             this.Controls.Add(this.NameLabel);
             this.Controls.Add(this.NameMessage);
             this.Controls.Add(this.txtURLBad);
-            this.Controls.Add(this.txtExist);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.KeyPreview = true;
             this.MaximizeBox = false;
@@ -165,7 +151,6 @@
         private System.Windows.Forms.Label NameMessage;
         private System.Windows.Forms.TextBox AddressTextBox;
         private System.Windows.Forms.Label AddressLabel;
-        private System.Windows.Forms.Label txtExist;
         private System.Windows.Forms.Label txtURLBad;
     }
 }

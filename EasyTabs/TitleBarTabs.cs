@@ -60,7 +60,25 @@ namespace EasyTabs
 		protected BaseTabRenderer _tabRenderer;
 
 		/// <summary>List of tabs to display for this window.</summary>
-		protected ListWithEvents<TitleBarTab> _tabs = new ListWithEvents<TitleBarTab>();
+		protected ListWithEvents<TitleBarTab> _tabs = new TitleBarTabCollection();
+
+		/// <summary>The first unpinned slot; new normal tabs cannot precede it.</summary>
+		public int PinnedTabCount => Tabs.TakeWhile(tab => tab.IsPinned).Count();
+
+		internal void UpdatePinnedTab(TitleBarTab tab)
+		{
+			// Preserve tab identity, selection and subscriptions while moving it to
+			// the boundary, as TabStripModel::SetTabPinnedImpl does.
+			Tabs.SuppressEvents();
+			try
+			{
+				Tabs.Remove(tab);
+				Tabs.Insert(PinnedTabCount, tab);
+			}
+			finally { Tabs.ResumeEvents(); }
+			TabRenderer?.BeginPinnedTabAnimation();
+			RedrawTabs();
+		}
 
 		/// <summary>Default constructor.</summary>
 		protected TitleBarTabs()

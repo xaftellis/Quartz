@@ -149,7 +149,7 @@ namespace Quartz
                     Name = "Apple",
                     WebAddress = "https://www.apple.com/",
                 };
-                _fav.Modify(favourite);
+                _fav.Add(favourite);
                 _fav.SaveChanges();
 
                 var favourite2 = new Models.FavouriteModel
@@ -157,7 +157,7 @@ namespace Quartz
                     Name = "Google",
                     WebAddress = "https://www.google.com/",
                 };
-                _fav.Modify(favourite2);
+                _fav.Add(favourite2);
                 _fav.SaveChanges();
 
                 var favourite3 = new Models.FavouriteModel
@@ -165,7 +165,7 @@ namespace Quartz
                     Name = "YouTube",
                     WebAddress = "https://www.youtube.com/",
                 };
-                _fav.Modify(favourite3);
+                _fav.Add(favourite3);
                 _fav.SaveChanges();
 
 
