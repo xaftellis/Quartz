@@ -39,6 +39,12 @@ namespace EasyTabs
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool ReleaseCapture();
 
+		private delegate bool EnumWindowCallback(IntPtr window, IntPtr parameter);
+
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool EnumWindows(EnumWindowCallback callback, IntPtr parameter);
+
 		private TabFrameScheduler _loadingAnimationTimer;
 		private readonly LayeredWindowBuffer _surface = new LayeredWindowBuffer();
 		private bool _renderPending, _forceRenderPending, _rendering;
@@ -88,6 +94,9 @@ namespace EasyTabs
 		[DllImport("dwmapi.dll")]
 		private static extern int DwmSetWindowAttribute(IntPtr windowHandle, int attribute, ref int attributeValue, int attributeSize);
 
+		[DllImport("dwmapi.dll")]
+		private static extern int DwmGetWindowAttribute(IntPtr windowHandle, int attribute, out int attributeValue, int attributeSize);
+
 		private static void SetWindowTransitionsEnabled(Form window, bool enabled)
 		{
 			int transitionsDisabled = enabled ? 0 : 1;
@@ -104,6 +113,8 @@ namespace EasyTabs
 
 		/// <summary>Live window containing <see cref="_tornTab" /> while it is being dragged.</summary>
 		protected static TitleBarTabs _tornTabWindow;
+
+		private bool _tornTabWindowReady;
 
 		/// <summary>Overlay that owns the current cross-window tab drag.</summary>
 		protected static TitleBarTabsOverlay _tornTabDragOwner;
@@ -132,12 +143,6 @@ namespace EasyTabs
 
 		/// <summary>Flag indicating whether we should draw the titlebar background (i.e. we are in a non-Aero environment).</summary>
 		protected bool _aeroEnabled = false;
-
-		/// <summary>
-		/// When a tab is torn from the window, this is where we store the areas on all open windows where tabs can be dropped to combine the tab with that
-		/// window.
-		/// </summary>
-		protected Tuple<TitleBarTabs, Rectangle>[] _dropAreas = null;
 
 		/// <summary>Pointer to the low-level mouse hook callback (<see cref="MouseHookCallback" />).</summary>
 		protected IntPtr _hookId;
@@ -488,7 +493,8 @@ namespace EasyTabs
 				_singleTabDropTarget = null;
 				if (target == null || target.IsDisposed || target.Disposing || !target.Visible ||
 					target.WindowState == FormWindowState.Minimized || target.Tabs.Count == 0 ||
-					_parentForm.IsDisposed || _parentForm.Tabs.Count != 1 || !_parentForm.Tabs.Contains(tab))
+					_parentForm.IsDisposed || _parentForm.Tabs.Count != 1 || !_parentForm.Tabs.Contains(tab) ||
+					FindTabDropTarget(_singleTabDropPoint, _parentForm) != target)
 					return;
 
 				// The target must deselect its current tab when this one is inserted.
@@ -531,12 +537,7 @@ namespace EasyTabs
 				Math.Abs(cursorPosition.Y - _singleTabDragStart.Y) < Math.Max(1, dragSize.Height / 2))
 				return;
 			_wasDragging = true;
-			var context = _parentForm.ApplicationContext;
-			if (context == null) return;
-			TitleBarTabs target = context.OpenWindows.FirstOrDefault(window => window != _parentForm &&
-				!window.IsDisposed && !window.Disposing && window.Visible &&
-				window.WindowState != FormWindowState.Minimized && window.Tabs.Count > 0 &&
-				window.TabDropArea.Contains(cursorPosition));
+			TitleBarTabs target = FindTabDropTarget(cursorPosition, _parentForm);
 			if (target == null) return;
 			_singleTabDropTarget = target;
 			_singleTabDropPoint = cursorPosition;
@@ -552,6 +553,49 @@ namespace EasyTabs
 			SendWindowDragMessage(_parentForm.Handle, 0x001F, IntPtr.Zero, IntPtr.Zero);
 		}
 
+		private TitleBarTabs FindTabDropTarget(Point cursorPosition, TitleBarTabs draggedWindow)
+		{
+			var context = _parentForm.ApplicationContext;
+			if (context == null || draggedWindow == null || !draggedWindow.IsHandleCreated) return null;
+			// Avoid scanning desktop windows unless a live tab strip is at the pointer.
+			if (!context.OpenWindows.Any(window => window != draggedWindow && !window.IsDisposed && !window.Disposing &&
+				window.IsHandleCreated && window.Visible && window.WindowState != FormWindowState.Minimized &&
+				window.Tabs.Count > 0 && window._overlay != null && window.TabDropArea.Contains(cursorPosition))) return null;
+
+			IntPtr ignoredWindow = draggedWindow.Handle;
+			TitleBarTabsOverlay draggedOverlay = draggedWindow._overlay;
+			IntPtr ignoredOverlay = draggedOverlay != null && draggedOverlay.IsHandleCreated ? draggedOverlay.Handle : IntPtr.Zero;
+			IntPtr frontWindow = IntPtr.Zero;
+			// EnumWindows walks front to back, including other applications. Ignore only
+			// the dragged window and its overlay; the source remains a possible target
+			// or obstruction. A foreground page must also block tab strips behind it.
+			EnumWindows((window, unused) =>
+			{
+				if (window == ignoredWindow || window == ignoredOverlay || !User32.IsWindowVisible(window) || User32.IsIconic(window)) return true;
+				RECT bounds;
+				// GetWindowRect uses the same DPI-virtualized screen coordinates as Cursor.Position.
+				if (!User32.GetWindowRect(window, out bounds) || cursorPosition.X < bounds.left || cursorPosition.X >= bounds.right ||
+					cursorPosition.Y < bounds.top || cursorPosition.Y >= bounds.bottom) return true;
+				int cloaked;
+				if (DwmGetWindowAttribute(window, 14 /* DWMWA_CLOAKED */, out cloaked, sizeof(int)) == 0 && cloaked != 0) return true;
+				// Click-through layered helpers do not obscure a drop target for input.
+				int clickThrough = (int)(WS_EX.WS_EX_LAYERED | WS_EX.WS_EX_TRANSPARENT);
+				if ((User32.GetWindowLong(window, -20 /* GWL_EXSTYLE */) & clickThrough) == clickThrough) return true;
+				frontWindow = window;
+				return false;
+			}, IntPtr.Zero);
+
+			foreach (TitleBarTabs window in context.OpenWindows)
+			{
+				if (window == draggedWindow || window.IsDisposed || window.Disposing || !window.IsHandleCreated ||
+					!window.Visible || window.WindowState == FormWindowState.Minimized || window.Tabs.Count == 0) continue;
+				TitleBarTabsOverlay overlay = window._overlay;
+				if (window.Handle == frontWindow || (overlay != null && overlay.IsHandleCreated && overlay.Handle == frontWindow))
+					return overlay != null && window.TabDropArea.Contains(cursorPosition) ? window : null;
+			}
+			return null;
+		}
+
 		/// <summary>Moves a tab into a real window as soon as it leaves its current tab strip.</summary>
 		private void CreateLiveTornTabWindow(Point cursorPosition)
 		{
@@ -560,6 +604,7 @@ namespace EasyTabs
 			{
 				return;
 			}
+			_tornTabWindowReady = false;
 
 			Rectangle sourceTabArea = tab.Area;
 			int sourceTabAreaWidth = Math.Max(1, _parentForm.TabRenderer.MaxTabArea.Width);
@@ -656,10 +701,7 @@ namespace EasyTabs
 
 			// Source-tab selection and reparenting must finish before the dragged window takes focus.
 			newWindow.Activate();
-
-			_dropAreas = (from window in _parentForm.ApplicationContext.OpenWindows
-						  where window != newWindow && window.Tabs.Count > 0
-						  select new Tuple<TitleBarTabs, Rectangle>(window, window.TabDropArea)).ToArray();
+			_tornTabWindowReady = true;
 		}
 
 		/// <summary>Keeps the live torn-tab window underneath the cursor.</summary>
@@ -690,28 +732,29 @@ namespace EasyTabs
                 return;
             }
             if (_tornTab != null && _tornTabDragOwner != this) return;
-            if (_tornTab != null && _dropAreas != null)
+            if (_tornTab != null)
             {
+                // Showing/reparenting can dispatch messages before the detached
+                // window's tab and pointer offset have finished initialization.
+                if (!_tornTabWindowReady) return;
                 MoveLiveTornTabWindow(cursor);
-                foreach (var dropArea in _dropAreas)
+                TitleBarTabs target = FindTabDropTarget(cursor, _tornTabWindow);
+                if (target != null)
                 {
-                    if (!dropArea.Item2.Contains(cursor)) continue;
                     TitleBarTab tab = _tornTab;
                     TitleBarTabs tornWindow = _tornTabWindow;
                     _tornTab = null;
                     _tornTabWindow = null;
                     _tornTabDragOwner = null;
-                    _dropAreas = null;
+                    _tornTabWindowReady = false;
                     tab.Active = false;
                     tab.ClearSubscriptions();
                     if (tornWindow != null && !tornWindow.IsDisposed) tornWindow.Tabs.Remove(tab);
-                    TitleBarTabs target = dropArea.Item1;
                     target.TabRenderer.CombineTab(tab, target._overlay.GetRelativeCursorPosition(cursor), _tornTabGrabRatio);
                     target._overlay.Render(cursor);
                     target.Activate();
                     if (tornWindow != null && !tornWindow.IsDisposed) tornWindow.Close();
                     if (_parentForm.Tabs.Count == 0) _parentForm.Close();
-                    break;
                 }
                 return;
             }
@@ -793,7 +836,7 @@ namespace EasyTabs
                         _tornTab = null;
                         _tornTabWindow = null;
                         _tornTabDragOwner = null;
-                        _dropAreas = null;
+                        _tornTabWindowReady = false;
                         if (released != null && !released.IsDisposed)
                         {
                             released.TabRenderer.EndDetachedWindowDrag();
