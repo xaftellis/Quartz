@@ -1,4 +1,4 @@
-﻿using EasyTabs;
+using EasyTabs;
 using Microsoft.SqlServer.Server;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
@@ -40,15 +40,18 @@ using Win32Interop.Structs;
 
 namespace Quartz
 {
-    public partial class Browser : Form, ITabLoadingState
+    public partial class Browser : Form, ITabLoadingPhase, ITabFaviconState
     {
         public bool IsLoading { get; private set; }
+        public bool IsWaiting { get; private set; }
+        public bool IsDefaultFavicon { get; private set; } = true;
         public event EventHandler LoadingStateChanged;
 
-        private void SetTabLoading(bool loading)
+        private void SetTabLoading(bool loading, bool waiting = false, bool restart = false)
         {
-            if (IsLoading == loading) return;
+            if (!restart && IsLoading == loading && IsWaiting == waiting) return;
             IsLoading = loading;
+            IsWaiting = waiting;
             LoadingStateChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -771,12 +774,7 @@ namespace Quartz
         #region Events
         private async void Browser_Load(object sender, EventArgs e)
         {
-            //bugfix to the 0,0 location of the settings context menu when first opened.
-            SettingsMenuStrip.Opening -= SettingsMenuStrip_Opening;
-            SettingsMenuStrip.Show(this, new Point(-10000, -10000));
-            SettingsMenuStrip.Close();              // closes it immediately
-            SettingsMenuStrip.Opening += SettingsMenuStrip_Opening;
-
+    
             // Force the underlying window handle to be created early
             var h = SettingsMenuStrip.Handle;
 
@@ -1156,6 +1154,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.DownloadStarting += CoreViewView2__DownloadStarting;
             wvWebView1.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
             wvWebView1.CoreWebView2.FaviconChanged += CoreWebView2_FaviconChanged;
+            wvWebView1.CoreWebView2.ContentLoading += CoreWebView2_ContentLoading;
             wvWebView1.CoreWebView2.ProcessFailed += CoreWebView2_ProcessFailed;
         }
 
@@ -1187,7 +1186,6 @@ namespace Quartz
                     ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
                     ParentTabs.SelectedTabIndex++;
                     ParentTabs.RedrawTabs();
-                    ParentTabs.Refresh();
                 }));
             }
             else
@@ -1195,7 +1193,6 @@ namespace Quartz
                 ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
                 ParentTabs.SelectedTabIndex++;
                 ParentTabs.RedrawTabs();
-                ParentTabs.Refresh();
             }
         }
 
@@ -1203,12 +1200,18 @@ namespace Quartz
         private void wvWebView1_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
             _activeNavigationId = e.NavigationId;
-            SetTabLoading(!e.Cancel);
+            SetTabLoading(!e.Cancel, !e.Cancel, !e.IsRedirected);
 
             Cursor = Cursors.AppStarting;
 
             btnRefresh.Visible = false;
             btnStop.Visible = true;
+        }
+
+        private void CoreWebView2_ContentLoading(object sender, CoreWebView2ContentLoadingEventArgs e)
+        {
+            if (e.NavigationId == _activeNavigationId && IsLoading)
+                SetTabLoading(true);
         }
 
         private void wvWebView1_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
@@ -1440,75 +1443,61 @@ namespace Quartz
             return messagePages.Any(p => p.Equals(fileName, StringComparison.OrdinalIgnoreCase));
         }
 
+        private int _faviconRequestVersion;
         public async void CoreWebView2_FaviconChanged(object sender, object e)
         {
-            // could add code that refreshes tab favicon to show changes.
-            if (Uri.IsWellFormedUriString(wvWebView1.Source.AbsoluteUri, UriKind.Absolute))
+            if (IsDisposed || wvWebView1.IsDisposed || wvWebView1.CoreWebView2 == null) return;
+            int requestVersion = ++_faviconRequestVersion;
+            Uri faviconSource = wvWebView1.Source;
+            ulong navigationId = _activeNavigationId;
+            if (faviconSource == null || !Uri.IsWellFormedUriString(faviconSource.AbsoluteUri, UriKind.Absolute)) return;
+
+            if (isQuartzDotCom(faviconSource))
             {
-                //bool showSiteIconsOnly = bool.Parse(SettingsService.Get("showSiteIconsOnly"));
-                //if (showSiteIconsOnly)
-                //{
-                //    ShowIcon = true;
-                //}
+                ShowIcon = false;
+                IsDefaultFavicon = true;
+                FaviconHelper.UpdateCurrentTab(ParentTabs, this);
+                return;
+            }
 
-                if (isQuartzDotCom(wvWebView1.Source))
+            Icon favicon = null;
+            try
+            {
+                // WebView2 reports an empty URI/stream for no favicon. Use its
+                // downloaded icon directly; probing a separate WebView delays the
+                // first favicon, and a disk cache can hide a site's updated icon.
+                if (!string.IsNullOrEmpty(wvWebView1.CoreWebView2.FaviconUri))
                 {
-                    this.ShowIcon = false;
-                    FaviconHelper.UpdateCurrentTab(ParentTabs, this);
-                    return;
-                }
-                else
-                {
-                    this.ShowIcon = true;
-                }
-
-                if (!FaviconHelper.DoesFaviconFileExist(wvWebView1.Source.AbsoluteUri))
-                {
-                    Stream originalStream = await wvWebView1.CoreWebView2.GetFaviconAsync(Microsoft.Web.WebView2.Core.CoreWebView2FaviconImageFormat.Png);
-
-                    if (originalStream != null && originalStream.Length != 0)
+                    using (Stream stream = await wvWebView1.CoreWebView2.GetFaviconAsync(CoreWebView2FaviconImageFormat.Png))
+                    using (var memory = new MemoryStream())
                     {
-                        // Copy stream into memory so it can be reused
-                        MemoryStream memoryStream = new MemoryStream();
-                        await originalStream.CopyToAsync(memoryStream);
-                        memoryStream.Position = 0;
-
-                        bool isDefaultFavicon = await FaviconHelper.IsDefaultFaviconAsync(new MemoryStream(memoryStream.ToArray()));
-                        if (!isDefaultFavicon)
+                        if (stream != null) await stream.CopyToAsync(memory);
+                        if (IsDisposed || wvWebView1.IsDisposed || requestVersion != _faviconRequestVersion ||
+                            navigationId != _activeNavigationId || faviconSource != wvWebView1.Source) return;
+                        if (memory.Length != 0)
                         {
-                            memoryStream.Position = 0;
-                            Icon icon = FaviconHelper.ConvertToIcon(memoryStream);
-                            Icon = icon;
-                            FaviconHelper.UpdateCurrentTab(ParentTabs, this);
-
-
-                            FaviconHelper.SaveToFile(icon, wvWebView1.Source.AbsoluteUri);
-                        }
-                        else
-                        {
-                            //if (showSiteIconsOnly)
-                            //{
-                            //    ShowIcon = false;
-                            //    return;
-                            //}
-
-                            Icon icon = FaviconHelper.GetDefaultFavicon16();
-                            Icon = icon;
-                            FaviconHelper.UpdateCurrentTab(ParentTabs, this);
+                            memory.Position = 0;
+                            favicon = FaviconHelper.ConvertToIcon(memory);
                         }
                     }
                 }
-                else
-                {
-                    Icon icon = FaviconHelper.GetFaviconFile(wvWebView1.Source.AbsoluteUri);
-                    Icon = icon;
-                    FaviconHelper.UpdateCurrentTab(ParentTabs, this);
-
-                }
             }
+            catch (Exception) when (IsDisposed || wvWebView1.IsDisposed ||
+                requestVersion != _faviconRequestVersion || navigationId != _activeNavigationId)
+            {
+                return; // Ignore an obsolete request interrupted by navigation or disposal.
+            }
+
+            IsDefaultFavicon = favicon == null;
+            Icon = favicon ?? FaviconHelper.GetDefaultFavicon16();
+            ShowIcon = true;
+            FaviconHelper.UpdateCurrentTab(ParentTabs, this);
+            // Keep the existing cache policy: SaveToFile creates a new file each time.
+            if (favicon != null && !FaviconHelper.DoesFaviconFileExist(faviconSource.AbsoluteUri))
+                FaviconHelper.SaveToFile(favicon, faviconSource.AbsoluteUri);
+
             bool isCorrect = await FavouriteService.ValidatePanelAsync(pnlFavourites);
-            if (!isCorrect)
-                LoadFavourites();
+            if (!IsDisposed && !isCorrect) LoadFavourites();
         }
 
         private void CoreWebView2_HistoryChanged(object sender, object e)
@@ -2057,7 +2046,6 @@ namespace Quartz
                     ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
                     ParentTabs.SelectedTabIndex++;
                     ParentTabs.RedrawTabs();
-                    ParentTabs.Refresh();
                 }));
             }
             else
@@ -2065,7 +2053,6 @@ namespace Quartz
                 ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
                 ParentTabs.SelectedTabIndex++;
                 ParentTabs.RedrawTabs();
-                ParentTabs.Refresh();
             }
         }
 
@@ -2210,7 +2197,6 @@ namespace Quartz
                         ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
                         ParentTabs.SelectedTabIndex++;
                         ParentTabs.RedrawTabs();
-                        ParentTabs.Refresh();
                     }));
                 }
                 else
@@ -2218,7 +2204,6 @@ namespace Quartz
                     ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
                     ParentTabs.SelectedTabIndex++;
                     ParentTabs.RedrawTabs();
-                    ParentTabs.Refresh();
                 }
             }
         }
@@ -2326,7 +2311,7 @@ namespace Quartz
             Shortcuts(false);
             Settings setting = new Settings(this, false);
             setting.Owner = this;
-            setting.ShowDialog();
+           setting.ShowDialog();
         }
 
         private void Item_Click(object sender, EventArgs e)

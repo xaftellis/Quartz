@@ -1,4 +1,4 @@
-﻿using EasyTabs;
+using EasyTabs;
 using Quartz.Controls;
 using Quartz.Libs;
 using Quartz.Models;
@@ -491,7 +491,6 @@ namespace Quartz
                             ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
                             ParentTabs.SelectedTabIndex++;
                             ParentTabs.RedrawTabs();
-                            ParentTabs.Refresh();
                         }));
                     }
                     else
@@ -499,7 +498,6 @@ namespace Quartz
                         ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
                         ParentTabs.SelectedTabIndex++;
                         ParentTabs.RedrawTabs();
-                        ParentTabs.Refresh();
                     }
 
                     this.Close();

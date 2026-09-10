@@ -29,6 +29,7 @@ namespace EasyTabs
 		internal virtual bool RequiresHoverRedraw(Point cursor) { return false; }
 		internal virtual void ButtonPointerDown(Point cursor) { }
 		internal virtual void BeginTabClose(TitleBarTab tab) { }
+		internal void OffsetWindowPosition(int x, int y) { _maxTabArea.Offset(x, y); }
 
 		[DllImport("user32.dll", EntryPoint = "SystemParametersInfoW")]
 		private static extern bool GetSystemAnimationSetting(uint action, uint parameter,

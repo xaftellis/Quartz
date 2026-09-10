@@ -214,6 +214,7 @@ namespace EasyTabs
 			{
 				TitleBarTab selectedTab = SelectedTab;
 				int selectedTabIndex = SelectedTabIndex;
+				if (selectedTabIndex == value) return;
 
 				if (selectedTab != null && selectedTabIndex != value)
 				{
@@ -277,7 +278,7 @@ namespace EasyTabs
 
 				if (_overlay != null)
 				{
-					_overlay.Render();
+					_overlay.RequestRender();
 				}
 			}
 		}
@@ -664,7 +665,7 @@ namespace EasyTabs
 
 			if (_overlay != null)
 			{
-				_overlay.Render(true);
+				_overlay.RequestRender();
 			}
 		}
 
@@ -748,7 +749,7 @@ namespace EasyTabs
 
 			if (_overlay != null)
 			{
-				_overlay.Render(true);
+				_overlay.RequestRender();
 			}
 		}
 
@@ -772,18 +773,18 @@ namespace EasyTabs
 
 			if (_overlay != null)
 			{
-				_overlay.Render(true);
+				_overlay.RequestRender();
 			}
 		}
 
 		/// <summary>
-		/// Calls <see cref="TitleBarTabsOverlay.Render(bool)"/> on <see cref="_overlay"/> to force a redrawing of the tabs.
+		/// Schedules a tab redraw, combining repeated requests into the next frame.
 		/// </summary>
 		public void RedrawTabs()
 		{
 			if (_overlay != null)
 			{
-				_overlay.Render(true);
+				_overlay.RequestRender(!(_tabRenderer is ChromiumTabRenderer));
 			}
 		}
 

@@ -22,7 +22,11 @@ namespace EasyTabs
 		private readonly Stopwatch _loadingClock = new Stopwatch();
 		private bool _isLoading;
 
-		/// <summary>Whether to replace the favicon with an animated loading indicator. Set on the UI thread.</summary>
+		// Remember completion even when loading starts and stops between two frames.
+		internal int LoadingCompletionVersion { get; private set; }
+		internal bool RevealFaviconOnLoadCompletion { get; private set; }
+
+		/// <summary>Whether to show the animated loading indicator. Set on the UI thread.</summary>
 		public bool IsLoading
 		{
 			get { return _isLoading; }
@@ -30,10 +34,19 @@ namespace EasyTabs
 			{
 				if (_isLoading == value) return;
 				_isLoading = value;
+				if (!value)
+				{
+					LoadingCompletionVersion++;
+					// TabIcon::SetNetworkState checks the icon at completion, not
+					// at the next paint (when a late favicon may already have arrived).
+					RevealFaviconOnLoadCompletion = Content != null && !Content.IsDisposed &&
+						!Content.Disposing && Content.Icon != null &&
+						!((Content as ITabFaviconState)?.IsDefaultFavicon ?? false);
+				}
 				_loadingClock.Reset();
 				if (value) _loadingClock.Start();
 				if (Parent != null && !Parent.IsDisposed && !Parent.Disposing && Parent.Tabs.Contains(this))
-					Parent._overlay?.Render();
+					Parent._overlay?.RequestRender();
 			}
 		}
 
@@ -100,7 +113,9 @@ namespace EasyTabs
 			internal set
 			{
 				// When the status of the tab changes, we null out the TabImage property so that it's recreated in the next rendering pass
+				if (_active == value) return;
 				_active = value;
+				TabImage?.Dispose();
 				TabImage = null;
 				Content.Visible = value;
 			}
@@ -178,10 +193,14 @@ namespace EasyTabs
 			}
 		}
 
-		private void Content_LoadingStateChanged(object sender, EventArgs e)
+        private void Content_LoadingStateChanged(object sender, EventArgs e)
 		{
 			ITabLoadingState loadingState = Content as ITabLoadingState;
+			bool wasLoading = IsLoading;
 			IsLoading = Content != null && !Content.IsDisposed && !Content.Disposing && loadingState != null && loadingState.IsLoading;
+			// A reload can start while the previous request is still loading.
+			if (wasLoading && IsLoading && (loadingState as ITabLoadingPhase)?.IsWaiting == true)
+				_loadingClock.Restart();
 		}
 
 		private void Content_Disposed(object sender, EventArgs e)

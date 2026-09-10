@@ -1,4 +1,4 @@
-﻿using EasyTabs;
+using EasyTabs;
 using Quartz.Services;
 using System;
 using System.Collections.Generic;
@@ -104,7 +104,6 @@ namespace Quartz.Controls
                     _parentForm.Tabs.Insert(newTabIndex, newtab);
                     _parentForm.SelectedTabIndex = newTabIndex;
                     _parentForm.RedrawTabs();
-                    _parentForm.Refresh();
                 }));
             }
             else
@@ -112,7 +111,6 @@ namespace Quartz.Controls
                 _parentForm.Tabs.Insert(newTabIndex, newtab);
                 _parentForm.SelectedTabIndex = newTabIndex;
                 _parentForm.RedrawTabs();
-                _parentForm.Refresh();
             }
         }
 
@@ -130,7 +128,6 @@ namespace Quartz.Controls
                     _parentForm.Tabs.Insert(newTabIndex, newtab);
                     _parentForm.SelectedTabIndex = newTabIndex;
                     _parentForm.RedrawTabs();
-                    _parentForm.Refresh();
                 }));
             }
             else
@@ -138,7 +135,6 @@ namespace Quartz.Controls
                 _parentForm.Tabs.Insert(newTabIndex, newtab);
                 _parentForm.SelectedTabIndex = newTabIndex;
                 _parentForm.RedrawTabs();
-                _parentForm.Refresh();
             }
         }
 
@@ -208,7 +204,6 @@ namespace Quartz.Controls
                     _parentForm.Tabs.Insert(newTabIndex, newtab);
                     _parentForm.SelectedTabIndex = newTabIndex;
                     _parentForm.RedrawTabs();
-                    _parentForm.Refresh();
                 }));
             }
             else
@@ -216,7 +211,6 @@ namespace Quartz.Controls
                 _parentForm.Tabs.Insert(newTabIndex, newtab);
                 _parentForm.SelectedTabIndex = newTabIndex;
                 _parentForm.RedrawTabs();
-                _parentForm.Refresh();
             }
         }
 
