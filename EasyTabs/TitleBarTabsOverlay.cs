@@ -167,8 +167,7 @@ namespace EasyTabs
 
         protected long _lastLeftButtonClickTicks = 0;
 
-		protected bool _firstClick = true;
-		protected Point[] _lastTwoClickCoordinates = new Point[2];
+		private Point _lastCaptionClickPosition;
 
 		protected bool _parentFormClosing = false;
 
@@ -775,14 +774,11 @@ namespace EasyTabs
                 if (_singleTabDragOwner != null) continue;
                 if ((WM)input.wParam.ToInt32() == WM.WM_LBUTTONDOWN)
                 {
-                    if (!_firstClick) _lastTwoClickCoordinates[1] = _lastTwoClickCoordinates[0];
-                    _lastTwoClickCoordinates[0] = input.Position;
-                    _firstClick = false;
                     _wasDragging = false;
                 }
                 else if ((WM)input.wParam.ToInt32() == WM.WM_LBUTTONDBLCLK)
                 {
-                    if (DesktopBounds.Contains(_lastTwoClickCoordinates[0]) && DesktopBounds.Contains(_lastTwoClickCoordinates[1]))
+                    if (!_wasDragging && _parentForm.MaximizeBox && IsCaptionPoint(input.Position))
                         _parentForm.WindowState = _parentForm.WindowState == FormWindowState.Maximized
                             ? FormWindowState.Normal : FormWindowState.Maximized;
                 }
@@ -811,6 +807,16 @@ namespace EasyTabs
                 }
             }
         }
+
+        private bool IsCaptionPoint(Point screenPosition)
+        {
+            if (!DesktopBounds.Contains(screenPosition)) return false;
+            Point relative = GetRelativeCursorPosition(screenPosition);
+            BaseTabRenderer renderer = _parentForm.TabRenderer;
+            return renderer.OverTab(_parentForm.Tabs, relative) == null &&
+                !renderer.IsOverAddButton(relative) && !renderer.IsOverSizingBox(relative);
+        }
+
 		/// <summary>Hook callback to process <see cref="WM.WM_MOUSEMOVE" /> messages to highlight/un-highlight the close button on each tab.</summary>
 		/// <param name="nCode">The message being received.</param>
 		/// <param name="wParam">Additional information about the message.</param>
@@ -840,9 +846,22 @@ namespace EasyTabs
                     if (message == WM.WM_LBUTTONDOWN)
                     {
                         long ticks = DateTime.Now.Ticks;
-                        if (_lastLeftButtonClickTicks > 0 && ticks - _lastLeftButtonClickTicks < _doubleClickInterval * 10000)
+                        // Classify before a click can add/remove a tab and expose
+                        // caption space underneath it. Both clicks must be blank.
+                        bool caption = _singleTabDragOwner == null && _tornTab == null && IsCaptionPoint(position);
+                        Size doubleClickSize = SystemInformation.DoubleClickSize;
+                        var doubleClickArea = new Rectangle(
+                            _lastCaptionClickPosition.X - doubleClickSize.Width / 2,
+                            _lastCaptionClickPosition.Y - doubleClickSize.Height / 2,
+                            doubleClickSize.Width, doubleClickSize.Height);
+                        if (caption && _lastLeftButtonClickTicks > 0 &&
+                            ticks - _lastLeftButtonClickTicks < _doubleClickInterval * 10000 && doubleClickArea.Contains(position))
+                        {
                             _mouseEvents.Enqueue(new MouseEvent { nCode = nCode, wParam = new IntPtr((int)WM.WM_LBUTTONDBLCLK), Position = position });
-                        _lastLeftButtonClickTicks = ticks;
+                            _lastLeftButtonClickTicks = 0;
+                        }
+                        else _lastLeftButtonClickTicks = caption ? ticks : 0;
+                        _lastCaptionClickPosition = position;
                     }
                     if (!_mouseInputQueued)
                         _mouseInputQueued = PostInputMessage(Handle, MouseInputMessage, IntPtr.Zero, IntPtr.Zero);
@@ -1111,6 +1130,7 @@ namespace EasyTabs
             if (m.Msg == (int)WM.WM_LBUTTONDOWN ||
                 m.Msg == (int)WM.WM_LBUTTONUP ||
                 m.Msg == (int)WM.WM_LBUTTONDBLCLK ||
+                m.Msg == (int)WM.WM_NCLBUTTONDBLCLK ||
                 m.Msg == (int)WM.WM_NCLBUTTONDOWN ||
                 m.Msg == (int)WM.WM_NCLBUTTONUP ||
                 m.Msg == (int)WM.WM_MBUTTONDOWN ||
@@ -1186,8 +1206,13 @@ namespace EasyTabs
 					break;
 
 				case WM.WM_LBUTTONDBLCLK:
-					_parentForm.ForwardMessage(ref m);
-					break;
+				case WM.WM_NCLBUTTONDBLCLK:
+                    // Caption toggling is handled by the filtered hook events.
+                    // Keep the second press as a normal tab/button press instead
+                    // of allowing Windows to maximize through HTCAPTION.
+                    m.Msg = m.Msg == (int)WM.WM_NCLBUTTONDBLCLK
+                        ? (int)WM.WM_NCLBUTTONDOWN : (int)WM.WM_LBUTTONDOWN;
+                    goto case WM.WM_LBUTTONDOWN;
 
 				// We always return HTCAPTION for the hit test message so that the underlying window doesn't have its focus removed
 				case WM.WM_NCHITTEST:
