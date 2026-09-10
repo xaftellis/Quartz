@@ -196,7 +196,7 @@ namespace Quartz
 
         private void NameTextBox_TextChanged(object sender, EventArgs e)
         {
-            _browser.UpdateFavouriteButtonPreview(favButton, NameTextBox.Text.Trim());
+            favButton = _browser.UpdateFavouriteButtonPreview(favButton, NameTextBox.Text.Trim());
         }
 
         private void NameTextBox_KeyUp(object sender, KeyEventArgs e)

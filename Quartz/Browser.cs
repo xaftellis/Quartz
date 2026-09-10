@@ -57,6 +57,8 @@ namespace Quartz
 
         private const int MaximumFavouriteButtonWidth = 150;
         private const int FavouriteButtonHeight = 23;
+        // Preserve the original overlay layout's room for the favicon.
+        private static readonly string FavouriteIconTextPrefix = new string(' ', 6);
 
         #region Declarations
         public AppContainer tabbedApp;
@@ -394,7 +396,7 @@ namespace Quartz
                     AutoSizeMode = AutoSizeMode.GrowAndShrink,
                     ImageAlign = ContentAlignment.MiddleLeft,
                     TextAlign = ContentAlignment.MiddleCenter,
-                    TextImageRelation = TextImageRelation.ImageBeforeText,
+                    TextImageRelation = TextImageRelation.Overlay,
                     UseMnemonic = false
                 };
 
@@ -423,14 +425,16 @@ namespace Quartz
 
         private static string FitFavouriteButtonText(Button button, string fullText, int maximumWidth)
         {
+            string prefix = button.Image == null ? string.Empty : FavouriteIconTextPrefix;
+            string displayText = prefix + fullText;
             Size originalMaximumSize = button.MaximumSize;
             button.MaximumSize = Size.Empty;
 
             try
             {
-                button.Text = fullText;
+                button.Text = displayText;
                 if (button.GetPreferredSize(Size.Empty).Width <= maximumWidth)
-                    return fullText;
+                    return displayText;
 
                 const string ellipsis = "...";
                 int minimum = 0;
@@ -439,7 +443,7 @@ namespace Quartz
                 while (minimum < maximum)
                 {
                     int length = (minimum + maximum + 1) / 2;
-                    button.Text = fullText.Substring(0, length) + ellipsis;
+                    button.Text = prefix + fullText.Substring(0, length) + ellipsis;
 
                     if (button.GetPreferredSize(Size.Empty).Width <= maximumWidth)
                         minimum = length;
@@ -447,7 +451,7 @@ namespace Quartz
                         maximum = length - 1;
                 }
 
-                return fullText.Substring(0, minimum) + ellipsis;
+                return prefix + fullText.Substring(0, minimum) + ellipsis;
             }
             finally
             {
@@ -455,15 +459,34 @@ namespace Quartz
             }
         }
 
-        internal void UpdateFavouriteButtonPreview(Button button, string name)
+        internal Button UpdateFavouriteButtonPreview(Button button, string name)
         {
             if (button == null)
-                return;
+                return null;
+
+            // Favicon validation can rebuild the bar while the edit window is open.
+            // Reconnect its saved button reference to the replacement control.
+            if (!pnlFavourites.Controls.Contains(button))
+            {
+                FavouriteModel favourite = GetFavourite(button);
+                if (favourite != null)
+                {
+                    button = pnlFavourites.Controls.OfType<Button>().FirstOrDefault(candidate =>
+                    {
+                        FavouriteModel candidateFavourite = GetFavourite(candidate);
+                        return candidateFavourite != null &&
+                            candidateFavourite.ProfileId == favourite.ProfileId &&
+                            candidateFavourite.Name == favourite.Name &&
+                            candidateFavourite.WebAddress == favourite.WebAddress;
+                    }) ?? button;
+                }
+            }
 
             button.AccessibleName = name;
             button.Text = FitFavouriteButtonText(button, name, MaximumFavouriteButtonWidth);
             button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
             UpdateFavBar();
+            return button;
         }
 
         private static FavouriteModel GetFavourite(Button button)
