@@ -480,6 +480,7 @@ namespace EasyTabs
                 if (activeIndex >= 0 && IsTabRepositioning && _tabClickOffset.HasValue)
                 {
                     int width = widths[activeIndex];
+                    UpdateTabDragOffset(new Size(width, Scale(ChromiumTabMetrics.Height)));
                     draggedX = Math.Max(startX, Math.Min(startX + _maxTabArea.Width - width, cursor.X - _tabClickOffset.Value));
                     int drop = Math.Max(0, Math.Min(tabs.Count - 1, (int)Math.Round(
                         (draggedX.Value - startX - TabRepositionDragDistance) / (double)Math.Max(1, width - OverlapWidth))));

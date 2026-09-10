@@ -111,6 +111,8 @@ namespace EasyTabs
 		/// <summary>Cursor offset inside <see cref="_tornTabWindow" /> while dragging.</summary>
 		protected static Point _tornTabWindowCursorOffset;
 
+		private static PointF _tornTabGrabRatio;
+
 		/// <summary>
 		/// Flag used in <see cref="WndProc" /> and <see cref="MouseHookCallback" /> to track whether the user was click/dragging when a particular event
 		/// occurred.
@@ -467,6 +469,9 @@ namespace EasyTabs
 		private void DragSingleTabWindow(TitleBarTab tab, Point cursorPosition)
 		{
 			HideTooltip();
+			Point tabClickOffset = GetRelativeCursorPosition(cursorPosition);
+			tabClickOffset.Offset(-tab.Area.Left, -tab.Area.Top);
+			PointF grabRatio = BaseTabRenderer.GetTabDragGrabRatio(tabClickOffset, tab.Area.Size);
 			_parentForm.TabRenderer.IsTabRepositioning = false;
 			_singleTabDragStart = cursorPosition;
 			_singleTabDropTarget = null;
@@ -492,9 +497,9 @@ namespace EasyTabs
 				tab.ClearSubscriptions();
 				_parentForm.Tabs.Remove(tab);
 				TitleBarTabsOverlay targetOverlay = target._overlay;
-				target.TabRenderer.CombineTab(tab, targetOverlay.GetRelativeCursorPosition(_singleTabDropPoint));
-				target.TabRenderer.Overlay_MouseDown(targetOverlay,
-					new MouseEventArgs(MouseButtons.Left, 1, _singleTabDropPoint.X, _singleTabDropPoint.Y, 0));
+				target.TabRenderer.CombineTab(tab, targetOverlay.GetRelativeCursorPosition(_singleTabDropPoint), grabRatio);
+				// Establish the full-size dragged tab before mouse-up can trigger an opening animation.
+				targetOverlay.Render(_singleTabDropPoint);
 				if ((Control.MouseButtons & MouseButtons.Left) == 0)
 					target.TabRenderer.Overlay_MouseUp(targetOverlay,
 						new MouseEventArgs(MouseButtons.Left, 1, _singleTabDropPoint.X, _singleTabDropPoint.Y, 0));
@@ -563,12 +568,9 @@ namespace EasyTabs
 			bool preserveTabOffset = cursorPosition.X >= sourceDropArea.Left && cursorPosition.X < sourceDropArea.Right;
 
 			Point relativeCursorPosition = GetRelativeCursorPosition(cursorPosition);
-			Point dragClickOffset = _parentForm.TabRenderer.TabDragClickOffset ?? new Point(
-				relativeCursorPosition.X - sourceTabArea.Left,
-				relativeCursorPosition.Y - sourceTabArea.Top);
-			Point cursorOffsetWithinTab = new Point(
-				Math.Max(0, Math.Min(dragClickOffset.X, sourceTabArea.Width)),
-				Math.Max(0, Math.Min(dragClickOffset.Y, sourceTabArea.Height)));
+			_tornTabGrabRatio = _parentForm.TabRenderer.TabDragGrabRatio ?? BaseTabRenderer.GetTabDragGrabRatio(
+				new Point(relativeCursorPosition.X - sourceTabArea.Left, relativeCursorPosition.Y - sourceTabArea.Top),
+				sourceTabArea.Size);
 
 			Rectangle sourceBounds = _parentForm.WindowState == FormWindowState.Normal
 				? _parentForm.Bounds
@@ -640,10 +642,10 @@ namespace EasyTabs
 				detachedTabX = Math.Max(normalTabX, Math.Min(detachedTabX, maximumTabX));
 			}
 
-			int detachedTabCursorOffsetX = Math.Min(cursorOffsetWithinTab.X, detachedTabWidth);
-			newWindow.TabRenderer.BeginDetachedWindowDrag(detachedTabX, detachedTabWidth);
+			newWindow.TabRenderer.BeginDetachedWindowDrag(detachedTabX, detachedTabWidth, _tornTabGrabRatio);
+			Point cursorOffsetWithinTab = newWindow.TabRenderer.TabDragClickOffset.Value;
 			_tornTabWindowCursorOffset = new Point(
-				(newWindow._overlay.Left - newWindow.Left) + detachedTabX + detachedTabCursorOffsetX,
+				(newWindow._overlay.Left - newWindow.Left) + detachedTabX + cursorOffsetWithinTab.X,
 				(newWindow._overlay.Top - newWindow.Top) + tab.Area.Top + cursorOffsetWithinTab.Y);
 			MoveLiveTornTabWindow(cursorPosition);
 			newWindow.RedrawTabs();
@@ -652,6 +654,9 @@ namespace EasyTabs
 			{
 				_parentForm.Hide();
 			}
+
+			// Source-tab selection and reparenting must finish before the dragged window takes focus.
+			newWindow.Activate();
 
 			_dropAreas = (from window in _parentForm.ApplicationContext.OpenWindows
 						  where window != newWindow && window.Tabs.Count > 0
@@ -666,9 +671,10 @@ namespace EasyTabs
 				return;
 			}
 
-			_tornTabWindow.Location = new Point(
+			// Raise while moving, without repeatedly changing focus or making the window always-on-top.
+			User32.SetWindowPos(_tornTabWindow.Handle, IntPtr.Zero,
 				cursorPosition.X - _tornTabWindowCursorOffset.X,
-				cursorPosition.Y - _tornTabWindowCursorOffset.Y);
+				cursorPosition.Y - _tornTabWindowCursorOffset.Y, 0, 0, SWP.SWP_NOSIZE | SWP.SWP_NOACTIVATE);
 		}
 
         // Mouse moves are sampled once per frame on the UI thread. Button events
@@ -697,9 +703,13 @@ namespace EasyTabs
                     _tornTabWindow = null;
                     _tornTabDragOwner = null;
                     _dropAreas = null;
+                    tab.Active = false;
                     tab.ClearSubscriptions();
                     if (tornWindow != null && !tornWindow.IsDisposed) tornWindow.Tabs.Remove(tab);
-                    dropArea.Item1.TabRenderer.CombineTab(tab, dropArea.Item1._overlay.GetRelativeCursorPosition(cursor));
+                    TitleBarTabs target = dropArea.Item1;
+                    target.TabRenderer.CombineTab(tab, target._overlay.GetRelativeCursorPosition(cursor), _tornTabGrabRatio);
+                    target._overlay.Render(cursor);
+                    target.Activate();
                     if (tornWindow != null && !tornWindow.IsDisposed) tornWindow.Close();
                     if (_parentForm.Tabs.Count == 0) _parentForm.Close();
                     break;

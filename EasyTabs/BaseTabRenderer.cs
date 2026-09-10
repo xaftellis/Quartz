@@ -368,6 +368,8 @@ namespace EasyTabs
 			Point relativeCursorPosition = _parentWindow._overlay.GetRelativeCursorPosition(e.Location);
 			_tabClickOffset = relativeCursorPosition.X - _parentWindow.SelectedTab.Area.Left;
 			_tabClickOffsetY = relativeCursorPosition.Y - _parentWindow.SelectedTab.Area.Top;
+			TabDragGrabRatio = GetTabDragGrabRatio(new Point(_tabClickOffset.Value, _tabClickOffsetY.Value),
+				_parentWindow.SelectedTab.Area.Size);
 		}
 
 		/// <summary>
@@ -381,6 +383,7 @@ namespace EasyTabs
 			_dragStart = null;
 			_tabClickOffset = null;
 			_tabClickOffsetY = null;
+			TabDragGrabRatio = null;
 			_detachedTabX = null;
 			_detachedTabWidth = null;
 
@@ -395,10 +398,12 @@ namespace EasyTabs
 		}
 
 		/// <summary>Keeps a detached tab in its previous visual position until the window drag ends.</summary>
-		internal virtual void BeginDetachedWindowDrag(int tabX, int tabWidth)
+		internal virtual void BeginDetachedWindowDrag(int tabX, int tabWidth, PointF grabRatio)
 		{
 			_detachedTabX = tabX;
 			_detachedTabWidth = tabWidth;
+			TabDragGrabRatio = grabRatio;
+			UpdateTabDragOffset(new Size(tabWidth, _parentWindow.SelectedTab.Area.Height));
 		}
 
 		/// <summary>Returns a detached tab to the normal tab-strip layout.</summary>
@@ -406,6 +411,28 @@ namespace EasyTabs
 		{
 			_detachedTabX = null;
 			_detachedTabWidth = null;
+			_tabClickOffset = _tabClickOffsetY = null;
+			TabDragGrabRatio = null;
+		}
+
+		/// <summary>Preserved throughout a drag, including transfers between renderers.</summary>
+		internal PointF? TabDragGrabRatio { get; private set; }
+
+		internal static PointF GetTabDragGrabRatio(Point offset, Size tabSize)
+		{
+			return new PointF(
+				Math.Max(0, Math.Min(1, offset.X / (float)Math.Max(1, tabSize.Width))),
+				Math.Max(0, Math.Min(1, offset.Y / (float)Math.Max(1, tabSize.Height))));
+		}
+
+		protected void UpdateTabDragOffset(Size tabSize)
+		{
+			if (!TabDragGrabRatio.HasValue) return;
+			// Chromium's DragSessionData retains size ratios instead of repeatedly rounding transferred offsets.
+			// https://chromium.googlesource.com/chromium/src/+/cac17959bd104dc21b81f5ad1839b5e8bd80c97f/chrome/browser/ui/views/tabs/common/dragged_tabs_container.cc
+			PointF ratio = TabDragGrabRatio.Value;
+			_tabClickOffset = Math.Min(Math.Max(0, tabSize.Width - 1), (int)Math.Round(ratio.X * tabSize.Width));
+			_tabClickOffsetY = Math.Min(Math.Max(0, tabSize.Height - 1), (int)Math.Round(ratio.Y * tabSize.Height));
 		}
 
 		/// <summary>Original cursor offset within the tab for the current drag.</summary>
@@ -692,6 +719,7 @@ namespace EasyTabs
 
 				else if (IsTabRepositioning && _tabClickOffset != null)
 				{
+					UpdateTabDragOffset(tabArea.Size);
 					// Keep the dragged tab within the usable tab strip, excluding the add button and frame controls.
 					int tabDragAreaLeft = SystemInformation.BorderSize.Width + offset.X;
 					tabArea.X = cursor.X - _tabClickOffset.Value;
@@ -1007,7 +1035,8 @@ namespace EasyTabs
 		/// </summary>
 		/// <param name="tab">Tab that was dragged into this window.</param>
 		/// <param name="cursorLocation">Location of the user's cursor.</param>
-		internal virtual void CombineTab(TitleBarTab tab, Point cursorLocation)
+		/// <param name="grabRatio">Original grab point as proportions of the tab's width and height.</param>
+		internal virtual void CombineTab(TitleBarTab tab, Point cursorLocation, PointF grabRatio)
 		{
 			// Stop rendering to prevent weird stuff from happening like the wrong tab being focused
 			_suspendRendering = true;
@@ -1015,16 +1044,9 @@ namespace EasyTabs
 			// Find out where to insert the tab in the list
 			int dropIndex = _parentWindow.Tabs.FindIndex(t => t.Area.Left <= cursorLocation.X && t.Area.Right >= cursorLocation.X);
 
-			// Simulate the user having clicked in the middle of the tab when they started dragging it so that the tab will move correctly within the window
-			// when the user continues to move the mouse
-			if (_parentWindow.Tabs.Count > 0)
-			{
-				_tabClickOffset = _parentWindow.Tabs.First().Area.Width / 2;
-			}
-			else
-			{
-				_tabClickOffset = 0;
-			}
+			TabDragGrabRatio = grabRatio;
+			UpdateTabDragOffset(tab.Area.Size);
+			_wasTabRepositioning = false;
 			IsTabRepositioning = true;
 
 			tab.Parent = _parentWindow;
