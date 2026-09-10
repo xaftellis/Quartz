@@ -75,7 +75,7 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.pnlTop = new System.Windows.Forms.Panel();
             this.btnSiteInformation = new Quartz.Controls.SiteInfoButton();
-            this.pnlFavourites = new System.Windows.Forms.FlowLayoutPanel();
+            this.pnlFavourites = new Quartz.Controls.FavouritesBar();
             this.txtWebAddress = new System.Windows.Forms.RichTextBox();
             this.btnSettings = new System.Windows.Forms.Button();
             this.SettingsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -1004,7 +1004,7 @@
         private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem showFavouritesBarToolStripMenuItem;
-        public System.Windows.Forms.FlowLayoutPanel pnlFavourites;
+        public Quartz.Controls.FavouritesBar pnlFavourites;
         private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;

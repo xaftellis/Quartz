@@ -161,6 +161,12 @@
     <Compile Include="Controls\SiteInfoButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\FavouritesBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\FavouriteButton.Visuals.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\SiteInfoPopup.cs">
       <SubType>Form</SubType>
     </Compile>

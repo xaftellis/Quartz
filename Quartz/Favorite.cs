@@ -55,6 +55,16 @@ namespace Quartz
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
+            // Another tab/window may have reordered favourites while this editor
+            // was open. Save against current storage, not the opening snapshot.
+            _service = new FavouriteService();
+            if (_modify && _service.Get(_text) == null)
+            {
+                MessageBox.Show(this, "This favourite has been removed or renamed. Please reopen it to edit.",
+                    "Favourite", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
+                return;
+            }
             string name = NameTextBox.Text.Trim();
             string address = AddressTextBox.Text.Trim();
 
@@ -117,17 +127,9 @@ namespace Quartz
                     };
 
                     _service.Modify(favourite);
-                    _service.SaveChanges();
-
                     if (SettingsService.Get("sortFavouritesBy") == "alphabetically")
-                    {
-                        _browser.SortByAlphabetially();
-                    }
-                    else
-                    {
-                        _service.Get(name).Index = _service.All().Count - 1;
-                        _service.SaveChanges();
-                    }
+                        _service.SortAlphabetically();
+                    _service.SaveChanges();
 
                     this.Close();
                     _browser.LoadFavourites();
@@ -165,6 +167,8 @@ namespace Quartz
                     && Uri.IsWellFormedUriString(address, UriKind.Absolute))
                 {
                     _service.Edit(_text, name, address);
+                    if (SettingsService.Get("sortFavouritesBy") == "alphabetically")
+                        _service.SortAlphabetically();
                     _service.SaveChanges();
                     this.Close();
                     _browser.LoadFavourites();

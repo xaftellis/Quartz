@@ -59,6 +59,10 @@ namespace Quartz
         private const int FavouriteButtonHeight = 23;
         // Preserve the original overlay layout's room for the favicon.
         private static readonly string FavouriteIconTextPrefix = new string(' ', 6);
+        private ToolTip _favouriteToolTip;
+        private bool _reloadFavourites;
+        private bool _loadingFavourites;
+        private bool _favouritesLoaded;
 
         #region Declarations
         public AppContainer tabbedApp;
@@ -151,6 +155,10 @@ namespace Quartz
         {
             InitializeComponent();
             InitializeSiteInfo();
+            _favouriteToolTip = new ToolTip(components);
+            pnlFavourites.OrderChanged += FavouritesOrderChanged;
+            pnlFavourites.InteractionEnded += FavouritesInteractionEnded;
+            pnlFavourites.AnimationCompleted += (sender, args) => { if (!IsDisposed && !Disposing) UpdateFavBar(); };
             _newtab = newtabrequest;
             _tabAddress = address;
             //lstSuggestions.View = View.Details;
@@ -378,49 +386,98 @@ namespace Quartz
 
         public void LoadFavourites()
         {
+            if (IsDisposed || Disposing) return;
+            if (pnlFavourites.IsInteracting)
+            {
+                _reloadFavourites = true;
+                return;
+            }
             bool showFavouriteIcon = SettingsService.Get("showFavouriteIcon") == "true";
             var service = new FavouriteService();
-
-            pnlFavourites.Controls.Clear();
-
+            string theme = SettingsService.Get("Theme");
+            var available = pnlFavourites.Controls.OfType<Controls.FavouriteButton>().ToList();
+            var buttons = new List<Controls.FavouriteButton>();
             foreach (var favourite in service.All().OrderBy(f => f.Index))
             {
-                var button = new Button
+                var button = available.FirstOrDefault(candidate =>
                 {
-                    Name = "btn" + favourite.Name,
-                    Text = favourite.Name,
-                    Tag = favourite,
-                    AccessibleName = favourite.Name,
-                    ContextMenuStrip = mnuMenu,
-                    AutoSize = true,
-                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                    ImageAlign = ContentAlignment.MiddleLeft,
-                    TextAlign = ContentAlignment.MiddleCenter,
-                    TextImageRelation = TextImageRelation.Overlay,
-                    UseMnemonic = false
-                };
-
-                NewControlThemeChanger.ChangeControlTheme(button);
-
-                if (showFavouriteIcon)
+                    var model = GetFavourite(candidate);
+                    return model != null && model.ProfileId == favourite.ProfileId &&
+                        model.Name == favourite.Name && model.WebAddress == favourite.WebAddress;
+                });
+                if (button == null)
                 {
-                    button.Font = new Font("Segoe UI", 8);
-                    button.Image = FaviconHelper.GetFaviconFileExternalAsImage(favourite.WebAddress);
+                    button = new Controls.FavouriteButton
+                    {
+                        ContextMenuStrip = mnuMenu,
+                        AutoSize = true,
+                        AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                        ImageAlign = ContentAlignment.MiddleLeft,
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        TextImageRelation = TextImageRelation.Overlay,
+                        UseMnemonic = false
+                    };
+                    button.MouseUp += Button_MouseUp;
+                    button.Click += btnGotoFavourite_Click;
                 }
-
-                button.Text = FitFavouriteButtonText(button, favourite.Name, MaximumFavouriteButtonWidth);
-                button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
-
-                var toolTip = new ToolTip();
-                toolTip.SetToolTip(button, favourite.Name + Environment.NewLine + favourite.WebAddress);
-
-                button.MouseDown += Button_MouseDown;
-                button.MouseMove += Button_MouseMove;
-                button.MouseUp += Button_MouseUp;
-                button.Click += btnGotoFavourite_Click;
-
-                pnlFavourites.Controls.Add(button);
+                else available.Remove(button);
+                button.Name = "btn" + favourite.Name;
+                button.Tag = favourite;
+                button.AccessibleName = favourite.Name;
+                buttons.Add(button);
             }
+            _reloadFavourites = false;
+            _loadingFavourites = true;
+            try
+            {
+                _favouriteToolTip.RemoveAll();
+                pnlFavourites.UpdateItems(buttons, button =>
+                {
+                    var favourite = GetFavourite(button);
+                    if (button.ThemeKey != theme)
+                    {
+                        NewControlThemeChanger.ChangeControlTheme(button);
+                        button.ThemeKey = theme;
+                    }
+                    button.SetIconVisibility(showFavouriteIcon, () => FaviconHelper.GetFaviconFileExternalAsImage(favourite.WebAddress));
+                    button.Text = FitFavouriteButtonText(button, favourite.Name, MaximumFavouriteButtonWidth);
+                    button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
+                    _favouriteToolTip.SetToolTip(button, favourite.Name + Environment.NewLine + favourite.WebAddress);
+                }, _favouritesLoaded);
+                _favouritesLoaded = true;
+            }
+            finally
+            {
+                _loadingFavourites = false;
+                UpdateFavBar();
+            }
+        }
+
+        private void FavouritesOrderChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                var order = pnlFavourites.Controls.OfType<Button>().Select(GetFavourite).ToList();
+                // Re-read storage at drop time; a stale tab must not overwrite
+                // favourites added, edited, or removed elsewhere during the drag.
+                if (new FavouriteService().TryReorder(order))
+                    SettingsService.Set("sortFavouritesBy", "custom");
+                else
+                    _reloadFavourites = true;
+            }
+            catch (Exception error) when (error is IOException || error is UnauthorizedAccessException || error is JsonException)
+            {
+                _reloadFavourites = true;
+                MessageBox.Show(this, "The favourites order could not be saved. " + error.Message,
+                    "Favourites", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void FavouritesInteractionEnded(object sender, EventArgs e)
+        {
+            // Finish the native mouse release before a refresh disposes its button.
+            if (_reloadFavourites && !IsDisposed && !Disposing && IsHandleCreated)
+                BeginInvoke((Action)(() => { if (_reloadFavourites) LoadFavourites(); }));
         }
 
         private static string FitFavouriteButtonText(Button button, string fullText, int maximumWidth)
@@ -494,60 +551,6 @@ namespace Quartz
             return button.Tag as FavouriteModel;
         }
 
-        bool mouseReleased = false;
-        Point mouseDownLocation;
-        bool isDragging = false;
-        Button draggedButton = null;
-        int originalButtonIndex = 0;
-
-        private void Button_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                mouseReleased = false;
-                isDragging = false;
-                draggedButton = sender as Button;
-                mouseDownLocation = e.Location;
-                originalButtonIndex = pnlFavourites.Controls.GetChildIndex(sender as Button);
-            }
-        }
-
-        private void Button_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (draggedButton == null)
-                return;
-
-            if (!mouseReleased && (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left)
-            {
-                if (!isDragging)
-                {
-                    // Get the current mouse location in screen coordinates
-                    Point currentScreenPos = draggedButton.PointToScreen(e.Location);
-
-                    // Get the button's rectangle in screen coordinates
-                    Rectangle buttonBounds = draggedButton.RectangleToScreen(draggedButton.ClientRectangle);
-
-                    // Start dragging only if mouse has moved outside the button
-                    if (!buttonBounds.Contains(currentScreenPos))
-                    {
-                        isDragging = true;
-                    }
-                }
-
-                if (isDragging)
-                {
-                    int currentIndex = pnlFavourites.Controls.GetChildIndex(draggedButton);
-                    int newIndex = GetNewButtonIndex(draggedButton, Cursor.Position);
-
-                    if (newIndex != currentIndex)
-                    {
-                        pnlFavourites.Controls.SetChildIndex(draggedButton, newIndex);
-                    }
-                }
-
-            }
-        }
-
         private async void Button_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Middle)
@@ -583,32 +586,10 @@ namespace Quartz
                 // Instant UI activation (0–1ms)
                 await Task.Yield();
             }
-            else if (e.Button == MouseButtons.Left && isDragging)
-            {
-                mouseReleased = true;
-                isDragging = false;
-                draggedButton = null;
-
-                FavouriteService favouriteService = new FavouriteService();
-                foreach (Button button in pnlFavourites.Controls)
-                {
-                    var favourite = GetFavourite(button);
-                    var storedFavourite = favourite == null ? null : favouriteService.Get(favourite.Name);
-                    if (storedFavourite != null)
-                        storedFavourite.Index = pnlFavourites.Controls.GetChildIndex(button);
-                }
-                favouriteService.SaveChanges();
-
-                int newButtonIndex = pnlFavourites.Controls.GetChildIndex(sender as Button);
-                if (originalButtonIndex != newButtonIndex)
-                {
-                    SettingsService.Set("sortFavouritesBy", "custom");
-                }
-            }
         }
         private void btnGotoFavourite_Click(object sender, EventArgs e)
         {
-            if (sender is Button && !isDragging)
+            if (sender is Button)
             {
                 var button = (Button)sender;
                 var favourite = GetFavourite(button);
@@ -617,31 +598,6 @@ namespace Quartz
                     SetSource(favourite.WebAddress);
                 }
             }
-        }
-
-        private int GetNewButtonIndex(Button draggedButton, Point screenMousePosition)
-        {
-            Point panelMousePoint = pnlFavourites.PointToClient(screenMousePosition);
-
-            var buttons = pnlFavourites.Controls.Cast<Control>().OfType<Button>()
-                .Where(b => b != draggedButton)
-                .OrderBy(b => b.Left)
-                .ToList();
-
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                var button = buttons[i];
-                int centerX = button.Left + button.Width / 2;
-
-                if (panelMousePoint.X < centerX)
-                {
-                    // Mouse is to the left of this button’s center → insert before
-                    return i;
-                }
-            }
-
-            // If we're past all buttons → insert at end
-            return buttons.Count;
         }
 
         public void SetSource(string url)
@@ -735,8 +691,8 @@ namespace Quartz
 
             bool shouldShow = showFavSetting || isHome;
 
-            // --- No favourites? Force hidden ---
-            if (pnlFavourites.Controls.Count == 0)
+            // Keep the row visible until its last removed favourite finishes fading.
+            if (!pnlFavourites.HasVisibleItems)
             {
                 pnlFavourites.Visible = false;
                 pnlTop.Height = 43;
@@ -1771,12 +1727,12 @@ namespace Quartz
 
         private void pnlFavourites_ControlRemoved(object sender, ControlEventArgs e)
         {
-            UpdateFavBar();
+            if (!_loadingFavourites) UpdateFavBar();
         }
 
         private void pnlFavourites_ControlAdded(object sender, ControlEventArgs e)
         {
-            UpdateFavBar();
+            if (!_loadingFavourites) UpdateFavBar();
         }
 
         private void Browser_MouseMove(object sender, MouseEventArgs e)
@@ -2488,16 +2444,21 @@ namespace Quartz
         public void SortByAlphabetially()
         {
             FavouriteService favouriteService = new FavouriteService();
-            List<FavouriteModel> allItems = favouriteService.All();
-
-            var sortedItems = allItems.OrderBy(item => item.Name).ToList();
-
-            for (int i = 0; i < sortedItems.Count; i++)
-            {
-                sortedItems[i].Index = i; // Update Index to match new position
-            }
-
+            favouriteService.SortAlphabetically();
             favouriteService.SaveChanges();
+
+            var buttons = pnlFavourites.Controls.OfType<Button>().ToList();
+            var order = favouriteService.All().OrderBy(f => f.Index).Select(favourite =>
+                buttons.FirstOrDefault(button =>
+                {
+                    var model = GetFavourite(button);
+                    return model != null && model.ProfileId == favourite.ProfileId &&
+                        model.Name == favourite.Name && model.WebAddress == favourite.WebAddress;
+                })).Cast<Control>().ToList();
+
+            // Reuse the live buttons so their positions can animate. A stale bar
+            // with added/removed/edited favourites still needs its normal refresh.
+            if (!pnlFavourites.TryAnimateOrder(order)) LoadFavourites();
         }
 
 
@@ -2507,7 +2468,6 @@ namespace Quartz
             {
                 SettingsService.Set("sortFavouritesBy", "alphabetically");
                 SortByAlphabetially();
-                LoadFavourites();
             }
             else
             {
@@ -2928,6 +2888,8 @@ namespace Quartz
                     WebAddress = Clipboard.GetText()
                 });
 
+                if (SettingsService.Get("sortFavouritesBy") == "alphabetically")
+                    service.SortAlphabetically();
                 service.SaveChanges();
                 LoadFavourites();
             }
