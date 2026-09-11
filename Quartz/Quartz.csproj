@@ -145,6 +145,8 @@
     <Compile Include="AddBirthday.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Libs\NewTabPageController.cs" />
+    <Compile Include="Services\NewTabPageData.cs" />
     <Compile Include="AddBirthday.Designer.cs">
       <DependentUpon>AddBirthday.cs</DependentUpon>
     </Compile>
@@ -1189,6 +1191,16 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Content Include="assets\quartz.com\newtab\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\quartz.png">
+      <Link>assets\quartz.com\newtab\quartz.png</Link>
+      <TargetPath>assets\quartz.com\newtab\quartz.png</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
