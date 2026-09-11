@@ -394,7 +394,7 @@ namespace EasyTabs
 
 			if (_wasTabRepositioning)
 			{
-				_parentWindow._overlay.Render(true);
+				_parentWindow._overlay?.Render(true);
 			}
 		}
 

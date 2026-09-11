@@ -139,6 +139,7 @@ namespace Quartz
                 TabRenderer = new ChromiumTabRenderer(this);
             }
 
+            ((ChromiumTabRenderer)TabRenderer).DefaultFavicon = FaviconHelper.GetDefaultFavicon16();
             // Light uses the blue throbber; the other themes use their existing foreground colour.
             TabRenderer.LoadingIndicatorColor = theme == "light" ||
                 !(theme == "dark" || theme == "black" || theme == "aqua" || theme == "xmas")

@@ -34,8 +34,7 @@ internal static class PinnedTabsTests
         }
         internal void Release()
         {
-            IsTabRepositioning = false;
-            _tabClickOffset = null;
+            Overlay_MouseUp(null, new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
         }
     }
 
@@ -91,6 +90,7 @@ internal static class PinnedTabsTests
             LayoutAndFrames();
             ReversalsAndReducedMotion();
             DragAndTransfer();
+            PinnedFallbackIcon();
             MenusAndClosing();
             Console.WriteLine("PASS: " + _checks + " pinned-tab checks.");
             return 0;
@@ -204,15 +204,32 @@ internal static class PinnedTabsTests
         {
             var a = window.Add("A", true); var b = window.Add("B", true);
             var c = window.Add("C"); var d = window.Add("D"); window.Paint(0);
-            window.Renderer.Drag(a); window.Paint(20, new Point(1000, 20));
+            window.Renderer.Drag(a); window.Paint(20, new Point(700, 20));
             Check(window.Order == "B,A,C,D", "Pinned drag reorders only within pinned tabs.");
-            for (int i = 1; i <= 15; i++) window.Paint(20 + i * 16, new Point(1000, 20));
+            Check(a.Area.X == 700 - 55 / 2 && a.Area.Right > d.Area.Right,
+                "Pinned visual follows the pointer across normal tabs.");
+            for (int i = 1; i <= 15; i++) window.Paint(20 + i * 16, new Point(700, 20));
             Check(window.Order == "B,A,C,D", "Stationary drag is stable during neighbour animation.");
-            window.Renderer.Release(); window.Paint(500);
+            int releasedX = a.Area.X;
+            double releasedAt = window.Renderer.Time;
+            window.Renderer.Release(); window.Paint(releasedAt);
+            Check(a.Area.X == releasedX, "Release does not snap the pinned visual.");
+            window.Paint(releasedAt + 100);
+            int legalX = b.Area.Left + 55 - 17;
+            Check(a.Area.X == (int)Math.Round(releasedX + (legalX - releasedX) * .75), "Pin returns with the 200 ms ease-out curve.");
+            window.Paint(releasedAt + 200);
+            Check(a.Area.X == legalX && a.IsPinned, "Pin settles into its legal slot without unpinning.");
+            window.Paint(500);
             window.Renderer.Drag(d); window.Paint(520, new Point(-100, 20));
             Check(window.Order == "B,A,D,C", "Normal drag cannot enter pinned section.");
-            Check(d.Area.Left >= b.Area.Left + 2 * (55 - 17), "Normal drag stays visually after pins.");
-            window.Renderer.Release();
+            Check(d.Area.Left == b.Area.Left, "Normal visual follows pointer over the pinned section.");
+            releasedX = d.Area.X;
+            window.Renderer.Release(); window.Paint(520);
+            Check(d.Area.X == releasedX, "Normal tab release does not snap at the pinned boundary.");
+            window.Paint(620);
+            Check(d.Area.X > releasedX && d.Area.X < b.Area.Left + 2 * (55 - 17), "Normal visual animates back out of the pinned section.");
+            window.Paint(720);
+            Check(d.Area.X == b.Area.Left + 2 * (55 - 17) && !d.IsPinned, "Normal tab settles after pins without changing state.");
             target.Add("TargetPin", true); target.Add("TargetNormal"); target.Paint(0);
             a.ClearSubscriptions(); window.Tabs.Remove(a);
             target.Renderer.CombineTab(a, new Point(1100, 20), new PointF(.5f, .5f));
@@ -242,6 +259,80 @@ internal static class PinnedTabsTests
                 window.Paint(20 + i * 16, pointer);
                 Check(window.Order == order, "Crowded strip's wider active tab must not keep reordering under a stationary pointer.");
             }
+        }
+    }
+
+    private static bool SamePixels(Bitmap a, Bitmap b)
+    {
+        if (a.Size != b.Size) return false;
+        for (int y = 0; y < a.Height; y++)
+            for (int x = 0; x < a.Width; x++)
+                if (a.GetPixel(x, y) != b.GetPixel(x, y)) return false;
+        return true;
+    }
+
+    private static void PinnedFallbackIcon()
+    {
+        foreach (bool dark in new[] { false, true })
+        using (var window = new Window())
+        using (var reference = new Window())
+        {
+            Icon fallback = dark ? Quartz.Properties.Resources.default_favicon_dark : Quartz.Properties.Resources.default_favicon;
+            window.Renderer.DefaultFavicon = reference.Renderer.DefaultFavicon = fallback;
+            if (dark) window.Renderer.Theme = reference.Renderer.Theme = new ChromiumTabTheme(Color.FromArgb(88, 88, 88),
+                Color.FromArgb(35, 35, 35), activeForeground: Color.LightGray, inactiveForeground: Color.LightGray);
+            var hidden = window.Add("Hidden icon");
+            Icon original = hidden.Icon;
+            hidden.Content.ShowIcon = false;
+            var expected = reference.Add("Hidden icon", true);
+            expected.Icon = fallback;
+            using (Bitmap originalFrame = window.Frame(0))
+            {
+                hidden.IsPinned = true;
+                using (Bitmap pinned = window.Frame(200))
+                using (Bitmap expectedFrame = reference.Frame(200))
+                {
+                    Check(SamePixels(pinned, expectedFrame), "Hidden-icon pin paints the real default favicon in " + (dark ? "dark" : "light") + " theme.");
+                    Check(!hidden.Content.ShowIcon && ReferenceEquals(hidden.Icon, original), "Fallback never overwrites the underlying icon or visibility.");
+                    using (var sheet = new Bitmap(pinned.Width, pinned.Height * 3))
+                    using (Graphics graphics = Graphics.FromImage(sheet))
+                    {
+                        graphics.DrawImageUnscaled(originalFrame, 0, 0);
+                        graphics.DrawImageUnscaled(pinned, 0, pinned.Height);
+                        hidden.IsPinned = false;
+                        window.Paint(400);
+                        using (Bitmap unpinned = window.Frame(600))
+                        {
+                            Check(SamePixels(originalFrame, unpinned), "Unpin restores the original iconless appearance exactly.");
+                            graphics.DrawImageUnscaled(unpinned, 0, pinned.Height * 2);
+                        }
+                        sheet.Save(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "pinned-fallback-" + (dark ? "dark" : "light") + ".png"));
+                    }
+                }
+            }
+            hidden.IsPinned = true; window.Paint(800);
+            hidden.Content.ShowIcon = true;
+            hidden.Icon = expected.Icon = SystemIcons.Warning;
+            using (Bitmap actual = window.Frame(820))
+            using (Bitmap expectedFrame = reference.Frame(820))
+                Check(SamePixels(actual, expectedFrame), "A real favicon arriving while pinned replaces the fallback.");
+            hidden.IsLoading = expected.IsLoading = true;
+            window.Paint(840); reference.Paint(840);
+            hidden.Content.ShowIcon = false;
+            hidden.IsLoading = expected.IsLoading = false;
+            expected.Icon = fallback;
+            window.Paint(900); reference.Paint(900);
+            using (Bitmap actual = window.Frame(1300))
+            using (Bitmap expectedFrame = reference.Frame(1300))
+                Check(SamePixels(actual, expectedFrame), "Default favicon remains visible after pinned navigation completes.");
+        }
+        using (var window = new Window())
+        {
+            var pin = window.Add("Pin", true); var normal = window.Add("Normal");
+            window.Paint(0); window.Renderer.Drag(normal); window.Paint(20, new Point(0, 20));
+            window.Renderer.AnimationsEnabled = false;
+            window.Renderer.Release(); window.Paint(20);
+            Check(normal.Area.Left == pin.Area.Left + 55 - 17, "Reduced-motion release returns immediately to the legal slot.");
         }
     }
 
@@ -278,11 +369,11 @@ internal static class PinnedTabsTests
                 .All(item => !item.Enabled), "Bulk close actions disabled when only pins remain.");
             var opening = typeof(TabContextMenu).GetMethod("DefaultContextMenu_Opening", BindingFlags.Instance | BindingFlags.NonPublic);
             opening.Invoke(menu, new object[] { null, new System.ComponentModel.CancelEventArgs() });
-            var pinItem = menu.Items.OfType<ToolStripMenuItem>().Single(item => item.Text == "Unpin tab");
+            var pinItem = menu.Items.OfType<ToolStripMenuItem>().Single(item => item.Text == "Unpin");
             pinItem.PerformClick();
             Check(!b.IsPinned, "Menu toggles pin state.");
             opening.Invoke(menu, new object[] { null, new System.ComponentModel.CancelEventArgs() });
-            Check(pinItem.Text == "Pin tab", "Menu label follows current pin state.");
+            Check(pinItem.Text == "Pin", "Menu label follows current pin state.");
         }
         ContextMenuProvider._parentForm = null; ContextMenuProvider._clickedTab = null;
     }

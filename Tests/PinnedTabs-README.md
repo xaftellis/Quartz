@@ -17,7 +17,12 @@ mixed ranges, fixed widths, pin/unpin timing, rapid reversal, reduced motion,
 loading, multiple DPI scales and light/dark themes, drag boundaries and stationary
 pointer stability, transfer to another window, menu labels and enabled states,
 bulk-close protection, explicit close, cancellation, disposal and session-only
-state. Generated `pinned-tabs-light.png` and `pinned-tabs-dark.png` show six frames
+state. Drag checks include movement across the pinned boundary, valid model order,
+intermediate return frames and reduced-motion release. Pixel checks verify the
+temporary default favicon, exact restoration after unpinning, loading completion
+and a real favicon arriving later. `pinned-fallback-light.png` and
+`pinned-fallback-dark.png` show before/pinned/unpinned appearances.
+Generated `pinned-tabs-light.png` and `pinned-tabs-dark.png` show six frames
 of a pin transition, 40 ms apart, in the test output directory.
 
 The tests use hidden forms and no WebView2 instances. Before release, smoke-test

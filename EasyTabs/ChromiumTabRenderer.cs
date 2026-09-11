@@ -306,6 +306,9 @@ namespace EasyTabs
         /// <summary>Show Chromium's former two-stage waiting/loading spinner. Disable for the modern single spinner.</summary>
         public bool ShowWaitingAnimation { get; set; } = true;
 
+        /// <summary>Borrowed fallback for pinned pages with no visible favicon. Never changes the page's icon.</summary>
+        public Icon DefaultFavicon { get; set; } = SystemIcons.Application;
+
         internal override void BeginTabClose(TitleBarTab tab)
         {
             lock (_sync)
@@ -363,6 +366,12 @@ namespace EasyTabs
 
         protected internal override void Overlay_MouseUp(object sender, MouseEventArgs e)
         {
+            // Chromium's StoppedDraggingTab returns the visual to its legal model
+            // slot with BoundsAnimator, including drags across the pinned boundary.
+            if (IsTabRepositioning)
+            {
+                lock (_sync) _animation.StartInsertion(AnimationTimeMilliseconds);
+            }
             base.Overlay_MouseUp(sender, e);
             bool redraw;
             lock (_sync)
@@ -500,9 +509,9 @@ namespace EasyTabs
                     int last = pinned ? pinnedCount - 1 : tabs.Count - 1;
                     int sectionStart = startX;
                     for (int i = 0; i < first; i++) sectionStart += widths[i] - OverlapWidth;
-                    int sectionEnd = pinned ? sectionStart + pinnedCount * (width - OverlapWidth) + OverlapWidth
-                        : startX + _maxTabArea.Width;
-                    draggedX = Math.Max(sectionStart, Math.Min(sectionEnd - width, cursor.X - _tabClickOffset.Value));
+                    // GetAttachedDragPoint clamps the visual only to the full
+                    // strip. The legal model slots below remain section-specific.
+                    draggedX = Math.Max(startX, Math.Min(startX + _maxTabArea.Width - width, cursor.X - _tabClickOffset.Value));
                     // Compare against model slot centers, never animating neighbour
                     // positions: a stationary pointer must not repeatedly reorder.
                     // In a crowded strip the active slot is wider. Calculate each
@@ -675,7 +684,7 @@ namespace EasyTabs
             float contentsWidth = geometry.Width / scale - 32;
             bool roomy = contentsWidth >= 68;
             bool close = !tab.IsPinned && tab.ShowCloseButton && (tab.Active || roomy) && (!visual.Closing || contentsWidth >= 16);
-            if (!visual.Closing) visual.HasIcon = tab.IsLoading || (tab.Content.ShowIcon && tab.Content.Icon != null);
+            if (!visual.Closing) visual.HasIcon = tab.IsPinned || tab.IsLoading || (tab.Content.ShowIcon && tab.Content.Icon != null);
             bool hasIcon = visual.HasIcon;
             bool icon = hasIcon && (tab.IsPinned || !tab.Active || contentsWidth - (close ? 16 : 0) >= 16);
             bool centerIcon = icon && !tab.Active && contentsWidth < 16;
@@ -717,8 +726,10 @@ namespace EasyTabs
             {
                 titleBounds = AnimateTitle(visual, titleBounds, icon, now, animate);
                 if (!normalContents) titleBounds = Rectangle.Empty;
-                Icon favicon = icon && tab.Content.ShowIcon ? tab.Content.Icon : null;
-                bool realFavicon = favicon != null && !((tab.Content as ITabFaviconState)?.IsDefaultFavicon ?? false);
+                bool useDefault = tab.IsPinned && (!tab.Content.ShowIcon || tab.Content.Icon == null);
+                Icon favicon = !icon ? null : useDefault ? (DefaultFavicon ?? SystemIcons.Application)
+                    : tab.Content.ShowIcon ? tab.Content.Icon : null;
+                bool realFavicon = favicon != null && !useDefault && !((tab.Content as ITabFaviconState)?.IsDefaultFavicon ?? false);
                 bool waiting = (tab.Content as ITabLoadingPhase)?.IsWaiting ?? false;
                 AnimateFavicon(visual, tab, now, animate);
                 visual.ContentInitialized = true;

@@ -24,18 +24,30 @@ fit the existing strip. Chromium-derived portions retain the license in
 
 ## Quartz behavior
 
-Right-click a tab and choose **Pin tab** or **Unpin tab**. Pins form a contiguous
+Right-click a tab and choose **Pin** or **Unpin**. Pins form a contiguous
 prefix. Pinning appends to that prefix; unpinning inserts at the beginning of the
 normal tabs. Selection and the live content form are preserved. New ordinary tabs
 opened from pinned tabs enter the normal section. Duplicates inherit pinning.
-Dragging reorders within the corresponding section, and moving a tab to another
-window keeps its pin state.
+Dragging reorders within the corresponding section, while the visual follows the
+pointer across the entire tab strip. Releasing animates it back to its legal slot
+over 200 ms. Moving a tab to another window keeps its pin state. This follows
+Chromium's [GetAttachedDragPoint and MoveAttached](https://chromium.googlesource.com/chromium/src/+/51eeb5e52adee36cec79d1e80613e63838d8260d/chrome/browser/ui/views/tabs/tab_drag_controller.cc)
+and [StoppedDraggingTab](https://chromium.googlesource.com/chromium/src/+/ab376d502995fadf0dabd0ff02e50e5d2a53fb7e/chrome/browser/ui/views/tabs/tab_strip.cc).
 
 Pins are 55 DIP wide with the existing 17 DIP overlap, show a native-size favicon
 or loading indicator, and have no close button. The full caption remains available
 through the existing tooltip. Explicit Close Tab, Ctrl+W and middle click retain
 their usual behavior. Close other/left/right skips pins and uses the normal content
 close lifecycle, including cancellation and disposal.
+
+Pinned pages with a missing or hidden favicon show Quartz's configured default
+favicon. This is a rendering fallback: the content's Icon and ShowIcon properties
+are never changed, so unpinning restores the original appearance. Chromium similarly
+forces visibility with `IsPinned() || ShouldDisplayFavicon()` in
+[TabData](https://chromium.googlesource.com/chromium/src/+/main/chrome/browser/ui/tabs/tab_data.cc).
+Its [favicon utilities](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/browser/favicon/favicon_utils.cc)
+provide a default matching the color scheme. A newly received visible favicon
+replaces the fallback normally, and loading still uses the spinner.
 
 Pin/unpin uses the shared layout clock: `1 - (1 - t)^2` over 200 ms for position
 and width. Reversals snapshot displayed bounds. While pinning, the close target

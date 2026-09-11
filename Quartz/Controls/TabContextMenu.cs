@@ -41,7 +41,7 @@ namespace Quartz.Controls
             reloadTabToolStripMenuItem = new ToolStripMenuItem("Reload");
             reloadTabToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.R;
             duplicateTabToolStripMenuItem = new ToolStripMenuItem("Duplicate");
-            pinTabToolStripMenuItem = new ToolStripMenuItem("Pin tab");
+            pinTabToolStripMenuItem = new ToolStripMenuItem("Pin");
             muteTabToolStripMenuItem = new ToolStripMenuItem("Mute tab");
             toolStripSeparator1 = new ToolStripSeparator();
             closeTabToolStripMenuItem = new ToolStripMenuItem("Close Tab");
@@ -236,7 +236,7 @@ namespace Quartz.Controls
                 return;
             }
             UpdateMenuItemsEnabledState();
-            pinTabToolStripMenuItem.Text = _clickedTab.IsPinned ? "Unpin tab" : "Pin tab";
+            pinTabToolStripMenuItem.Text = _clickedTab.IsPinned ? "Unpin" : "Pin";
 
             if (_clickedTab?.Content is Browser browser)
             {
