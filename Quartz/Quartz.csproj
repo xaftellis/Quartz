@@ -186,6 +186,7 @@
     <Compile Include="Controls\CircularImageButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\TabContextMenu.WindowMenu.cs" />
     <Compile Include="Controls\TabContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>

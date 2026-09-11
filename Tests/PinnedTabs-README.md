@@ -33,3 +33,9 @@ Test the themes and display scales used for the release.
 
 The implementation notes and Chromium source references are in
 [ChromiumTabRendering.md](../EasyTabs/ChromiumTabRendering.md).
+
+The same executable also runs `TabWindowTests.cs`, covering context-menu window
+moves, live content identity, selection and pinned ordering, repeated transfers,
+close cancellation, last-tab window closure, destination ordering and stale
+menu entries. See [TabWindowMoves.md](../EasyTabs/TabWindowMoves.md) for the
+current Chromium references and live-browser smoke checks.

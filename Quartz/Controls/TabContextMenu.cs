@@ -10,7 +10,7 @@ using System.Windows.Media.Animation;
 
 namespace Quartz.Controls
 {
-    public class TabContextMenu : ContextMenuStrip
+    public partial class TabContextMenu : ContextMenuStrip
     {
         TitleBarTabs _parentForm;
         TitleBarTab _clickedTab;
@@ -37,6 +37,11 @@ namespace Quartz.Controls
             // Controls
             newTabLeftStripMenuItem = new ToolStripMenuItem("New tab to the left");
             newTabRightStripMenuItem = new ToolStripMenuItem("New tab to the right");
+            moveTabToolStripMenuItem = new ToolStripMenuItem("Move tab to new window");
+            moveTabToolStripMenuItem.Click += (sender, e) =>
+            {
+                if (!moveTabToolStripMenuItem.HasDropDownItems) MoveTabToNewWindow();
+            };
             toolStripSeparator = new ToolStripSeparator();
             reloadTabToolStripMenuItem = new ToolStripMenuItem("Reload");
             reloadTabToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.R;
@@ -59,6 +64,7 @@ namespace Quartz.Controls
             {
                 newTabLeftStripMenuItem,
                 newTabRightStripMenuItem,
+                moveTabToolStripMenuItem,
                 toolStripSeparator,
                 reloadTabToolStripMenuItem,
                 duplicateTabToolStripMenuItem,
@@ -236,6 +242,7 @@ namespace Quartz.Controls
                 return;
             }
             UpdateMenuItemsEnabledState();
+            UpdateMoveWindowMenu();
             pinTabToolStripMenuItem.Text = _clickedTab.IsPinned ? "Unpin" : "Pin";
 
             if (_clickedTab?.Content is Browser browser)

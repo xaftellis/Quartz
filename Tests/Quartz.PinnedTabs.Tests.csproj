@@ -28,6 +28,7 @@
       <Name>EasyTabs</Name>
     </ProjectReference>
     <Compile Include="PinnedTabsTests.cs" />
+    <Compile Include="TabWindowTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

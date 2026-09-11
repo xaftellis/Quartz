@@ -65,6 +65,52 @@ namespace EasyTabs
 		/// <summary>The first unpinned slot; new normal tabs cannot precede it.</summary>
 		public int PinnedTabCount => Tabs.TakeWhile(tab => tab.IsPinned).Count();
 
+		/// <summary>Whether this window can accept a live tab from the source window.</summary>
+		public virtual bool CanReceiveTabsFrom(TitleBarTabs source)
+		{
+			return source != null && source != this && GetType() == source.GetType() &&
+				!IsDisposed && !Disposing && !IsClosing &&
+				!source.IsDisposed && !source.Disposing && !source.IsClosing &&
+				ApplicationContext != null && ApplicationContext == source.ApplicationContext &&
+				ApplicationContext.OpenWindows.Contains(this) && ApplicationContext.OpenWindows.Contains(source);
+		}
+
+		/// <summary>Moves the existing tab and its content without closing or recreating the page.</summary>
+		public bool MoveTabToWindow(TitleBarTab tab, TitleBarTabs destination)
+		{
+			if (tab == null || tab.Parent != this || !Tabs.Contains(tab) ||
+				tab.Content == null || tab.Content.IsDisposed || tab.Content.Disposing ||
+				destination == null || !destination.CanReceiveTabsFrom(this)) return false;
+
+			int index = Tabs.IndexOf(tab);
+			bool wasActive = tab.Active;
+			tab.Active = false;
+			// Detach only this window's subscriptions; page and client handlers survive.
+			tab.Content.TextChanged -= Content_TextChanged;
+			tab.Closing -= TitleBarTabs_Closing;
+			if (AeroPeekEnabled)
+				TaskbarManager.Instance.TabbedThumbnail.RemoveThumbnailPreview(tab.Content);
+			if (_previews.TryGetValue(tab.Content, out Bitmap preview))
+			{
+				preview.Dispose();
+				_previews.Remove(tab.Content);
+			}
+			if (_previousActiveTab == tab) _previousActiveTab = null;
+
+			Tabs.Remove(tab);
+			tab.Parent = destination;
+			// Chromium appends normal tabs and inserts pins at the pinned boundary.
+			destination.Tabs.Add(tab);
+			if (wasActive && Tabs.Count > 0) SelectedTabIndex = Math.Min(index, Tabs.Count - 1);
+			destination.SelectedTab = tab;
+			RedrawTabs();
+			destination.RedrawTabs();
+
+			// The destination owns the content before an empty source is allowed to close.
+			if (Tabs.Count == 0 && ExitOnLastTabClose) Close();
+			return true;
+		}
+
 		internal void UpdatePinnedTab(TitleBarTab tab)
 		{
 			// Preserve tab identity, selection and subscriptions while moving it to

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace EasyTabs
@@ -11,6 +13,10 @@ namespace EasyTabs
 	{
 		/// <summary>List of all opened windows.</summary>
 		protected List<TitleBarTabs> _openWindows = new List<TitleBarTabs>();
+		private readonly List<TitleBarTabs> _activationOrder = new List<TitleBarTabs>();
+
+		/// <summary>A snapshot of open windows, most recently activated first.</summary>
+		public IEnumerable<TitleBarTabs> OpenWindowsByActivation => _activationOrder.ToArray();
 
 		/// <summary>List of all opened windows.</summary>
 		public List<TitleBarTabs> OpenWindows
@@ -49,7 +55,10 @@ namespace EasyTabs
 				window.ApplicationContext = this;
 
 				_openWindows.Add(window);
+				_activationOrder.Insert(0, window);
+				window.Activated += Window_Activated;
 				window.FormClosed += window_FormClosed;
+				window.Disposed += Window_Disposed;
 			}
 		}
 
@@ -61,7 +70,25 @@ namespace EasyTabs
 		/// <param name="e">Arguments associated with the event.</param>
 		protected void window_FormClosed(object sender, FormClosedEventArgs e)
 		{
-            _openWindows.Remove((TitleBarTabs) sender);
+			RemoveWindow((TitleBarTabs)sender);
+		}
+
+		private void Window_Activated(object sender, EventArgs e)
+		{
+			var window = (TitleBarTabs)sender;
+			_activationOrder.Remove(window);
+			_activationOrder.Insert(0, window);
+		}
+
+		private void Window_Disposed(object sender, EventArgs e) => RemoveWindow((TitleBarTabs)sender);
+
+		private void RemoveWindow(TitleBarTabs window)
+		{
+			if (!_openWindows.Remove(window)) return;
+			_activationOrder.Remove(window);
+			window.Activated -= Window_Activated;
+			window.FormClosed -= window_FormClosed;
+			window.Disposed -= Window_Disposed;
 
 			if (_openWindows.Count == 0)
 			{

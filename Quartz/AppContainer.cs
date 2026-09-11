@@ -32,6 +32,19 @@ namespace Quartz
 
         public string _windowName = string.Empty;
 
+        public Guid ProfileId { get; }
+
+        public override bool CanReceiveTabsFrom(TitleBarTabs source) =>
+            base.CanReceiveTabsFrom(source) && source is AppContainer window && window.ProfileId == ProfileId;
+
+        internal void ActivateForTabMove()
+        {
+            if (WindowState == FormWindowState.Minimized) WindowState = _lastNonMinimizedWindowState;
+            Show();
+            Activate();
+            SelectedTab?.Content.Focus();
+        }
+
         private string ToBgr(System.Drawing.Color c) => $"{c.B:X2}{c.G:X2}{c.R:X2}";
 
         [DllImport("DwmApi")]
@@ -70,6 +83,7 @@ namespace Quartz
             ApplyWindowSettings();
 
             ProfileService.LoadCurrentProfile();
+            ProfileId = ProfileService.Current;
             var theme = SettingsService.Get("Theme");
             Icon icon = Quartz.Properties.Resources.favicon;
             System.Drawing.Color barBackColor = System.Drawing.Color.White;

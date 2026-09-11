@@ -276,9 +276,9 @@ namespace Quartz
             }
         }
 
-        private static void PositionNewAppContainer(AppContainer container)
+        internal static void PositionNewAppContainer(AppContainer container, AppContainer source = null)
         {
-            AppContainer referenceWindow = Form.ActiveForm as AppContainer;
+            AppContainer referenceWindow = source ?? Form.ActiveForm as AppContainer;
             if (referenceWindow == null || referenceWindow.IsDisposed ||
                 referenceWindow.WindowState == FormWindowState.Minimized)
             {

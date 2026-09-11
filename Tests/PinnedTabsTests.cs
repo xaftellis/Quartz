@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
-internal static class PinnedTabsTests
+internal static partial class PinnedTabsTests
 {
     private static int _checks;
     private static void Check(bool condition, string message)
@@ -92,7 +92,9 @@ internal static class PinnedTabsTests
             DragAndTransfer();
             PinnedFallbackIcon();
             MenusAndClosing();
-            Console.WriteLine("PASS: " + _checks + " pinned-tab checks.");
+            WindowTransfers();
+            WindowMoveMenus();
+            Console.WriteLine("PASS: " + _checks + " tab checks.");
             return 0;
         }
         catch (Exception error) { Console.Error.WriteLine(error); return 1; }
