@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using Win32Interop.Enums;
 using Win32Interop.Methods;
 using Win32Interop.Structs;
-using Timer = System.Timers.Timer;
 
 namespace EasyTabs
 {
@@ -85,7 +84,7 @@ namespace EasyTabs
 				_loadingAnimationTimer?.Dispose();
 				_loadingAnimationTimer = null;
 				StopMouseInput();
-				showTooltipTimer?.Dispose();
+				_hoverCards?.Dispose();
 				_surface.Dispose();
 			}
 			base.Dispose(disposing);
@@ -103,7 +102,7 @@ namespace EasyTabs
 			DwmSetWindowAttribute(window.Handle, DwmwaTransitionsForcedDisabled, ref transitionsDisabled, sizeof(int));
 		}
 
-        protected Timer showTooltipTimer;
+        private TabHoverCardController _hoverCards;
 
 		/// <summary>All of the parent forms and their overlays so that we don't create duplicate overlays across the application domain.</summary>
 		protected static Dictionary<TitleBarTabs, TitleBarTabsOverlay> _parents = new Dictionary<TitleBarTabs, TitleBarTabsOverlay>();
@@ -161,7 +160,6 @@ namespace EasyTabs
 		private readonly Queue<MouseEvent> _mouseEvents = new Queue<MouseEvent>();
 		private bool _mouseInputQueued, _mouseMovePending, _mouseInside;
 		private Point _latestMousePosition;
-		private TitleBarTab _tooltipTab;
 
 		[DllImport("user32.dll", EntryPoint = "PostMessageW")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -198,13 +196,7 @@ namespace EasyTabs
 			_loadingAnimationTimer = new TabFrameScheduler(Handle);
 			AttachHandlers();
 
-			showTooltipTimer = new Timer
-			{
-				AutoReset = false,
-				SynchronizingObject = this
-			};
-
-			showTooltipTimer.Elapsed += ShowTooltipTimer_Elapsed;
+			_hoverCards = new TabHoverCardController(_parentForm, this, GetHoverCardTarget);
 		}
 
 		/// <summary>
@@ -385,6 +377,7 @@ namespace EasyTabs
 
 		private void StopMouseInput()
 		{
+			_hoverCards?.Dismiss(true);
 			if (_hookId != IntPtr.Zero) User32.UnhookWindowsHookEx(_hookId);
 			_hookId = IntPtr.Zero;
 			_mouseEvents.Clear();
@@ -392,75 +385,23 @@ namespace EasyTabs
 			if (_parentForm != null) _parents.Remove(_parentForm);
 		}
 
-		private void HideTooltip()
+		private void HideTooltip() => _hoverCards?.Dismiss(true);
+
+		private TitleBarTab GetHoverCardTarget()
 		{
-			showTooltipTimer.Stop();
-
-			if (_parentForm.InvokeRequired)
-			{
-				_parentForm.Invoke(new Action(() =>
-				{
-					_parentForm.Tooltip.Hide(_parentForm);
-				}));
-			}
-
-			else
-			{
-				_parentForm.Tooltip.Hide(_parentForm);
-			}
+			if (IsDisposed || !Visible || _parentForm.IsDisposed || _parentForm.TabRenderer == null ||
+				_singleTabDragOwner != null || _tornTab != null || Control.MouseButtons != MouseButtons.None)
+				return null;
+			Point point = Cursor.Position;
+			if (!DesktopBounds.Contains(point)) return null;
+			// A different window covering Quartz must not trigger a hidden tab.
+            IntPtr windowAtPoint = WindowAtPoint(point);
+            if (windowAtPoint != Handle && !(_hoverCards?.OwnsWindow(windowAtPoint) ?? false)) return null;
+			return _parentForm.TabRenderer.OverTab(_parentForm.Tabs, GetRelativeCursorPosition(point));
 		}
 
-		private void ShowTooltip(TitleBarTabs tabsForm, string caption)
-		{
-			Point tooltipLocation = new Point(Cursor.Position.X + 7, Cursor.Position.Y + 55);
-			tabsForm.Tooltip.Show(caption, tabsForm, tabsForm.PointToClient(tooltipLocation), tabsForm.Tooltip.AutoPopDelay);
-		}
-
-		private void ShowTooltipTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			if (IsDisposed || Disposing || _parentForm.IsDisposed || !_parentForm.ShowTooltips)
-			{
-				return;
-			}
-
-			Point relativeCursorPosition = GetRelativeCursorPosition(Cursor.Position);
-			TitleBarTab hoverTab = _parentForm.TabRenderer.OverTab(_parentForm.Tabs, relativeCursorPosition);
-
-			if (hoverTab != null)
-			{
-				TitleBarTabs hoverTabForm = hoverTab.Parent;
-
-				if (hoverTabForm.InvokeRequired)
-				{
-					hoverTabForm.Invoke(new Action(() =>
-					{
-						ShowTooltip(hoverTabForm, hoverTab.Caption);
-					}));
-				}
-
-				else
-				{
-					ShowTooltip(hoverTabForm, hoverTab.Caption);
-				}
-			}
-		}
-
-		private void StartTooltipTimer()
-		{
-			if (!_parentForm.ShowTooltips)
-			{
-				return;
-			}
-
-			Point relativeCursorPosition = GetRelativeCursorPosition(Cursor.Position);
-			TitleBarTab hoverTab = _parentForm.TabRenderer.OverTab(_parentForm.Tabs, relativeCursorPosition);
-
-			if (hoverTab != null)
-			{
-				showTooltipTimer.Interval = hoverTab.Parent.Tooltip.AutomaticDelay;
-				showTooltipTimer.Start();
-			}
-		}
+		[DllImport("user32.dll", EntryPoint = "WindowFromPoint")]
+		private static extern IntPtr WindowAtPoint(Point point);
 
 		private bool CanDragSingleTabWindow(TitleBarTab tab, Point relativeCursor)
 		{
@@ -767,7 +708,6 @@ namespace EasyTabs
             {
                 _wasDragging = true;
                 HideTooltip();
-                _tooltipTab = null;
                 Rectangle dragArea = TabDropArea;
                 dragArea.Inflate(renderer.TabTearDragDistance, renderer.TabTearDragDistance);
                 if (!dragArea.Contains(cursor) && _tornTab == null)
@@ -781,12 +721,7 @@ namespace EasyTabs
             }
 
             TitleBarTab hovered = renderer.OverTab(_parentForm.Tabs, relative);
-            if (hovered != _tooltipTab)
-            {
-                HideTooltip();
-                _tooltipTab = hovered;
-                StartTooltipTimer();
-            }
+            _hoverCards?.Hover(GetHoverCardTarget());
             int closeIndex = hovered != null && renderer.IsOverCloseButton(hovered, relative)
                 ? _parentForm.Tabs.IndexOf(hovered) : -1;
             bool sizing = renderer.RendersEntireTitleBar && renderer.IsOverSizingBox(relative);
@@ -806,6 +741,7 @@ namespace EasyTabs
             while (_mouseEvents.Count > 0 && !IsDisposed && !_parentForm.IsDisposed)
             {
                 MouseEvent input = _mouseEvents.Dequeue();
+                _hoverCards?.Dismiss(true);
                 // Finish the drag at the release position, even if its last move
                 // arrived between frames. Never replay the current cursor for an
                 // older queued click.
@@ -999,6 +935,7 @@ namespace EasyTabs
 		/// <param name="e">Arguments associated with the event.</param>
 		private void _parentForm_Refresh(object sender, EventArgs e)
 		{
+			_hoverCards?.Dismiss(true);
 			UpdateLoadingAnimation();
 			if (_parentForm.WindowState == FormWindowState.Minimized)
 			{
@@ -1103,7 +1040,7 @@ namespace EasyTabs
 						: _parentForm.WindowState != FormWindowState.Maximized && !_parentForm.TabRenderer.RendersEntireTitleBar
 							? new Point(0, SystemInformation.VerticalResizeBorderThickness - SystemInformation.BorderSize.Height)
 							: Point.Empty;
-					_parentForm.TabRenderer.Render(_parentForm.Tabs, graphics, offset, cursorPosition, forceRedraw);
+				_parentForm.TabRenderer.Render(_parentForm.Tabs, graphics, offset, cursorPosition, forceRedraw);
 
 					// Retain the transparent hole for the underlying classic control box.
 					if (DisplayType == DisplayType.Classic && (_parentForm.ControlBox || _parentForm.MaximizeBox || _parentForm.MinimizeBox))
@@ -1136,6 +1073,7 @@ namespace EasyTabs
 			finally
 			{
 				_rendering = false;
+				_hoverCards?.Refresh();
 				UpdateLoadingAnimation();
 			}
 		}
@@ -1185,6 +1123,7 @@ namespace EasyTabs
                 m.Msg == (int)WM.WM_NCRBUTTONDOWN ||
                 m.Msg == (int)WM.WM_NCRBUTTONUP)
             {
+				_hoverCards?.Dismiss(true);
 				if(!_active)
 				{
 					_parentForm.Activate();
@@ -1375,6 +1314,7 @@ namespace EasyTabs
 		/// <param name="e">Arguments associated with the event.</param>
 		private void _parentForm_Deactivate(object sender, EventArgs e)
 		{
+			_hoverCards?.Dismiss(true);
 			_active = false;
 			Render();
 		}
@@ -1384,6 +1324,7 @@ namespace EasyTabs
 		/// <param name="e">Arguments associated with the event.</param>
 		private void _parentForm_Disposed(object sender, EventArgs e)
 		{
+			_hoverCards?.Dispose();
 			_loadingAnimationTimer?.Dispose();
 			_loadingAnimationTimer = null;
 		}

@@ -40,7 +40,7 @@ using Win32Interop.Structs;
 
 namespace Quartz
 {
-    public partial class Browser : Form, ITabLoadingPhase, ITabFaviconState
+    public partial class Browser : Form, ITabLoadingPhase, ITabFaviconState, ITabPreviewSource, ITabMemorySource
     {
         public bool IsLoading { get; private set; }
         public bool IsWaiting { get; private set; }
@@ -154,6 +154,8 @@ namespace Quartz
         public Browser(string address, bool newtabrequest)
         {
             InitializeComponent();
+            InitializeTabPreview();
+            InitializeTabMemory();
             InitializeSiteInfo();
             _favouriteToolTip = new ToolTip(components);
             pnlFavourites.OrderChanged += FavouritesOrderChanged;
@@ -1142,7 +1144,10 @@ namespace Quartz
             if (e.ProcessFailedKind == CoreWebView2ProcessFailedKind.BrowserProcessExited ||
                 e.ProcessFailedKind == CoreWebView2ProcessFailedKind.RenderProcessExited ||
                 e.ProcessFailedKind == CoreWebView2ProcessFailedKind.RenderProcessUnresponsive)
+            {
+                PreviewProcessFailed();
                 SetTabLoading(false);
+            }
         }
 
         private void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
@@ -1177,6 +1182,7 @@ namespace Quartz
         private ulong _activeNavigationId;
         private void wvWebView1_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
+            PreviewNavigationStarting(e);
             _activeNavigationId = e.NavigationId;
             SetTabLoading(!e.Cancel, !e.Cancel, !e.IsRedirected);
 
@@ -1189,7 +1195,10 @@ namespace Quartz
         private void CoreWebView2_ContentLoading(object sender, CoreWebView2ContentLoadingEventArgs e)
         {
             if (e.NavigationId == _activeNavigationId && IsLoading)
+            {
+                PreviewContentLoading();
                 SetTabLoading(true);
+            }
         }
 
         private void wvWebView1_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
@@ -1199,6 +1208,8 @@ namespace Quartz
                 return;
 
             SetTabLoading(false);
+
+            PreviewNavigationCompleted();
 
             if (loadnum == 0)
                 loadnum++;
@@ -1322,6 +1333,9 @@ namespace Quartz
         {
             var currentUri = wvWebView1.Source;
             if (currentUri == null) return;
+
+            _previewAddress = currentUri.AbsoluteUri;
+            PreviewChanged?.Invoke(this, EventArgs.Empty);
 
             UpdateFavBar();
 

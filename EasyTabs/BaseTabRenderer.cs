@@ -25,6 +25,8 @@ namespace EasyTabs
 		/// <summary>Animate tab layout changes while retaining the existing renderer and artwork.</summary>
 		public bool AnimationsEnabled { get; set; } = true;
 
+		internal bool CanAnimateHoverCards => ShouldAnimateLayout();
+
 		internal virtual bool IsLayoutAnimating { get { return _layoutAnimation.IsAnimating; } }
 		internal virtual bool RequiresHoverRedraw(Point cursor) { return false; }
 		internal virtual void ButtonPointerDown(Point cursor) { }

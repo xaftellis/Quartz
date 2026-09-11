@@ -158,6 +158,16 @@
       <DependentUpon>Browser.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Browser.TabPreview.cs">
+      <DependentUpon>Browser.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Libs\TabPreviewCapture.cs" />
+    <Compile Include="Libs\TabMemorySampler.cs" />
+    <Compile Include="Browser.TabMemory.cs">
+      <DependentUpon>Browser.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Controls\SiteInfoButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -186,7 +196,9 @@
     <Compile Include="Controls\CircularImageButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\TabContextMenu.WindowMenu.cs" />
+    <Compile Include="Controls\TabContextMenu.WindowMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\TabContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>

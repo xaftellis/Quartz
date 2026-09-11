@@ -127,6 +127,7 @@ namespace EasyTabs
 			{
 				// When the status of the tab changes, we null out the TabImage property so that it's recreated in the next rendering pass
 				if (_active == value) return;
+				if (_active && !value) (Content as ITabPreviewSource)?.RequestPreview();
 				_active = value;
 				TabImage?.Dispose();
 				TabImage = null;

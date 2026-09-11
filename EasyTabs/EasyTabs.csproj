@@ -135,6 +135,14 @@
     <Compile Include="ContextMenuProvider.cs" />
     <Compile Include="DisplayType.cs" />
     <Compile Include="ITabLoadingState.cs" />
+    <Compile Include="ITabPreviewSource.cs" />
+    <Compile Include="ITabMemorySource.cs" />
+    <Compile Include="TabMemoryUsageFormatter.cs" />
+    <Compile Include="TabHoverCardAnimation.cs" />
+    <Compile Include="TabHoverCard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TabHoverCardController.cs" />
     <Compile Include="TabLoadingIndicator.cs" />
     <Compile Include="ListItemEventArgs.cs" />
     <Compile Include="ListModification.cs" />
