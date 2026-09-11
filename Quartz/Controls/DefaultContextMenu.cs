@@ -118,28 +118,14 @@ namespace Quartz.Controls
                         WebAddress = browser.wvWebView1.Source.AbsoluteUri
                     };
 
-                    favouriteService.Modify(favourite);
-
-                    // Only handle index here when not sorting alphabetically
-                    if (SettingsService.Get("sortFavouritesBy") != "alphabetically")
-                    {
-                        // Get the highest existing index and assign the next one
-                        int nextIndex = favouriteService.All().Count - 1;
-                        favouriteService.Get(browser.Text).Index = nextIndex;
-                    }
+                    favouriteService.Add(favourite);
                 }
             }
 
             // Handle alphabetical sorting ONLY once if needed
             if (SettingsService.Get("sortFavouritesBy") == "alphabetically")
             {
-                List<FavouriteModel> allItems = favouriteService.All();
-                var sortedItems = allItems.OrderBy(item => item.Name).ToList();
-
-                for (int i = 0; i < sortedItems.Count; i++)
-                {
-                    sortedItems[i].Index = i;
-                }
+                favouriteService.SortAlphabetically();
             }
 
             favouriteService.SaveChanges();

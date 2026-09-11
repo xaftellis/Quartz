@@ -1079,6 +1079,9 @@
   <data name="wvLoadingProgress.TabIndex" type="System.Int32, mscorlib">
     <value>16</value>
   </data>
+  <data name="wvLoadingProgress.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="&gt;&gt;wvLoadingProgress.Name" xml:space="preserve">
     <value>wvLoadingProgress</value>
   </data>
@@ -2223,31 +2226,34 @@
   <data name="&gt;&gt;btnStop.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
-  <data name="picFavicon.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Zoom</value>
+  <data name="btnSiteInformation.AccessibleName" xml:space="preserve">
+    <value>Site information</value>
   </data>
-  <data name="picFavicon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>145, 14</value>
+  <data name="btnSiteInformation.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
   </data>
-  <data name="picFavicon.Size" type="System.Drawing.Size, System.Drawing">
-    <value>16, 16</value>
+  <data name="btnSiteInformation.Location" type="System.Drawing.Point, System.Drawing">
+    <value>140, 8</value>
   </data>
-  <data name="picFavicon.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
-    <value>Zoom</value>
+  <data name="btnSiteInformation.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>26, 26</value>
   </data>
-  <data name="picFavicon.TabIndex" type="System.Int32, mscorlib">
+  <data name="btnSiteInformation.Size" type="System.Drawing.Size, System.Drawing">
+    <value>26, 26</value>
+  </data>
+  <data name="btnSiteInformation.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;picFavicon.Name" xml:space="preserve">
-    <value>picFavicon</value>
+  <data name="&gt;&gt;btnSiteInformation.Name" xml:space="preserve">
+    <value>btnSiteInformation</value>
   </data>
-  <data name="&gt;&gt;picFavicon.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;btnSiteInformation.Type" xml:space="preserve">
+    <value>Quartz.Controls.SiteInfoButton, Quartz, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;picFavicon.Parent" xml:space="preserve">
+  <data name="&gt;&gt;btnSiteInformation.Parent" xml:space="preserve">
     <value>pnlTop</value>
   </data>
-  <data name="&gt;&gt;picFavicon.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;btnSiteInformation.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="pnlFavourites.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -2508,20 +2514,23 @@
   <metadata name="mnuFavourites.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>435, 58</value>
   </metadata>
+  <data name="addFavouritesToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+D</value>
+  </data>
   <data name="addFavouritesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 22</value>
+    <value>188, 22</value>
   </data>
   <data name="addFavouritesToolStripMenuItem.Text" xml:space="preserve">
     <value>Add favourite</value>
   </data>
   <data name="toolStripSeparator8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>143, 6</value>
+    <value>185, 6</value>
   </data>
   <data name="mnuFavourites.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
     <value>Inherit</value>
   </data>
   <data name="mnuFavourites.Size" type="System.Drawing.Size, System.Drawing">
-    <value>147, 32</value>
+    <value>189, 32</value>
   </data>
   <data name="&gt;&gt;mnuFavourites.Name" xml:space="preserve">
     <value>mnuFavourites</value>
@@ -2893,7 +2902,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlTop.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="pnlDivider.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -5654,7 +5663,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlBottom.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

@@ -13,6 +13,8 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            if (disposing) _newTabPageController?.Dispose();
+            if (disposing) DisposeTabPreview();
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -74,8 +76,8 @@
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.pnlTop = new System.Windows.Forms.Panel();
-            this.picFavicon = new System.Windows.Forms.PictureBox();
-            this.pnlFavourites = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnSiteInformation = new Quartz.Controls.SiteInfoButton();
+            this.pnlFavourites = new Quartz.Controls.FavouritesBar();
             this.txtWebAddress = new System.Windows.Forms.RichTextBox();
             this.btnSettings = new System.Windows.Forms.Button();
             this.SettingsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -116,7 +118,6 @@
             this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.UrlBox = new System.Windows.Forms.PictureBox();
             this.UrlLeft = new System.Windows.Forms.PictureBox();
             this.UrlRight = new System.Windows.Forms.PictureBox();
@@ -133,7 +134,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.wvLoadingProgress)).BeginInit();
             this.mnuSearch.SuspendLayout();
             this.pnlTop.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picFavicon)).BeginInit();
             this.SettingsMenuStrip.SuspendLayout();
             this.mnuHistory.SuspendLayout();
             this.mnuFavourites.SuspendLayout();
@@ -486,7 +486,7 @@
             // pnlTop
             // 
             this.pnlTop.BackColor = System.Drawing.Color.Transparent;
-            this.pnlTop.Controls.Add(this.picFavicon);
+            this.pnlTop.Controls.Add(this.btnSiteInformation);
             this.pnlTop.Controls.Add(this.wvLoadingProgress);
             this.pnlTop.Controls.Add(this.pnlFavourites);
             this.pnlTop.Controls.Add(this.txtWebAddress);
@@ -504,12 +504,14 @@
             this.pnlTop.ForeColor = System.Drawing.Color.Transparent;
             this.pnlTop.Name = "pnlTop";
             // 
-            // picFavicon
+            // btnSiteInformation
             // 
-            this.picFavicon.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.picFavicon, "picFavicon");
-            this.picFavicon.Name = "picFavicon";
-            this.picFavicon.TabStop = false;
+            resources.ApplyResources(this.btnSiteInformation, "btnSiteInformation");
+            this.btnSiteInformation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.btnSiteInformation.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSiteInformation.ForeColor = System.Drawing.Color.Black;
+            this.btnSiteInformation.Name = "btnSiteInformation";
+            this.btnSiteInformation.UseVisualStyleBackColor = false;
             // 
             // pnlFavourites
             // 
@@ -575,7 +577,6 @@
             this.restartToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.SettingsMenuStrip.Name = "SettingsMenuStrip";
-            this.SettingsMenuStrip.OwnerItem = this.toolStripMenuItem1;
             this.SettingsMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             resources.ApplyResources(this.SettingsMenuStrip, "SettingsMenuStrip");
             this.SettingsMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.SettingsMenuStrip_Opening);
@@ -815,12 +816,6 @@
             resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.DropDown = this.SettingsMenuStrip;
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
-            // 
             // UrlBox
             // 
             resources.ApplyResources(this.UrlBox, "UrlBox");
@@ -830,7 +825,6 @@
             // 
             // UrlLeft
             // 
-            this.UrlLeft.BackColor = System.Drawing.Color.Transparent;
             resources.ApplyResources(this.UrlLeft, "UrlLeft");
             this.UrlLeft.Name = "UrlLeft";
             this.UrlLeft.TabStop = false;
@@ -915,7 +909,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.wvLoadingProgress)).EndInit();
             this.mnuSearch.ResumeLayout(false);
             this.pnlTop.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picFavicon)).EndInit();
             this.SettingsMenuStrip.ResumeLayout(false);
             this.mnuHistory.ResumeLayout(false);
             this.mnuFavourites.ResumeLayout(false);
@@ -952,7 +945,6 @@
         private System.Windows.Forms.ToolStripMenuItem locationToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem changeLocationToolStripMenuItem1;
         public Microsoft.Web.WebView2.WinForms.WebView2 wvLoadingProgress;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
@@ -1009,13 +1001,12 @@
         private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
-        public System.Windows.Forms.PictureBox picFavicon;
         public System.Windows.Forms.RichTextBox txtWebAddress;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem showFavouritesBarToolStripMenuItem;
-        public System.Windows.Forms.FlowLayoutPanel pnlFavourites;
+        public Quartz.Controls.FavouritesBar pnlFavourites;
         private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
@@ -1029,6 +1020,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
         private System.Windows.Forms.ToolStripMenuItem deleteBrowsingDataToolStripMenuItem;
+        private Quartz.Controls.SiteInfoButton btnSiteInformation;
     }
 }
 

@@ -1,4 +1,4 @@
-﻿using EasyTabs;
+using EasyTabs;
 using Microsoft.SqlServer.Server;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
@@ -40,10 +40,29 @@ using Win32Interop.Structs;
 
 namespace Quartz
 {
-    public partial class Browser : Form
+    public partial class Browser : Form, ITabLoadingPhase, ITabFaviconState, ITabPreviewSource, ITabMemorySource
     {
+        public bool IsLoading { get; private set; }
+        public bool IsWaiting { get; private set; }
+        public bool IsDefaultFavicon { get; private set; } = true;
+        public event EventHandler LoadingStateChanged;
+
+        private void SetTabLoading(bool loading, bool waiting = false, bool restart = false)
+        {
+            if (!restart && IsLoading == loading && IsWaiting == waiting) return;
+            IsLoading = loading;
+            IsWaiting = waiting;
+            LoadingStateChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         private const int MaximumFavouriteButtonWidth = 150;
         private const int FavouriteButtonHeight = 23;
+        // Preserve the original overlay layout's room for the favicon.
+        private static readonly string FavouriteIconTextPrefix = new string(' ', 6);
+        private ToolTip _favouriteToolTip;
+        private bool _reloadFavourites;
+        private bool _loadingFavourites;
+        private bool _favouritesLoaded;
 
         #region Declarations
         public AppContainer tabbedApp;
@@ -92,13 +111,16 @@ namespace Quartz
             get { return fullScreen; }
             set
             {
+                if (fullScreen == value) return;
+
                 fullScreen = value;
                 if (value)
                 {
-
                     _windowState = tabbedApp.WindowState;
-                    size = tabbedApp.Size;
-                    point = tabbedApp.Location;
+                    Rectangle normalBounds = _windowState == FormWindowState.Normal
+                        ? tabbedApp.Bounds : tabbedApp.RestoreBounds;
+                    size = normalBounds.Size;
+                    point = normalBounds.Location;
                     tabbedApp.OverlayVisible = false;
                     tabbedApp.WindowState = FormWindowState.Normal;
                     tabbedApp.FormBorderStyle = FormBorderStyle.None;
@@ -109,23 +131,17 @@ namespace Quartz
                 }
                 else
                 {
-                    if (_windowState != FormWindowState.Maximized)
-                    {
-                        tabbedApp.WindowState = _windowState;
-                        tabbedApp.Size = size;
-                        Location = point;
-                    }
-                    else
-                    {
-                        tabbedApp.WindowState = FormWindowState.Maximized;
-                    }
-                    tabbedApp.OverlayVisible = true;
+                    tabbedApp.WindowState = FormWindowState.Normal;
                     tabbedApp.FormBorderStyle = FormBorderStyle.Sizable;
+                    tabbedApp.Bounds = new Rectangle(point, size);
+                    tabbedApp.WindowState = _windowState;
+                    tabbedApp.OverlayVisible = true;
                     pnlTop.Visible = true;
                     pnlDivider.Visible = true;
                     tabbedApp.TopMost = false;
                     wvWebView1.Focus();
                 }
+                tabbedApp.ResizeTabContents();
             }
         }
         #endregion
@@ -138,6 +154,13 @@ namespace Quartz
         public Browser(string address, bool newtabrequest)
         {
             InitializeComponent();
+            InitializeTabPreview();
+            InitializeTabMemory();
+            InitializeSiteInfo();
+            _favouriteToolTip = new ToolTip(components);
+            pnlFavourites.OrderChanged += FavouritesOrderChanged;
+            pnlFavourites.InteractionEnded += FavouritesInteractionEnded;
+            pnlFavourites.AnimationCompleted += (sender, args) => { if (!IsDisposed && !Disposing) UpdateFavBar(); };
             _newtab = newtabrequest;
             _tabAddress = address;
             //lstSuggestions.View = View.Details;
@@ -334,8 +357,6 @@ namespace Quartz
             //PANNELS
             pnlDivider.BackColor = PanelbackColor;
 
-            picFavicon.BackColor = PanelbackColor;
-
             pnlDivider.BackColor = dividerColor;
 
             //TEXTBOXS
@@ -356,6 +377,8 @@ namespace Quartz
             NewControlThemeChanger.ChangeControlTheme(wvWebView1);
             NewControlThemeChanger.ChangeControlTheme(zoomToolStrip);
             NewControlThemeChanger.ChangeControlTheme(mnuFavourites);
+            _siteInfoController?.ApplyTheme(txtWebAddress.BackColor, txtWebAddress.ForeColor);
+            _newTabPageController?.UpdateTheme();
         }
 
         public void ChangeTheme(string theme)
@@ -366,61 +389,112 @@ namespace Quartz
 
         public void LoadFavourites()
         {
+            if (IsDisposed || Disposing) return;
+            if (pnlFavourites.IsInteracting)
+            {
+                _reloadFavourites = true;
+                return;
+            }
             bool showFavouriteIcon = SettingsService.Get("showFavouriteIcon") == "true";
             var service = new FavouriteService();
-
-            pnlFavourites.Controls.Clear();
-
+            string theme = SettingsService.Get("Theme");
+            var available = pnlFavourites.Controls.OfType<Controls.FavouriteButton>().ToList();
+            var buttons = new List<Controls.FavouriteButton>();
             foreach (var favourite in service.All().OrderBy(f => f.Index))
             {
-                var button = new Button
+                var button = available.FirstOrDefault(candidate =>
                 {
-                    Name = "btn" + favourite.Name,
-                    Text = favourite.Name,
-                    Tag = favourite,
-                    AccessibleName = favourite.Name,
-                    ContextMenuStrip = mnuMenu,
-                    AutoSize = true,
-                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                    ImageAlign = ContentAlignment.MiddleLeft,
-                    TextAlign = ContentAlignment.MiddleCenter,
-                    TextImageRelation = TextImageRelation.ImageBeforeText,
-                    UseMnemonic = false
-                };
-
-                NewControlThemeChanger.ChangeControlTheme(button);
-
-                if (showFavouriteIcon)
+                    var model = GetFavourite(candidate);
+                    return model != null && model.ProfileId == favourite.ProfileId &&
+                        model.Id == favourite.Id;
+                });
+                if (button == null)
                 {
-                    button.Font = new Font("Segoe UI", 8);
-                    button.Image = FaviconHelper.GetFaviconFileExternalAsImage(favourite.WebAddress);
+                    button = new Controls.FavouriteButton
+                    {
+                        ContextMenuStrip = mnuMenu,
+                        AutoSize = true,
+                        AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                        ImageAlign = ContentAlignment.MiddleLeft,
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        TextImageRelation = TextImageRelation.Overlay,
+                        UseMnemonic = false
+                    };
+                    button.MouseUp += Button_MouseUp;
+                    button.Click += btnGotoFavourite_Click;
                 }
-
-                button.Text = FitFavouriteButtonText(button, favourite.Name, MaximumFavouriteButtonWidth);
-                button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
-
-                var toolTip = new ToolTip();
-                toolTip.SetToolTip(button, favourite.Name + Environment.NewLine + favourite.WebAddress);
-
-                button.MouseDown += Button_MouseDown;
-                button.MouseMove += Button_MouseMove;
-                button.MouseUp += Button_MouseUp;
-                button.Click += btnGotoFavourite_Click;
-
-                pnlFavourites.Controls.Add(button);
+                else available.Remove(button);
+                button.Name = "btn" + favourite.Id.ToString("N");
+                button.Tag = favourite;
+                button.AccessibleName = favourite.Name;
+                buttons.Add(button);
             }
+            _reloadFavourites = false;
+            _loadingFavourites = true;
+            try
+            {
+                _favouriteToolTip.RemoveAll();
+                pnlFavourites.UpdateItems(buttons, button =>
+                {
+                    var favourite = GetFavourite(button);
+                    if (button.ThemeKey != theme)
+                    {
+                        NewControlThemeChanger.ChangeControlTheme(button);
+                        button.ThemeKey = theme;
+                    }
+                    button.SetIconVisibility(showFavouriteIcon, () => FaviconHelper.GetFaviconFileExternalAsImage(favourite.WebAddress));
+                    button.Text = FitFavouriteButtonText(button, favourite.Name, MaximumFavouriteButtonWidth);
+                    button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
+                    _favouriteToolTip.SetToolTip(button, favourite.Name + Environment.NewLine + favourite.WebAddress);
+                }, _favouritesLoaded);
+                _favouritesLoaded = true;
+            }
+            finally
+            {
+                _loadingFavourites = false;
+                UpdateFavBar();
+            }
+        }
+
+        private void FavouritesOrderChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                var order = pnlFavourites.Controls.OfType<Button>().Select(GetFavourite).ToList();
+                // Re-read storage at drop time; a stale tab must not overwrite
+                // favourites added, edited, or removed elsewhere during the drag.
+                if (new FavouriteService().TryReorder(order))
+                    SettingsService.Set("sortFavouritesBy", "custom");
+                else
+                    _reloadFavourites = true;
+            }
+            catch (Exception error) when (error is IOException || error is UnauthorizedAccessException || error is JsonException)
+            {
+                _reloadFavourites = true;
+                MessageBox.Show(this, "The favourites order could not be saved. " + error.Message,
+                    "Favourites", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void FavouritesInteractionEnded(object sender, EventArgs e)
+        {
+            // Finish the native mouse release before a refresh disposes its button.
+            if (_reloadFavourites && !IsDisposed && !Disposing && IsHandleCreated)
+                BeginInvoke((Action)(() => { if (_reloadFavourites) LoadFavourites(); }));
         }
 
         private static string FitFavouriteButtonText(Button button, string fullText, int maximumWidth)
         {
+            string prefix = button.Image == null ? string.Empty : FavouriteIconTextPrefix;
+            string displayText = prefix + fullText;
             Size originalMaximumSize = button.MaximumSize;
             button.MaximumSize = Size.Empty;
 
             try
             {
-                button.Text = fullText;
+                button.Text = displayText;
                 if (button.GetPreferredSize(Size.Empty).Width <= maximumWidth)
-                    return fullText;
+                    return displayText;
 
                 const string ellipsis = "...";
                 int minimum = 0;
@@ -429,7 +503,7 @@ namespace Quartz
                 while (minimum < maximum)
                 {
                     int length = (minimum + maximum + 1) / 2;
-                    button.Text = fullText.Substring(0, length) + ellipsis;
+                    button.Text = prefix + fullText.Substring(0, length) + ellipsis;
 
                     if (button.GetPreferredSize(Size.Empty).Width <= maximumWidth)
                         minimum = length;
@@ -437,7 +511,7 @@ namespace Quartz
                         maximum = length - 1;
                 }
 
-                return fullText.Substring(0, minimum) + ellipsis;
+                return prefix + fullText.Substring(0, minimum) + ellipsis;
             }
             finally
             {
@@ -445,74 +519,38 @@ namespace Quartz
             }
         }
 
-        internal void UpdateFavouriteButtonPreview(Button button, string name)
+        internal Button UpdateFavouriteButtonPreview(Button button, string name)
         {
             if (button == null)
-                return;
+                return null;
+
+            // Favicon validation can rebuild the bar while the edit window is open.
+            // Reconnect its saved button reference to the replacement control.
+            if (!pnlFavourites.Controls.Contains(button))
+            {
+                FavouriteModel favourite = GetFavourite(button);
+                if (favourite != null)
+                {
+                    button = pnlFavourites.Controls.OfType<Button>().FirstOrDefault(candidate =>
+                    {
+                        FavouriteModel candidateFavourite = GetFavourite(candidate);
+                        return candidateFavourite != null &&
+                            candidateFavourite.ProfileId == favourite.ProfileId &&
+                            candidateFavourite.Id == favourite.Id;
+                    }) ?? button;
+                }
+            }
 
             button.AccessibleName = name;
             button.Text = FitFavouriteButtonText(button, name, MaximumFavouriteButtonWidth);
             button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
             UpdateFavBar();
+            return button;
         }
 
         private static FavouriteModel GetFavourite(Button button)
         {
             return button.Tag as FavouriteModel;
-        }
-
-        bool mouseReleased = false;
-        Point mouseDownLocation;
-        bool isDragging = false;
-        Button draggedButton = null;
-        int originalButtonIndex = 0;
-
-        private void Button_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                mouseReleased = false;
-                isDragging = false;
-                draggedButton = sender as Button;
-                mouseDownLocation = e.Location;
-                originalButtonIndex = pnlFavourites.Controls.GetChildIndex(sender as Button);
-            }
-        }
-
-        private void Button_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (draggedButton == null)
-                return;
-
-            if (!mouseReleased && (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left)
-            {
-                if (!isDragging)
-                {
-                    // Get the current mouse location in screen coordinates
-                    Point currentScreenPos = draggedButton.PointToScreen(e.Location);
-
-                    // Get the button's rectangle in screen coordinates
-                    Rectangle buttonBounds = draggedButton.RectangleToScreen(draggedButton.ClientRectangle);
-
-                    // Start dragging only if mouse has moved outside the button
-                    if (!buttonBounds.Contains(currentScreenPos))
-                    {
-                        isDragging = true;
-                    }
-                }
-
-                if (isDragging)
-                {
-                    int currentIndex = pnlFavourites.Controls.GetChildIndex(draggedButton);
-                    int newIndex = GetNewButtonIndex(draggedButton, Cursor.Position);
-
-                    if (newIndex != currentIndex)
-                    {
-                        pnlFavourites.Controls.SetChildIndex(draggedButton, newIndex);
-                    }
-                }
-
-            }
         }
 
         private async void Button_MouseUp(object sender, MouseEventArgs e)
@@ -527,13 +565,18 @@ namespace Quartz
                 var browser = new Browser(favourite.WebAddress, true);
                 browser.InitializeTab();
 
-                var newTab = new TitleBarTab(ParentTabs) { Content = browser };
+                var newTab = new TitleBarTab(ParentTabs)
+                {
+                    Content = browser,
+                    Caption = "Loading...",
+                    IsLoading = true
+                };
 
                 void AddTab()
                 {
                     int index = ParentTabs.SelectedTabIndex + 1;
                     ParentTabs.Tabs.Insert(index, newTab);
-                    ParentTabs.SelectedTabIndex = index;
+                    ParentTabs.SelectedTab = newTab;
                     ParentTabs.RedrawTabs();
                 }
 
@@ -545,32 +588,10 @@ namespace Quartz
                 // Instant UI activation (0–1ms)
                 await Task.Yield();
             }
-            else if (e.Button == MouseButtons.Left && isDragging)
-            {
-                mouseReleased = true;
-                isDragging = false;
-                draggedButton = null;
-
-                FavouriteService favouriteService = new FavouriteService();
-                foreach (Button button in pnlFavourites.Controls)
-                {
-                    var favourite = GetFavourite(button);
-                    var storedFavourite = favourite == null ? null : favouriteService.Get(favourite.Name);
-                    if (storedFavourite != null)
-                        storedFavourite.Index = pnlFavourites.Controls.GetChildIndex(button);
-                }
-                favouriteService.SaveChanges();
-
-                int newButtonIndex = pnlFavourites.Controls.GetChildIndex(sender as Button);
-                if (originalButtonIndex != newButtonIndex)
-                {
-                    SettingsService.Set("sortFavouritesBy", "custom");
-                }
-            }
         }
         private void btnGotoFavourite_Click(object sender, EventArgs e)
         {
-            if (sender is Button && !isDragging)
+            if (sender is Button)
             {
                 var button = (Button)sender;
                 var favourite = GetFavourite(button);
@@ -579,31 +600,6 @@ namespace Quartz
                     SetSource(favourite.WebAddress);
                 }
             }
-        }
-
-        private int GetNewButtonIndex(Button draggedButton, Point screenMousePosition)
-        {
-            Point panelMousePoint = pnlFavourites.PointToClient(screenMousePosition);
-
-            var buttons = pnlFavourites.Controls.Cast<Control>().OfType<Button>()
-                .Where(b => b != draggedButton)
-                .OrderBy(b => b.Left)
-                .ToList();
-
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                var button = buttons[i];
-                int centerX = button.Left + button.Width / 2;
-
-                if (panelMousePoint.X < centerX)
-                {
-                    // Mouse is to the left of this button’s center → insert before
-                    return i;
-                }
-            }
-
-            // If we're past all buttons → insert at end
-            return buttons.Count;
         }
 
         public void SetSource(string url)
@@ -643,6 +639,9 @@ namespace Quartz
             string engine = SettingsService.Get("SearchEngine");
             string theme = SettingsService.Get("Theme");
             bool useDefaultHome = SettingsService.Get("DefaultHomePage") == "true";
+
+            if (useDefaultHome)
+                return NewTabPageData.PageUrl + "?theme=" + Uri.EscapeDataString(theme ?? "light");
 
             // Helper for themed pages
             string ThemePage(string name) => $"https://quartz.com/{theme}/{name}.html";
@@ -693,12 +692,12 @@ namespace Quartz
 
             // --- Safely check Source ---
             string currentUrl = wvWebView1?.Source?.ToString() ?? "";
-            bool isHome = currentUrl == GetHomeUrl();
+            bool isHome = NewTabPageData.IsPage(currentUrl) || currentUrl == GetHomeUrl();
 
             bool shouldShow = showFavSetting || isHome;
 
-            // --- No favourites? Force hidden ---
-            if (pnlFavourites.Controls.Count == 0)
+            // Keep the row visible until its last removed favourite finishes fading.
+            if (!pnlFavourites.HasVisibleItems)
             {
                 pnlFavourites.Visible = false;
                 pnlTop.Height = 43;
@@ -759,12 +758,7 @@ namespace Quartz
         #region Events
         private async void Browser_Load(object sender, EventArgs e)
         {
-            //bugfix to the 0,0 location of the settings context menu when first opened.
-            SettingsMenuStrip.Opening -= SettingsMenuStrip_Opening;
-            SettingsMenuStrip.Show(this, new Point(-10000, -10000));
-            SettingsMenuStrip.Close();              // closes it immediately
-            SettingsMenuStrip.Opening += SettingsMenuStrip_Opening;
-
+    
             // Force the underlying window handle to be created early
             var h = SettingsMenuStrip.Handle;
 
@@ -792,19 +786,12 @@ namespace Quartz
                 options.ProfileName = ProfileService.Current.ToString();
                 options.IsInPrivateModeEnabled = Program.profileService.Get(ProfileService.Current).isDisposable;
 
-                //sys webview
-                var sysenv = await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\", null);
-                var sysoptions = sysenv.CreateCoreWebView2ControllerOptions();
-
                 if (wvWebView1.CoreWebView2 == null)
                 {
                     await wvWebView1.EnsureCoreWebView2Async(env, options);
                 }
 
-                if (wvLoadingProgress.CoreWebView2 == null)
-                {
-                    await wvLoadingProgress.EnsureCoreWebView2Async(sysenv, sysoptions);
-                }
+                await _siteInfoController.InitializeAsync();
 
                 if (Program.profileService.Get(ProfileService.Current).isDisposable)
                 {
@@ -831,6 +818,10 @@ namespace Quartz
 
 
             wvWebView1.CoreWebView2.SetVirtualHostNameToFolderMapping("quartz.com", Application.StartupPath + @"\assets\quartz.com\", CoreWebView2HostResourceAccessKind.Allow);
+            var newTabProfile = ProfileService.Current;
+            _newTabPageController = new NewTabPageController(wvWebView1.CoreWebView2, newTabProfile,
+                Program.profileService.Get(newTabProfile).isDisposable, SettingsService.Get,
+                () => new HistoryService().GetProfileHistoryFromRange(newTabProfile, null, DateTime.MaxValue));
 
             if (_newtab)
             {
@@ -891,13 +882,11 @@ namespace Quartz
             if (SettingsService.Get("MemoryUsage") == "low")
             {
                 wvWebView1.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
-                wvLoadingProgress.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
 
             }
             else
             {
                 wvWebView1.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Normal;
-                wvLoadingProgress.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
             }
 
             if (SettingsService.Get("Zoom") != null)
@@ -959,7 +948,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v2.4.0";
+            notifyIcon1.Text = "Quartz v3.0.0 (Developer Build)";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -1054,10 +1043,6 @@ namespace Quartz
                                 uri = new Uri("https://www.google.com/maps/search/" + String.Join("+", Uri.EscapeDataString(rawUrl).Split(new string[] { "%20" }, StringSplitOptions.RemoveEmptyEntries)));
                                 break;
 
-                            //case "favicon":
-                            //    uri = new Uri("https://www.google.com/s2/favicons?domain=" + String.Join("", Uri.EscapeDataString(rawUrl).Split(new string[] { "" }, StringSplitOptions.RemoveEmptyEntries)));
-                            //    break;
-
                             case "ebay":
                                 uri = new Uri("https://www.ebay.com/sch/?_nkw=" + String.Join("+", Uri.EscapeDataString(rawUrl).Split(new string[] { "%20" }, StringSplitOptions.RemoveEmptyEntries)));
                                 break;
@@ -1080,6 +1065,7 @@ namespace Quartz
                         }
                     }
                     SetSource(uri);
+                    wvWebView1.Focus();
                 }
                 catch
                 {
@@ -1115,10 +1101,6 @@ namespace Quartz
                             uri = new Uri("https://www.google.com/maps/search/" + String.Join("+", Uri.EscapeDataString(rawUrl).Split(new string[] { "%20" }, StringSplitOptions.RemoveEmptyEntries)));
                             break;
 
-                        //case "favicon":
-                        //    uri = new Uri("https://www.google.com/s2/favicons?domain=" + String.Join("", Uri.EscapeDataString(rawUrl).Split(new string[] { "" }, StringSplitOptions.RemoveEmptyEntries)));
-                        //    break;
-
                         case "ebay":
                             uri = new Uri("https://www.ebay.com/sch/?_nkw=" + String.Join("+", Uri.EscapeDataString(rawUrl).Split(new string[] { "%20" }, StringSplitOptions.RemoveEmptyEntries)));
                             break;
@@ -1140,6 +1122,7 @@ namespace Quartz
                             break;
                     }
                     SetSource(uri);
+                    wvWebView1.Focus();
                 }
                 #endregion
             }
@@ -1159,6 +1142,20 @@ namespace Quartz
             wvWebView1.CoreWebView2.DownloadStarting += CoreViewView2__DownloadStarting;
             wvWebView1.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
             wvWebView1.CoreWebView2.FaviconChanged += CoreWebView2_FaviconChanged;
+            wvWebView1.CoreWebView2.ContentLoading += CoreWebView2_ContentLoading;
+            wvWebView1.CoreWebView2.ProcessFailed += CoreWebView2_ProcessFailed;
+        }
+
+        private void CoreWebView2_ProcessFailed(object sender, CoreWebView2ProcessFailedEventArgs e)
+        {
+            // An unrelated GPU or subframe failure does not mean this page has finished loading.
+            if (e.ProcessFailedKind == CoreWebView2ProcessFailedKind.BrowserProcessExited ||
+                e.ProcessFailedKind == CoreWebView2ProcessFailedKind.RenderProcessExited ||
+                e.ProcessFailedKind == CoreWebView2ProcessFailedKind.RenderProcessUnresponsive)
+            {
+                PreviewProcessFailed();
+                SetTabLoading(false);
+            }
         }
 
         private void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
@@ -1166,47 +1163,63 @@ namespace Quartz
             e.Handled = true;
             Browser browser = new Browser(e.Uri, true);
             browser.InitializeTab();
-            var newtab = new TitleBarTab(ParentTabs) { Content = browser };
+            var newtab = new TitleBarTab(ParentTabs)
+            { 
+                Content = browser,
+                Caption = "Loading...",
+                IsLoading = true
+            };
 
             if (ParentTabs.InvokeRequired)
             {
                 ParentTabs.Invoke(new Action(() =>
                 {
                     ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                    ParentTabs.SelectedTabIndex++;
+                    ParentTabs.SelectedTab = newtab;
                     ParentTabs.RedrawTabs();
-                    ParentTabs.Refresh();
                 }));
             }
             else
             {
                 ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                ParentTabs.SelectedTabIndex++;
+                ParentTabs.SelectedTab = newtab;
                 ParentTabs.RedrawTabs();
-                ParentTabs.Refresh();
             }
         }
 
         private ulong _activeNavigationId;
+        private NewTabPageController _newTabPageController;
         private void wvWebView1_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
+            // Restored tabs and saved links to the old themed home pages use the new page too.
+            Uri target;
+            if (Uri.TryCreate(e.Uri, UriKind.Absolute, out target) && target.Host == "quartz.com" &&
+                System.Text.RegularExpressions.Regex.IsMatch(target.AbsolutePath,
+                    @"^/(light|dark|black|aqua|xmas)/(Google|Bing|DuckDuckGo|Yahoo|YouTube|Netflix|Ecosia|Google%20Maps|Google Maps|Custom)\.html$",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            {
+                e.Cancel = true;
+                BeginInvoke(new Action(() => SetSource(NewTabPageData.PageUrl + "?theme=" +
+                    Uri.EscapeDataString(SettingsService.Get("Theme") ?? "light"))));
+                return;
+            }
+            PreviewNavigationStarting(e);
             _activeNavigationId = e.NavigationId;
+            SetTabLoading(!e.Cancel, !e.Cancel, !e.IsRedirected);
 
             Cursor = Cursors.AppStarting;
-            picFavicon.Visible = false;
-            wvLoadingProgress.Visible = true;
-
-            string theme = SettingsService.Get("Theme");
-
-            if (string.IsNullOrWhiteSpace(theme))
-                theme = "black";
-
-            string fileName = string.Equals(theme, "xmas", StringComparison.OrdinalIgnoreCase) ? "throbber_small_xmas_red.svg" : $"throbber_small_{theme}.svg";
-            string throbberPath = Path.Combine(Application.StartupPath, "assets", "throbber", fileName);
-            wvLoadingProgress.Source = new Uri(throbberPath);
 
             btnRefresh.Visible = false;
             btnStop.Visible = true;
+        }
+
+        private void CoreWebView2_ContentLoading(object sender, CoreWebView2ContentLoadingEventArgs e)
+        {
+            if (e.NavigationId == _activeNavigationId && IsLoading)
+            {
+                PreviewContentLoading();
+                SetTabLoading(true);
+            }
         }
 
         private void wvWebView1_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
@@ -1215,14 +1228,16 @@ namespace Quartz
             if (e.NavigationId != _activeNavigationId)
                 return;
 
+            SetTabLoading(false);
+
+            PreviewNavigationCompleted();
+
             if (loadnum == 0)
                 loadnum++;
 
             Cursor = Cursors.Default;
             btnRefresh.Visible = true;
             btnStop.Visible = false;
-            wvLoadingProgress.Visible = false;
-            picFavicon.Visible = true;
 
             if (e.IsSuccess)
             {
@@ -1340,17 +1355,26 @@ namespace Quartz
             var currentUri = wvWebView1.Source;
             if (currentUri == null) return;
 
+            _previewAddress = currentUri.AbsoluteUri;
+            PreviewChanged?.Invoke(this, EventArgs.Empty);
+
             UpdateFavBar();
 
             if (isQuartzDotCom(currentUri))
             {
-                picFavicon.Image = null;
                 this.ShowIcon = false;
                 FaviconHelper.UpdateCurrentTab(ParentTabs, this);
             }
             else
             {
                 this.ShowIcon = true;
+            }
+
+            if (NewTabPageData.IsPage(currentUri.AbsoluteUri))
+            {
+                txtWebAddress.Clear();
+                if (loadnum == 0 && !_newtab) txtWebAddress.Focus();
+                return;
             }
 
             if (loadnum == 0 && !_newtab)
@@ -1439,79 +1463,61 @@ namespace Quartz
             return messagePages.Any(p => p.Equals(fileName, StringComparison.OrdinalIgnoreCase));
         }
 
+        private int _faviconRequestVersion;
         public async void CoreWebView2_FaviconChanged(object sender, object e)
         {
-            // could add code that refreshes tab favicon to show changes.
-            if (Uri.IsWellFormedUriString(wvWebView1.Source.AbsoluteUri, UriKind.Absolute))
+            if (IsDisposed || wvWebView1.IsDisposed || wvWebView1.CoreWebView2 == null) return;
+            int requestVersion = ++_faviconRequestVersion;
+            Uri faviconSource = wvWebView1.Source;
+            ulong navigationId = _activeNavigationId;
+            if (faviconSource == null || !Uri.IsWellFormedUriString(faviconSource.AbsoluteUri, UriKind.Absolute)) return;
+
+            if (isQuartzDotCom(faviconSource))
             {
-                //bool showSiteIconsOnly = bool.Parse(SettingsService.Get("showSiteIconsOnly"));
-                //if (showSiteIconsOnly)
-                //{
-                //    ShowIcon = true;
-                //}
+                ShowIcon = false;
+                IsDefaultFavicon = true;
+                FaviconHelper.UpdateCurrentTab(ParentTabs, this);
+                return;
+            }
 
-                if (isQuartzDotCom(wvWebView1.Source))
+            Icon favicon = null;
+            try
+            {
+                // WebView2 reports an empty URI/stream for no favicon. Use its
+                // downloaded icon directly; probing a separate WebView delays the
+                // first favicon, and a disk cache can hide a site's updated icon.
+                if (!string.IsNullOrEmpty(wvWebView1.CoreWebView2.FaviconUri))
                 {
-                    picFavicon.Image = null;
-                    this.ShowIcon = false;
-                    FaviconHelper.UpdateCurrentTab(ParentTabs, this);
-                    return;
-                }
-                else
-                {
-                    this.ShowIcon = true;
-                }
-
-                if (!FaviconHelper.DoesFaviconFileExist(wvWebView1.Source.AbsoluteUri))
-                {
-                    Stream originalStream = await wvWebView1.CoreWebView2.GetFaviconAsync(Microsoft.Web.WebView2.Core.CoreWebView2FaviconImageFormat.Png);
-
-                    if (originalStream != null && originalStream.Length != 0)
+                    using (Stream stream = await wvWebView1.CoreWebView2.GetFaviconAsync(CoreWebView2FaviconImageFormat.Png))
+                    using (var memory = new MemoryStream())
                     {
-                        // Copy stream into memory so it can be reused
-                        MemoryStream memoryStream = new MemoryStream();
-                        await originalStream.CopyToAsync(memoryStream);
-                        memoryStream.Position = 0;
-
-                        bool isDefaultFavicon = await FaviconHelper.IsDefaultFaviconAsync(new MemoryStream(memoryStream.ToArray()));
-                        if (!isDefaultFavicon)
+                        if (stream != null) await stream.CopyToAsync(memory);
+                        if (IsDisposed || wvWebView1.IsDisposed || requestVersion != _faviconRequestVersion ||
+                            navigationId != _activeNavigationId || faviconSource != wvWebView1.Source) return;
+                        if (memory.Length != 0)
                         {
-                            memoryStream.Position = 0;
-                            Icon icon = FaviconHelper.ConvertToIcon(memoryStream);
-                            Icon = icon;
-                            FaviconHelper.UpdateCurrentTab(ParentTabs, this);
-
-                            picFavicon.Image = icon.ToBitmap();
-
-                            FaviconHelper.SaveToFile(icon, wvWebView1.Source.AbsoluteUri);
-                        }
-                        else
-                        {
-                            //if (showSiteIconsOnly)
-                            //{
-                            //    ShowIcon = false;
-                            //    return;
-                            //}
-
-                            Icon icon = FaviconHelper.GetDefaultFavicon16();
-                            Icon = icon;
-                            FaviconHelper.UpdateCurrentTab(ParentTabs, this);
-                            picFavicon.Image = icon.ToBitmap();
+                            memory.Position = 0;
+                            favicon = FaviconHelper.ConvertToIcon(memory);
                         }
                     }
                 }
-                else
-                {
-                    Icon icon = FaviconHelper.GetFaviconFile(wvWebView1.Source.AbsoluteUri);
-                    Icon = icon;
-                    FaviconHelper.UpdateCurrentTab(ParentTabs, this);
-
-                    picFavicon.Image = icon.ToBitmap();
-                }
             }
+            catch (Exception) when (IsDisposed || wvWebView1.IsDisposed ||
+                requestVersion != _faviconRequestVersion || navigationId != _activeNavigationId)
+            {
+                return; // Ignore an obsolete request interrupted by navigation or disposal.
+            }
+
+            IsDefaultFavicon = favicon == null;
+            Icon = favicon ?? FaviconHelper.GetDefaultFavicon16();
+            ShowIcon = true;
+            FaviconHelper.UpdateCurrentTab(ParentTabs, this);
+            // Keep the existing cache policy: SaveToFile creates a new file each time.
+            if (favicon != null && !FaviconHelper.DoesFaviconFileExist(faviconSource.AbsoluteUri))
+                FaviconHelper.SaveToFile(favicon, faviconSource.AbsoluteUri);
+
             bool isCorrect = await FavouriteService.ValidatePanelAsync(pnlFavourites);
-            if (!isCorrect)
-                LoadFavourites();
+            if (!IsDisposed && !isCorrect) LoadFavourites();
         }
 
         private void CoreWebView2_HistoryChanged(object sender, object e)
@@ -1604,7 +1610,7 @@ namespace Quartz
                     var favourite = GetFavourite(button);
                     if (favourite != null)
                     {
-                        FavouriteService.Remove(favourite.Name);
+                        FavouriteService.Remove(favourite.Id);
                         FavouriteService.SaveChanges();
                         LoadFavourites();
                     }
@@ -1762,12 +1768,12 @@ namespace Quartz
 
         private void pnlFavourites_ControlRemoved(object sender, ControlEventArgs e)
         {
-            UpdateFavBar();
+            if (!_loadingFavourites) UpdateFavBar();
         }
 
         private void pnlFavourites_ControlAdded(object sender, ControlEventArgs e)
         {
-            UpdateFavBar();
+            if (!_loadingFavourites) UpdateFavBar();
         }
 
         private void Browser_MouseMove(object sender, MouseEventArgs e)
@@ -2047,23 +2053,26 @@ namespace Quartz
         {
             Browser browser = new Browser(null, false);
             browser.InitializeTab();
-            var newtab = new TitleBarTab(ParentTabs) { Content = browser };
+            var newtab = new TitleBarTab(ParentTabs)
+            {
+                Content = browser,
+                Caption = "New Tab",
+                IsLoading = true
+            };
             if (ParentTabs.InvokeRequired)
             {
                 ParentTabs.Invoke(new Action(() =>
                 {
                     ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                    ParentTabs.SelectedTabIndex++;
+                    ParentTabs.SelectedTab = newtab;
                     ParentTabs.RedrawTabs();
-                    ParentTabs.Refresh();
                 }));
             }
             else
             {
                 ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                ParentTabs.SelectedTabIndex++;
+                ParentTabs.SelectedTab = newtab;
                 ParentTabs.RedrawTabs();
-                ParentTabs.Refresh();
             }
         }
 
@@ -2194,23 +2203,27 @@ namespace Quartz
 
                 Browser browser = new Browser(menuItem.Tag.ToString(), true);
                 browser.InitializeTab();
-                var newtab = new TitleBarTab(ParentTabs) { Content = browser };
+                var newtab = new TitleBarTab(ParentTabs)
+                {
+                    Content = browser,
+                    Caption = "Loading...",
+                    IsLoading = true
+                };
+
                 if (ParentTabs.InvokeRequired)
                 {
                     ParentTabs.Invoke(new Action(() =>
                     {
                         ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                        ParentTabs.SelectedTabIndex++;
+                        ParentTabs.SelectedTab = newtab;
                         ParentTabs.RedrawTabs();
-                        ParentTabs.Refresh();
                     }));
                 }
                 else
                 {
                     ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                    ParentTabs.SelectedTabIndex++;
+                    ParentTabs.SelectedTab = newtab;
                     ParentTabs.RedrawTabs();
-                    ParentTabs.Refresh();
                 }
             }
         }
@@ -2318,7 +2331,7 @@ namespace Quartz
             Shortcuts(false);
             Settings setting = new Settings(this, false);
             setting.Owner = this;
-            setting.ShowDialog();
+           setting.ShowDialog();
         }
 
         private void Item_Click(object sender, EventArgs e)
@@ -2472,16 +2485,22 @@ namespace Quartz
         public void SortByAlphabetially()
         {
             FavouriteService favouriteService = new FavouriteService();
-            List<FavouriteModel> allItems = favouriteService.All();
-
-            var sortedItems = allItems.OrderBy(item => item.Name).ToList();
-
-            for (int i = 0; i < sortedItems.Count; i++)
-            {
-                sortedItems[i].Index = i; // Update Index to match new position
-            }
-
+            favouriteService.SortAlphabetically();
             favouriteService.SaveChanges();
+
+            var buttons = pnlFavourites.Controls.OfType<Button>().ToList();
+            var order = favouriteService.All().OrderBy(f => f.Index).Select(favourite =>
+                buttons.FirstOrDefault(button =>
+                {
+                    var model = GetFavourite(button);
+                    return model != null && model.ProfileId == favourite.ProfileId &&
+                        model.Id == favourite.Id &&
+                        model.Name == favourite.Name && model.WebAddress == favourite.WebAddress;
+                })).Cast<Control>().ToList();
+
+            // Reuse the live buttons so their positions can animate. A stale bar
+            // with added/removed/edited favourites still needs its normal refresh.
+            if (!pnlFavourites.TryAnimateOrder(order)) LoadFavourites();
         }
 
 
@@ -2491,7 +2510,6 @@ namespace Quartz
             {
                 SettingsService.Set("sortFavouritesBy", "alphabetically");
                 SortByAlphabetially();
-                LoadFavourites();
             }
             else
             {
@@ -2792,7 +2810,7 @@ namespace Quartz
                         Clipboard.SetText(favourite.WebAddress);
 
                         FavouriteService favouriteService = new FavouriteService();
-                        favouriteService.Remove(favourite.Name);
+                        favouriteService.Remove(favourite.Id);
                         favouriteService.SaveChanges();
 
                         LoadFavourites();
@@ -2808,7 +2826,7 @@ namespace Quartz
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //wvWebView1.Focus();
+            wvWebView1.Focus();
             SendKeys.SendWait("^f");
         }
 
@@ -2830,7 +2848,7 @@ namespace Quartz
             {
                 var menuItem = new ToolStripMenuItem
                 {
-                    Name = "smi" + favourite.Name,
+                    Name = "smi" + favourite.Id.ToString("N"),
                     Text = favourite.Name,
                     Tag = favourite.WebAddress,
                 };
@@ -2854,13 +2872,18 @@ namespace Quartz
                         var browser = new Browser(favourite.WebAddress, true);
                         browser.InitializeTab();
 
-                        var newTab = new TitleBarTab(ParentTabs) { Content = browser };
+                        var newTab = new TitleBarTab(ParentTabs)
+                        {
+                            Content = browser,
+                            Caption = "Loading...",
+                            IsLoading = true
+                        };
 
                         void AddTab()
                         {
                             int index = ParentTabs.SelectedTabIndex + 1;
                             ParentTabs.Tabs.Insert(index, newTab);
-                            ParentTabs.SelectedTabIndex = index;
+                            ParentTabs.SelectedTab = newTab;
                             ParentTabs.RedrawTabs();
                         }
 
@@ -2907,9 +2930,16 @@ namespace Quartz
                     WebAddress = Clipboard.GetText()
                 });
 
+                if (SettingsService.Get("sortFavouritesBy") == "alphabetically")
+                    service.SortAlphabetically();
                 service.SaveChanges();
                 LoadFavourites();
             }
+        }
+
+        private void picFavicon_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

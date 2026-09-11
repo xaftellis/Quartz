@@ -8,6 +8,7 @@ namespace Quartz.Models
 {
     public class FavouriteModel
     {
+        public Guid Id { get; set; }
         public Guid ProfileId { get; set; }
         public int Index { get; set; }
         public string Name { get; set; }

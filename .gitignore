@@ -8,3 +8,4 @@ obj/
 *.cache
 *.log
 *.db
+Tools/NewTab/node_modules/

@@ -199,11 +199,11 @@
             this.labelVersion.AutoSize = true;
             this.labelVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelVersion.ForeColor = System.Drawing.Color.Black;
-            this.labelVersion.Location = new System.Drawing.Point(334, 72);
+            this.labelVersion.Location = new System.Drawing.Point(240, 73);
             this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(296, 24);
+            this.labelVersion.Size = new System.Drawing.Size(311, 24);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version 2.4.0 (Development Build)";
+            this.labelVersion.Text = "Version 3.0.0 (Development Build 1)";
             // 
             // LoadingProgress
             // 

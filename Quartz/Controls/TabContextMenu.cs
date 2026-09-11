@@ -1,4 +1,4 @@
-﻿using EasyTabs;
+using EasyTabs;
 using Quartz.Services;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Windows.Media.Animation;
 
 namespace Quartz.Controls
 {
-    public class TabContextMenu : ContextMenuStrip
+    public partial class TabContextMenu : ContextMenuStrip
     {
         TitleBarTabs _parentForm;
         TitleBarTab _clickedTab;
@@ -21,6 +21,7 @@ namespace Quartz.Controls
         private ToolStripSeparator toolStripSeparator;
         private ToolStripMenuItem reloadTabToolStripMenuItem;
         private ToolStripMenuItem duplicateTabToolStripMenuItem;
+        private ToolStripMenuItem pinTabToolStripMenuItem;
         private ToolStripMenuItem muteTabToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem closeTabToolStripMenuItem;
@@ -36,10 +37,16 @@ namespace Quartz.Controls
             // Controls
             newTabLeftStripMenuItem = new ToolStripMenuItem("New tab to the left");
             newTabRightStripMenuItem = new ToolStripMenuItem("New tab to the right");
+            moveTabToolStripMenuItem = new ToolStripMenuItem("Move tab to new window");
+            moveTabToolStripMenuItem.Click += (sender, e) =>
+            {
+                if (!moveTabToolStripMenuItem.HasDropDownItems) MoveTabToNewWindow();
+            };
             toolStripSeparator = new ToolStripSeparator();
             reloadTabToolStripMenuItem = new ToolStripMenuItem("Reload");
             reloadTabToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.R;
             duplicateTabToolStripMenuItem = new ToolStripMenuItem("Duplicate");
+            pinTabToolStripMenuItem = new ToolStripMenuItem("Pin");
             muteTabToolStripMenuItem = new ToolStripMenuItem("Mute tab");
             toolStripSeparator1 = new ToolStripSeparator();
             closeTabToolStripMenuItem = new ToolStripMenuItem("Close Tab");
@@ -57,9 +64,11 @@ namespace Quartz.Controls
             {
                 newTabLeftStripMenuItem,
                 newTabRightStripMenuItem,
+                moveTabToolStripMenuItem,
                 toolStripSeparator,
                 reloadTabToolStripMenuItem,
                 duplicateTabToolStripMenuItem,
+                pinTabToolStripMenuItem,
                 muteTabToolStripMenuItem,
                 toolStripSeparator1,
                 closeTabToolStripMenuItem,
@@ -72,6 +81,11 @@ namespace Quartz.Controls
 
             // Events
             this.Opening += DefaultContextMenu_Opening;
+            pinTabToolStripMenuItem.Click += (sender, e) =>
+            {
+                if (_clickedTab != null && _parentForm.Tabs.Contains(_clickedTab))
+                    _clickedTab.IsPinned = !_clickedTab.IsPinned;
+            };
 
             newTabLeftStripMenuItem.Click += NewTabLeftStripMenuItem_Click;
             newTabRightStripMenuItem.Click += NewTabRightStripMenuItem_Click;
@@ -102,17 +116,15 @@ namespace Quartz.Controls
                 _parentForm.Invoke(new Action(() =>
                 {
                     _parentForm.Tabs.Insert(newTabIndex, newtab);
-                    _parentForm.SelectedTabIndex = newTabIndex;
+                    _parentForm.SelectedTab = newtab;
                     _parentForm.RedrawTabs();
-                    _parentForm.Refresh();
                 }));
             }
             else
             {
                 _parentForm.Tabs.Insert(newTabIndex, newtab);
-                _parentForm.SelectedTabIndex = newTabIndex;
+                _parentForm.SelectedTab = newtab;
                 _parentForm.RedrawTabs();
-                _parentForm.Refresh();
             }
         }
 
@@ -128,17 +140,15 @@ namespace Quartz.Controls
                 _parentForm.Invoke(new Action(() =>
                 {
                     _parentForm.Tabs.Insert(newTabIndex, newtab);
-                    _parentForm.SelectedTabIndex = newTabIndex;
+                    _parentForm.SelectedTab = newtab;
                     _parentForm.RedrawTabs();
-                    _parentForm.Refresh();
                 }));
             }
             else
             {
                 _parentForm.Tabs.Insert(newTabIndex, newtab);
-                _parentForm.SelectedTabIndex = newTabIndex;
+                _parentForm.SelectedTab = newtab;
                 _parentForm.RedrawTabs();
-                _parentForm.Refresh();
             }
         }
 
@@ -163,42 +173,22 @@ namespace Quartz.Controls
         private void CloseLeftToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int idx = _parentForm.Tabs.IndexOf(_clickedTab);
-            if (idx > 0)
-            {
-                // Ensures tab is selected
-                _parentForm.SelectedTab = _clickedTab;
-
-                // Keep only the clicked tab and all tabs to its right
-                var remaining = _parentForm.Tabs.Skip(idx).ToList();
-
-                _parentForm.Tabs.Clear();
-                _parentForm.Tabs.AddRange(remaining);
-            }
+            if (idx > 0) CloseTabs(_parentForm.Tabs.Take(idx));
         }
 
         private void CloseRightToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int idx = _parentForm.Tabs.IndexOf(_clickedTab);
-            if (idx >= 0 && idx < _parentForm.Tabs.Count - 1)
-            {
-                // Ensures tab is selected
-                _parentForm.SelectedTab = _clickedTab;
-
-                // Keep only the clicked tab and all tabs to its left
-                var remaining = _parentForm.Tabs.Take(idx + 1).ToList();
-
-                _parentForm.Tabs.Clear();
-                _parentForm.Tabs.AddRange(remaining);
-            }
+            if (idx >= 0) CloseTabs(_parentForm.Tabs.Skip(idx + 1));
         }
 
         private void DuplicateTabToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string _url = ((Browser)_clickedTab.Content).wvWebView1.Source.AbsoluteUri.ToString();
+            string _url = ((Browser)_clickedTab.Content).wvWebView1.Source?.AbsoluteUri ?? "about:blank";
 
             Browser browser = new Browser(_url, true);
             browser.InitializeTab();
-            var newtab = new TitleBarTab(_parentForm) { Content = browser };
+            var newtab = new TitleBarTab(_parentForm) { Content = browser, IsPinned = _clickedTab.IsPinned };
             int newTabIndex = _parentForm.Tabs.IndexOf(_clickedTab) + 1;
 
             if (_parentForm.InvokeRequired)
@@ -206,30 +196,30 @@ namespace Quartz.Controls
                 _parentForm.Invoke(new Action(() =>
                 {
                     _parentForm.Tabs.Insert(newTabIndex, newtab);
-                    _parentForm.SelectedTabIndex = newTabIndex;
+                    _parentForm.SelectedTab = newtab;
                     _parentForm.RedrawTabs();
-                    _parentForm.Refresh();
                 }));
             }
             else
             {
                 _parentForm.Tabs.Insert(newTabIndex, newtab);
-                _parentForm.SelectedTabIndex = newTabIndex;
+                _parentForm.SelectedTab = newtab;
                 _parentForm.RedrawTabs();
-                _parentForm.Refresh();
             }
         }
 
         private void CloseOtherToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_clickedTab != null)
-            {
-                // Ensures tab is selected
-                _parentForm.SelectedTab = _clickedTab;
+            if (_clickedTab != null) CloseTabs(_parentForm.Tabs.Where(tab => tab != _clickedTab));
+        }
 
-                _parentForm.Tabs.Clear();
-                _parentForm.Tabs.Add(_clickedTab);
-            }
+        private void CloseTabs(IEnumerable<TitleBarTab> candidates)
+        {
+            _parentForm.SelectedTab = _clickedTab;
+            // Use the normal close lifecycle (including cancellation, disposal,
+            // selection and animation). Chromium protects pins from bulk closes.
+            foreach (TitleBarTab tab in candidates.Where(tab => !tab.IsPinned).ToArray())
+                if (_parentForm.Tabs.Contains(tab)) tab.Content.Close();
         }
 
         public void DefineVarables()
@@ -246,12 +236,20 @@ namespace Quartz.Controls
         private void DefaultContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             DefineVarables();
+            if (_parentForm == null || _clickedTab == null || !_parentForm.Tabs.Contains(_clickedTab))
+            {
+                e.Cancel = true;
+                return;
+            }
             UpdateMenuItemsEnabledState();
+            UpdateMoveWindowMenu();
+            pinTabToolStripMenuItem.Text = _clickedTab.IsPinned ? "Unpin" : "Pin";
 
             if (_clickedTab?.Content is Browser browser)
             {
-                bool isMuted = browser.wvWebView1.CoreWebView2.IsMuted;
+                bool isMuted = browser.wvWebView1.CoreWebView2?.IsMuted ?? false;
                 muteTabToolStripMenuItem.Text = !isMuted ? "Mute tab" : "Unmute tab";
+                muteTabToolStripMenuItem.Enabled = browser.wvWebView1.CoreWebView2 != null;
             }
 
             //showSiteIconsOnlyToolStripMenuItem.Checked = SettingsService.Get("showSiteIconsOnly") == "true";
@@ -265,15 +263,10 @@ namespace Quartz.Controls
         public void UpdateMenuItemsEnabledState()
         {
             int clickedTabIndex = _parentForm.Tabs.IndexOf(_clickedTab);
-            int count = _parentForm.Tabs.Count;
-
-            // Basic logic:
-            // - Close other: enabled when more than 1 tab exists
-            // - Close left: enabled when one or more tabs to the left (idx > 0)
-            // - Close right: enabled when one or more tabs to the right (idx < count-1)
-            closeOtherToolStripMenuItem.Enabled = count > 1;
-            closeLeftToolStripMenuItem.Enabled = clickedTabIndex > 0;
-            closeRightToolStripMenuItem.Enabled = (clickedTabIndex >= 0 && clickedTabIndex < count - 1);
+            closeOtherToolStripMenuItem.Enabled = _parentForm.Tabs.Any(tab => tab != _clickedTab && !tab.IsPinned);
+            closeLeftToolStripMenuItem.Enabled = _parentForm.Tabs.Take(clickedTabIndex).Any(tab => !tab.IsPinned);
+            closeRightToolStripMenuItem.Enabled = clickedTabIndex >= 0 &&
+                _parentForm.Tabs.Skip(clickedTabIndex + 1).Any(tab => !tab.IsPinned);
         }
     }
 }

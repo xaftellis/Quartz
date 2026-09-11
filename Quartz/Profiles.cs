@@ -563,7 +563,7 @@ namespace Quartz
         private void AddFavourite(string name, string url)
         {
             var favourite = new Models.FavouriteModel { Name = name, WebAddress = url };
-            FavouriteService.Modify(favourite);
+            FavouriteService.Add(favourite);
             FavouriteService.SaveChanges();
         }
 

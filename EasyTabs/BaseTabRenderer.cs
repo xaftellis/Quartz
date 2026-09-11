@@ -1,8 +1,10 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Win32Interop.Enums;
 
@@ -12,9 +14,36 @@ namespace EasyTabs
 	/// Provides the base functionality for any tab renderer, taking care of actually rendering and detecting whether the cursor is over a tab.  Any custom
 	/// tab renderer needs to inherit from this class, just as <see cref="ChromeTabRenderer" /> does.
 	/// </summary>
-	public abstract class BaseTabRenderer
+	public abstract class BaseTabRenderer : IDisposable
 	{
 		bool? _isWindows10 = null;
+		private readonly TabLayoutAnimation _layoutAnimation = new TabLayoutAnimation();
+		private readonly Stopwatch _layoutClock = Stopwatch.StartNew();
+		private readonly object _addButtonAnimationKey = new object();
+		private readonly HashSet<TitleBarTab> _hoveredCloseButtons = new HashSet<TitleBarTab>();
+
+		/// <summary>Animate tab layout changes while retaining the existing renderer and artwork.</summary>
+		public bool AnimationsEnabled { get; set; } = true;
+
+		internal bool CanAnimateHoverCards => ShouldAnimateLayout();
+
+		internal virtual bool IsLayoutAnimating { get { return _layoutAnimation.IsAnimating; } }
+		internal virtual bool RequiresHoverRedraw(Point cursor) { return false; }
+		internal virtual void ButtonPointerDown(Point cursor) { }
+		internal virtual void BeginTabClose(TitleBarTab tab) { }
+		internal virtual void BeginPinnedTabAnimation() { }
+		internal void OffsetWindowPosition(int x, int y) { _maxTabArea.Offset(x, y); }
+
+		[DllImport("user32.dll", EntryPoint = "SystemParametersInfoW")]
+		private static extern bool GetSystemAnimationSetting(uint action, uint parameter,
+			[MarshalAs(UnmanagedType.Bool)] out bool enabled, uint flags);
+
+		protected virtual bool ShouldAnimateLayout()
+		{
+			bool enabled;
+			return AnimationsEnabled && !SystemInformation.HighContrast &&
+				(!GetSystemAnimationSetting(0x1042, 0, out enabled, 0) || enabled);
+		}
 
 		/// <summary>
 		/// Background of the content area for the tab when the tab is active; its width also determines how wide the default content area for the tab
@@ -24,6 +53,9 @@ namespace EasyTabs
 		
 		//<summary>Color of the title text. To change colors of the entire tab, change it from resource actively or permanently. </summary>
 		protected Color ForeColor = Color.Black;
+
+		/// <summary>Colour of the indicator drawn in place of a loading tab's favicon.</summary>
+		public Color LoadingIndicatorColor { get; set; } = Color.FromArgb(66, 133, 244);
 
 		/// <summary>Image to display on the left side of an active tab.</summary>
 		protected Image _activeLeftSideImage;
@@ -81,6 +113,15 @@ namespace EasyTabs
 
 		/// <summary>When the user is dragging a tab, this represents the horizontal offset within the tab where the user clicked to start the drag operation.</summary>
 		protected int? _tabClickOffset = null;
+
+		/// <summary>Vertical offset within the tab where the current drag started.</summary>
+		protected int? _tabClickOffsetY = null;
+
+		/// <summary>Temporary tab position used while its detached window is still being dragged.</summary>
+		protected int? _detachedTabX = null;
+
+		/// <summary>Temporary tab width used while its detached window is still being dragged.</summary>
+		protected int? _detachedTabWidth = null;
 
 		/// <summary>The width of the content area that we should use for each tab.</summary>
 		protected int _tabContentWidth;
@@ -327,7 +368,11 @@ namespace EasyTabs
 		{
 			_wasTabRepositioning = false;
 			_dragStart = e.Location;
-			_tabClickOffset = _parentWindow._overlay.GetRelativeCursorPosition(e.Location).X - _parentWindow.SelectedTab.Area.Location.X;
+			Point relativeCursorPosition = _parentWindow._overlay.GetRelativeCursorPosition(e.Location);
+			_tabClickOffset = relativeCursorPosition.X - _parentWindow.SelectedTab.Area.Left;
+			_tabClickOffsetY = relativeCursorPosition.Y - _parentWindow.SelectedTab.Area.Top;
+			TabDragGrabRatio = GetTabDragGrabRatio(new Point(_tabClickOffset.Value, _tabClickOffsetY.Value),
+				_parentWindow.SelectedTab.Area.Size);
 		}
 
 		/// <summary>
@@ -340,6 +385,10 @@ namespace EasyTabs
 		{
 			_dragStart = null;
 			_tabClickOffset = null;
+			_tabClickOffsetY = null;
+			TabDragGrabRatio = null;
+			_detachedTabX = null;
+			_detachedTabWidth = null;
 
 			_wasTabRepositioning = IsTabRepositioning;
 
@@ -347,7 +396,56 @@ namespace EasyTabs
 
 			if (_wasTabRepositioning)
 			{
-				_parentWindow._overlay.Render(true);
+				_parentWindow._overlay?.Render(true);
+			}
+		}
+
+		/// <summary>Keeps a detached tab in its previous visual position until the window drag ends.</summary>
+		internal virtual void BeginDetachedWindowDrag(int tabX, int tabWidth, PointF grabRatio)
+		{
+			_detachedTabX = tabX;
+			_detachedTabWidth = tabWidth;
+			TabDragGrabRatio = grabRatio;
+			UpdateTabDragOffset(new Size(tabWidth, _parentWindow.SelectedTab.Area.Height));
+		}
+
+		/// <summary>Returns a detached tab to the normal tab-strip layout.</summary>
+		internal virtual void EndDetachedWindowDrag()
+		{
+			_detachedTabX = null;
+			_detachedTabWidth = null;
+			_tabClickOffset = _tabClickOffsetY = null;
+			TabDragGrabRatio = null;
+		}
+
+		/// <summary>Preserved throughout a drag, including transfers between renderers.</summary>
+		internal PointF? TabDragGrabRatio { get; private set; }
+
+		internal static PointF GetTabDragGrabRatio(Point offset, Size tabSize)
+		{
+			return new PointF(
+				Math.Max(0, Math.Min(1, offset.X / (float)Math.Max(1, tabSize.Width))),
+				Math.Max(0, Math.Min(1, offset.Y / (float)Math.Max(1, tabSize.Height))));
+		}
+
+		protected void UpdateTabDragOffset(Size tabSize)
+		{
+			if (!TabDragGrabRatio.HasValue) return;
+			// Chromium's DragSessionData retains size ratios instead of repeatedly rounding transferred offsets.
+			// https://chromium.googlesource.com/chromium/src/+/cac17959bd104dc21b81f5ad1839b5e8bd80c97f/chrome/browser/ui/views/tabs/common/dragged_tabs_container.cc
+			PointF ratio = TabDragGrabRatio.Value;
+			_tabClickOffset = Math.Min(Math.Max(0, tabSize.Width - 1), (int)Math.Round(ratio.X * tabSize.Width));
+			_tabClickOffsetY = Math.Min(Math.Max(0, tabSize.Height - 1), (int)Math.Round(ratio.Y * tabSize.Height));
+		}
+
+		/// <summary>Original cursor offset within the tab for the current drag.</summary>
+		internal virtual Point? TabDragClickOffset
+		{
+			get
+			{
+				return _tabClickOffset.HasValue && _tabClickOffsetY.HasValue
+					? new Point(_tabClickOffset.Value, _tabClickOffsetY.Value)
+					: (Point?) null;
 			}
 		}
 
@@ -372,7 +470,7 @@ namespace EasyTabs
 		/// </summary>
 		/// <param name="sender">List of tabs in the <see cref="_parentWindow" />.</param>
 		/// <param name="e">Arguments associated with the event.</param>
-		private void Tabs_CollectionModified(object sender, ListModificationEventArgs e)
+		protected virtual void Tabs_CollectionModified(object sender, ListModificationEventArgs e)
 		{
 			ListWithEvents<TitleBarTab> tabs = (ListWithEvents<TitleBarTab>) sender;
 
@@ -411,6 +509,17 @@ namespace EasyTabs
 		/// <param name="tabs">The list of tabs that we should check.</param>
 		/// <param name="cursor">The relative position of the cursor within the window.</param>
 		/// <returns>The tab within <paramref name="tabs" /> that the <paramref name="cursor" /> is over; if none, then null is returned.</returns>
+		public virtual void Dispose()
+		{
+			_parentWindow.Tabs.CollectionModified -= Tabs_CollectionModified;
+			if (_parentWindow._overlay != null)
+			{
+				_parentWindow._overlay.MouseMove -= Overlay_MouseMove;
+				_parentWindow._overlay.MouseUp -= Overlay_MouseUp;
+				_parentWindow._overlay.MouseDown -= Overlay_MouseDown;
+			}
+		}
+
 		public virtual TitleBarTab OverTab(IEnumerable<TitleBarTab> tabs, Point cursor)
 		{
 			TitleBarTab overTab = null;
@@ -493,7 +602,7 @@ namespace EasyTabs
 		/// <returns>True if the <paramref name="tab" />'s <see cref="TitleBarTab.CloseButtonArea" /> contains <paramref name="cursor" />, false otherwise.</returns>
 		public virtual bool IsOverCloseButton(TitleBarTab tab, Point cursor)
 		{
-			if (!tab.ShowCloseButton || _wasTabRepositioning)
+			if (tab.IsPinned || !tab.ShowCloseButton || _wasTabRepositioning)
 			{
 				return false;
 			}
@@ -509,8 +618,7 @@ namespace EasyTabs
             return _parentWindow.ClientRectangle.Width - offset.X -
                         (ShowAddButton
                             ? _addButtonImage.Width + AddButtonMarginLeft + AddButtonMarginRight
-                            : 0) - 
-                        (tabs.Count * OverlapWidth) -
+                            : 0) -
                         (_parentWindow.ControlBox
                             ? SystemInformation.CaptionButtonSize.Width
                             : 0) -
@@ -537,8 +645,15 @@ namespace EasyTabs
 
 			if (tabs == null || tabs.Count == 0)
 			{
+				_layoutAnimation.Reset();
+				_hoveredCloseButtons.Clear();
 				return;
 			}
+
+			_layoutAnimation.BeginFrame(tabs.Cast<object>().Concat(ShowAddButton
+				? new[] { _addButtonAnimationKey } : new object[0]),
+				_layoutClock.Elapsed.TotalMilliseconds, ShouldAnimateLayout());
+			_hoveredCloseButtons.RemoveWhere(tab => !tabs.Contains(tab));
 
 			Point screenCoordinates = _parentWindow.PointToScreen(_parentWindow.ClientRectangle.Location);
 
@@ -547,9 +662,20 @@ namespace EasyTabs
 			_maxTabArea.Width = GetMaxTabAreaWidth(tabs, offset);
 			_maxTabArea.Height = TabHeight;
 
-			// Get the width of the content area for each tab by taking the parent window's client width, subtracting the left and right border widths and the 
-			// add button area (if applicable) and then dividing by the number of tabs
-			int tabContentWidth = Math.Min(_activeCenterImage.Width, Convert.ToInt32(Math.Floor(Convert.ToDouble(_maxTabArea.Width / tabs.Count))));
+			// Divide the usable strip between the tabs after accounting for their fixed curved edges and overlap.
+			int tabEdgeWidth = tabs.Sum(tab => GetTabLeftImage(tab).Width + GetTabRightImage(tab).Width) -
+				((tabs.Count - 1) * OverlapWidth);
+			int availableTabContentWidth = Math.Max(0, _maxTabArea.Width - tabEdgeWidth);
+			int tabContentWidth = Math.Min(_activeCenterImage.Width, availableTabContentWidth / tabs.Count);
+			int tabContentRemainder = tabContentWidth < _activeCenterImage.Width
+				? availableTabContentWidth - (tabContentWidth * tabs.Count)
+				: 0;
+			// Chromium rounds the shared width down, then gives one leftover pixel to each tab from left to right.
+			if (_detachedTabWidth.HasValue && tabs.Count == 1)
+			{
+				tabContentWidth = Math.Max(1, _detachedTabWidth.Value - _activeLeftSideImage.Width - _activeRightSideImage.Width);
+				tabContentRemainder = 0;
+			}
 
 			// Determine if we need to redraw the TabImage properties for each tab by seeing if the content width that we calculated above is equal to content 
 			// width we had in the previous rendering pass
@@ -579,31 +705,29 @@ namespace EasyTabs
 				Image tabLeftImage = GetTabLeftImage(selectedTab);
 				Image tabRightImage = GetTabRightImage(selectedTab);
 				tabCenterImage = GetTabCenterImage(selectedTab);
+				int selectedTabLeadingExtraWidth = Math.Min(selectedIndex, tabContentRemainder);
+				int selectedTabContentWidth = tabContentWidth + (selectedIndex < tabContentRemainder ? 1 : 0);
 
 				Rectangle tabArea = new Rectangle(
 					SystemInformation.BorderSize.Width + offset.X +
-					selectedIndex * (tabContentWidth + tabLeftImage.Width + tabRightImage.Width - OverlapWidth),
-					offset.Y + (TabHeight - tabCenterImage.Height), tabContentWidth + tabLeftImage.Width + tabRightImage.Width,
+					selectedIndex * (tabContentWidth + tabLeftImage.Width + tabRightImage.Width - OverlapWidth) +
+					selectedTabLeadingExtraWidth,
+					offset.Y + (TabHeight - tabCenterImage.Height), selectedTabContentWidth + tabLeftImage.Width + tabRightImage.Width,
 					tabCenterImage.Height);
 
-				if (IsTabRepositioning && _tabClickOffset != null)
+				if (_detachedTabX.HasValue && tabs.Count == 1)
 				{
-					// Make sure that the user doesn't move the tab past the beginning of the list or the outside of the window
+					tabArea.X = _detachedTabX.Value;
+				}
+
+				else if (IsTabRepositioning && _tabClickOffset != null)
+				{
+					UpdateTabDragOffset(tabArea.Size);
+					// Keep the dragged tab within the usable tab strip, excluding the add button and frame controls.
+					int tabDragAreaLeft = SystemInformation.BorderSize.Width + offset.X;
 					tabArea.X = cursor.X - _tabClickOffset.Value;
-					tabArea.X = Math.Max(SystemInformation.BorderSize.Width + offset.X, tabArea.X);
-					tabArea.X =
-						Math.Min(
-							SystemInformation.BorderSize.Width + (_parentWindow.WindowState == FormWindowState.Maximized
-								? _parentWindow.ClientRectangle.Width - (_parentWindow.ControlBox
-									? SystemInformation.CaptionButtonSize.Width
-									: 0) -
-								  (_parentWindow.MinimizeBox
-									  ? SystemInformation.CaptionButtonSize.Width
-									  : 0) -
-								  (_parentWindow.MaximizeBox
-									  ? SystemInformation.CaptionButtonSize.Width
-									  : 0)
-								: _parentWindow.ClientRectangle.Width) - tabArea.Width, tabArea.X);
+					tabArea.X = Math.Max(tabDragAreaLeft, tabArea.X);
+					tabArea.X = Math.Min(tabDragAreaLeft + _maxTabArea.Width - tabArea.Width, tabArea.X);
 
 					int dropIndex = 0;
 
@@ -627,10 +751,11 @@ namespace EasyTabs
 						_parentWindow.Tabs.Remove(tab);
 						_parentWindow.Tabs.Insert(dropIndex, tab);
 						_parentWindow.Tabs.ResumeEvents();
+						selectedIndex = dropIndex;
 					}
 				}
 
-				activeTabs.Add(new Tuple<TitleBarTab, int, Rectangle>(tabs[selectedIndex], selectedIndex, tabArea));
+				activeTabs.Add(new Tuple<TitleBarTab, int, Rectangle>(selectedTab, selectedIndex, tabArea));
 			}
 
 			// Loop through the tabs in reverse order since we need the ones farthest on the left to overlap those to their right
@@ -639,23 +764,29 @@ namespace EasyTabs
 				Image tabLeftImage = GetTabLeftImage(tab);
 				tabCenterImage = GetTabCenterImage(tab);
 				Image tabRightImage = GetTabRightImage(tab);
+				int currentTabLeadingExtraWidth = Math.Min(i, tabContentRemainder);
+				int currentTabContentWidth = tabContentWidth + (i < tabContentRemainder ? 1 : 0);
 
 				Rectangle tabArea =
 					new Rectangle(
 						SystemInformation.BorderSize.Width + offset.X +
-						(i * (tabContentWidth + tabLeftImage.Width + tabRightImage.Width - OverlapWidth)),
-						offset.Y + (TabHeight - tabCenterImage.Height), tabContentWidth + tabLeftImage.Width + tabRightImage.Width,
+						(i * (tabContentWidth + tabLeftImage.Width + tabRightImage.Width - OverlapWidth)) +
+						currentTabLeadingExtraWidth,
+						offset.Y + (TabHeight - tabCenterImage.Height), currentTabContentWidth + tabLeftImage.Width + tabRightImage.Width,
 						tabCenterImage.Height);
 
 				// If we need to redraw the tab image, null out the property so that it will be recreated in the call to Render() below
 				if (redraw)
 				{
+					tab.TabImage?.Dispose();
 					tab.TabImage = null;
 				}
 
 				// In this first pass, we only render the inactive tabs since we need the active tabs to show up on top of everything else
 				if (!tab.Active)
 				{
+					tabArea = _layoutAnimation.GetBounds(tab, tabArea, false,
+						tabLeftImage.Width + tabRightImage.Width + 1);
 					Render(graphicsContext, tab, i, tabArea, cursor, tabLeftImage, tabCenterImage, tabRightImage);
 				}
 
@@ -669,22 +800,51 @@ namespace EasyTabs
 				tabCenterImage = GetTabCenterImage(tab.Item1);
 				Image tabRightImage = GetTabRightImage(tab.Item1);
 
-				Render(graphicsContext, tab.Item1, tab.Item2, tab.Item3, cursor, tabLeftImage, tabCenterImage, tabRightImage);
+				Rectangle animatedArea = _layoutAnimation.GetBounds(tab.Item1, tab.Item3,
+					IsTabRepositioning || _detachedTabX.HasValue,
+					tabLeftImage.Width + tabRightImage.Width + 1);
+				Render(graphicsContext, tab.Item1, tab.Item2, animatedArea, cursor, tabLeftImage, tabCenterImage, tabRightImage);
 			}
 
 			_previousTabCount = tabs.Count;
 
 			// Render the add tab button to the screen
-			if (ShowAddButton && !IsTabRepositioning)
+			if (ShowAddButton)
 			{
 				_addButtonArea =
 					new Rectangle(
 						(_previousTabCount *
 						 (tabContentWidth + _activeLeftSideImage.Width + _activeRightSideImage.Width - OverlapWidth)) +
-						_activeRightSideImage.Width + AddButtonMarginLeft + offset.X,
+						tabContentRemainder + _activeRightSideImage.Width + AddButtonMarginLeft + offset.X,
 						AddButtonMarginTop + offset.Y + (TabHeight - tabCenterImage.Height), _addButtonImage.Width, _addButtonImage.Height);
+				int tabWidth = tabContentWidth + _activeLeftSideImage.Width + _activeRightSideImage.Width;
+				int normalRightmostTabEdge = SystemInformation.BorderSize.Width + offset.X +
+					((tabs.Count - 1) * (tabWidth - OverlapWidth)) + tabWidth + tabContentRemainder;
+				int maximumAddButtonX = _addButtonArea.X +
+					(SystemInformation.BorderSize.Width + offset.X + _maxTabArea.Width - normalRightmostTabEdge);
+				int trailingButtonGap = _addButtonArea.X - normalRightmostTabEdge;
 
-				bool cursorOverAddButton = IsOverAddButton(cursor);
+				if (IsTabRepositioning)
+				{
+					int rightmostTabEdge = tabs.Max(tab => tab.Area.Right);
+					_addButtonArea.X += rightmostTabEdge - normalRightmostTabEdge;
+				}
+
+				if (_detachedTabX.HasValue && tabs.Count == 1)
+				{
+					int normalTabX = SystemInformation.BorderSize.Width + offset.X;
+					_addButtonArea.X += _detachedTabX.Value - normalTabX;
+				}
+
+				// Like Chromium, the add button follows the trailing tab until the fixed tab boundary is full, then stays put.
+				_addButtonArea.X = Math.Min(_addButtonArea.X, maximumAddButtonX);
+				_addButtonArea = _layoutAnimation.GetBounds(_addButtonAnimationKey, _addButtonArea,
+					IsTabRepositioning || _detachedTabX.HasValue, _addButtonArea.Width);
+				// Keep the button clear of the tabs as widths interpolate.
+				_addButtonArea.X = Math.Min(maximumAddButtonX,
+					Math.Max(_addButtonArea.X, tabs.Max(tab => tab.Area.Right) + trailingButtonGap));
+
+				bool cursorOverAddButton = !IsTabRepositioning && IsOverAddButton(cursor);
 
 				graphicsContext.DrawImage(
 					cursorOverAddButton
@@ -713,12 +873,33 @@ namespace EasyTabs
 				return;
 			}
 
+			int tabContentWidth = Math.Max(0, area.Width - tabLeftImage.Width - tabRightImage.Width);
+			int tabImageWidth = Math.Max(1, area.Width);
+			// Hit testing must use the currently drawn rectangle, including during
+			// animation when the mouse itself has not moved.
+			tab.Area = area;
+			tab.CloseButtonArea = new Rectangle(
+				area.Width - tabRightImage.Width - CloseButtonMarginRight - _closeButtonImage.Width,
+				CloseButtonMarginTop, _closeButtonImage.Width, _closeButtonImage.Height);
+			bool closeHovered = tab.ShowCloseButton && IsOverCloseButton(tab, cursor);
+			if (closeHovered != _hoveredCloseButtons.Contains(tab))
+			{
+				if (closeHovered) _hoveredCloseButtons.Add(tab);
+				else _hoveredCloseButtons.Remove(tab);
+				tab.TabImage?.Dispose();
+				tab.TabImage = null;
+			}
+
 			// If we need to redraw the tab image
-			if (tab.TabImage == null)
+			if (tab.TabImage == null || tab.TabImage.Width != tabImageWidth)
 			{
 				// We render the tab to an internal property so that we don't necessarily have to redraw it in every rendering pass, only if its width or 
 				// status have changed
-				tab.TabImage = new Bitmap(area.Width <= 0 ? 1 : area.Width, tabCenterImage.Height <= 0 ? 1 : tabCenterImage.Height);
+				if (tab.TabImage != null)
+				{
+					tab.TabImage.Dispose();
+				}
+				tab.TabImage = new Bitmap(tabImageWidth, tabCenterImage.Height <= 0 ? 1 : tabCenterImage.Height);
 
 				using (Graphics tabGraphicsContext = Graphics.FromImage(tab.TabImage))
 				{
@@ -726,12 +907,15 @@ namespace EasyTabs
 					tabGraphicsContext.DrawImage(
 						tabLeftImage, new Rectangle(0, 0, tabLeftImage.Width, tabLeftImage.Height), 0, 0, tabLeftImage.Width, tabLeftImage.Height, GraphicsUnit.Pixel);
 
-					tabGraphicsContext.DrawImage(
-						tabCenterImage, new Rectangle(tabLeftImage.Width, 0, _tabContentWidth, tabCenterImage.Height), 0, 0, _tabContentWidth, tabCenterImage.Height,
-						GraphicsUnit.Pixel);
+					if (tabContentWidth > 0)
+					{
+						tabGraphicsContext.DrawImage(
+							tabCenterImage, new Rectangle(tabLeftImage.Width, 0, tabContentWidth, tabCenterImage.Height), 0, 0, tabContentWidth, tabCenterImage.Height,
+							GraphicsUnit.Pixel);
+					}
 
 					tabGraphicsContext.DrawImage(
-						tabRightImage, new Rectangle(tabLeftImage.Width + _tabContentWidth, 0, tabRightImage.Width, tabRightImage.Height), 0, 0, tabRightImage.Width,
+						tabRightImage, new Rectangle(tabLeftImage.Width + tabContentWidth, 0, tabRightImage.Width, tabRightImage.Height), 0, 0, tabRightImage.Width,
 						tabRightImage.Height, GraphicsUnit.Pixel);
 
 					// Draw the close button
@@ -752,28 +936,37 @@ namespace EasyTabs
 					}
 				}
 
-				tab.Area = area;
 			}
+
+			tab.Area = area;
 
 			// Render the tab's saved image to the screen
 			graphicsContext.DrawImage(
 				tab.TabImage, area, 0, 0, tab.TabImage.Width, tab.TabImage.Height,
 				GraphicsUnit.Pixel);
 
-			// Render the icon for the tab's content, if it exists and there's room for it in the tab's content area
-			if (tab.Content.ShowIcon && _tabContentWidth > 16 + IconMarginLeft + (tab.ShowCloseButton
+			// Loading uses the favicon's existing rectangle and caption spacing, including for background tabs.
+			bool showIcon = tab.IsLoading || tab.Content.ShowIcon;
+			if (showIcon && tabContentWidth > 16 + IconMarginLeft + (tab.ShowCloseButton
 				? CloseButtonMarginLeft +
 				  tab.CloseButtonArea.Width +
 				  CloseButtonMarginRight
 				: 0))
 			{
-				graphicsContext.DrawIcon(
-					new Icon(tab.Content.Icon, 16, 16),
-					new Rectangle(area.X + OverlapWidth + IconMarginLeft, IconMarginTop + area.Y, 16, 16));
+				Rectangle iconArea = new Rectangle(area.X + OverlapWidth + IconMarginLeft, IconMarginTop + area.Y, 16, 16);
+				if (tab.IsLoading)
+				{
+					TabLoadingIndicator.Draw(graphicsContext, iconArea, LoadingIndicatorColor, tab.LoadingElapsedMilliseconds);
+				}
+				else
+				{
+					using (Icon icon = new Icon(tab.Content.Icon, 16, 16))
+						graphicsContext.DrawIcon(icon, iconArea);
+				}
 			}
 
 			// Render the caption for the tab's content if there's room for it in the tab's content area
-			if (_tabContentWidth > (tab.Content.ShowIcon
+			if (tabContentWidth > (showIcon
 				? 16 + IconMarginLeft + IconMarginRight
 				: 0) + CaptionMarginLeft + CaptionMarginRight + (tab.ShowCloseButton
 					? CloseButtonMarginLeft +
@@ -781,26 +974,25 @@ namespace EasyTabs
 					  CloseButtonMarginRight
 					: 0))
 			{
+				using (SolidBrush captionBrush = new SolidBrush(ForeColor))
+				using (StringFormat captionFormat = new StringFormat(StringFormatFlags.NoWrap) { Trimming = StringTrimming.EllipsisCharacter })
 				graphicsContext.DrawString(
-					tab.Caption, CaptionFont, new SolidBrush(ForeColor),
+					tab.Caption, CaptionFont, captionBrush,
 					new Rectangle(
-						area.X + OverlapWidth + CaptionMarginLeft + (tab.Content.ShowIcon
+						area.X + OverlapWidth + CaptionMarginLeft + (showIcon
 							? IconMarginLeft +
 							  16 +
 							  IconMarginRight
 							: 0),
 						CaptionMarginTop + area.Y,
-						_tabContentWidth - (tab.Content.ShowIcon
+						tabContentWidth - (showIcon
 							? IconMarginLeft + 16 + IconMarginRight
 							: 0) - (tab.ShowCloseButton
 								? _closeButtonImage.Width +
 								  CloseButtonMarginRight +
 								  CloseButtonMarginLeft
 								: 0), tab.TabImage.Height),
-					new StringFormat(StringFormatFlags.NoWrap)
-					{
-						Trimming = StringTrimming.EllipsisCharacter
-					});
+					captionFormat);
 			}
 		}
 
@@ -846,7 +1038,8 @@ namespace EasyTabs
 		/// </summary>
 		/// <param name="tab">Tab that was dragged into this window.</param>
 		/// <param name="cursorLocation">Location of the user's cursor.</param>
-		internal virtual void CombineTab(TitleBarTab tab, Point cursorLocation)
+		/// <param name="grabRatio">Original grab point as proportions of the tab's width and height.</param>
+		internal virtual void CombineTab(TitleBarTab tab, Point cursorLocation, PointF grabRatio)
 		{
 			// Stop rendering to prevent weird stuff from happening like the wrong tab being focused
 			_suspendRendering = true;
@@ -854,16 +1047,9 @@ namespace EasyTabs
 			// Find out where to insert the tab in the list
 			int dropIndex = _parentWindow.Tabs.FindIndex(t => t.Area.Left <= cursorLocation.X && t.Area.Right >= cursorLocation.X);
 
-			// Simulate the user having clicked in the middle of the tab when they started dragging it so that the tab will move correctly within the window
-			// when the user continues to move the mouse
-			if (_parentWindow.Tabs.Count > 0)
-			{
-				_tabClickOffset = _parentWindow.Tabs.First().Area.Width / 2;
-			}
-			else
-			{
-				_tabClickOffset = 0;
-			}
+			TabDragGrabRatio = grabRatio;
+			UpdateTabDragOffset(tab.Area.Size);
+			_wasTabRepositioning = false;
 			IsTabRepositioning = true;
 
 			tab.Parent = _parentWindow;
@@ -882,7 +1068,7 @@ namespace EasyTabs
 			// Resume rendering
 			_suspendRendering = false;
 
-			_parentWindow.SelectedTabIndex = dropIndex;
+			_parentWindow.SelectedTab = tab;
 			_parentWindow.ResizeTabContents();
 		}
 	}

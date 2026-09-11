@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAPICodePack.Taskbar;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -17,6 +18,53 @@ namespace EasyTabs
 
 		/// <summary>Parent window that contains this tab.</summary>
 		protected TitleBarTabs _parent;
+
+		private readonly Stopwatch _loadingClock = new Stopwatch();
+		private bool _isLoading;
+		private bool _isPinned;
+
+		/// <summary>Pinned tabs form a fixed-width prefix of their window's tab strip.</summary>
+		public bool IsPinned
+		{
+			get { return _isPinned; }
+			set
+			{
+				if (_isPinned == value) return;
+				_isPinned = value;
+				if (Parent != null && Parent.Tabs.Contains(this)) Parent.UpdatePinnedTab(this);
+			}
+		}
+
+		// Remember completion even when loading starts and stops between two frames.
+		internal int LoadingCompletionVersion { get; private set; }
+		internal bool RevealFaviconOnLoadCompletion { get; private set; }
+
+		/// <summary>Whether to show the animated loading indicator. Set on the UI thread.</summary>
+		public bool IsLoading
+		{
+			get { return _isLoading; }
+			set
+			{
+				if (_isLoading == value) return;
+				_isLoading = value;
+				if (!value)
+				{
+					LoadingCompletionVersion++;
+					// TabIcon::SetNetworkState checks the icon at completion, not
+					// at the next paint (when a late favicon may already have arrived).
+					RevealFaviconOnLoadCompletion = Content != null && !Content.IsDisposed &&
+						!Content.Disposing && Content.Icon != null &&
+						!((Content as ITabFaviconState)?.IsDefaultFavicon ?? false);
+				}
+				_loadingClock.Reset();
+				if (value) _loadingClock.Start();
+				if (Parent != null && !Parent.IsDisposed && !Parent.Disposing && Parent.Tabs.Contains(this))
+					Parent._overlay?.RequestRender();
+			}
+		}
+
+		/// <summary>The clock belongs to the tab, so tear-out and merge preserve its animation phase.</summary>
+		internal double LoadingElapsedMilliseconds { get { return _loadingClock.Elapsed.TotalMilliseconds; } }
 
 		/// <summary>Default constructor that initializes the various properties.</summary>
 		/// <param name="parent">Parent window that contains this tab.</param>
@@ -78,7 +126,10 @@ namespace EasyTabs
 			internal set
 			{
 				// When the status of the tab changes, we null out the TabImage property so that it's recreated in the next rendering pass
+				if (_active == value) return;
+				if (_active && !value) (Content as ITabPreviewSource)?.RequestPreview();
 				_active = value;
+				TabImage?.Dispose();
 				TabImage = null;
 				Content.Visible = value;
 			}
@@ -133,6 +184,10 @@ namespace EasyTabs
 				{
 					_content.FormClosing -= Content_Closing;
 					_content.TextChanged -= Content_TextChanged;
+					_content.Disposed -= Content_Disposed;
+					ITabLoadingState previousLoadingState = _content as ITabLoadingState;
+					if (previousLoadingState != null)
+						previousLoadingState.LoadingStateChanged -= Content_LoadingStateChanged;
 				}
 
 				_content = value;
@@ -143,7 +198,28 @@ namespace EasyTabs
 				Content.Parent = Parent;
 				Content.FormClosing += Content_Closing;
 				Content.TextChanged += Content_TextChanged;
+				Content.Disposed += Content_Disposed;
+				ITabLoadingState loadingState = Content as ITabLoadingState;
+				if (loadingState != null)
+					loadingState.LoadingStateChanged += Content_LoadingStateChanged;
+				// Also pick up navigation that began before this form was attached to its tab.
+				Content_LoadingStateChanged(Content, EventArgs.Empty);
 			}
+		}
+
+        private void Content_LoadingStateChanged(object sender, EventArgs e)
+		{
+			ITabLoadingState loadingState = Content as ITabLoadingState;
+			bool wasLoading = IsLoading;
+			IsLoading = Content != null && !Content.IsDisposed && !Content.Disposing && loadingState != null && loadingState.IsLoading;
+			// A reload can start while the previous request is still loading.
+			if (wasLoading && IsLoading && (loadingState as ITabLoadingPhase)?.IsWaiting == true)
+				_loadingClock.Restart();
+		}
+
+		private void Content_Disposed(object sender, EventArgs e)
+		{
+			IsLoading = false;
 		}
 
 		/// <summary>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+  <title>New Tab</title>
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="newtab.css">
+  <script src="newtab.js" defer></script>
+</head>
+<body>
+  <main id="content">
+    <img id="logo" src="quartz.png" alt="Quartz" width="144" height="144" draggable="false">
+    <div id="searchbox">
+      <form id="search-form" role="search" autocomplete="off">
+        <span class="icon search-icon" aria-hidden="true"></span>
+        <input id="search-input" type="search" role="combobox" aria-label="Search or type a URL" aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" placeholder="Search or type a URL" autocomplete="off" spellcheck="false" maxlength="2048">
+        <button id="clear-search" class="icon-button" type="button" aria-label="Clear search" hidden><span class="icon close-icon"></span></button>
+      </form>
+      <div id="suggestions" role="listbox" aria-label="Suggestions" hidden></div>
+    </div>
+    <nav id="shortcuts" aria-label="Shortcuts"></nav>
+  </main>
+  <div id="shortcut-menu" role="menu" aria-label="Shortcut options" hidden>
+    <button id="edit-shortcut" role="menuitem">Edit shortcut</button>
+    <button id="remove-shortcut" role="menuitem">Remove</button>
+  </div>
+  <dialog id="shortcut-dialog" aria-labelledby="dialog-title">
+    <form id="shortcut-form" novalidate>
+      <h2 id="dialog-title">Add shortcut</h2>
+      <label for="shortcut-name">Name</label>
+      <input id="shortcut-name" type="text" maxlength="128" autocomplete="off">
+      <label for="shortcut-url">URL</label>
+      <input id="shortcut-url" type="text" inputmode="url" maxlength="2048" autocomplete="off" spellcheck="false" aria-describedby="url-error">
+      <div id="url-error" role="alert"></div>
+      <div class="dialog-buttons">
+        <button id="cancel-shortcut" type="button">Cancel</button>
+        <button id="save-shortcut" class="primary" type="submit" disabled>Done</button>
+      </div>
+    </form>
+  </dialog>
+  <div id="toast" role="status" hidden><span id="toast-message"></span><button id="undo" hidden>Undo</button></div>
+  <div id="search-status" class="sr-only" role="status" aria-live="polite"></div>
+</body>
+</html>

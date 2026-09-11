@@ -156,7 +156,6 @@ namespace Quartz
                         (ShowAddButton
                             ? _addButtonImage.Width + AddButtonMarginLeft + AddButtonMarginRight
                             : 0) -
-                        (tabs.Count * OverlapWidth) -
                         _windowsSizingBoxes.Width;
         }
     }

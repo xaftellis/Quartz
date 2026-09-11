@@ -89,47 +89,47 @@ namespace Quartz.Omnibox
             ((Browser)form).txtWebAddress.TextChanged += TxtWebAddress_TextChanged;
         }
 
-        private void TxtWebAddress_TextChanged(object sender, EventArgs e)
-        {
-            if (lvSuggestions.SelectedItems.Count > 0)
-            {
-                var item = lvSuggestions.SelectedItems[0];
-                var imgList = lvSuggestions.SmallImageList ?? lvSuggestions.LargeImageList;
+        //private void TxtWebAddress_TextChanged(object sender, EventArgs e)
+        //{
+        //    if (lvSuggestions.SelectedItems.Count > 0)
+        //    {
+        //        var item = lvSuggestions.SelectedItems[0];
+        //        var imgList = lvSuggestions.SmallImageList ?? lvSuggestions.LargeImageList;
 
-                if (imgList != null)
-                {
-                    Image img = null;
+        //        if (imgList != null)
+        //        {
+        //            Image img = null;
 
-                    if (!string.IsNullOrEmpty(item.ImageKey) && imgList.Images.ContainsKey(item.ImageKey))
-                        img = imgList.Images[item.ImageKey];
-                    else if (item.ImageIndex >= 0 && item.ImageIndex < imgList.Images.Count)
-                        img = imgList.Images[item.ImageIndex];
+        //            if (!string.IsNullOrEmpty(item.ImageKey) && imgList.Images.ContainsKey(item.ImageKey))
+        //                img = imgList.Images[item.ImageKey];
+        //            else if (item.ImageIndex >= 0 && item.ImageIndex < imgList.Images.Count)
+        //                img = imgList.Images[item.ImageIndex];
 
-                    ((Browser)form).picFavicon.Image = img;
-                }
-            }
-        }
+        //            ((Browser)form).picFavicon.Image = img;
+        //        }
+        //    }
+        //}
 
-        private void LvSuggestions_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (lvSuggestions.SelectedItems.Count > 0)
-            {
-                var item = lvSuggestions.SelectedItems[0];
-                var imgList = lvSuggestions.SmallImageList ?? lvSuggestions.LargeImageList;
+        //private void LvSuggestions_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (lvSuggestions.SelectedItems.Count > 0)
+        //    {
+        //        var item = lvSuggestions.SelectedItems[0];
+        //        var imgList = lvSuggestions.SmallImageList ?? lvSuggestions.LargeImageList;
 
-                if (imgList != null)
-                {
-                    Image img = null;
+        //        if (imgList != null)
+        //        {
+        //            Image img = null;
 
-                    if (!string.IsNullOrEmpty(item.ImageKey) && imgList.Images.ContainsKey(item.ImageKey))
-                        img = imgList.Images[item.ImageKey];
-                    else if (item.ImageIndex >= 0 && item.ImageIndex < imgList.Images.Count)
-                        img = imgList.Images[item.ImageIndex];
+        //            if (!string.IsNullOrEmpty(item.ImageKey) && imgList.Images.ContainsKey(item.ImageKey))
+        //                img = imgList.Images[item.ImageKey];
+        //            else if (item.ImageIndex >= 0 && item.ImageIndex < imgList.Images.Count)
+        //                img = imgList.Images[item.ImageIndex];
 
-                    ((Browser)form).picFavicon.Image = img;
-                }
-            }
-        }
+        //            ((Browser)form).picFavicon.Image = img;
+        //        }
+        //    }
+        //}
 
         private void LvSuggestions_DrawItem(object sender, DrawListViewItemEventArgs e)
         {

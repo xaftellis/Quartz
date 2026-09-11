@@ -16,7 +16,34 @@ namespace Quartz
 {
     public partial class AppContainer : TitleBarTabs
     {
+        private static readonly Size MinimumWindowSize = new Size(816, 489);
+        private const int MinimumVisibleWindowEdge = 30;
+        private const string WindowSizeSetting = "WindowSize";
+        private const string WindowPositionSetting = "WindowPosition";
+        private const string WindowStateSetting = "WindowState";
+
+        private bool _restoringWindowSettings = true;
+        private FormWindowState _lastNonMinimizedWindowState = FormWindowState.Normal;
+        private FormWindowState _lastObservedWindowState = FormWindowState.Normal;
+        private Size? _savedWindowSize;
+        private System.Drawing.Point? _savedWindowPosition;
+        private FormWindowState? _savedWindowState;
+        private readonly Timer _windowSettingsSaveTimer = new Timer { Interval = 300 };
+
         public string _windowName = string.Empty;
+
+        public Guid ProfileId { get; }
+
+        public override bool CanReceiveTabsFrom(TitleBarTabs source) =>
+            base.CanReceiveTabsFrom(source) && source is AppContainer window && window.ProfileId == ProfileId;
+
+        internal void ActivateForTabMove()
+        {
+            if (WindowState == FormWindowState.Minimized) WindowState = _lastNonMinimizedWindowState;
+            Show();
+            Activate();
+            SelectedTab?.Content.Focus();
+        }
 
         private string ToBgr(System.Drawing.Color c) => $"{c.B:X2}{c.G:X2}{c.R:X2}";
 
@@ -48,8 +75,15 @@ namespace Quartz
         public AppContainer()
         {
             InitializeComponent();
+            MinimumSize = MinimumWindowSize;
+
+            _windowSettingsSaveTimer.Tick += WindowSettingsSaveTimer_Tick;
+
+            ReadWindowSettings();
+            ApplyWindowSettings();
 
             ProfileService.LoadCurrentProfile();
+            ProfileId = ProfileService.Current;
             var theme = SettingsService.Get("Theme");
             Icon icon = Quartz.Properties.Resources.favicon;
             System.Drawing.Color barBackColor = System.Drawing.Color.White;
@@ -60,7 +94,7 @@ namespace Quartz
 
             if (theme == "light")
             {
-                TabRenderer = new LightTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this) { Theme = ChromiumTabTheme.Light };
 
                 barBackColor = System.Drawing.Color.FromArgb(222, 225, 230);
                 textForeColor = System.Drawing.Color.Black;
@@ -68,7 +102,13 @@ namespace Quartz
             }
             else if (theme == "dark")
             {
-                TabRenderer = new DarkTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this)
+                {
+                    Theme = new ChromiumTabTheme(System.Drawing.Color.FromArgb(88, 88, 88),
+                        System.Drawing.Color.FromArgb(35, 35, 35),
+                        activeForeground: System.Drawing.Color.FromArgb(195, 195, 195),
+                        inactiveForeground: System.Drawing.Color.FromArgb(195, 195, 195))
+                };
 
                 barBackColor = System.Drawing.Color.FromArgb(88, 88, 88);
                 textForeColor = System.Drawing.Color.FromArgb(195, 195, 195);
@@ -76,7 +116,11 @@ namespace Quartz
             }
             else if (theme == "black")
             {
-                TabRenderer = new BlackTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this)
+                {
+                    Theme = new ChromiumTabTheme(System.Drawing.Color.Black, System.Drawing.Color.Black,
+                        activeForeground: System.Drawing.Color.White, inactiveForeground: System.Drawing.Color.White)
+                };
 
                 barBackColor = System.Drawing.Color.Black;
                 textForeColor = System.Drawing.Color.White;
@@ -84,7 +128,10 @@ namespace Quartz
             }
             else if (theme == "aqua")
             {
-                TabRenderer = new AquaTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this)
+                {
+                    Theme = new ChromiumTabTheme(System.Drawing.Color.Blue, System.Drawing.Color.Aqua)
+                };
 
                 barBackColor = System.Drawing.Color.Blue;
                 textForeColor = System.Drawing.Color.Aqua;
@@ -92,7 +139,10 @@ namespace Quartz
             }
             else if (theme == "xmas")
             {
-                TabRenderer = new XmasTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this)
+                {
+                    Theme = new ChromiumTabTheme(System.Drawing.Color.Lime, System.Drawing.Color.Red)
+                };
 
                 barBackColor = System.Drawing.Color.Lime;
                 textForeColor = System.Drawing.Color.Red;
@@ -100,8 +150,15 @@ namespace Quartz
             }
             else
             {
-                TabRenderer = new ChromeTabRenderer(this);
+                TabRenderer = new ChromiumTabRenderer(this);
             }
+
+            ((ChromiumTabRenderer)TabRenderer).DefaultFavicon = FaviconHelper.GetDefaultFavicon16();
+            // Light uses the blue throbber; the other themes use their existing foreground colour.
+            TabRenderer.LoadingIndicatorColor = theme == "light" ||
+                !(theme == "dark" || theme == "black" || theme == "aqua" || theme == "xmas")
+                ? System.Drawing.Color.FromArgb(66, 133, 244)
+                : textForeColor;
 
             Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
 
@@ -111,6 +168,156 @@ namespace Quartz
             ContextMenuProvider._contextMenuStripTab = new TabContextMenu();
         }
 
+        private void ReadWindowSettings()
+        {
+            string[] savedSize = MainSettingsService.Get(WindowSizeSetting)?.Split(',');
+            if (savedSize?.Length == 2
+                && int.TryParse(savedSize[0], out int width)
+                && int.TryParse(savedSize[1], out int height))
+            {
+                _savedWindowSize = new Size(
+                    Math.Max(MinimumWindowSize.Width, width),
+                    Math.Max(MinimumWindowSize.Height, height));
+            }
+
+            string[] savedPosition = MainSettingsService.Get(WindowPositionSetting)?.Split(',');
+            if (savedPosition?.Length == 2
+                && int.TryParse(savedPosition[0], out int x)
+                && int.TryParse(savedPosition[1], out int y))
+            {
+                _savedWindowPosition = new System.Drawing.Point(x, y);
+            }
+
+            string savedState = MainSettingsService.Get(WindowStateSetting);
+            if (savedState == FormWindowState.Maximized.ToString())
+            {
+                _savedWindowState = FormWindowState.Maximized;
+            }
+            else if (savedState == FormWindowState.Normal.ToString())
+            {
+                _savedWindowState = FormWindowState.Normal;
+            }
+        }
+
+        private void ApplyWindowSettings()
+        {
+            if (_savedWindowSize.HasValue)
+            {
+                WindowState = FormWindowState.Normal;
+                StartPosition = FormStartPosition.Manual;
+                Bounds = GetSafeRestoredBounds();
+            }
+
+            if (_savedWindowState.HasValue)
+                WindowState = _savedWindowState.Value;
+        }
+
+        private Rectangle GetSafeRestoredBounds()
+        {
+            Size savedSize = _savedWindowSize.Value;
+            bool savedPositionIsVisible = false;
+            Screen targetScreen;
+
+            if (_savedWindowPosition.HasValue)
+            {
+                Rectangle requestedBounds = new Rectangle(_savedWindowPosition.Value, savedSize);
+                savedPositionIsVisible = Screen.AllScreens.Any(
+                    screen => screen.WorkingArea.IntersectsWith(requestedBounds));
+
+                targetScreen = savedPositionIsVisible
+                    ? Screen.FromRectangle(requestedBounds)
+                    : Screen.FromPoint(Cursor.Position);
+            }
+            else
+            {
+                targetScreen = Screen.FromPoint(Cursor.Position);
+            }
+
+            Rectangle workingArea = targetScreen.WorkingArea;
+            int width = Math.Min(savedSize.Width, Math.Max(MinimumWindowSize.Width, workingArea.Width));
+            int height = Math.Min(savedSize.Height, Math.Max(MinimumWindowSize.Height, workingArea.Height));
+
+            int x = savedPositionIsVisible
+                ? Math.Max(workingArea.Left + MinimumVisibleWindowEdge - width,
+                    Math.Min(_savedWindowPosition.Value.X, workingArea.Right - MinimumVisibleWindowEdge))
+                : workingArea.Left + (workingArea.Width - width) / 2;
+
+            int y = savedPositionIsVisible
+                ? Math.Max(workingArea.Top,
+                    Math.Min(_savedWindowPosition.Value.Y, workingArea.Bottom - MinimumVisibleWindowEdge))
+                : workingArea.Top + (workingArea.Height - height) / 2;
+
+            return new Rectangle(x, y, width, height);
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+
+            _lastObservedWindowState = WindowState;
+            if (WindowState != FormWindowState.Minimized)
+                _lastNonMinimizedWindowState = WindowState;
+
+            _restoringWindowSettings = false;
+        }
+
+        private void SaveWindowSettings()
+        {
+            if (_restoringWindowSettings)
+                return;
+
+            Rectangle normalBounds = WindowState == FormWindowState.Normal ? Bounds : RestoreBounds;
+            if (normalBounds.Width <= 0 || normalBounds.Height <= 0)
+                return;
+
+            FormWindowState savedState = WindowState == FormWindowState.Minimized
+                ? _lastNonMinimizedWindowState
+                : WindowState;
+
+            MainSettingsService.Set(WindowSizeSetting, $"{normalBounds.Width},{normalBounds.Height}");
+            MainSettingsService.Set(WindowPositionSetting, $"{normalBounds.X},{normalBounds.Y}");
+            MainSettingsService.Set(
+                WindowStateSetting,
+                savedState == FormWindowState.Maximized
+                    ? FormWindowState.Maximized.ToString()
+                    : FormWindowState.Normal.ToString());
+        }
+
+        private void ScheduleWindowSettingsSave()
+        {
+            if (_restoringWindowSettings || WindowState != FormWindowState.Normal)
+                return;
+
+            _windowSettingsSaveTimer.Stop();
+            _windowSettingsSaveTimer.Start();
+        }
+
+        private void WindowSettingsSaveTimer_Tick(object sender, EventArgs e)
+        {
+            _windowSettingsSaveTimer.Stop();
+            SaveWindowSettings();
+        }
+
+        protected override void OnResizeEnd(EventArgs e)
+        {
+            base.OnResizeEnd(e);
+            SaveWindowSettings();
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            if (!e.Cancel)
+                SaveWindowSettings();
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            _windowSettingsSaveTimer.Dispose();
+            base.OnFormClosed(e);
+        }
+
         public override TitleBarTab CreateTab()
         {
             Browser browser = new Browser(null, false);
@@ -118,7 +325,8 @@ namespace Quartz
 
             return new TitleBarTab(this)
             {
-                Content = browser
+                Content = browser,
+                IsLoading = true,
             };
         }
 
@@ -184,15 +392,30 @@ namespace Quartz
                 }
                 catch { }
             }
+
+            ScheduleWindowSettingsSave();
         }
 
         private void AppContainer_SizeChanged(object sender, EventArgs e)
         {
-            if (MinimumSize != new Size(816, 489))
+            if (MinimumSize != MinimumWindowSize)
+                MinimumSize = MinimumWindowSize;
+
+            FormWindowState currentState = WindowState;
+            if (currentState != FormWindowState.Minimized)
+                _lastNonMinimizedWindowState = currentState;
+
+            if (!_restoringWindowSettings
+                && currentState != FormWindowState.Minimized
+                && currentState != _lastObservedWindowState)
             {
-                Size = new Size(816, 489);
-                MinimumSize = new Size(816, 489);
+                SaveWindowSettings();
             }
+
+            if (currentState == FormWindowState.Normal)
+                ScheduleWindowSettingsSave();
+
+            _lastObservedWindowState = currentState;
         }
     }
 }

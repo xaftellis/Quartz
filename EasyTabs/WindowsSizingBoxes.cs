@@ -10,7 +10,7 @@ using Win32Interop.Enums;
 
 namespace EasyTabs
 {
-    public class WindowsSizingBoxes
+    public class WindowsSizingBoxes : IDisposable
     {
         protected TitleBarTabs _parentWindow;
         protected Image _minimizeImage = null;
@@ -23,6 +23,9 @@ namespace EasyTabs
         protected Rectangle _minimizeButtonArea = new Rectangle(0, 0, 45, 29);
         protected Rectangle _maximizeRestoreButtonArea = new Rectangle(45, 0, 45, 29);
         protected Rectangle _closeButtonArea = new Rectangle(90, 0, 45, 29);
+
+        public float Scale { get; set; } = 1;
+        private int Pixel(float value) => (int)Math.Round(value * Scale);
 
         public WindowsSizingBoxes(TitleBarTabs parentWindow)
         {
@@ -46,7 +49,7 @@ namespace EasyTabs
         {
             get
             {
-                return _minimizeButtonArea.Width + _maximizeRestoreButtonArea.Width + _closeButtonArea.Width;
+                return Pixel(45) * 3;
             }
         }
 
@@ -60,9 +63,10 @@ namespace EasyTabs
             int right = _parentWindow.ClientRectangle.Width;
             bool closeButtonHighlighted = false;
             
-            _minimizeButtonArea.X = right - 135;
-            _maximizeRestoreButtonArea.X = right - 90;
-            _closeButtonArea.X = right - 45;
+            int buttonWidth = Pixel(45);
+            _minimizeButtonArea = new Rectangle(right - buttonWidth * 3, 0, buttonWidth, Pixel(29));
+            _maximizeRestoreButtonArea = new Rectangle(right - buttonWidth * 2, 0, buttonWidth, Pixel(29));
+            _closeButtonArea = new Rectangle(right - buttonWidth, 0, buttonWidth, Pixel(29));
 
             if (_minimizeButtonArea.Contains(cursor))
             {
@@ -80,9 +84,16 @@ namespace EasyTabs
                 closeButtonHighlighted = true;
             }
 
-            graphicsContext.DrawImage(closeButtonHighlighted ? _closeHighlightImage : _closeImage, _closeButtonArea.X + 17, _closeButtonArea.Y + 9);
-            graphicsContext.DrawImage(_parentWindow.WindowState == FormWindowState.Maximized ? _restoreImage : _maximizeImage, _maximizeRestoreButtonArea.X + 17, _maximizeRestoreButtonArea.Y + 9);
-            graphicsContext.DrawImage(_minimizeImage, _minimizeButtonArea.X + 17, _minimizeButtonArea.Y + 9);
+            graphicsContext.DrawImage(closeButtonHighlighted ? _closeHighlightImage : _closeImage, _closeButtonArea.X + Pixel(17), Pixel(9), Pixel(10), Pixel(10));
+            graphicsContext.DrawImage(_parentWindow.WindowState == FormWindowState.Maximized ? _restoreImage : _maximizeImage, _maximizeRestoreButtonArea.X + Pixel(17), Pixel(9), Pixel(10), Pixel(10));
+            graphicsContext.DrawImage(_minimizeImage, _minimizeButtonArea.X + Pixel(17), Pixel(9), Pixel(10), Pixel(10));
+        }
+
+        public void Dispose()
+        {
+            _minimizeImage?.Dispose(); _restoreImage?.Dispose(); _maximizeImage?.Dispose();
+            _closeImage?.Dispose(); _closeHighlightImage?.Dispose();
+            _minimizeMaximizeButtonHighlight?.Dispose(); _closeButtonHighlight?.Dispose();
         }
 
         public HT NonClientHitTest(Point cursor)

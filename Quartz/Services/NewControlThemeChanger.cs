@@ -35,36 +35,6 @@ namespace Quartz.Services
             DwmSetWindowAttribute(hWnd, DWWMA_BORDER_COLOR, border, 4);
         }
 
-        //public static void AnimateButtonImageFromResources(Button btn)
-        //{
-        //    int frame = 1;
-        //    int maxFrames = 98;
-
-        //    Timer t = new Timer();
-        //    t.Interval = 30;
-
-        //    t.Tick += (s, e) =>
-        //    {
-        //        // Use reflection to get the resource by name
-        //        string resourceName = $"frame_{frame}"; // match your resource names exactly
-
-        //        var resProperty = typeof(Properties.Resources).GetProperty(resourceName,
-        //            System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-
-        //        if (resProperty != null)
-        //        {
-        //            var img = resProperty.GetValue(null) as System.Drawing.Image;
-        //            btn.Image = img;
-        //        }
-
-        //        frame++;
-        //        if (frame > maxFrames)
-        //            frame = 1; // loop forever
-        //    };
-
-        //    t.Start();
-        //}
-
         public static void ChangeWindowTheme(IntPtr handle)
         {
             var theme = SettingsService.Get("Theme");

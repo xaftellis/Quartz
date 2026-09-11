@@ -14,6 +14,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("© Daniel Xaftellis 2026. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+[assembly: InternalsVisibleTo("Quartz.Favourites.Tests")]
+[assembly: InternalsVisibleTo("Quartz.PinnedTabs.Tests")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

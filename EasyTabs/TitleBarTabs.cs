@@ -60,7 +60,71 @@ namespace EasyTabs
 		protected BaseTabRenderer _tabRenderer;
 
 		/// <summary>List of tabs to display for this window.</summary>
-		protected ListWithEvents<TitleBarTab> _tabs = new ListWithEvents<TitleBarTab>();
+		protected ListWithEvents<TitleBarTab> _tabs = new TitleBarTabCollection();
+
+		/// <summary>The first unpinned slot; new normal tabs cannot precede it.</summary>
+		public int PinnedTabCount => Tabs.TakeWhile(tab => tab.IsPinned).Count();
+
+		/// <summary>Whether this window can accept a live tab from the source window.</summary>
+		public virtual bool CanReceiveTabsFrom(TitleBarTabs source)
+		{
+			return source != null && source != this && GetType() == source.GetType() &&
+				!IsDisposed && !Disposing && !IsClosing &&
+				!source.IsDisposed && !source.Disposing && !source.IsClosing &&
+				ApplicationContext != null && ApplicationContext == source.ApplicationContext &&
+				ApplicationContext.OpenWindows.Contains(this) && ApplicationContext.OpenWindows.Contains(source);
+		}
+
+		/// <summary>Moves the existing tab and its content without closing or recreating the page.</summary>
+		public bool MoveTabToWindow(TitleBarTab tab, TitleBarTabs destination)
+		{
+			if (tab == null || tab.Parent != this || !Tabs.Contains(tab) ||
+				tab.Content == null || tab.Content.IsDisposed || tab.Content.Disposing ||
+				destination == null || !destination.CanReceiveTabsFrom(this)) return false;
+
+			int index = Tabs.IndexOf(tab);
+			bool wasActive = tab.Active;
+			tab.Active = false;
+			// Detach only this window's subscriptions; page and client handlers survive.
+			tab.Content.TextChanged -= Content_TextChanged;
+			tab.Closing -= TitleBarTabs_Closing;
+			if (AeroPeekEnabled)
+				TaskbarManager.Instance.TabbedThumbnail.RemoveThumbnailPreview(tab.Content);
+			if (_previews.TryGetValue(tab.Content, out Bitmap preview))
+			{
+				preview.Dispose();
+				_previews.Remove(tab.Content);
+			}
+			if (_previousActiveTab == tab) _previousActiveTab = null;
+
+			Tabs.Remove(tab);
+			tab.Parent = destination;
+			// Chromium appends normal tabs and inserts pins at the pinned boundary.
+			destination.Tabs.Add(tab);
+			if (wasActive && Tabs.Count > 0) SelectedTabIndex = Math.Min(index, Tabs.Count - 1);
+			destination.SelectedTab = tab;
+			RedrawTabs();
+			destination.RedrawTabs();
+
+			// The destination owns the content before an empty source is allowed to close.
+			if (Tabs.Count == 0 && ExitOnLastTabClose) Close();
+			return true;
+		}
+
+		internal void UpdatePinnedTab(TitleBarTab tab)
+		{
+			// Preserve tab identity, selection and subscriptions while moving it to
+			// the boundary, as TabStripModel::SetTabPinnedImpl does.
+			Tabs.SuppressEvents();
+			try
+			{
+				Tabs.Remove(tab);
+				Tabs.Insert(PinnedTabCount, tab);
+			}
+			finally { Tabs.ResumeEvents(); }
+			TabRenderer?.BeginPinnedTabAnimation();
+			RedrawTabs();
+		}
 
 		/// <summary>Default constructor.</summary>
 		protected TitleBarTabs()
@@ -70,7 +134,6 @@ namespace EasyTabs
 			_previousWindowState = null;
 			ExitOnLastTabClose = true;
 			InitializeComponent();
-			SetWindowThemeAttributes(WTNCA.NODRAWCAPTION | WTNCA.NODRAWICON);
 
 			_tabs.CollectionModified += _tabs_CollectionModified;
 
@@ -85,6 +148,16 @@ namespace EasyTabs
 			};
 
 			ShowTooltips = true;
+		}
+
+		/// <summary>
+		/// Applies the title-bar theme after derived windows have had a chance to
+		/// configure their startup bounds and state.
+		/// </summary>
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			SetWindowThemeAttributes(WTNCA.NODRAWCAPTION | WTNCA.NODRAWICON);
 		}
 
 		/// <summary>Flag indicating whether composition is enabled on the desktop.</summary>
@@ -172,6 +245,8 @@ namespace EasyTabs
 
 			set
 			{
+				if (ReferenceEquals(_tabRenderer, value)) return;
+				_tabRenderer?.Dispose();
 				_tabRenderer = value;
 				SetFrameSize();
 			}
@@ -203,6 +278,7 @@ namespace EasyTabs
 			{
 				TitleBarTab selectedTab = SelectedTab;
 				int selectedTabIndex = SelectedTabIndex;
+				if (selectedTabIndex == value) return;
 
 				if (selectedTab != null && selectedTabIndex != value)
 				{
@@ -266,7 +342,7 @@ namespace EasyTabs
 
 				if (_overlay != null)
 				{
-					_overlay.Render();
+					_overlay.RequestRender();
 				}
 			}
 		}
@@ -563,8 +639,10 @@ namespace EasyTabs
 
 			if (tab != null)
 			{
-				tab.Content.Location = new Point(0, Padding.Top - 1);
-				tab.Content.Size = new Size(ClientRectangle.Width, ClientRectangle.Height - Padding.Top + 1);
+				// Borderless fullscreen has no tab-header area to reserve above the page.
+				int contentTop = FormBorderStyle == FormBorderStyle.None ? 0 : Padding.Top - 1;
+				tab.Content.Location = new Point(0, contentTop);
+				tab.Content.Size = new Size(ClientRectangle.Width, ClientRectangle.Height - contentTop);
 			}
 		}
 
@@ -651,7 +729,7 @@ namespace EasyTabs
 
 			if (_overlay != null)
 			{
-				_overlay.Render(true);
+				_overlay.RequestRender();
 			}
 		}
 
@@ -735,7 +813,7 @@ namespace EasyTabs
 
 			if (_overlay != null)
 			{
-				_overlay.Render(true);
+				_overlay.RequestRender();
 			}
 		}
 
@@ -759,18 +837,18 @@ namespace EasyTabs
 
 			if (_overlay != null)
 			{
-				_overlay.Render(true);
+				_overlay.RequestRender();
 			}
 		}
 
 		/// <summary>
-		/// Calls <see cref="TitleBarTabsOverlay.Render(bool)"/> on <see cref="_overlay"/> to force a redrawing of the tabs.
+		/// Schedules a tab redraw, combining repeated requests into the next frame.
 		/// </summary>
 		public void RedrawTabs()
 		{
 			if (_overlay != null)
 			{
-				_overlay.Render(true);
+				_overlay.RequestRender(!(_tabRenderer is ChromiumTabRenderer));
 			}
 		}
 
@@ -862,6 +940,7 @@ namespace EasyTabs
 			int removeIndex = Tabs.IndexOf(closingTab);
 			int selectedTabIndex = SelectedTabIndex;
 
+			TabRenderer?.BeginTabClose(closingTab);
 			Tabs.Remove(closingTab);
 
 			if (selectedTabIndex > removeIndex)
@@ -911,6 +990,9 @@ namespace EasyTabs
 		/// <returns>One of the <see cref="HT" /> values, depending on where the user clicked.</returns>
 		private HT HitTest(Point point, IntPtr windowHandle)
 		{
+			if (FormBorderStyle == FormBorderStyle.None)
+				return HT.HTCLIENT;
+
 			RECT rect;
 
 			User32.GetWindowRect(windowHandle, out rect);
