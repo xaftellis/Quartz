@@ -12,6 +12,14 @@ namespace Quartz.Controls
         public FocusAwareContextMenuStrip() { }
         public FocusAwareContextMenuStrip(IContainer container) : base(container) { }
 
+        protected override void OnOpening(CancelEventArgs e)
+        {
+            // Opening handlers populate dynamic menus. Style the final items,
+            // including newly created submenus, before the popup is measured.
+            base.OnOpening(e);
+            if (!e.Cancel) ChromiumMenuStyle.Apply(this);
+        }
+
         protected override void OnOpened(EventArgs e)
         {
             base.OnOpened(e);
