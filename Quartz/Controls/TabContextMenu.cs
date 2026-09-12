@@ -10,7 +10,7 @@ using System.Windows.Media.Animation;
 
 namespace Quartz.Controls
 {
-    public partial class TabContextMenu : ContextMenuStrip
+    public partial class TabContextMenu : FocusAwareContextMenuStrip
     {
         TitleBarTabs _parentForm;
         TitleBarTab _clickedTab;

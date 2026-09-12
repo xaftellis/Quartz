@@ -99,7 +99,7 @@ internal static class NewTabTests
                 var env=await CoreWebView2Environment.CreateAsync(null,Path.Combine(output,"profile-"+Guid.NewGuid().ToString("N")));
                 await view.EnsureCoreWebView2Async(env);var core=view.CoreWebView2;
                 core.SetVirtualHostNameToFolderMapping("quartz.com",Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"assets","quartz.com"),CoreWebView2HostResourceAccessKind.DenyCors);
-                await core.AddScriptToExecuteOnDocumentCreatedAsync("window.__errors=[];addEventListener('error',e=>__errors.push(e.message));addEventListener('unhandledrejection',e=>__errors.push(String(e.reason)))");
+                await core.AddScriptToExecuteOnDocumentCreatedAsync("window.__errors=[];addEventListener('error',e=>__errors.push(e.error?.stack||e.message));addEventListener('unhandledrejection',e=>__errors.push(e.reason?.stack||String(e.reason)))");
                 controller=new NewTabPageController(core,profile,false,key=>key=="Theme"?theme:"google",()=>history,url=>history.RemoveAll(h=>h.ProfileId==profile&&h.WebAddress==url),Suggest);
                 core.NavigationStarting+=(sender,nav)=>{if(NewTabPageData.IsPage(core.Source)&&!NewTabPageData.IsPage(nav.Uri)){destination=nav.Uri;nav.Cancel=true;}};
                 core.Navigate(NewTabPageData.PageUrl);await Bind();await Task.Delay(200);
@@ -111,6 +111,15 @@ internal static class NewTabTests
                 await Assert("document.documentElement.scrollHeight<=innerHeight","no unwanted vertical scrollbar");
                 await Capture("light");
                 await Focus();await Until("matches().length===2");
+                if(args.Contains("--suggestions-only")){
+                    await Assert("box.dropdownIsVisible&&matches().length===2","recent history is visible on empty input");
+                    await Type("weather in perth");
+                    await Until("box.result.matches.some(m=>m.type==='search-suggest')",8000);
+                    await Assert("box.dropdownIsVisible&&box.result.matches.length>1","live Google suggestions are visible");
+                    await Assert("__errors.length===0","suggestions produce no runtime errors");
+                    await Capture("suggestions-fix");
+                    Console.WriteLine("Focused suggestion check passed.");return;
+                }
                 await Assert("matches()[0].match.contents==='Recent Quartz page'&&!box.result.matches.some(m=>m.contents==='OTHER PROFILE')","empty click shows newest Quartz history");
                 await Assert("Array.from(matches()).every(m=>m.match.supportsDeletion&&!m.shadowRoot.querySelector('#remove').hidden)","all local history rows have Chromium's remove control");
                 await Assert("(()=>{const a=rect(box.getInputElement().shadowRoot.querySelector('cr-searchbox-icon'));const b=rect(matches()[0].shadowRoot.querySelector('cr-searchbox-icon'));return Math.abs((a.x+a.width/2)-(b.x+b.width/2))<1})()","input and suggestion icon columns align");
@@ -176,4 +185,6 @@ internal static class NewTabTests
         Application.Run(form);
     }
 }
+
+
 

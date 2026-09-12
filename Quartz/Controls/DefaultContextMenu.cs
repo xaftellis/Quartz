@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Quartz.Controls
 {
-    public class DefaultContextMenu : ContextMenuStrip
+    public class DefaultContextMenu : FocusAwareContextMenuStrip
     {
         TitleBarTabs _parentForm;
         TitleBarTab _clickedTab;

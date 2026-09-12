@@ -154,6 +154,7 @@ namespace Quartz
         public Browser(string address, bool newtabrequest)
         {
             InitializeComponent();
+            InitializeWebViewFocus();
             InitializeTabPreview();
             InitializeTabMemory();
             InitializeSiteInfo();
@@ -643,31 +644,28 @@ namespace Quartz
             if (useDefaultHome)
                 return NewTabPageData.PageUrl + "?theme=" + Uri.EscapeDataString(theme ?? "light");
 
-            // Helper for themed pages
-            string ThemePage(string name) => $"https://quartz.com/{theme}/{name}.html";
-
             switch (engine)
             {
                 case "bing":
-                    return useDefaultHome ? ThemePage("Bing") : "https://www.bing.com/";
+                    return "https://www.bing.com/";
 
                 case "yahoo":
-                    return useDefaultHome ? ThemePage("Yahoo") : "https://search.yahoo.com/";
+                    return "https://search.yahoo.com/";
 
                 case "duckduckgo":
-                    return useDefaultHome ? ThemePage("DuckDuckGo") : "https://duckduckgo.com/";
+                    return "https://duckduckgo.com/";
 
                 case "wikipedia":
                     return "https://www.wikipedia.org/";
 
                 case "netflix":
-                    return useDefaultHome ? ThemePage("Netflix") : "https://www.netflix.com/";
+                    return "https://www.netflix.com/";
 
                 case "youtube":
-                    return useDefaultHome ? ThemePage("YouTube") : "https://www.youtube.com/";
+                    return "https://www.youtube.com/";
 
                 case "googlemaps":
-                    return useDefaultHome ? ThemePage("Google Maps") : "https://www.google.com/maps";
+                    return "https://www.google.com/maps";
 
                 case "ebay":
                     return "https://www.ebay.com/";
@@ -676,14 +674,14 @@ namespace Quartz
                     return "https://www.amazon.com/";
 
                 case "ecosia":
-                    return useDefaultHome ? ThemePage("Ecosia") : "https://www.ecosia.org/";
+                    return "https://www.ecosia.org/";
 
                 case "google":
-                    return useDefaultHome ? ThemePage("Google") : "https://www.google.com/";
+                    return "https://www.google.com/";
 
                 default:
                     // Fallback to Google
-                    return useDefaultHome ? ThemePage("Google") : "https://www.google.com/";
+                    return "https://www.google.com/";
             }
         }
         public void UpdateFavBar()
@@ -2423,6 +2421,8 @@ namespace Quartz
             {
                 var uri = wvWebView1.Source;
 
+                if (uri == null) return;
+
                 // Get host
                 string host = uri.Host;
 
@@ -2485,7 +2485,11 @@ namespace Quartz
                 _originalURL = txtWebAddress.Text;
             }
 
-            BeginInvoke((Action)(() => txtWebAddress.SelectAll()));
+            BeginInvoke((Action)(() =>
+            {
+                if (!IsDisposed && !Disposing && txtWebAddress.Focused)
+                    txtWebAddress.SelectAll();
+            }));
         }
 
         public void SortByAlphabetially()

@@ -40,7 +40,7 @@
             this.WebAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.When = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Delete = new System.Windows.Forms.DataGridViewImageColumn();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip1 = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openInNewTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();

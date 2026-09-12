@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.btnCreate = new System.Windows.Forms.Button();
-            this.ContextMenuStripProfiles = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ContextMenuStripProfiles = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.setDefaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();

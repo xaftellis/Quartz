@@ -2,7 +2,7 @@
 import {CrLitElement,html} from '//resources/lit/v3_0/lit.rollup.js';
 import {SearchboxMixin} from '//resources/cr_components/searchbox/searchbox_mixin.js';
 import {getCss} from 'chrome://new-tab-page/ntp_searchbox.css.js';
-import {callbackRouter,hostEvents} from './host';
+import {callbackRouter,hostEvents,handler} from './host';
 import './autocomplete';
 
 export class QuartzSearchbox extends SearchboxMixin(CrLitElement) {
@@ -31,6 +31,7 @@ export class QuartzSearchbox extends SearchboxMixin(CrLitElement) {
     hostEvents.removeEventListener('icons-updated',this.refreshIcons);
     super.disconnectedCallback();
   }
+  pageHandler(){return handler;}
   getInputElement(){return this.$.input;}
   getDropdownElement(){return this.$.matches;}
   getWrapperElement(){return this.$.inputWrapper;}
@@ -56,3 +57,4 @@ export class QuartzSearchbox extends SearchboxMixin(CrLitElement) {
     </div>`;}
 }
 customElements.define('ntp-searchbox',QuartzSearchbox);
+

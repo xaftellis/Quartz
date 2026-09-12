@@ -8,7 +8,7 @@ import crypto from 'node:crypto';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../..');
-const vendor = path.join(root, 'third_party/chromium/webui');
+const vendor = path.join(root, 'chromeium/webui');
 const output = path.join(root, 'Quartz/assets/quartz.com/newtab');
 const revision = 'a2bee684f3c4224a8836957b917c167d9bb9a349';
 const online = process.argv.includes('--sync');
@@ -64,6 +64,7 @@ function resource(spec, importer = '') {
 }
 
 const assets = new Map();
+const generatedAssets = new Set();
 async function asset(name) {
   if (!assets.has(name)) {
     const text = await source(name);
@@ -72,6 +73,7 @@ async function asset(name) {
     await fs.mkdir(path.dirname(file), {recursive:true});
     await fs.writeFile(file, text);
     assets.set(name, relative);
+    generatedAssets.add(relative);
   }
   return assets.get(name);
 }
@@ -113,6 +115,7 @@ const plugin = {
           const relative = 'chromium/' + name.replace(/^ui\/webui\/resources\//, '');
           await fs.mkdir(path.dirname(path.join(output,relative)),{recursive:true});
           await fs.writeFile(path.join(output,relative),css);
+          generatedAssets.add(relative);
           return {loader:'js', contents:`const style=document.createElement('link');style.rel='stylesheet';style.href=${JSON.stringify('/newtab/'+relative)};document.head.append(style);export function getCss(){return []}`};
         }
         const dependencies = imported.filter(x => !x.includes('cr_shared_vars'));
@@ -149,7 +152,7 @@ const plugin = {
 
 await fs.mkdir(output,{recursive:true});
 await fs.copyFile(path.join(here,'node_modules/lit/LICENSE'),path.join(output,'lit-LICENSE'));
-for (const name of ['search_cr23.svg','history_cr23.svg','default.svg','page_cr23.svg','clock_cr23.svg'])
+for (const name of ['search_cr23.svg','history_cr23.svg','page_cr23.svg'])
   await asset('ui/webui/resources/cr_components/searchbox/icons/'+name);
 // Reproduce the Windows WebUI text defaults, including the original 81.25% body size.
 const defaults=platform(await source('ui/webui/resources/css/text_defaults_md.css'))
@@ -160,6 +163,19 @@ await fs.writeFile(path.join(output,'chromium-text-defaults.css'),defaults);
 const stage = await esbuild.build({entryPoints:[path.join(here,'entry.ts')],bundle:true,write:false,format:'esm',target:'es2022',plugins:[plugin],logLevel:'warning'});
 await esbuild.build({stdin:{contents:stage.outputFiles[0].text,resolveDir:here,sourcefile:'chromium-components.js'},bundle:true,format:'esm',target:'es2022',outfile:path.join(output,'chromium-components.js'),legalComments:'eof',minify:false,logLevel:'warning'});
 await fs.writeFile(path.join(vendor,'manifest.json'), JSON.stringify({revision,files:manifest},null,2)+'\n');
+// Remove obsolete generated assets only after the replacement bundle succeeds.
+async function pruneGenerated(directory) {
+  for (const entry of await fs.readdir(directory, {withFileTypes:true})) {
+    const file = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      await pruneGenerated(file);
+      if (!(await fs.readdir(file)).length) await fs.rmdir(file);
+    } else if (entry.isFile() && !generatedAssets.has(path.relative(output,file).split(path.sep).join('/'))) {
+      await fs.unlink(file);
+    }
+  }
+}
+await pruneGenerated(path.join(output,'chromium'));
 console.log(`Built ${Object.keys(manifest).length} original Chromium sources and ${assets.size} original assets at ${revision}.`);
 
 

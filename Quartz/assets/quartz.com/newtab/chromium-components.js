@@ -11766,6 +11766,9 @@ var QuartzSearchbox = class extends SearchboxMixin(CrLitElement) {
     hostEvents.removeEventListener("icons-updated", this.refreshIcons);
     super.disconnectedCallback();
   }
+  pageHandler() {
+    return handler;
+  }
   getInputElement() {
     return this.$.input;
   }

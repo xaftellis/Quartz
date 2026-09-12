@@ -57,7 +57,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.txtTimeMachine = new System.Windows.Forms.TextBox();
             this.mcTimeMachine = new System.Windows.Forms.MonthCalendar();
-            this.mnuTimeMachine = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuTimeMachine = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.todayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.goodFridayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,7 +65,7 @@
             this.christmasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.birthdaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuBirthdays = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuBirthdays = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.addBirthdayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.groupBoxDownloadDialog = new System.Windows.Forms.GroupBox();
@@ -120,7 +120,7 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip1 = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.tabPageAbout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LoadingProgress)).BeginInit();
