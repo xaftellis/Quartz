@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -147,12 +147,22 @@
     </Compile>
     <Compile Include="Libs\NewTabPageController.cs" />
     <Compile Include="Services\NewTabPageData.cs" />
+    <Compile Include="Services\NewTabPageIcons.cs" />
     <Compile Include="AddBirthday.Designer.cs">
       <DependentUpon>AddBirthday.cs</DependentUpon>
     </Compile>
     <Compile Include="AppContainer.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AppContainer.Session.cs">
+      <DependentUpon>AppContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Browser.Session.cs">
+      <DependentUpon>Browser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BrowserSession.cs" />
+    <Compile Include="Services\SessionStore.cs" />
+    <Compile Include="Services\SessionService.cs" />
     <Compile Include="AppContainer.Designer.cs">
       <DependentUpon>AppContainer.cs</DependentUpon>
     </Compile>
@@ -1192,7 +1202,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Content Include="assets\quartz.com\newtab\*">
+    <Content Include="assets\quartz.com\newtab\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\quartz.png">
@@ -1221,3 +1231,4 @@
   <Import Project="..\packages\Magick.NET-Q8-AnyCPU.14.16.0\build\netstandard20\Magick.NET-Q8-AnyCPU.targets" Condition="Exists('..\packages\Magick.NET-Q8-AnyCPU.14.16.0\build\netstandard20\Magick.NET-Q8-AnyCPU.targets')" />
   <Import Project="..\packages\Microsoft.Web.WebView2.1.0.4191.47\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.4191.47\build\Microsoft.Web.WebView2.targets')" />
 </Project>
+

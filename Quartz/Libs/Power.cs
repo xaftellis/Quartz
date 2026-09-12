@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,27 +10,27 @@ namespace Quartz.Libs
 {
     internal class Power
     {
-        public static void CloseAppContainer()
+        public static bool CloseAppContainer()
         {
-            if (Application.OpenForms["AppContainer"] != null)
+            Program.Session?.PrepareForShutdown();
+            var forms = Application.OpenForms.Cast<Form>().Where(f => f.Name == "AppContainer").ToList();
+            foreach (var form in forms)
             {
-                var forms = Application.OpenForms.Cast<Form>().Where(f => f.Name == "AppContainer").ToList();
-                foreach (var form in forms)
+                form.Close();
+                if (!form.IsDisposed)
                 {
-                    form.Close();
+                    Program.Session?.CancelShutdown();
+                    return false;
                 }
             }
+            return true;
         }
 
         public static void Shutdown()
         {
             if (Application.OpenForms["AppContainer"] != null)
             {
-                var forms = Application.OpenForms.Cast<Form>().Where(f => f.Name == "AppContainer").ToList();
-                foreach (var form in forms)
-                {
-                    form.Close();
-                }
+                CloseAppContainer();
             }
             else
             {
@@ -41,14 +42,19 @@ namespace Quartz.Libs
         {
             if (Application.OpenForms["AppContainer"] != null)
             {
-              CloseAppContainer();
-
-                Application.Restart();
+                if (CloseAppContainer()) Application.Restart();
             }
             else
             {
                 Application.Restart();
             }
+        }
+        public static void RestartWithArguments(string address)
+        {
+            if (!CloseAppContainer()) return;
+            Program.ReleaseInstanceForRestart();
+            Process.Start(Application.ExecutablePath, "\"" + address.Replace("\"", "%22") + "\"");
+            Application.Exit();
         }
     }
 }

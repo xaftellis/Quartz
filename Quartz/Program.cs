@@ -21,6 +21,7 @@ namespace Quartz
     {
         // Keep this alive for the app lifetime
         public static TitleBarTabsApplicationContext EasyTabsContext;
+        internal static SessionService Session;
         public static bool _bypassPassword = false;
         public static ProfileService profileService = new ProfileService();
 
@@ -125,6 +126,7 @@ namespace Quartz
         #region Application Exit
         private static void Application_ApplicationExit(object sender, EventArgs e)
         {
+            Session?.Dispose();
             if (!_bypassPassword)
             {
                 var defaultProfile = profileService.GetDefault();
@@ -174,22 +176,87 @@ namespace Quartz
 
             EasyTabsContext = new TitleBarTabsApplicationContext();
 
-            var firstContainer = new AppContainer();
-            var browser = args.Length == 0 ? new Browser(null, false) : new Browser(args[0], true);
-            browser.InitializeTab();
-
-            firstContainer.Tabs.Add(new TitleBarTab(firstContainer) { Content = browser });
-            firstContainer.SelectedTabIndex = 0;
-
-            EasyTabsContext.Start(firstContainer);
+            if (SettingsService.Get(activeProfile.Id, SessionService.ContinueSetting) == null)
+                SettingsService.Set(activeProfile.Id, SessionService.ContinueSetting, "true");
+            Session = new SessionService(activeProfile.Id,
+                !activeProfile.isDisposable && SettingsService.Get(activeProfile.Id, SessionService.ContinueSetting) != "false",
+                () => CaptureBrowserSession(activeProfile.Id));
+            var savedSession = Session.ReadSavedSession();
+            if (savedSession != null && savedSession.Windows.Count > 0)
+            {
+                AppContainer activeWindow = null;
+                foreach (var savedWindow in savedSession.Windows)
+                {
+                    var container = new AppContainer();
+                    container.RestoreSessionWindow(savedWindow);
+                    TitleBarTab selectedTab = null;
+                    for (int index = 0; index < savedWindow.Tabs.Count; index++)
+                    {
+                        var savedTab = savedWindow.Tabs[index];
+                        string address = Browser.ResolveSessionUrl(savedTab.Url);
+                        var browser = new Browser(address, !string.IsNullOrEmpty(address));
+                        browser.InitializeTab();
+                        browser.PrepareSessionTab(savedTab);
+                        var tab = new TitleBarTab(container) { Content = browser, IsPinned = savedTab.IsPinned };
+                        container.Tabs.Add(tab);
+                        if (index == savedWindow.SelectedTabIndex) selectedTab = tab;
+                    }
+                    container.SelectedTab = selectedTab ?? container.Tabs.First();
+                    EasyTabsContext.Start(container);
+                    if (savedWindow.Id == savedSession.ActiveWindowId) activeWindow = container;
+                }
+                activeWindow = activeWindow ?? EasyTabsContext.OpenWindows.OfType<AppContainer>().First();
+                if (args.Length > 0 && !string.IsNullOrWhiteSpace(args[0]))
+                {
+                    var browser = new Browser(args[0], true);
+                    browser.InitializeTab();
+                    var tab = new TitleBarTab(activeWindow) { Content = browser };
+                    activeWindow.Tabs.Add(tab);
+                    activeWindow.SelectedTab = tab;
+                }
+                activeWindow.Activate();
+            }
+            else
+            {
+                OpenNewAppContainer(args.Length > 0 ? args[0] : null);
+            }
 
             // Now that EasyTabsContext is available, process any pending IPC messages
             ProcessPendingMessages();
+            Session.Start();
 
             OpenBirthdayDialogIfNecessary();
 
             Application.ApplicationExit += Application_ApplicationExit;
             Application.Run(EasyTabsContext);
+        }
+
+        private static BrowserSessionModel CaptureBrowserSession(Guid profileId)
+        {
+            if (EasyTabsContext == null) return null;
+            var windows = EasyTabsContext.OpenWindows.OfType<AppContainer>()
+                .Where(window => !window.IsDisposed && !window.SessionClosing && window.ProfileId == profileId)
+                .Select(window => window.CaptureSessionWindow())
+                .Where(window => window.Tabs.Count > 0).ToList();
+            var active = EasyTabsContext.OpenWindowsByActivation.OfType<AppContainer>()
+                .FirstOrDefault(window => windows.Any(saved => saved.Id == window.SessionWindowId));
+            return new BrowserSessionModel
+            {
+                ProfileId = profileId,
+                Windows = windows,
+                ActiveWindowId = active?.SessionWindowId ?? Guid.Empty
+            };
+        }
+
+        internal static void ReleaseInstanceForRestart()
+        {
+            try { _pipeServerCts?.Cancel(); }
+            catch (ObjectDisposedException) { }
+            try { _singleInstanceMutex?.ReleaseMutex(); }
+            catch (ApplicationException) { }
+            catch (ObjectDisposedException) { }
+            _singleInstanceMutex?.Dispose();
+            _singleInstanceMutex = null;
         }
 
         private static void LaunchProfilesWindow(string[] args)
@@ -455,6 +522,7 @@ namespace Quartz
                 { "AreDevToolsEnabled", "true" },
                 { "AreBrowserAcceleratorKeysEnabled", "true" },
                 { "DefaultHomePage", "true" },
+                { SessionService.ContinueSetting, "true" },
                 { "IsPasswordAutosaveEnabled", "true" },
                 { "IsGeneralAutofillEnabled", "true" },
                 { "Zoom", "1.0" },

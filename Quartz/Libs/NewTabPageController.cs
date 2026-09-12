@@ -6,9 +6,11 @@ using Quartz.Omnibox;
 using Quartz.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Quartz.Libs
 {
@@ -19,18 +21,31 @@ namespace Quartz.Libs
         private readonly bool isPrivate;
         private readonly Func<string, string> setting;
         private readonly Func<IEnumerable<HistoryModel>> history;
+        private readonly Action<string> removeHistory;
+        private readonly Func<string, string, CancellationToken, Task<List<string>>> fetchSuggestions;
+        private readonly Stopwatch requestClock = Stopwatch.StartNew();
+        private long lastSuggestRequest = -100;
+        private List<HistoryModel> historySnapshot;
+        private DateTime historyStamp;
+        private readonly HashSet<string> servedHistory = new HashSet<string>(StringComparer.Ordinal);
+        private readonly HashSet<string> loadedIcons = new HashSet<string>(StringComparer.Ordinal);
         private CancellationTokenSource suggestions;
         private int documentVersion;
         private bool disposed;
+        private static readonly string HistoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "Xaftellis", "Quartz", "UserData", "jsons", "history.json");
 
         public NewTabPageController(CoreWebView2 core, Guid profile, bool isPrivate,
-            Func<string, string> setting, Func<IEnumerable<HistoryModel>> history)
+            Func<string, string> setting, Func<IEnumerable<HistoryModel>> history, Action<string> removeHistory = null,
+            Func<string, string, CancellationToken, Task<List<string>>> fetchSuggestions = null)
         {
             this.core = core;
             this.profile = profile;
             this.isPrivate = isPrivate;
             this.setting = setting;
             this.history = history;
+            this.removeHistory = removeHistory ?? (url => new HistoryService().DeleteProfileUrl(profile, url));
+            this.fetchSuggestions = fetchSuggestions ?? SearchSuggestions.GetForEngineAsync;
             core.WebMessageReceived += OnMessage;
             core.NavigationStarting += OnNavigation;
         }
@@ -47,6 +62,9 @@ namespace Quartz.Libs
         {
             documentVersion++;
             CancelSuggestions();
+            historySnapshot = null;
+            servedHistory.Clear();
+            loadedIcons.Clear();
         }
 
         public void UpdateTheme()
@@ -61,9 +79,33 @@ namespace Quartz.Libs
                 core.PostWebMessageAsJson(JsonConvert.SerializeObject(message));
         }
 
+        private IEnumerable<HistoryModel> Snapshot()
+        {
+            if (isPrivate) return Enumerable.Empty<HistoryModel>();
+            var stamp = File.GetLastWriteTimeUtc(HistoryPath);
+            if (historySnapshot == null || stamp != historyStamp)
+            {
+                historySnapshot = (history() ?? Enumerable.Empty<HistoryModel>()).ToList();
+                historyStamp = stamp;
+            }
+            return historySnapshot;
+        }
+
+        private void SendIcons(IEnumerable<string> addresses, bool withMonograms)
+        {
+            var urls = addresses.Where(NewTabPageData.IsWebUrl).Distinct().Take(10).ToList();
+            if (!withMonograms) urls = urls.Where(url => !loadedIcons.Contains(url)).ToList();
+            if (urls.Count == 0) return;
+            var icons = NewTabPageIcons.Cached(urls);
+            var fallbacks = new Dictionary<string, object>();
+            if (withMonograms)
+                foreach (var url in urls.Where(url => !icons.ContainsKey(url))) fallbacks[url] = NewTabPageIcons.Monogram(url);
+            foreach (var url in urls) loadedIcons.Add(url);
+            Post(new { type = "icons", icons, fallbacks });
+        }
+
         private async void OnMessage(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
-            // Expose profile data only to this exact local top-level document.
             if (disposed || !NewTabPageData.IsPage(e.Source) || !NewTabPageData.IsPage(core.Source)) return;
             int version = documentVersion;
             int id = 0;
@@ -76,20 +118,48 @@ namespace Quartz.Libs
                 switch ((string)message["type"])
                 {
                     case "state": UpdateTheme(); break;
+                    case "stop-suggest": CancelSuggestions(); break;
                     case "suggest":
                         CancelSuggestions();
-                        suggestions = new CancellationTokenSource();
-                        var token = suggestions.Token;
                         string query = ((string)message["query"] ?? "").Trim();
                         if (query.Length > 2048) return;
-                        var recent = NewTabPageData.RecentHistory(isPrivate ? null : history(), profile, query, isPrivate)
-                            .Select(h => new { kind = "history", text = string.IsNullOrWhiteSpace(h.Title) ? new Uri(h.WebAddress).Host : h.Title,
+                        suggestions = new CancellationTokenSource();
+                        var token = suggestions.Token;
+                        var recent = NewTabPageData.RecentHistory(Snapshot(), profile, query, isPrivate)
+                            .Select(h => new { text = string.IsNullOrWhiteSpace(h.Title) ? new Uri(h.WebAddress).Host : h.Title,
                                 url = h.WebAddress }).ToList();
-                        Post(new { type = "suggestions", id, query, history = recent, searches = new string[0] });
+                        foreach (var item in recent) servedHistory.Add(item.url);
+                        Post(new { type = "suggestions", id, query, history = recent, searches = new string[0], complete = query.Length == 0 });
+                        // Favicon failures must never delay or suppress autocomplete.
+                        try { SendIcons(recent.Select(h => h.url), false); }
+                        catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is JsonException || ex is ArgumentException) { }
                         if (query.Length == 0) break;
-                        var remote = await SearchSuggestions.GetForEngineAsync(query, setting("SearchEngine"), token);
+                        // Chromium's default polling strategy measures 100ms from the
+                        // last request sent, not from each keystroke (SearchProvider).
+                        int delay = (int)Math.Max(0, 100 - (requestClock.ElapsedMilliseconds - lastSuggestRequest));
+                        if (delay > 0) await Task.Delay(delay, token);
+                        token.ThrowIfCancellationRequested();
+                        lastSuggestRequest = requestClock.ElapsedMilliseconds;
+                        var remote = await fetchSuggestions(query, setting("SearchEngine"), token);
                         if (!disposed && version == documentVersion && !token.IsCancellationRequested)
-                            Post(new { type = "suggestions", id, query, history = recent, searches = remote.Take(6).ToArray() });
+                            Post(new { type = "suggestions", id, query, history = recent, searches = remote.Take(6).ToArray(), complete = true });
+                        break;
+                    case "delete-history":
+                        string address = (string)message["url"];
+                        bool removed = false;
+                        if (!isPrivate && address != null && servedHistory.Contains(address) && NewTabPageData.IsWebUrl(address))
+                        {
+                            CancelSuggestions();
+                            try
+                            {
+                                removeHistory(address);
+                                historySnapshot = null;
+                                servedHistory.Remove(address);
+                                removed = true;
+                            }
+                            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is JsonException) { }
+                        }
+                        Post(new { type = "history-deleted", id, url = address, success = removed });
                         break;
                     case "navigate":
                         string destination = NewTabPageData.SearchUrl((string)message["text"], setting("SearchEngine"),
@@ -99,18 +169,7 @@ namespace Quartz.Libs
                     case "icons":
                         var urls = message["urls"] as JArray;
                         if (urls == null || urls.Count > 10) return;
-                        var icons = new Dictionary<string, string>();
-                        var cache = new FaviconService();
-                        foreach (string url in urls.Values<string>().Where(NewTabPageData.IsWebUrl))
-                        {
-                            var icon = cache.Get(url);
-                            if (icon == null) continue;
-                            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                "Xaftellis", "Quartz", "UserData", "cache", icon.Id + ".ico");
-                            if (File.Exists(path) && new FileInfo(path).Length < 262144)
-                                icons[url] = "data:image/x-icon;base64," + Convert.ToBase64String(File.ReadAllBytes(path));
-                        }
-                        Post(new { type = "icons", icons });
+                        SendIcons(urls.Values<string>(), true);
                         break;
                 }
             }
@@ -132,3 +191,4 @@ namespace Quartz.Libs
         }
     }
 }
+

@@ -1,5 +1,11 @@
 # Chromium new-tab source reference
 
+This directory retains the initial reference snapshot. The implementation now
+compiles the newer upstream sources in `../webui` at revision
+`d228ff553e2800b1e81c1f29ddd5cbc5483e9030`, including Chromium's actual components
+and original SVGs. See `../../../Tools/NewTab/README.md` for the build and Quartz
+host adaptations, and `../webui/manifest.json` for source hashes.
+
 Actual, unmodified upstream HTML templates, CSS and TypeScript downloaded from
 Chromium main on 2026-09-11 at revision
 `3cd17c9338482b7c18fa96453ae20971b373a342`.

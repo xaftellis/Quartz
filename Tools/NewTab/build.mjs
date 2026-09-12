@@ -10,7 +10,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../..');
 const vendor = path.join(root, 'third_party/chromium/webui');
 const output = path.join(root, 'Quartz/assets/quartz.com/newtab');
-const revision = 'd228ff553e2800b1e81c1f29ddd5cbc5483e9030';
+const revision = 'a2bee684f3c4224a8836957b917c167d9bb9a349';
 const online = process.argv.includes('--sync');
 const manifest = {};
 const inflight = new Map();
@@ -91,7 +91,7 @@ const plugin = {
   name:'chromium-webui',
   setup(build) {
     build.onResolve({filter:/.*/}, args => {
-      if (args.path.startsWith('lit') || args.path === '@lit/reactive-element') return {path:args.path, external:true};
+      if (args.path.startsWith('lit') || args.path === '@lit/reactive-element') return {path:args.path.replace('lit/index.js','lit').replace('lit-html/','lit/'), external:true};
       if (args.path === 'quartz-host') return {path:path.join(here, 'host.ts')};
       const isSource = args.namespace === 'chromium' || /^(chrome:)?\/\/resources\//.test(args.path) || args.path.startsWith('chrome://new-tab-page/');
       if (!isSource) return;
@@ -131,6 +131,10 @@ const plugin = {
       }
       if (name.endsWith('.js')) name = name.slice(0,-3) + '.ts';
       let text = platform(await source(name));
+      if (name === 'third_party/lit/v3_0/lit.ts')
+        text = text.replace('css, CSSResultGroup, html, LitElement, nothing, render, PropertyValues, TemplateResult','css, html, LitElement, nothing, render').replace('directive, PartInfo, PartType','directive, PartType');
+      if (name.endsWith('/searchbox_icon.ts'))
+        text = text.replace("from '//resources/js/icon.js'", "from 'quartz-host'");
       // Chromium's favicon2 URL is a browser service, supplied by Quartz instead.
       if (name.endsWith('/most_visited.ts')) {
         text = `import {faviconUrl} from 'quartz-host';\n` + text;
@@ -144,9 +148,18 @@ const plugin = {
 };
 
 await fs.mkdir(output,{recursive:true});
+await fs.copyFile(path.join(here,'node_modules/lit/LICENSE'),path.join(output,'lit-LICENSE'));
+for (const name of ['search_cr23.svg','history_cr23.svg','default.svg','page_cr23.svg','clock_cr23.svg'])
+  await asset('ui/webui/resources/cr_components/searchbox/icons/'+name);
+// Reproduce the Windows WebUI text defaults, including the original 81.25% body size.
+const defaults=platform(await source('ui/webui/resources/css/text_defaults_md.css'))
+  .replaceAll('$i18nRaw{fontfamilyMd}', "'Segoe UI', Tahoma, sans-serif");
+await fs.writeFile(path.join(output,'chromium-text-defaults.css'),defaults);
 // Stage one resolves Chromium's generated resource URLs; stage two bundles Lit
 // from the lockfile, leaving no runtime CDN or network dependency.
 const stage = await esbuild.build({entryPoints:[path.join(here,'entry.ts')],bundle:true,write:false,format:'esm',target:'es2022',plugins:[plugin],logLevel:'warning'});
 await esbuild.build({stdin:{contents:stage.outputFiles[0].text,resolveDir:here,sourcefile:'chromium-components.js'},bundle:true,format:'esm',target:'es2022',outfile:path.join(output,'chromium-components.js'),legalComments:'eof',minify:false,logLevel:'warning'});
 await fs.writeFile(path.join(vendor,'manifest.json'), JSON.stringify({revision,files:manifest},null,2)+'\n');
 console.log(`Built ${Object.keys(manifest).length} original Chromium sources and ${assets.size} original assets at ${revision}.`);
+
+

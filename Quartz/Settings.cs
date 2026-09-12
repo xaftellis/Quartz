@@ -162,12 +162,26 @@ namespace Quartz
         }
 
         private Browser _browser = null;
+        private readonly Guid _settingsProfileId;
         bool opentab = false;
         public Settings(Browser browser, bool tab)
         {
             opentab = tab;
             _browser = browser;
+            _settingsProfileId = browser?.SessionProfileId ?? ProfileService.Current;
             InitializeComponent();
+            bool isDisposable = Program.profileService.Get(_settingsProfileId)?.isDisposable ?? true;
+            cbContinueSession.Enabled = !isDisposable;
+            cbContinueSession.Checked = !isDisposable &&
+                SettingsService.Get(_settingsProfileId, SessionService.ContinueSetting) != "false";
+        }
+
+        private void ContinueSession_Click(object sender, EventArgs e)
+        {
+            SettingsService.Set(_settingsProfileId, SessionService.ContinueSetting,
+                cbContinueSession.Checked ? "true" : "false");
+            if (Program.Session?.ProfileId == _settingsProfileId)
+                Program.Session.SetEnabled(cbContinueSession.Checked);
         }
 
         public event EventHandler QuartzUpdaterClosed;
