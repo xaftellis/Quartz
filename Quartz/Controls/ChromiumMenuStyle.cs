@@ -25,6 +25,13 @@ namespace Quartz.Controls
             return States.GetValue(menu, key => new MenuState(key));
         }
 
+        internal static void PrepareOpening(ToolStripDropDown menu)
+        {
+            var state = GetState(menu);
+            state.Prepare();
+            state.fade.PrepareOpening();
+        }
+
         internal static int Scale(Control control, int dip)
         {
             return (int)Math.Round(dip * control.DeviceDpi / 96.0);
@@ -51,29 +58,45 @@ namespace Quartz.Controls
             internal int IconColumns;
             private bool preparing;
             private ChromiumMenuWindow surface;
+            internal readonly ChromiumMenuFade fade;
 
             internal MenuState(ToolStripDropDown menu)
             {
                 Menu = menu;
+                fade = new ChromiumMenuFade(menu, opacity => surface?.SetOpacity(opacity));
                 menu.Opening += Opening;
                 menu.Opened += Opened;
                 menu.Closed += Closed;
                 menu.Layout += Layout;
                 menu.LocationChanged += LocationChanged;
-                menu.VisibleChanged += (sender, e) => { if (!menu.Visible) surface?.Hide(); };
+                menu.VisibleChanged += (sender, e) => { if (!menu.Visible) Hide(); };
+                menu.HandleDestroyed += (sender, e) => Hide();
+                menu.MouseDown += (sender, e) => fade.Reset();
+                menu.KeyDown += (sender, e) => fade.Reset();
                 menu.Disposed += Disposed;
                 menu.ItemAdded += ItemAdded;
                 menu.ItemRemoved += (sender, e) => { if (menu.Visible) Prepare(); };
             }
 
-            private void Opening(object sender, CancelEventArgs e) { Prepare(); }
+            private void Opening(object sender, CancelEventArgs e)
+            {
+                // Root context menus prepare after all their Opening handlers.
+                // Generated ToolStrip submenus use this shared event instead.
+                if (!e.Cancel && !(Menu is FocusAwareContextMenuStrip)) PrepareOpening(Menu);
+            }
             private void Opened(object sender, EventArgs e)
             {
                 Prepare();
                 if (surface == null) surface = new ChromiumMenuWindow(Menu);
                 surface.Update(Palette.Background);
+                fade.Start();
             }
-            private void Closed(object sender, ToolStripDropDownClosedEventArgs e) { surface?.Hide(); }
+            private void Closed(object sender, ToolStripDropDownClosedEventArgs e) { Hide(); }
+            private void Hide()
+            {
+                surface?.Hide();
+                fade.Reset();
+            }
             private void LocationChanged(object sender, EventArgs e)
             {
                 if (Menu.Visible && !preparing) surface?.Update(Palette.Background);
@@ -95,7 +118,11 @@ namespace Quartz.Controls
             {
                 if (Menu.Visible) Prepare();
             }
-            private void Disposed(object sender, EventArgs e) { surface?.Dispose(); }
+            private void Disposed(object sender, EventArgs e)
+            {
+                fade.Dispose();
+                surface?.Dispose();
+            }
 
             internal void Prepare()
             {

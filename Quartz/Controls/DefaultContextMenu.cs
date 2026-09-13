@@ -160,11 +160,6 @@ namespace Quartz.Controls
         {
             DefineVarables();
 
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(this.Handle, 100, Animation.AW_BLEND);
-            }
-
             // Enable or disable items based on window state and capabilities
             restoreToolStripMenuItem.Enabled = (_parentForm.WindowState != FormWindowState.Normal);
             moveToolStripMenuItem.Enabled = (_parentForm.FormBorderStyle != FormBorderStyle.FixedDialog &&

@@ -1420,11 +1420,6 @@ namespace Quartz
 
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(mnuTimeMachine.Handle, 100, Animation.AW_BLEND);
-            }
-
             if (birthdayService.All().Count != 0)
             {
                 birthdaysToolStripMenuItem.DropDown = mnuBirthdays;
@@ -1518,11 +1513,6 @@ namespace Quartz
             }
 
 
-            //last
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow((sender as ContextMenuStrip).Handle, 100, Animation.AW_BLEND);
-            }
         }
 
 
@@ -1785,14 +1775,6 @@ namespace Quartz
                 birthdayService.Remove(model.Id);
                 birthdayService.SaveChanges();
                 // Refresh your menu or UI if needed
-            }
-        }
-
-        private void contextMenuStrip1_Opening_1(object sender, CancelEventArgs e)
-        {
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow((sender as ContextMenuStrip).Handle, 100, Animation.AW_BLEND);
             }
         }
 

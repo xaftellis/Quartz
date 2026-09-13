@@ -1827,10 +1827,6 @@ namespace Quartz
             }
 
 
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(mnuMenu.Handle, 100, Animation.AW_BLEND);
-            }
         }
 
         private void changeProfileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1843,10 +1839,6 @@ namespace Quartz
 
         private void SettingsMenuStrip_Opening(object sender, CancelEventArgs e)
         {
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(SettingsMenuStrip.Handle, 100, Animation.AW_BLEND);
-            }
 
             if (SettingsService.Get("AreDevToolsEnabled") == "true")
             {
@@ -2009,10 +2001,6 @@ namespace Quartz
         {
             locationToolStripMenuItem1.Text = $"Location: {wvWebView1.CoreWebView2.Profile.DefaultDownloadFolderPath}";
 
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(mnuDownloadsDropDown.Handle, 100, Animation.AW_BLEND);
-            }
         }
 
         private void changeLocationToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -2083,14 +2071,6 @@ namespace Quartz
         private void closeTabToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tabbedApp.SelectedTab.Content.Close();
-        }
-
-        private void mnuExperts_Opening(object sender, CancelEventArgs e)
-        {
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(mnuExperts.Handle, 100, Animation.AW_BLEND);
-            }
         }
 
         private void restartToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2185,10 +2165,6 @@ namespace Quartz
             clearHistoryItem.Click += ClearHistoryItem_Click; ;
             mnuHistory.Items.Add(clearHistoryItem);
 
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(mnuHistory.Handle, 100, Animation.AW_BLEND);
-            }
         }
 
         private void ClearHistoryItem_Click(object sender, EventArgs e)
@@ -2274,14 +2250,6 @@ namespace Quartz
 
             MainSettingsService.Set("Reset", "true");
             Power.Restart();
-        }
-
-        private void mnuUserData_Opening(object sender, CancelEventArgs e)
-        {
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(mnuUserData.Handle, 100, Animation.AW_BLEND);
-            }
         }
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2769,10 +2737,6 @@ namespace Quartz
             copyToolStripMenuItem1.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
             deleteToolStripMenuItem.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
 
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(mnuSearch.Handle, 100, Animation.AW_BLEND);
-            }
         }
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2910,10 +2874,6 @@ namespace Quartz
                 mnuFavourites.Items.Add(menuItem);
             }
 
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(mnuFavourites.Handle, 100, Animation.AW_BLEND);
-            }
         }
 
         private void nameWindowToolStripMenuItem_Click(object sender, EventArgs e)

@@ -1,5 +1,4 @@
-// Glyph paths: Copyright 2026 The Chromium Authors. BSD license in
-// chromeium/new_tab/LICENSE. Source revision and paths: chromeium/context_menu/README.md.
+// Original Chromium glyph assets: chromeium/context_menu/README.md.
 using Svg;
 using System.Collections.Generic;
 using System.Drawing;
@@ -127,14 +126,11 @@ namespace Quartz.Controls
                     foreach (var old in Glyphs.Values) old.Dispose();
                     Glyphs.Clear();
                 }
-                string path = check
-                    ? "m9.55 15.15 8.47-8.47a.97.97 0 0 1 1.4 0c.2.2.3.44.3.71a.98.98 0 0 1-.3.72L10.25 17.3a.96.96 0 0 1-1.4 0L4.55 13a.94.94 0 0 1-.29-.71 1.02 1.02 0 0 1 .31-.72c.2-.2.44-.3.72-.3.27 0 .51.1.71.3Z"
-                    : "M8.57 8 5.9 5.33a.68.68 0 0 1 0-.98.67.67 0 0 1 .98 0l3.16 3.16a.67.67 0 0 1 .2.48.67.67 0 0 1-.2.48l-3.16 3.16c-.14.14-.3.21-.48.2a.71.71 0 0 1-.48-.22.67.67 0 0 1 0-.98Z";
-                int canvas = check ? 24 : 16;
                 var xml = new XmlDocument();
-                xml.LoadXml("<svg xmlns='http://www.w3.org/2000/svg' width='" + canvas + "' height='" + canvas +
-                    "' viewBox='0 0 " + canvas + " " + canvas + "'><path fill='#" +
-                    color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2") + "' d='" + path + "'/></svg>");
+                string asset = check ? "check" : "keyboard_arrow_right_flippable";
+                using (var stream = typeof(ChromiumMenuRenderer).Assembly.GetManifestResourceStream("Quartz.ChromiumMenus." + asset + ".svg"))
+                    xml.Load(stream);
+                xml.DocumentElement.SetAttribute("fill", "#" + color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2"));
                 image = SvgDocument.Open(xml).Draw(box.Width, box.Height);
                 if (rtl) image.RotateFlip(RotateFlipType.RotateNoneFlipX);
                 Glyphs.Add(key, image);

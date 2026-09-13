@@ -178,6 +178,7 @@
     <Compile Include="Controls\ChromiumMenuStyle.cs" />
     <Compile Include="Controls\ChromiumMenuRenderer.cs" />
     <Compile Include="Controls\ChromiumMenuWindow.cs" />
+    <Compile Include="Controls\ChromiumMenuFade.cs" />
     <Compile Include="Browser.SiteInfo.cs">
       <DependentUpon>Browser.cs</DependentUpon>
       <SubType>Form</SubType>
@@ -331,6 +332,12 @@
     <Compile Include="Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Resources\ChromiumMenus\check.svg">
+      <LogicalName>Quartz.ChromiumMenus.check.svg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ChromiumMenus\keyboard_arrow_right_flippable.svg">
+      <LogicalName>Quartz.ChromiumMenus.keyboard_arrow_right_flippable.svg</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="AddBirthday.resx">
       <DependentUpon>AddBirthday.cs</DependentUpon>
     </EmbeddedResource>

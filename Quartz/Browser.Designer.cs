@@ -719,7 +719,6 @@
             this.mnuExperts.Name = "mnuExperts";
             this.mnuExperts.OwnerItem = this.expertsToolStripMenuItem;
             resources.ApplyResources(this.mnuExperts, "mnuExperts");
-            this.mnuExperts.Opening += new System.ComponentModel.CancelEventHandler(this.mnuExperts_Opening);
             // 
             // nameWindowToolStripMenuItem
             // 
@@ -774,7 +773,6 @@
             this.mnuUserData.Name = "mnuUserData";
             this.mnuUserData.OwnerItem = this.userDataToolStripMenuItem;
             resources.ApplyResources(this.mnuUserData, "mnuUserData");
-            this.mnuUserData.Opening += new System.ComponentModel.CancelEventHandler(this.mnuUserData_Opening);
             // 
             // openFolderToolStripMenuItem
             // 

@@ -16,7 +16,10 @@ namespace Quartz.Controls
         private Size lastSize;
         private int lastDpi;
         private Color lastColor;
-        private Bitmap bitmap;
+        private IntPtr memoryDc, nativeBitmap, previousBitmap;
+        private Size surfaceSize;
+        private byte opacity = 255;
+        private bool visible;
         private int margin;
 
         internal ChromiumMenuWindow(ToolStripDropDown menu) { this.menu = menu; }
@@ -27,39 +30,55 @@ namespace Quartz.Controls
             if (Handle == IntPtr.Zero)
                 CreateHandle(new CreateParams { Caption = "Quartz menu shadow", Style = unchecked((int)0x80000000),
                     ExStyle = 0x00080000 | 0x00000020 | 0x08000000 | 0x00000080 | 0x00000008 });
-            bool changed = bitmap == null || lastSize != menu.Size || lastDpi != menu.DeviceDpi || lastColor != color;
+            bool changed = memoryDc == IntPtr.Zero || lastSize != menu.Size || lastDpi != menu.DeviceDpi || lastColor != color;
             if (changed)
             {
                 lastSize = menu.Size; lastDpi = menu.DeviceDpi; lastColor = color;
                 int elevation = ChromiumMenuStyle.Scale(menu, menu.OwnerItem == null ? 12 : 16);
                 margin = Math.Max(1, elevation * 3);
                 int radius = ChromiumMenuStyle.Scale(menu, 12);
-                bitmap?.Dispose();
-                bitmap = RenderSurface(menu.Size, radius, elevation, margin, color);
-                // The backdrop paints the outer antialiased pixel. Native GDI
-                // paints only the opaque interior, so there are no jagged corners.
-                using (var path = RoundedRectangle(new RectangleF(1, 1, menu.Width - 2, menu.Height - 2), Math.Max(1, radius - 1)))
+                ReleaseSurface();
+                using (var bitmap = RenderSurface(menu.Size, radius, elevation, margin, color))
                 {
-                    var oldRegion = menu.Region;
-                    menu.Region = new Region(path);
-                    oldRegion?.Dispose();
+                    surfaceSize = bitmap.Size;
+                    memoryDc = CreateCompatibleDC(IntPtr.Zero);
+                    nativeBitmap = bitmap.GetHbitmap(Color.FromArgb(0));
+                    previousBitmap = SelectObject(memoryDc, nativeBitmap);
                 }
+                var oldRegion = menu.Region;
+                menu.Region = CreateMenuRegion(menu.Size, radius);
+                oldRegion?.Dispose();
             }
             Point location = new Point(menu.Left - margin, menu.Top - margin);
-            if (changed) Upload(bitmap, location);
-            SetWindowPos(Handle, menu.Handle, location.X, location.Y, bitmap.Width, bitmap.Height,
+            byte nextOpacity = (byte)Math.Round(menu.Opacity * 255);
+            if (changed || !visible || opacity != nextOpacity)
+            {
+                opacity = nextOpacity;
+                Upload(location);
+            }
+            SetWindowPos(Handle, menu.Handle, location.X, location.Y, surfaceSize.Width, surfaceSize.Height,
                 0x0010 | 0x0040); // SWP_NOACTIVATE | SWP_SHOWWINDOW, immediately behind the menu.
+            visible = true;
+        }
+
+        internal void SetOpacity(byte value)
+        {
+            if (opacity == value) return;
+            opacity = value;
+            if (visible && memoryDc != IntPtr.Zero)
+                Upload(new Point(menu.Left - margin, menu.Top - margin));
         }
 
         internal void Hide()
         {
+            visible = false;
             if (Handle != IntPtr.Zero) ShowWindow(Handle, 0);
         }
 
         public void Dispose()
         {
             Hide();
-            bitmap?.Dispose(); bitmap = null;
+            ReleaseSurface();
             if (Handle != IntPtr.Zero) DestroyHandle();
         }
 
@@ -80,6 +99,20 @@ namespace Quartz.Controls
             path.AddArc(bounds.Left, bounds.Bottom - diameter, diameter, diameter, 90, 90);
             path.CloseFigure();
             return path;
+        }
+
+        private static Region CreateMenuRegion(Size size, int radius)
+        {
+            // Only the rounded corners need an antialiased pixel supplied by
+            // the backdrop. Insetting the entire HWND also clips every hover
+            // row, exposing a white strip down both straight edges.
+            using (var corners = RoundedRectangle(new RectangleF(1, 1, size.Width - 2, size.Height - 2),
+                Math.Max(1, radius - 1)))
+            {
+                var region = new Region(corners);
+                region.Union(new Rectangle(0, radius, size.Width, Math.Max(0, size.Height - radius * 2)));
+                return region;
+            }
         }
 
         internal static Bitmap RenderSurface(Size size, int radius, int elevation, int margin, Color color)
@@ -126,6 +159,16 @@ namespace Quartz.Controls
             {
                 graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 graphics.FillPath(brush, path);
+                // The menu HWND owns this interior. Leaving another opaque body
+                // behind it would blend the two alphas and spoil the fade.
+                // Match its native Region exactly; retain just the outer edge
+                // and shadow on this click-through surface.
+                using (var interior = CreateMenuRegion(size, radius))
+                {
+                    interior.Translate(margin, margin);
+                    graphics.CompositingMode = CompositingMode.SourceCopy;
+                    graphics.FillRegion(Brushes.Transparent, interior);
+                }
             }
             return result;
         }
@@ -169,23 +212,23 @@ namespace Quartz.Controls
             return source;
         }
 
-        private void Upload(Bitmap image, Point location)
+        private void Upload(Point location)
         {
-            IntPtr screen = GetDC(IntPtr.Zero), memory = CreateCompatibleDC(screen);
-            IntPtr hBitmap = image.GetHbitmap(Color.FromArgb(0)), previous = SelectObject(memory, hBitmap);
-            try
-            {
-                var position = new NativePoint(location.X, location.Y);
-                var size = new NativeSize(image.Width, image.Height);
-                var origin = new NativePoint(0, 0);
-                var blend = new BlendFunction { SourceConstantAlpha = 255, AlphaFormat = 1 };
-                UpdateLayeredWindow(Handle, screen, ref position, ref size, memory, ref origin, 0, ref blend, 2);
-            }
-            finally
-            {
-                SelectObject(memory, previous); DeleteObject(hBitmap);
-                DeleteDC(memory); ReleaseDC(IntPtr.Zero, screen);
-            }
+            var position = new NativePoint(location.X, location.Y);
+            var size = new NativeSize(surfaceSize.Width, surfaceSize.Height);
+            var origin = new NativePoint(0, 0);
+            var blend = new BlendFunction { SourceConstantAlpha = opacity, AlphaFormat = 1 };
+            // Reuse the selected native bitmap/DC: each frame only changes alpha.
+            UpdateLayeredWindow(Handle, IntPtr.Zero, ref position, ref size, memoryDc, ref origin, 0, ref blend, 2);
+        }
+
+        private void ReleaseSurface()
+        {
+            if (memoryDc == IntPtr.Zero) return;
+            SelectObject(memoryDc, previousBitmap);
+            DeleteObject(nativeBitmap);
+            DeleteDC(memoryDc);
+            memoryDc = nativeBitmap = previousBitmap = IntPtr.Zero;
         }
 
         [StructLayout(LayoutKind.Sequential)] private struct NativePoint { internal int X, Y; internal NativePoint(int x, int y) { X = x; Y = y; } }
@@ -194,8 +237,6 @@ namespace Quartz.Controls
         [DllImport("user32.dll")] private static extern bool UpdateLayeredWindow(IntPtr hwnd, IntPtr hdc, ref NativePoint position, ref NativeSize size, IntPtr source, ref NativePoint origin, int key, ref BlendFunction blend, int flags);
         [DllImport("user32.dll")] private static extern bool SetWindowPos(IntPtr hwnd, IntPtr after, int x, int y, int width, int height, int flags);
         [DllImport("user32.dll")] private static extern bool ShowWindow(IntPtr hwnd, int command);
-        [DllImport("user32.dll")] private static extern IntPtr GetDC(IntPtr hwnd);
-        [DllImport("user32.dll")] private static extern int ReleaseDC(IntPtr hwnd, IntPtr dc);
         [DllImport("gdi32.dll")] private static extern IntPtr CreateCompatibleDC(IntPtr dc);
         [DllImport("gdi32.dll")] private static extern bool DeleteDC(IntPtr dc);
         [DllImport("gdi32.dll")] private static extern IntPtr SelectObject(IntPtr dc, IntPtr obj);
