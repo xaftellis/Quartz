@@ -379,7 +379,6 @@ namespace Quartz
             NewControlThemeChanger.ChangeControlTheme(zoomToolStrip);
             NewControlThemeChanger.ChangeControlTheme(mnuFavourites);
             _siteInfoController?.ApplyTheme(txtWebAddress.BackColor, txtWebAddress.ForeColor);
-            _newTabPageController?.UpdateTheme();
         }
 
         public void ChangeTheme(string theme)
@@ -641,31 +640,31 @@ namespace Quartz
             string theme = SettingsService.Get("Theme");
             bool useDefaultHome = SettingsService.Get("DefaultHomePage") == "true";
 
-            if (useDefaultHome)
-                return NewTabPageData.PageUrl + "?theme=" + Uri.EscapeDataString(theme ?? "light");
+            // Helper for themed pages
+            string ThemePage(string name) => $"https://quartz.com/{theme}/{name}.html";
 
             switch (engine)
             {
                 case "bing":
-                    return "https://www.bing.com/";
+                    return useDefaultHome ? ThemePage("Bing") : "https://www.bing.com/";
 
                 case "yahoo":
-                    return "https://search.yahoo.com/";
+                    return useDefaultHome ? ThemePage("Yahoo") : "https://search.yahoo.com/";
 
                 case "duckduckgo":
-                    return "https://duckduckgo.com/";
+                    return useDefaultHome ? ThemePage("DuckDuckGo") : "https://duckduckgo.com/";
 
                 case "wikipedia":
                     return "https://www.wikipedia.org/";
 
                 case "netflix":
-                    return "https://www.netflix.com/";
+                    return useDefaultHome ? ThemePage("Netflix") : "https://www.netflix.com/";
 
                 case "youtube":
-                    return "https://www.youtube.com/";
+                    return useDefaultHome ? ThemePage("YouTube") : "https://www.youtube.com/";
 
                 case "googlemaps":
-                    return "https://www.google.com/maps";
+                    return useDefaultHome ? ThemePage("Google Maps") : "https://www.google.com/maps";
 
                 case "ebay":
                     return "https://www.ebay.com/";
@@ -674,14 +673,14 @@ namespace Quartz
                     return "https://www.amazon.com/";
 
                 case "ecosia":
-                    return "https://www.ecosia.org/";
+                    return useDefaultHome ? ThemePage("Ecosia") : "https://www.ecosia.org/";
 
                 case "google":
-                    return "https://www.google.com/";
+                    return useDefaultHome ? ThemePage("Google") : "https://www.google.com/";
 
                 default:
                     // Fallback to Google
-                    return "https://www.google.com/";
+                    return useDefaultHome ? ThemePage("Google") : "https://www.google.com/";
             }
         }
         public void UpdateFavBar()
@@ -690,7 +689,7 @@ namespace Quartz
 
             // --- Safely check Source ---
             string currentUrl = wvWebView1?.Source?.ToString() ?? "";
-            bool isHome = NewTabPageData.IsPage(currentUrl) || currentUrl == GetHomeUrl();
+            bool isHome = currentUrl == GetHomeUrl();
 
             bool shouldShow = showFavSetting || isHome;
 
@@ -817,10 +816,6 @@ namespace Quartz
 
 
             wvWebView1.CoreWebView2.SetVirtualHostNameToFolderMapping("quartz.com", Application.StartupPath + @"\assets\quartz.com\", CoreWebView2HostResourceAccessKind.Allow);
-            var newTabProfile = ProfileService.Current;
-            _newTabPageController = new NewTabPageController(wvWebView1.CoreWebView2, newTabProfile,
-                Program.profileService.Get(newTabProfile).isDisposable, SettingsService.Get,
-                () => new HistoryService().GetProfileHistoryFromRange(newTabProfile, null, DateTime.MaxValue));
 
             wvWebView1.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) =>
             {
@@ -1185,21 +1180,8 @@ namespace Quartz
         }
 
         private ulong _activeNavigationId;
-        private NewTabPageController _newTabPageController;
         private void wvWebView1_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
-            // Restored tabs and saved links to the old themed home pages use the new page too.
-            Uri target;
-            if (Uri.TryCreate(e.Uri, UriKind.Absolute, out target) && target.Host == "quartz.com" &&
-                System.Text.RegularExpressions.Regex.IsMatch(target.AbsolutePath,
-                    @"^/(light|dark|black|aqua|xmas)/(Google|Bing|DuckDuckGo|Yahoo|YouTube|Netflix|Ecosia|Google%20Maps|Google Maps|Custom)\.html$",
-                    System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-            {
-                e.Cancel = true;
-                BeginInvoke(new Action(() => SetSource(NewTabPageData.PageUrl + "?theme=" +
-                    Uri.EscapeDataString(SettingsService.Get("Theme") ?? "light"))));
-                return;
-            }
             PreviewNavigationStarting(e);
             SessionNavigationStarting(e);
             _activeNavigationId = e.NavigationId;
@@ -1368,13 +1350,6 @@ namespace Quartz
             else
             {
                 this.ShowIcon = true;
-            }
-
-            if (NewTabPageData.IsPage(currentUri.AbsoluteUri))
-            {
-                txtWebAddress.Clear();
-                if (loadnum == 0 && !_newtab) txtWebAddress.Focus();
-                return;
             }
 
             if (loadnum == 0 && !_newtab)

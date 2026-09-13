@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Quartz.Models;
 using System;
 using System.Collections.Generic;
@@ -15,9 +15,8 @@ namespace Quartz.Services
         private string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Xaftellis\Quartz\UserData\jsons", "history.json");
         private List<HistoryModel> _items = null;
 
-        public HistoryService(string jsonPath = null)
+        public HistoryService()
         {
-            if (jsonPath != null) _jsonPath = jsonPath;
             Reload();
         }
 
@@ -134,16 +133,6 @@ namespace Quartz.Services
             SaveChanges();
         }
 
-        public void DeleteProfileUrl(Guid profileId, string url)
-        {
-            if (!NewTabPageData.IsWebUrl(url)) throw new ArgumentException("url");
-            string address = new Uri(url).AbsoluteUri;
-            // Chromium removes the URL and every visit to it, within this profile.
-            _items.RemoveAll(h => h != null && h.ProfileId == profileId &&
-                NewTabPageData.IsWebUrl(h.WebAddress) && new Uri(h.WebAddress).AbsoluteUri == address);
-            SaveChanges();
-        }
-
         public void SaveChanges()
         {
             var jsonString = JsonConvert.SerializeObject(_items);
@@ -151,5 +140,3 @@ namespace Quartz.Services
         }
     }
 }
-
-
