@@ -16,8 +16,19 @@ namespace Quartz.Controls
 
         public static void Apply(ToolStripDropDown menu)
         {
-            if (menu == null || menu.IsDisposed) return;
+            if (menu == null || menu.IsDisposed || IsDesignTime(menu)) return;
             States.GetValue(menu, key => new MenuState(key)).Prepare();
+        }
+
+        internal static bool IsDesignTime(ToolStripDropDown menu)
+        {
+            // LicenseManager covers construction before a designer assigns Site.
+            // Generated submenus inherit design mode through their owner strip.
+            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
+            for (ToolStrip strip = menu; strip != null; strip = (strip as ToolStripDropDown)?.OwnerItem?.Owner)
+                for (Control control = strip; control != null; control = control.Parent)
+                    if (control.Site?.DesignMode == true) return true;
+            return false;
         }
 
         internal static MenuState GetState(ToolStripDropDown menu)
@@ -27,6 +38,7 @@ namespace Quartz.Controls
 
         internal static void PrepareOpening(ToolStripDropDown menu)
         {
+            if (IsDesignTime(menu)) return;
             var state = GetState(menu);
             state.Prepare();
             state.fade.PrepareOpening();
@@ -86,6 +98,7 @@ namespace Quartz.Controls
             }
             private void Opened(object sender, EventArgs e)
             {
+                if (IsDesignTime(Menu)) return;
                 Prepare();
                 if (surface == null) surface = new ChromiumMenuWindow(Menu);
                 surface.Update(Palette.Background);
@@ -126,7 +139,7 @@ namespace Quartz.Controls
 
             internal void Prepare()
             {
-                if (preparing || Menu.IsDisposed) return;
+                if (preparing || Menu.IsDisposed || IsDesignTime(Menu)) return;
                 preparing = true;
                 Menu.SuspendLayout();
                 try

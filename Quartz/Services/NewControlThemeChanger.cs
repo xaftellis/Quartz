@@ -76,6 +76,7 @@ namespace Quartz.Services
         }
         public static void ChangeControlTheme(object _object)
         {
+            if (_object is ToolStripDropDown menu && Controls.ChromiumMenuStyle.IsDesignTime(menu)) return;
             Color backcolor = Color.White;
             Color forecolor = Color.Black;
             Color extrabackcolor = Color.Blue;

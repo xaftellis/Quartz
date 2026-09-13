@@ -17,13 +17,14 @@ namespace Quartz.Controls
             // Opening handlers populate dynamic menus. Style the final items,
             // including newly created submenus, before the popup is measured.
             base.OnOpening(e);
-            if (!e.Cancel) ChromiumMenuStyle.PrepareOpening(this);
+            if (!e.Cancel && !DesignMode && !ChromiumMenuStyle.IsDesignTime(this))
+                ChromiumMenuStyle.PrepareOpening(this);
         }
 
         protected override void OnOpened(EventArgs e)
         {
             base.OnOpened(e);
-            if (Visible && !IsDisposed) Focus();
+            if (Visible && !IsDisposed && !DesignMode && !ChromiumMenuStyle.IsDesignTime(this)) Focus();
         }
     }
 }
