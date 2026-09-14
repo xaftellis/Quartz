@@ -15,7 +15,6 @@ namespace Quartz.Services
     {
         private static string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Xaftellis\Quartz\UserData\jsons", "settings.json");
         private static string WindowsTheme = ThemeHelper.GetTheme();
-        private static bool DisplayOutOfDateThemeMessage = true;
 
         [ThreadStatic] private static int _readSnapshotDepth;
         [ThreadStatic] private static List<SettingModel> _readSnapshot;
@@ -151,37 +150,18 @@ namespace Quartz.Services
             _readSnapshot = null;
         }
 
-        public static string GetWindowsTheme()
-        {
-            if(IsWindowsThemeUpToDate() == false && DisplayOutOfDateThemeMessage == true)
-            {
-                var msg = MessageBox.Show("We've detected a change in the Windows theme. Would you like to restart the application to synchronize the themes?", "Out Of Sync", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (msg == DialogResult.Yes)
-                {
-                    if (Application.OpenForms["AppContainer"] != null)
-                    {
-                        Power.Restart();
-                    }
-                    else
-                    {
-                        MainSettingsService.Set("RunBrowser", "true");
-                        Power.Restart();
-                    }
-                }
-                else if (msg == DialogResult.No)
-                {
-                    DisplayOutOfDateThemeMessage = false;
-                }
-            }
+        public static string GetWindowsTheme() => WindowsTheme;
 
-            return WindowsTheme;
+        // Called on the UI thread by ThemeService, outside a settings read.
+        internal static bool RefreshWindowsTheme()
+        {
+            string current = ThemeHelper.GetTheme();
+            if (current == WindowsTheme) return false;
+            WindowsTheme = current;
+            return true;
         }
 
-        public static bool IsWindowsThemeUpToDate()
-        {
-            return WindowsTheme == ThemeHelper.GetTheme();                                                        
-        }
-
+        public static bool IsWindowsThemeUpToDate() => WindowsTheme == ThemeHelper.GetTheme();
 
         public static void DeleteProfileSettings(Guid profileId)
         {

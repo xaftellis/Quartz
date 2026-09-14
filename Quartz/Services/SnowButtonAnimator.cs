@@ -16,6 +16,7 @@ namespace Quartz.Services
         private static readonly List<Button> buttons = new List<Button>();
         // frame index per button
         private static readonly Dictionary<Button, int> frames = new Dictionary<Button, int>();
+        private static readonly Dictionary<Button, Image> originalImages = new Dictionary<Button, Image>();
         private const int MaxFrames = 98;
 
         static SnowButtonAnimator()
@@ -24,33 +25,18 @@ namespace Quartz.Services
         }
 
         /// <summary>
-        /// Start animating this button. If a button with the same Name on the same Form
-        /// is already animated, this does nothing.
+        /// Start animating this button. Repeated calls for the same button do nothing.
         /// </summary>
         public static void Animate(Button btn)
         {
             if (btn == null) return;
 
-            Form form = btn.FindForm();
-
-            // check duplicates: same Name + same Form
-            foreach (var b in buttons)
-            {
-                if (b.Name == btn.Name && b.FindForm() == form)
-                    return; // already animating same-name on same form
-            }
-
+            if (buttons.Contains(btn)) return;
             buttons.Add(btn);
             frames[btn] = 1;
-
-            // remove from lists when disposed
-            btn.Disposed += (s, e) => RemoveButton(btn);
-            // also remove when parent changes to null (removed from form/controls)
-            btn.ParentChanged += (s, e) =>
-            {
-                if (btn.Parent == null)
-                    RemoveButton(btn);
-            };
+            originalImages[btn] = btn.BackgroundImage;
+            btn.Disposed += ButtonDisposed;
+            btn.ParentChanged += ButtonParentChanged;
 
             if (!timer.Enabled)
                 timer.Start();
@@ -93,28 +79,30 @@ namespace Quartz.Services
                 timer.Stop();
         }
 
-        private static void RemoveButton(Button btn)
+        private static void ButtonDisposed(object sender, EventArgs e) => RemoveButton((Button)sender);
+        private static void ButtonParentChanged(object sender, EventArgs e)
         {
-            if (btn == null) return;
-
-            if (buttons.Contains(btn))
-                buttons.Remove(btn);
-
-            if (frames.ContainsKey(btn))
-                frames.Remove(btn);
-
-            if (buttons.Count == 0 && timer.Enabled)
-                timer.Stop();
+            var button = (Button)sender;
+            if (button.Parent == null) RemoveButton(button);
         }
 
-        /// <summary>
-        /// Optional helper to stop and clear all animations.
-        /// </summary>
+        public static void Stop(Button button) => RemoveButton(button);
+
+        private static void RemoveButton(Button btn)
+        {
+            if (btn == null || !buttons.Remove(btn)) return;
+            frames.Remove(btn);
+            btn.Disposed -= ButtonDisposed;
+            btn.ParentChanged -= ButtonParentChanged;
+            if (originalImages.TryGetValue(btn, out Image image) && !btn.IsDisposed)
+                btn.BackgroundImage = image;
+            originalImages.Remove(btn);
+            if (buttons.Count == 0) timer.Stop();
+        }
+
         public static void StopAll()
         {
-            timer.Stop();
-            buttons.Clear();
-            frames.Clear();
+            foreach (var button in buttons.ToArray()) RemoveButton(button);
         }
     }
 }

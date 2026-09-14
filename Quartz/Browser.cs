@@ -397,8 +397,7 @@ namespace Quartz
 
         public void ChangeTheme(string theme)
         {
-            SettingsService.Set("Theme", theme);
-            LoadTheme();
+            ThemeService.ChangeTheme(theme);
         }
 
         public void LoadFavourites()
@@ -1243,6 +1242,7 @@ namespace Quartz
             if (e.IsSuccess)
             {
                 SaveCurrentPageToHistory();
+                _ = ApplyInternalPageThemeAsync();
                 return;
             }
 

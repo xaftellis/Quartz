@@ -76,6 +76,7 @@ namespace Quartz.Services
         }
         public static void ChangeControlTheme(object _object)
         {
+            if (_object == null || (_object is Control disposed && disposed.IsDisposed)) return;
             Color backcolor = Color.White;
             Color forecolor = Color.Black;
             Color extrabackcolor = Color.Blue;
@@ -205,6 +206,10 @@ namespace Quartz.Services
                 {
                     SnowButtonAnimator.Animate(button);
                 }
+                else
+                {
+                    SnowButtonAnimator.Stop(button);
+                }
             }
             else if (control is ContextMenuStrip)
             {
@@ -328,11 +333,9 @@ namespace Quartz.Services
             List<object> allControls = GetAllControls(form);
 
             // Display the names of all controls
-            foreach (var ctrl in allControls)
+            foreach (var ctrl in allControls.Distinct())
             {
-                var control = ctrl as Control;
-
-                ChangeControlTheme(control); ChangeControlTheme(control);
+                ChangeControlTheme(ctrl);
 
             }
         }

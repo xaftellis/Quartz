@@ -153,7 +153,6 @@ namespace Quartz
                 ComboBoxTheme.Items.Add("Xmas");
             SelectSettingsItem(ComboBoxTheme, theme, disposable ? 4 : 0,
                 "auto (light/dark)", "auto (light/black)", "light", "dark", "black", "aqua", "xmas");
-            PreviousThemeSelectedIndex = ComboBoxTheme.SelectedIndex;
         }
 
         private void ApplySettingsTabAlignment()

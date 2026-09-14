@@ -45,6 +45,26 @@ namespace Quartz.Omnibox
             else return Color.Black;
         }
         
+        // Recolour in place: do not raise TextChanged, rebuild suggestions,
+        // clear undo history, or lose the current selection on a theme switch.
+        public void RefreshColors()
+        {
+            int start = omniBox.SelectionStart;
+            int length = omniBox.SelectionLength;
+            string value = omniBox.Text;
+            string host = QueryAnalyzer.IsProbablyUrl(value) ? GetHostPart(value) : null;
+            int hostIndex = string.IsNullOrEmpty(host) ? -1 : value.IndexOf(host, StringComparison.OrdinalIgnoreCase);
+            omniBox.SelectAll();
+            omniBox.SelectionBackColor = omniBox.BackColor;
+            omniBox.SelectionColor = hostIndex >= 0 ? SecondaryColor() : MainColor();
+            if (hostIndex >= 0)
+            {
+                omniBox.Select(hostIndex, host.Length);
+                omniBox.SelectionColor = MainColor();
+            }
+            omniBox.Select(start, length);
+        }
+
         public void RenderText()
         
         {

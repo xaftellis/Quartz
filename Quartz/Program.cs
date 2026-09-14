@@ -77,6 +77,7 @@ namespace Quartz
             InitializeDefaultProfile().GetAwaiter().GetResult();
 
             HandleResetIfRequested();
+            ThemeService.Start();
 
             string frequency = MainSettingsService.Get("UpdateCheckFrequency");
             DateTime lastChecked = UpdateStatusService.Get().CheckedAtUtc;

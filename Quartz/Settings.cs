@@ -26,7 +26,6 @@ namespace Quartz
     public partial class Settings : Form
     {
         private bool updating;
-        private int PreviousThemeSelectedIndex;
         private BirthdayService _birthdayService;
         public BirthdayService birthdayService => _birthdayService ?? (_birthdayService = new BirthdayService());
 
@@ -292,168 +291,35 @@ namespace Quartz
         private void ComboBoxTheme_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_loadingSettings) return;
-            String currenttheme;
-            if (SettingsService.GetAutoTheme() != null)
+            string[] themes = { "auto (light/dark)", "auto (light/black)", "light", "dark", "black", "aqua", "xmas" };
+            int index = ComboBoxTheme.SelectedIndex;
+            if (index < 0 || index >= themes.Length) return;
+            string preference = themes[index];
+            if (preference == (SettingsService.GetAutoTheme() ?? SettingsService.Get("Theme"))) return;
+            _browser.ChangeTheme(preference);
+        }
+
+        internal void ApplyLiveTheme()
+        {
+            if (!_settingsLoaded) return;
+            _loadingSettings = true;
+            SuspendLayout();
+            try
             {
-                currenttheme = SettingsService.GetAutoTheme();
+                NewControlThemeChanger.ChangeTheme(this);
+                NewControlThemeChanger.ChangeControlTheme(mnuBirthdays);
+                NewControlThemeChanger.ChangeControlTheme(contextMenuStrip1);
+                LoadThemeSelection();
+                ApplyTimeMachineLayout();
+                var previous = pictureBox1.BackgroundImage;
+                pictureBox1.BackgroundImage = FaviconHelper.GetFullResDefaultFaviconAsImage();
+                previous?.Dispose();
+                if (LoadingProgress.CoreWebView2 != null) ApplyUpdateIndicatorTheme();
             }
-            else
+            finally
             {
-                currenttheme = SettingsService.Get("Theme");
-            }
-
-            if (ComboBoxTheme.SelectedIndex == 0 && currenttheme != "auto (light/dark)")
-            {
-                if (MessageBox.Show("This action will require a restart, are you sure you want to continue?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    var theme = "auto (light/dark)";
-                    _browser.ChangeTheme(theme);
-
-                    if (Program.profileService.Get(ProfileService.Current).isDisposable)
-                    {
-                        Program.profileService.Get(ProfileService.Current).endSession = false;
-                        Program.profileService.SaveChanges();
-                    }
-
-                    Program._bypassPassword = true;
-                    MainSettingsService.Set("RunBrowser", "true");
-                    Power.Restart();
-                }
-                else
-                {
-                    ComboBoxTheme.SelectedIndex = PreviousThemeSelectedIndex;
-                }
-            }
-            else if (ComboBoxTheme.SelectedIndex == 1 && currenttheme != "auto (light/black)")
-            {
-                if (MessageBox.Show("This action will require a restart, are you sure you want to continue?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    var theme = "auto (light/black)";
-                    _browser.ChangeTheme(theme);
-                    if (Program.profileService.Get(ProfileService.Current).isDisposable)
-                    {
-                        Program.profileService.Get(ProfileService.Current).endSession = false;
-                        Program.profileService.SaveChanges();
-                    }
-
-                    Program._bypassPassword = true;
-                    MainSettingsService.Set("RunBrowser", "true");
-                    Power.Restart();
-                }
-                else
-                {
-                    ComboBoxTheme.SelectedIndex = PreviousThemeSelectedIndex;
-                }
-            }
-            else if (ComboBoxTheme.SelectedIndex == 2 && currenttheme != "light")
-            {
-                if (MessageBox.Show("This action will require a restart, are you sure you want to continue?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    var theme = "light";
-                    _browser.ChangeTheme(theme);
-
-                    if (Program.profileService.Get(ProfileService.Current).isDisposable)
-                    {
-                        Program.profileService.Get(ProfileService.Current).endSession = false;
-                        Program.profileService.SaveChanges();
-                    }
-
-                    Program._bypassPassword = true;
-                    MainSettingsService.Set("RunBrowser", "true");
-                    Power.Restart();
-                }
-                else
-                {
-                    ComboBoxTheme.SelectedIndex = PreviousThemeSelectedIndex;
-                }
-            }
-            else if (ComboBoxTheme.SelectedIndex == 3 && currenttheme != "dark")
-            {
-                if (MessageBox.Show("This action will require a restart, are you sure you want to continue?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    var theme = "dark";
-                    _browser.ChangeTheme(theme);
-
-                    if (Program.profileService.Get(ProfileService.Current).isDisposable)
-                    {
-                        Program.profileService.Get(ProfileService.Current).endSession = false;
-                        Program.profileService.SaveChanges();
-                    }
-
-                    Program._bypassPassword = true;
-                    MainSettingsService.Set("RunBrowser", "true");
-                    Power.Restart();
-                }
-                else
-                {
-                    ComboBoxTheme.SelectedIndex = PreviousThemeSelectedIndex;
-                }
-            }
-            else if (ComboBoxTheme.SelectedIndex == 4 && currenttheme != "black")
-            {
-                if (MessageBox.Show("This action will require a restart, are you sure you want to continue?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    var theme = "black";
-                    _browser.ChangeTheme(theme);
-
-                    if (Program.profileService.Get(ProfileService.Current).isDisposable)
-                    {
-                        Program.profileService.Get(ProfileService.Current).endSession = false;
-                        Program.profileService.SaveChanges();
-                    }
-
-                    Program._bypassPassword = true;
-                    MainSettingsService.Set("RunBrowser", "true");
-                    Power.Restart();
-                }
-                else
-                {
-                    ComboBoxTheme.SelectedIndex = PreviousThemeSelectedIndex;
-                }
-            }
-            else if (ComboBoxTheme.SelectedIndex == 5 && currenttheme != "aqua")
-            {
-                if (MessageBox.Show("This action will require a restart, are you sure you want to continue?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    var theme = "aqua";
-                    _browser.ChangeTheme(theme);
-
-                    if (Program.profileService.Get(ProfileService.Current).isDisposable)
-                    {
-                        Program.profileService.Get(ProfileService.Current).endSession = false;
-                        Program.profileService.SaveChanges();
-                    }
-
-                    Program._bypassPassword = true;
-                    MainSettingsService.Set("RunBrowser", "true");
-                    Power.Restart();
-                }
-                else
-                {
-                    ComboBoxTheme.SelectedIndex = PreviousThemeSelectedIndex;
-                }
-            }
-            else if (ComboBoxTheme.SelectedIndex == 6 && Quartz.Services.GetRealTimeInZone.GetRealTimeInComputerTimeZone().Month == 12 && currenttheme != "xmas")
-            {
-                if (MessageBox.Show("This action will require a restart, are you sure you want to continue?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    var theme = "xmas";
-                    _browser.ChangeTheme(theme);
-
-                    if (Program.profileService.Get(ProfileService.Current).isDisposable)
-                    {
-                        Program.profileService.Get(ProfileService.Current).endSession = false;
-                        Program.profileService.SaveChanges();
-                    }
-
-                    Program._bypassPassword = true;
-                    MainSettingsService.Set("RunBrowser", "true");
-                    Power.Restart();
-                }
-                else
-                {
-                    ComboBoxTheme.SelectedIndex = PreviousThemeSelectedIndex;
-                }
+                ResumeLayout(true);
+                _loadingSettings = false;
             }
         }
 

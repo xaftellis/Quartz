@@ -92,6 +92,22 @@ namespace Quartz
             Rebind();
         }
 
+        internal void ApplyLiveTheme()
+        {
+            NewControlThemeChanger.ChangeTheme(this);
+            NewControlThemeChanger.ChangeControlTheme(contextMenuStrip1);
+            LoadSeparatorTheme(pnlDivider);
+            historyTheme = SettingsService.Get("Theme");
+            // Keep the rows, scroll position, filter and selection intact.
+            var previous = defaultFavicon;
+            defaultFavicon = FaviconHelper.GetDefaultFavicon16().ToBitmap();
+            foreach (var id in faviconImages.Keys.ToArray())
+                if (ReferenceEquals(faviconImages[id], previous)) faviconImages[id] = defaultFavicon;
+            SetDataLook();
+            previous?.Dispose();
+            dataGridView1.Invalidate();
+        }
+
         private void btnClear_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Are You Sure Want To Clear All History?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)

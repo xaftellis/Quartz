@@ -87,8 +87,16 @@ namespace Quartz
 
             ProfileService.LoadCurrentProfile();
             ProfileId = ProfileService.Current;
+            AeroPeekEnabled = false;
+            ApplyWindowTheme();
+
+            ContextMenuProvider._contextMenuStripNormal = new DefaultContextMenu();
+            ContextMenuProvider._contextMenuStripTab = new TabContextMenu();
+        }
+
+        internal void ApplyWindowTheme()
+        {
             var theme = SettingsService.Get("Theme");
-            Icon icon = Quartz.Properties.Resources.favicon;
             System.Drawing.Color barBackColor = System.Drawing.Color.White;
             System.Drawing.Color textForeColor = System.Drawing.Color.Black;
             // Chromium leaves the native outer frame to DWM. Let Windows choose
@@ -96,24 +104,26 @@ namespace Quartz
             // of overriding it with Quartz's almost-white #DBDCDD.
             System.Drawing.Color? windowOutline = null;
 
-            AeroPeekEnabled = false;
+            var renderer = TabRenderer as ChromiumTabRenderer;
+            if (renderer == null)
+            {
+                renderer = new ChromiumTabRenderer(this);
+                TabRenderer = renderer;
+            }
 
             if (theme == "light")
             {
-                TabRenderer = new ChromiumTabRenderer(this) { Theme = ChromiumTabTheme.Light };
+                renderer.Theme = ChromiumTabTheme.Light;
 
                 barBackColor = System.Drawing.Color.FromArgb(222, 225, 230);
                 textForeColor = System.Drawing.Color.Black;
             }
             else if (theme == "dark")
             {
-                TabRenderer = new ChromiumTabRenderer(this)
-                {
-                    Theme = new ChromiumTabTheme(System.Drawing.Color.FromArgb(88, 88, 88),
-                        System.Drawing.Color.FromArgb(35, 35, 35),
-                        activeForeground: System.Drawing.Color.FromArgb(195, 195, 195),
-                        inactiveForeground: System.Drawing.Color.FromArgb(195, 195, 195))
-                };
+                renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.FromArgb(88, 88, 88),
+                    System.Drawing.Color.FromArgb(35, 35, 35),
+                    activeForeground: System.Drawing.Color.FromArgb(195, 195, 195),
+                    inactiveForeground: System.Drawing.Color.FromArgb(195, 195, 195));
 
                 barBackColor = System.Drawing.Color.FromArgb(88, 88, 88);
                 textForeColor = System.Drawing.Color.FromArgb(195, 195, 195);
@@ -121,11 +131,8 @@ namespace Quartz
             }
             else if (theme == "black")
             {
-                TabRenderer = new ChromiumTabRenderer(this)
-                {
-                    Theme = new ChromiumTabTheme(System.Drawing.Color.Black, System.Drawing.Color.Black,
-                        activeForeground: System.Drawing.Color.White, inactiveForeground: System.Drawing.Color.White)
-                };
+                renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.Black, System.Drawing.Color.Black,
+                    activeForeground: System.Drawing.Color.White, inactiveForeground: System.Drawing.Color.White);
 
                 barBackColor = System.Drawing.Color.Black;
                 textForeColor = System.Drawing.Color.White;
@@ -133,10 +140,7 @@ namespace Quartz
             }
             else if (theme == "aqua")
             {
-                TabRenderer = new ChromiumTabRenderer(this)
-                {
-                    Theme = new ChromiumTabTheme(System.Drawing.Color.Blue, System.Drawing.Color.Aqua)
-                };
+                renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.Blue, System.Drawing.Color.Aqua);
 
                 barBackColor = System.Drawing.Color.Blue;
                 textForeColor = System.Drawing.Color.Aqua;
@@ -144,10 +148,7 @@ namespace Quartz
             }
             else if (theme == "xmas")
             {
-                TabRenderer = new ChromiumTabRenderer(this)
-                {
-                    Theme = new ChromiumTabTheme(System.Drawing.Color.Lime, System.Drawing.Color.Red)
-                };
+                renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.Lime, System.Drawing.Color.Red);
 
                 barBackColor = System.Drawing.Color.Lime;
                 textForeColor = System.Drawing.Color.Red;
@@ -155,7 +156,7 @@ namespace Quartz
             }
             else
             {
-                TabRenderer = new ChromiumTabRenderer(this);
+                renderer.Theme = ChromiumTabTheme.Light;
             }
 
             ((ChromiumTabRenderer)TabRenderer).DefaultFavicon = FaviconHelper.GetDefaultFavicon16();
@@ -169,8 +170,6 @@ namespace Quartz
 
             CustomWindow(barBackColor, textForeColor, windowOutline, Handle);
 
-            ContextMenuProvider._contextMenuStripNormal = new DefaultContextMenu();
-            ContextMenuProvider._contextMenuStripTab = new TabContextMenu();
         }
 
         private void ReadWindowSettings()

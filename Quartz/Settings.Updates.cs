@@ -29,14 +29,7 @@ namespace Quartz
                     LoadingProgress.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
                     LoadingProgress.CoreWebView2.MemoryUsageTargetLevel = SettingsService.Get("MemoryUsage") == "low"
                         ? CoreWebView2MemoryUsageTargetLevel.Low : CoreWebView2MemoryUsageTargetLevel.Normal;
-                    NewControlThemeChanger.ChangeControlTheme(LoadingProgress);
-                    string theme = SettingsService.Get("Theme");
-                    string colour = theme == "xmas" ? "xmas_green" : theme == "black" ? "white" :
-                        theme == "aqua" ? "blue" : theme;
-                    string path = Path.Combine(Application.StartupPath, "assets", "throbber",
-                        "throbber_medium_" + colour + ".svg");
-                    LoadingProgress.ZoomFactor = 1;
-                    LoadingProgress.Source = new Uri(path);
+                    ApplyUpdateIndicatorTheme();
                 }
                 return true;
             }
@@ -46,6 +39,18 @@ namespace Quartz
                 Debug.WriteLine("Update indicator unavailable: " + error.Message);
                 return false;
             }
+        }
+
+        private void ApplyUpdateIndicatorTheme()
+        {
+            NewControlThemeChanger.ChangeControlTheme(LoadingProgress);
+            string theme = SettingsService.Get("Theme");
+            string colour = theme == "xmas" ? "xmas_green" : theme == "black" ? "white" :
+                theme == "aqua" ? "blue" : theme;
+            string path = Path.Combine(Application.StartupPath, "assets", "throbber",
+                "throbber_medium_" + colour + ".svg");
+            LoadingProgress.ZoomFactor = 1;
+            LoadingProgress.Source = new Uri(path);
         }
 
         private async void CheckingForUpdatesAnimation()
