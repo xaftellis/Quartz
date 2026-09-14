@@ -50,6 +50,7 @@ namespace EasyTabs
             private Rectangle _iconBounds, _titleBounds;
             private Color _foreground;
             private float _scale;
+            private readonly TabTitleRenderer _title = new TabTitleRenderer();
             internal Rectangle FaviconSource { get; private set; }
             internal Rectangle IconBounds => _iconBounds;
             internal bool HasFavicon => _icon != null;
@@ -78,17 +79,30 @@ namespace EasyTabs
 
                 _graphics.Clear(Color.Transparent);
                 if (icon != null) _graphics.DrawIcon(icon, FaviconSource);
-                if (titleBounds.Width > 0)
-                {
-                    using (var brush = new SolidBrush(foreground))
-                    using (var format = new StringFormat(StringFormat.GenericTypographic)
-                    { FormatFlags = StringFormatFlags.NoWrap, Trimming = StringTrimming.EllipsisCharacter, LineAlignment = StringAlignment.Center })
-                        _graphics.DrawString(caption, font, brush, titleBounds, format);
-                }
+                _title.Draw(_graphics, Pixels, caption, font, titleBounds, foreground, scale);
                 _graphics.Flush(System.Drawing.Drawing2D.FlushIntention.Sync);
                 Pixels.NotifyPixelsChanged();
                 _caption = caption; _icon = icon; _iconBounds = iconBounds; _titleBounds = titleBounds;
                 _foreground = foreground; _scale = scale;
+            }
+
+            internal void UpdateClosingTitle(Rectangle titleBounds, Color foreground, float scale, Font font)
+            {
+                if (Pixels == null || (_titleBounds == titleBounds && _foreground == foreground && _scale == scale)) return;
+                // The page form is already disposed. Keep the cached favicon
+                // pixels; only clear/redraw the title side of the shared bitmap.
+                var state = _graphics.Save();
+                try
+                {
+                    _graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                    using (var clear = new SolidBrush(Color.Transparent))
+                        _graphics.FillRectangle(clear, 0, 0, FaviconSource.Left, Pixels.Height);
+                }
+                finally { _graphics.Restore(state); }
+                _title.Draw(_graphics, Pixels, _caption, font, titleBounds, foreground, scale);
+                _graphics.Flush(System.Drawing.Drawing2D.FlushIntention.Sync);
+                Pixels.NotifyPixelsChanged();
+                _titleBounds = titleBounds; _foreground = foreground; _scale = scale;
             }
 
             public void Dispose()
@@ -832,6 +846,9 @@ namespace EasyTabs
                 visual.Content.Update(tab.Area.Size, tab.Caption, tab.IsLoading && (waiting || !realFavicon) ? null : favicon,
                     iconBounds, titleBounds, foreground, scale, _font, forceRedraw);
             }
+            else
+                visual.Content.UpdateClosingTitle(normalContents ? titleBounds : Rectangle.Empty,
+                    foreground, scale, _font);
             RectangleF clip = geometry.ContentClip(leading, trailing);
             if (visual.Closing && close)
                 clip.Width = Math.Max(0, Math.Min(clip.Right, titleRight) - clip.Left);

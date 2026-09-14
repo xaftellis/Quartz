@@ -131,6 +131,7 @@
     <Compile Include="TabFrameScheduler.cs" />
     <Compile Include="ChromeTabRenderer.cs" />
     <Compile Include="ChromiumTabRenderer.cs" />
+    <Compile Include="TabTitleRenderer.cs" />
     <Compile Include="ChromiumTabGeometry.cs" />
     <Compile Include="ChromiumTabTheme.cs" />
     <Compile Include="ContextMenuProvider.cs" />
