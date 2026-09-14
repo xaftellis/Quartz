@@ -401,7 +401,8 @@ namespace EasyTabs
                 visual.Closing = true;
                 visual.Previous = null;
                 if (index > 0) _visuals.TryGetValue(_parentWindow.Tabs[index - 1], out visual.Previous);
-                visual.Hover = 0;
+                // Tab::SetClosing does not reset hover. Active tabs track hover
+                // too, so their existing highlight appears when they lose selection.
                 visual.CloseFeedback.Cancel();
                 if (_pressedFeedback == visual.CloseFeedback) _pressedFeedback = null;
             }
@@ -646,6 +647,7 @@ namespace EasyTabs
                     }
                 }
 
+                _hoverAnimating = false;
                 int closingRight = startX;
                 foreach (TitleBarTab tab in _closingTabs)
                 {
@@ -664,12 +666,17 @@ namespace EasyTabs
                         continue;
                     }
                     ChromiumTabGeometry geometry = visual.Geometry;
-                    if (geometry.Width != visual.Bounds.Width)
+                    if (geometry.Width != visual.Bounds.Width || geometry.Stroke != 0)
                     {
                         visual.Geometry = new ChromiumTabGeometry(visual.Bounds.Width, visual.Bounds.Height,
-                            scale, geometry.Stroke, geometry.ExtendHit, geometry.First);
+                            scale, 0, geometry.ExtendHit, geometry.First);
                         geometry.Dispose();
                     }
+                    // Keep the highlight while the pointer is inside the shrinking
+                    // tab; on exit it fades normally instead of disappearing at close.
+                    bool hovered = visual.Bounds.Contains(cursor) &&
+                        visual.Geometry.HitTest.Contains(cursor.X - visual.Bounds.X, cursor.Y - visual.Bounds.Y);
+                    UpdateHover(visual, hovered, cursor, animate, step);
                     closingRight = Math.Max(closingRight, visual.Bounds.Right);
                 }
 
@@ -677,14 +684,10 @@ namespace EasyTabs
                 _paintOrder.AddRange(tabs);
                 _paintOrder.Sort(_comparePaintOrder);
                 _hoveredTab = IsTabRepositioning ? null : FindTab(cursor);
-                _hoverAnimating = false;
                 foreach (TitleBarTab tab in tabs)
                 {
                     Visual visual = _visuals[tab];
-                    float target = tab == _hoveredTab && !tab.Active ? 1 : 0;
-                    visual.Hover = !animate ? target : target > visual.Hover ? Math.Min(target, visual.Hover + step) : Math.Max(target, visual.Hover - step);
-                    _hoverAnimating |= visual.Hover != target;
-                    if (tab == _hoveredTab) visual.HoverPoint = new Point(cursor.X - tab.Area.X, cursor.Y - tab.Area.Y);
+                    UpdateHover(visual, tab == _hoveredTab, cursor, animate, step);
                 }
                 _paintOrder.Sort(_comparePaintOrder);
 
@@ -712,6 +715,15 @@ namespace EasyTabs
             }
         }
 
+        private void UpdateHover(Visual visual, bool hovered, Point cursor, bool animate, float step)
+        {
+            float target = hovered ? 1 : 0;
+            visual.Hover = !animate ? target : target > visual.Hover
+                ? Math.Min(target, visual.Hover + step) : Math.Max(target, visual.Hover - step);
+            _hoverAnimating |= visual.Hover != target;
+            if (hovered) visual.HoverPoint = new Point(cursor.X - visual.Bounds.X, cursor.Y - visual.Bounds.Y);
+        }
+
         private void EnsureBuffer(int width, int height)
         {
             if (_buffer != null && _buffer.Width == width && _buffer.Height == height) return;
@@ -724,20 +736,23 @@ namespace EasyTabs
         {
             Visual visual = _visuals[tab];
             ChromiumTabGeometry geometry = visual.Geometry;
+            // Chromium's IsActiveTab returns false once a tab leaves the model.
+            // The retained visual must not inherit the removed tab's Active flag.
+            bool active = tab.Active && !visual.Closing;
             int index = visual.Index;
             float scale = geometry.Scale;
             float leading = visual.Closing ? 0 : SeparatorOpacity(tab, index > 0 ? tabs[index - 1] : null, true);
             float trailing = visual.Closing ? 0 : SeparatorOpacity(tab, index + 1 < tabs.Count ? tabs[index + 1] : null, false);
             float t = ChromiumTabMetrics.Clamp((geometry.Width / scale - 256) / (32 - 256f), 0, 1);
             float hoverOpacity = (Theme.HoverMinimum + (Theme.HoverMaximum - Theme.HoverMinimum) * t * t) * visual.Hover;
-            Color background = tab.Active ? Theme.ActiveTab : ChromiumTabTheme.Blend(Theme.InactiveTab, Theme.ActiveTab, hoverOpacity);
-            Color foreground = tab.Active || hoverOpacity > .5f ? Theme.ActiveForeground : Theme.InactiveForeground;
+            Color background = active ? Theme.ActiveTab : ChromiumTabTheme.Blend(Theme.InactiveTab, Theme.ActiveTab, hoverOpacity);
+            Color foreground = active || hoverOpacity > .5f ? Theme.ActiveForeground : Theme.InactiveForeground;
             canvas.Save();
             canvas.Translate(visual.Bounds.X, visual.Bounds.Y);
             using (var paint = new SKPaint { IsAntialias = true, Color = ToSkia(background) })
             {
                 canvas.DrawPath(geometry.Fill, paint);
-                if (!tab.Active && visual.Hover > 0)
+                if (!active && visual.Hover > 0)
                 {
                     canvas.Save(); canvas.ClipPath(geometry.Fill, SKClipOperation.Intersect, true);
                     SKColor center = ToSkia(Theme.ActiveTab).WithAlpha((byte)(255 * Theme.RadialOpacity * visual.Hover));
@@ -764,11 +779,11 @@ namespace EasyTabs
             // glyph box; Chromium's larger touch-only border isn't a mouse target.
             float contentsWidth = geometry.Width / scale - 32;
             bool roomy = contentsWidth >= 68;
-            bool close = !tab.IsPinned && tab.ShowCloseButton && (tab.Active || roomy) && (!visual.Closing || contentsWidth >= 16);
+            bool close = !tab.IsPinned && tab.ShowCloseButton && (active || roomy) && (!visual.Closing || contentsWidth >= 16);
             if (!visual.Closing) visual.HasIcon = tab.IsPinned || tab.IsLoading || (tab.Content.ShowIcon && tab.Content.Icon != null);
             bool hasIcon = visual.HasIcon;
-            bool icon = hasIcon && (tab.IsPinned || !tab.Active || contentsWidth - (close ? 16 : 0) >= 16);
-            bool centerIcon = icon && !tab.Active && contentsWidth < 16;
+            bool icon = hasIcon && (tab.IsPinned || !active || contentsWidth - (close ? 16 : 0) >= 16);
+            bool centerIcon = icon && !active && contentsWidth < 16;
             int contentStart = Scale(!tab.IsPinned && roomy ? 20 : 16);
             int iconX = centerIcon ? (geometry.Width - Scale(16)) / 2 : contentStart;
             bool normalContents = !tab.IsPinned || geometry.Width >= Scale(ChromiumTabMetrics.PinnedWidth + ChromiumTabMetrics.PinnedTitleThreshold);

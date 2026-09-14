@@ -53,8 +53,9 @@ namespace Quartz
         const int DWWMA_CAPTION_COLOR = 35;
         const int DWWMA_BORDER_COLOR = 34;
         const int DWMWA_TEXT_COLOR = 36;
+        const int DWMWA_COLOR_DEFAULT = unchecked((int)0xFFFFFFFF);
 
-        public void CustomWindow(System.Drawing.Color captionColor, System.Drawing.Color fontColor, System.Drawing.Color borderColor, IntPtr handle)
+        public void CustomWindow(System.Drawing.Color captionColor, System.Drawing.Color fontColor, System.Drawing.Color? borderColor, IntPtr handle)
         {
             IntPtr hWnd = handle;
             int[] caption = new int[] { int.Parse(ToBgr(captionColor), System.Globalization.NumberStyles.HexNumber) };
@@ -63,7 +64,9 @@ namespace Quartz
             int[] font = new int[] { int.Parse(ToBgr(fontColor), System.Globalization.NumberStyles.HexNumber) };
             DwmSetWindowAttribute(hWnd, DWMWA_TEXT_COLOR, font, 4);
 
-            int[] border = new int[] { int.Parse(ToBgr(borderColor), System.Globalization.NumberStyles.HexNumber) };
+            int[] border = new int[] { borderColor.HasValue
+                ? int.Parse(ToBgr(borderColor.Value), System.Globalization.NumberStyles.HexNumber)
+                : DWMWA_COLOR_DEFAULT };
             DwmSetWindowAttribute(hWnd, DWWMA_BORDER_COLOR, border, 4);
         }
         public bool OverlayVisible
@@ -88,7 +91,10 @@ namespace Quartz
             Icon icon = Quartz.Properties.Resources.favicon;
             System.Drawing.Color barBackColor = System.Drawing.Color.White;
             System.Drawing.Color textForeColor = System.Drawing.Color.Black;
-            System.Drawing.Color windowOutline = System.Drawing.Color.White;
+            // Chromium leaves the native outer frame to DWM. Let Windows choose
+            // the light-theme outline and its active/inactive appearance instead
+            // of overriding it with Quartz's almost-white #DBDCDD.
+            System.Drawing.Color? windowOutline = null;
 
             AeroPeekEnabled = false;
 
@@ -98,7 +104,6 @@ namespace Quartz
 
                 barBackColor = System.Drawing.Color.FromArgb(222, 225, 230);
                 textForeColor = System.Drawing.Color.Black;
-                windowOutline = System.Drawing.Color.FromArgb(219, 220, 221);
             }
             else if (theme == "dark")
             {

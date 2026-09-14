@@ -114,6 +114,7 @@ namespace EasyTabs
 		protected static TitleBarTabs _tornTabWindow;
 
 		private bool _tornTabWindowReady;
+		private TitleBarTab _selectionBeforeDrag;
 
 		/// <summary>Overlay that owns the current cross-window tab drag.</summary>
 		protected static TitleBarTabsOverlay _tornTabDragOwner;
@@ -537,6 +538,30 @@ namespace EasyTabs
 			return null;
 		}
 
+		/// <summary>Retains the source selection before a drag activates another tab.</summary>
+		internal void RememberSelectionBeforeDrag(TitleBarTab draggedTab)
+		{
+			_selectionBeforeDrag = _parentForm.SelectedTab != draggedTab ? _parentForm.SelectedTab : null;
+		}
+
+		internal void SelectTabBeforeDetach(TitleBarTab draggedTab)
+		{
+			// Chromium 85 restores the selection from before a background tab was
+			// pressed. Otherwise use the ordinary right-neighbour / last-tab fallback.
+			int index = _parentForm.Tabs.IndexOf(draggedTab);
+			if (index < 0) return;
+			int previousIndex = _selectionBeforeDrag == null ? -1 : _parentForm.Tabs.IndexOf(_selectionBeforeDrag);
+			_parentForm.SelectedTabIndex = previousIndex >= 0 && _selectionBeforeDrag != draggedTab
+				? previousIndex : index == _parentForm.Tabs.Count - 1 ? index - 1 : index + 1;
+			_selectionBeforeDrag = null;
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			base.OnMouseUp(e);
+			_selectionBeforeDrag = null;
+		}
+
 		/// <summary>Moves a tab into a real window as soon as it leaves its current tab strip.</summary>
 		private void CreateLiveTornTabWindow(Point cursorPosition)
 		{
@@ -594,9 +619,7 @@ namespace EasyTabs
 			newWindow.Bounds = draggedWindowBounds;
 
 			tab.ClearSubscriptions();
-			_parentForm.SelectedTabIndex = _parentForm.SelectedTabIndex == _parentForm.Tabs.Count - 1
-				? _parentForm.SelectedTabIndex - 1
-				: _parentForm.SelectedTabIndex + 1;
+			SelectTabBeforeDetach(tab);
 			_parentForm.Tabs.Remove(tab);
 
 			tab.Parent = newWindow;
@@ -691,6 +714,7 @@ namespace EasyTabs
                     tab.Active = false;
                     tab.ClearSubscriptions();
                     if (tornWindow != null && !tornWindow.IsDisposed) tornWindow.Tabs.Remove(tab);
+                    target._overlay.RememberSelectionBeforeDrag(tab);
                     target.TabRenderer.CombineTab(tab, target._overlay.GetRelativeCursorPosition(cursor), _tornTabGrabRatio);
                     target._overlay.Render(cursor);
                     target.Activate();
@@ -1187,6 +1211,7 @@ namespace EasyTabs
 							// If the user clicked the close button, remove the tab from the list
 							if (!_parentForm.TabRenderer.IsOverCloseButton(clickedTab, relativeCursorPosition))
 							{
+								RememberSelectionBeforeDrag(clickedTab);
 								_parentForm.ResizeTabContents(clickedTab);
 								_parentForm.SelectedTabIndex = _parentForm.Tabs.IndexOf(clickedTab);
 
