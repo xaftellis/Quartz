@@ -126,10 +126,8 @@ namespace Quartz
 
         
         private Browser _browser = null;
-        bool opentab = false;
-        public Settings(Browser browser, bool tab)
+        public Settings(Browser browser)
         {
-            opentab = tab;
             _browser = browser;
             InitializeComponent();
             DoubleBuffered = true;
@@ -323,19 +321,6 @@ namespace Quartz
             }
         }
 
-        private void cbAnimation_CheckStateChanged(object sender, EventArgs e)
-        {
-            if (_loadingSettings) return;
-            if (cbAnimation.Checked)
-            {
-                SettingsService.Set("Animation", "true");
-            }
-            else
-            {
-                SettingsService.Set("Animation", "false");
-            }
-        }
-
         private void cbDHP_CheckedChanged(object sender, EventArgs e)
         {
             if (_loadingSettings) return;
@@ -501,31 +486,15 @@ namespace Quartz
         {
             if (!mcTimeMachine.Visible)
             {
-                if (SettingsService.Get("Animation") == "true")
-                {
-                    Animation.AnimateWindow(mcTimeMachine.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_POSITIVE);
-                    mcTimeMachine.Visible = true;
-                    btnDown.Text = "▲";
-                }
-                else
-                {
-                    mcTimeMachine.Visible = true;
-                    btnDown.Text = "▲";
-                }
+                Animation.AnimateWindow(mcTimeMachine.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_POSITIVE);
+                mcTimeMachine.Visible = true;
+                btnDown.Text = "▲";
             }
             else
             {
-                if (SettingsService.Get("Animation") == "true")
-                {
-                    Animation.AnimateWindow(mcTimeMachine.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_NEGATIVE | Animation.AW_HIDE);
-                    mcTimeMachine.Visible = false;
-                    btnDown.Text = "▼";
-                }
-                else
-                {
-                    mcTimeMachine.Visible = false;
-                    btnDown.Text = "▼";
-                }
+                Animation.AnimateWindow(mcTimeMachine.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_NEGATIVE | Animation.AW_HIDE);
+                mcTimeMachine.Visible = false;
+                btnDown.Text = "▼";
             }
         }
         private void txtTimeMachine_KeyUp(object sender, KeyEventArgs e)
@@ -565,17 +534,9 @@ namespace Quartz
             {
                 if (mcTimeMachine.Visible == true)
                 {
-                    if (SettingsService.Get("Animation") == "true")
-                    {
-                        Animation.AnimateWindow(mcTimeMachine.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_NEGATIVE | Animation.AW_HIDE);
-                        mcTimeMachine.Visible = false;
-                        btnDown.Text = "▼";
-                    }
-                    else
-                    {
-                        mcTimeMachine.Visible = false;
-                        btnDown.Text = "▼";
-                    }
+                    Animation.AnimateWindow(mcTimeMachine.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_NEGATIVE | Animation.AW_HIDE);
+                    mcTimeMachine.Visible = false;
+                    btnDown.Text = "▼";
                 }
                 txtTimeMachine.Enabled = false;
                 btnDown.Enabled = false;
@@ -795,10 +756,7 @@ namespace Quartz
 
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(mnuTimeMachine.Handle, 100, Animation.AW_BLEND);
-            }
+            Animation.AnimateWindow(mnuTimeMachine.Handle, 100, Animation.AW_BLEND);
 
             if (birthdayService.All().Count != 0)
             {
@@ -876,10 +834,7 @@ namespace Quartz
 
 
             //last
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow((sender as ContextMenuStrip).Handle, 100, Animation.AW_BLEND);
-            }
+            Animation.AnimateWindow((sender as ContextMenuStrip).Handle, 100, Animation.AW_BLEND);
         }
 
 
@@ -1148,10 +1103,7 @@ namespace Quartz
 
         private void contextMenuStrip1_Opening_1(object sender, CancelEventArgs e)
         {
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow((sender as ContextMenuStrip).Handle, 100, Animation.AW_BLEND);
-            }
+            Animation.AnimateWindow((sender as ContextMenuStrip).Handle, 100, Animation.AW_BLEND);
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)

@@ -40,31 +40,15 @@ namespace Quartz
             {
                 button1.Location = new Point(201, 247);
                 Size = new Size(304, 318);
-                if (SettingsService.Get("Animation") == "true")
-                {
-                    Animation.AnimateWindow(mcCalender.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_POSITIVE);
-                    mcCalender.Visible = true;
-                    btnDown.Text = "▲";
-                }
-                else
-                {
-                    mcCalender.Visible = true;
-                    btnDown.Text = "▲";
-                }
+                Animation.AnimateWindow(mcCalender.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_POSITIVE);
+                mcCalender.Visible = true;
+                btnDown.Text = "▲";
             }
             else
             {
-                if (SettingsService.Get("Animation") == "true")
-                {
-                    Animation.AnimateWindow(mcCalender.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_NEGATIVE | Animation.AW_HIDE);
-                    mcCalender.Visible = false;
-                    btnDown.Text = "▼";
-                }
-                else
-                {
-                    mcCalender.Visible = false;
-                    btnDown.Text = "▼";
-                }
+                Animation.AnimateWindow(mcCalender.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_NEGATIVE | Animation.AW_HIDE);
+                mcCalender.Visible = false;
+                btnDown.Text = "▼";
                 button1.Location = new Point(201, 70);
                 Size = new Size(304, 144);
             }

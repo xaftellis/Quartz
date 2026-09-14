@@ -462,7 +462,6 @@ namespace Quartz
                 { "DownloadAlignment", "TopRight" },
                 { "Private", "false" },
                 { "TrackingPreventionLevel", "balanced" },
-                { "Animation", "true" },
                 { "MemoryUsage", "normal" },
                 { "escClose", "true" },
                 { "DraggableForms", "true" },

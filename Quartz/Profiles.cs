@@ -423,10 +423,7 @@ namespace Quartz
                 setDefaultToolStripMenuItem.Text = "Set default";
             }
 
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(ContextMenuStripProfiles.Handle, 100, Animation.AW_BLEND);
-            }
+            Animation.AnimateWindow(ContextMenuStripProfiles.Handle, 100, Animation.AW_BLEND);
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
@@ -541,7 +538,6 @@ namespace Quartz
             SettingsService.Set("DownloadAlignment", "TopRight");
             SettingsService.Set("Private", "false");
             SettingsService.Set("TrackingPreventionLevel", "balanced");
-            SettingsService.Set("Animation", "true");
             SettingsService.Set("MemoryUsage", "normal");
             SettingsService.Set("escClose", "true");
             SettingsService.Set("DraggableForms", "true");

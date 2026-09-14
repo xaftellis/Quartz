@@ -311,6 +311,7 @@
     <Compile Include="Services\InternalPageTheme.cs" />
     <Compile Include="Browser.Theme.cs">
       <DependentUpon>Browser.cs</DependentUpon>
+      <SubType>Form</SubType>
     </Compile>
     <EmbeddedResource Include="Services\InternalPageTheme.js" />
     <Compile Include="Services\FavouriteService.cs" />

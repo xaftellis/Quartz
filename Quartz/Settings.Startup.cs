@@ -68,7 +68,6 @@ namespace Quartz
                 { BoxDev, "AreDevToolsEnabled" },
                 { BoxSwipeNav, "IsSwipeNavigationEnabled" },
                 { BoxKeys, "AreBrowserAcceleratorKeysEnabled" },
-                { cbAnimation, "Animation" },
                 { cbESC, "escClose" },
                 { autofillCheckBox, "IsGeneralAutofillEnabled" },
                 { autoSaveCheckBox, "IsPasswordAutosaveEnabled" },

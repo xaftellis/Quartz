@@ -575,10 +575,7 @@ namespace Quartz
                 copyLinkToolStripMenuItem.Text = "Copy link";
             }
 
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(contextMenuStrip1.Handle, 100, Animation.AW_BLEND);
-            }
+            Animation.AnimateWindow(contextMenuStrip1.Handle, 100, Animation.AW_BLEND);
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)

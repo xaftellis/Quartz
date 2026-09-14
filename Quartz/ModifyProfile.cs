@@ -210,7 +210,6 @@ namespace Quartz
                 SettingsService.Set("DownloadAlignment", "TopRight");
                 SettingsService.Set("Private", "false");
                 SettingsService.Set("TrackingPreventionLevel", "balanced");
-                SettingsService.Set("Animation", "true");
                 SettingsService.Set("MemoryUsage", "normal");
                 SettingsService.Set("escClose", "true");
                 SettingsService.Set("DraggableForms", "true");

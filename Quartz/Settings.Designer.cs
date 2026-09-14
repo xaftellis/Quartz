@@ -48,8 +48,6 @@
             this.cbDrag = new System.Windows.Forms.CheckBox();
             this.txtMemory = new System.Windows.Forms.Label();
             this.checkBoxMemory = new System.Windows.Forms.CheckBox();
-            this.cbAnimation = new System.Windows.Forms.CheckBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tabPageApp = new System.Windows.Forms.TabPage();
             this.cbtimeMachine = new System.Windows.Forms.CheckBox();
@@ -310,8 +308,6 @@
             this.tabPagePerformance.Controls.Add(this.cbDrag);
             this.tabPagePerformance.Controls.Add(this.txtMemory);
             this.tabPagePerformance.Controls.Add(this.checkBoxMemory);
-            this.tabPagePerformance.Controls.Add(this.cbAnimation);
-            this.tabPagePerformance.Controls.Add(this.label3);
             this.tabPagePerformance.Controls.Add(this.label2);
             this.tabPagePerformance.Location = new System.Drawing.Point(4, 40);
             this.tabPagePerformance.Name = "tabPagePerformance";
@@ -322,7 +318,7 @@
             // cbESC
             // 
             this.cbESC.AutoSize = true;
-            this.cbESC.Location = new System.Drawing.Point(329, 117);
+            this.cbESC.Location = new System.Drawing.Point(40, 117);
             this.cbESC.Name = "cbESC";
             this.cbESC.Size = new System.Drawing.Size(103, 17);
             this.cbESC.TabIndex = 21;
@@ -335,7 +331,7 @@
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.Color.Black;
-            this.label5.Location = new System.Drawing.Point(341, 89);
+            this.label5.Location = new System.Drawing.Point(52, 89);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(72, 25);
             this.label5.TabIndex = 20;
@@ -345,7 +341,7 @@
             // cbDrag
             // 
             this.cbDrag.AutoSize = true;
-            this.cbDrag.Location = new System.Drawing.Point(329, 140);
+            this.cbDrag.Location = new System.Drawing.Point(40, 140);
             this.cbDrag.Name = "cbDrag";
             this.cbDrag.Size = new System.Drawing.Size(106, 17);
             this.cbDrag.TabIndex = 19;
@@ -359,7 +355,7 @@
             this.txtMemory.AutoSize = true;
             this.txtMemory.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtMemory.ForeColor = System.Drawing.Color.Black;
-            this.txtMemory.Location = new System.Drawing.Point(647, 89);
+            this.txtMemory.Location = new System.Drawing.Point(368, 89);
             this.txtMemory.Name = "txtMemory";
             this.txtMemory.Size = new System.Drawing.Size(89, 25);
             this.txtMemory.TabIndex = 18;
@@ -369,35 +365,13 @@
             // 
             this.checkBoxMemory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxMemory.AutoSize = true;
-            this.checkBoxMemory.Location = new System.Drawing.Point(608, 117);
+            this.checkBoxMemory.Location = new System.Drawing.Point(329, 117);
             this.checkBoxMemory.Name = "checkBoxMemory";
             this.checkBoxMemory.Size = new System.Drawing.Size(177, 17);
             this.checkBoxMemory.TabIndex = 17;
             this.checkBoxMemory.Text = "Reduced Memory Consumption ";
             this.checkBoxMemory.UseVisualStyleBackColor = true;
             this.checkBoxMemory.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // cbAnimation
-            // 
-            this.cbAnimation.AutoSize = true;
-            this.cbAnimation.Location = new System.Drawing.Point(40, 117);
-            this.cbAnimation.Name = "cbAnimation";
-            this.cbAnimation.Size = new System.Drawing.Size(72, 17);
-            this.cbAnimation.TabIndex = 16;
-            this.cbAnimation.Text = "Animation";
-            this.cbAnimation.UseVisualStyleBackColor = true;
-            this.cbAnimation.CheckedChanged += new System.EventHandler(this.cbAnimation_CheckStateChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.Color.Black;
-            this.label3.Location = new System.Drawing.Point(24, 89);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(107, 25);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Animation";
             // 
             // label2
             // 
@@ -1336,8 +1310,6 @@
         private System.Windows.Forms.CheckBox cbDrag;
         private System.Windows.Forms.Label txtMemory;
         private System.Windows.Forms.CheckBox checkBoxMemory;
-        private System.Windows.Forms.CheckBox cbAnimation;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TabPage tabPageApp;
         private System.Windows.Forms.CheckBox cbtimeMachine;

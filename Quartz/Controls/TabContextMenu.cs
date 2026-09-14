@@ -254,10 +254,7 @@ namespace Quartz.Controls
 
             //showSiteIconsOnlyToolStripMenuItem.Checked = SettingsService.Get("showSiteIconsOnly") == "true";
 
-            if (SettingsService.Get("Animation") == "true")
-            {
-                Animation.AnimateWindow(this.Handle, 100, Animation.AW_BLEND);
-            }
+            Animation.AnimateWindow(this.Handle, 100, Animation.AW_BLEND);
         }
 
         public void UpdateMenuItemsEnabledState()
