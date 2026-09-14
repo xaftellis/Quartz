@@ -326,7 +326,7 @@ namespace Quartz
             return new TitleBarTab(this)
             {
                 Content = browser,
-                IsLoading = true,
+                IsLoading = browser.IsLoading,
             };
         }
 
@@ -351,9 +351,7 @@ namespace Quartz
 
                     if (item.Active)
                     {
-                        bool isCorrect = await FavouriteService.ValidatePanelAsync(browser.pnlFavourites);
-                        if (!isCorrect)
-                            form.LoadFavourites();
+                        await form.RefreshFavouritesOnActivationAsync();
 
                         form.notifyIcon1.Visible = true;
                         if (form.wvWebView1?.CoreWebView2 != null && form.WasDownloadDialogActive)

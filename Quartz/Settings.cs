@@ -27,7 +27,8 @@ namespace Quartz
     {
         private bool updating;
         private int PreviousThemeSelectedIndex;
-        public BirthdayService birthdayService = new BirthdayService();
+        private BirthdayService _birthdayService;
+        public BirthdayService birthdayService => _birthdayService ?? (_birthdayService = new BirthdayService());
 
         private string ToBgr(Color c) => $"{c.B:X2}{c.G:X2}{c.R:X2}";
         [DllImport("DwmApi")]
@@ -111,6 +112,7 @@ namespace Quartz
 
         private void HiddenPDFItems_Checked(object sender)
         {
+            if (_loadingSettings) return;
             CheckBox cb = (CheckBox)sender;
             if (cb.Checked)
             {
@@ -124,43 +126,6 @@ namespace Quartz
         }
 
         
-        private async void CheckingForUpdatesAnimation()
-        {
-            // ----- Animate "Checking For Updates" -----
-            string baseText = "Checking For Updates";
-            string[] dots = { "", ".", "..", "..." };
-
-            while (updating)
-            {
-                foreach (string d in dots)
-                {
-                    if (!updating)
-                        break;
-
-                    txtUpdate.Text = baseText + d;
-                    await Task.Delay(500);
-                }
-            }
-
-            //// ----- Restore UI -----
-            //updating = false;
-
-            //buttonChech.Visible = true;
-            //txtUpdate.Visible = false;
-            //LoadingProgress.Visible = false;
-            //pictureBox1.Visible = true;
-
-            //// ----- Error / Retry dialog -----
-            //DialogResult dr = MessageBox.Show(
-            //    "Failed to connect to servers, please check your internet connection.",
-            //    "Something Went Wrong",
-            //    MessageBoxButtons.RetryCancel,
-            //    MessageBoxIcon.Error);
-
-            //if (dr == DialogResult.Retry)
-            //    checkforupdates();
-        }
-
         private Browser _browser = null;
         bool opentab = false;
         public Settings(Browser browser, bool tab)
@@ -168,475 +133,19 @@ namespace Quartz
             opentab = tab;
             _browser = browser;
             InitializeComponent();
+            DoubleBuffered = true;
+            _browser.wvWebView1.CoreWebView2InitializationCompleted += BrowserSettingsReady;
+            Disposed += (sender, args) =>
+            {
+                updating = false;
+                _browser.wvWebView1.CoreWebView2InitializationCompleted -= BrowserSettingsReady;
+            };
         }
 
         public event EventHandler QuartzUpdaterClosed;
-        private async void button1_Click(object sender, EventArgs e)
+        private void Settings_Load(object sender, EventArgs e)
         {
-            //preparing for animation
-            updating = true;
-
-            buttonChech.Visible = false;
-            txtUpdate.Visible = true;
-            LoadingProgress.Visible = true;
-            pictureBox1.Visible = false;
-
-            // ----- Set throbber based on theme (4.8.1 SAFE) -----
-            string theme = SettingsService.Get("Theme");
-            string fileName;
-
-            if (theme == "xmas")
-                fileName = "throbber_medium_xmas_green.svg";
-            else if (theme == "black")
-                fileName = "throbber_medium_white.svg";
-            else if (theme == "aqua")
-                fileName = "throbber_medium_blue.svg";
-            else
-                fileName = "throbber_medium_" + theme + ".svg";
-
-            string path = Path.Combine(Application.StartupPath, "assets", "throbber", fileName);
-
-            LoadingProgress.Reload();
-            LoadingProgress.ZoomFactor = 1;
-            LoadingProgress.Source = new Uri("file://" + path);
-            CheckingForUpdatesAnimation();
-            await Task.Delay(1500);
-            //end of segment
-
-            string updaterPath = Path.Combine(
-             Application.StartupPath,
-             "QuartzUpdater.exe");
-
-            if (!File.Exists(updaterPath))
-            {
-                MessageBox.Show(
-                    "QuartzUpdater.exe was not found beside Quartz.exe.",
-                    "Check for updates",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return;
-            }
-
-            try
-            {
-                Process updater = Process.Start(new ProcessStartInfo
-                {
-                    FileName = updaterPath,
-                    Arguments = "--parent-pid " + Process.GetCurrentProcess().Id +
-          " --owner-hwnd " + Handle.ToInt64(),
-                    WorkingDirectory = Application.StartupPath,
-                    UseShellExecute = true
-                });
-
-                if (updater == null)
-                    return;
-
-                updater.Exited += (_sender, _args) =>
-                {
-                    if (IsDisposed || !IsHandleCreated)
-                        return;
-
-                    BeginInvoke(new Action(() =>
-                    {
-                        // ----- Restore UI -----
-                        updating = false;
-
-                        buttonChech.Visible = true;
-                        txtUpdate.Visible = false;
-                        LoadingProgress.Visible = false;
-                        pictureBox1.Visible = true;
-
-                        updater.Dispose();
-                    }));
-                };
-
-                updater.EnableRaisingEvents = true;
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(
-                    "QuartzUpdater could not be opened. " + exception.Message,
-                    "Check for updates",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
-        }
-
-        private async void Settings_Load(object sender, EventArgs e)
-        {
-            if (SettingsService.Get("DraggableForms") == "true")
-            {
-                MouseDragger mouseDragger = new MouseDragger(this);
-            }
-
-            if (Program.profileService.Get(ProfileService.Current).isDisposable == true)
-            {
-                List<string> itemList = new List<string>
-                {
-                    "Auto (Light/Dark)",
-                    "Auto (Light/Black)",
-                    "Light",
-                    "Dark",
-                    "Black (Default)",
-                    "Aqua"
-                };
-
-                ComboBoxTheme.Items.Clear();
-                ComboBoxTheme.Items.AddRange(itemList.ToArray());
-            }
-            else
-            {
-                List<string> itemList = new List<string>
-                {
-                    "Auto (Light/Dark) (Default)",
-                    "Auto (Light/Black)",
-                    "Light",
-                    "Dark",
-                    "Black",
-                    "Aqua"
-                };
-
-                ComboBoxTheme.Items.Clear();
-                ComboBoxTheme.Items.AddRange(itemList.ToArray());
-            }
-
-            CheckBox[] checkboxes =
-             {
-                cbPDFnone,
-                cbPDFsave,
-                cbPDFprint,
-                cbPDFsaveas,
-                cbPDFzoomin,
-                cbPDFzoomout,
-                cbPDFrotate,
-                cbPDFfitpage,
-                cbPDFpagelayout,
-                cbPDFbookmarks,
-                cbPDFpageselector,
-                cbPDFsearch,
-                cbPDFfullscreen,
-                cbPDFmoresettings,
-            };
-
-
-            foreach (CheckBox check in checkboxes)
-            {
-                check.Checked = SettingsService.Get("HiddenPDF" + check.Text.Replace(" ", "")) == "true";
-            }
-
-            cbStatusBar.Checked = SettingsService.Get("IsStatusBarEnabled") == "true";
-
-            string frequency = MainSettingsService.Get("UpdateCheckFrequency") ?? "daily";
-
-            switch (frequency)
-            {
-                case "startup":
-                    cbUpdateCheckFrequency.SelectedIndex = 0;
-                    break;
-
-                case "weekly":
-                    cbUpdateCheckFrequency.SelectedIndex = 2;
-                    break;
-
-                case "monthly":
-                    cbUpdateCheckFrequency.SelectedIndex = 3;
-                    break;
-
-                case "never":
-                    cbUpdateCheckFrequency.SelectedIndex = 4;
-                    break;
-
-                default:
-                    cbUpdateCheckFrequency.SelectedIndex = 1; // Daily
-                    break;
-            }
-
-            if (SettingsService.Get("SettingsTabAlignment") == "top")
-            {
-                comboSettingsTabAlinement.SelectedIndex = 0;
-            }
-            else if (SettingsService.Get("SettingsTabAlignment") == "left")
-            {
-                comboSettingsTabAlinement.SelectedIndex = 1;
-            }
-            else if (SettingsService.Get("SettingsTabAlignment") == "right")
-            {
-                comboSettingsTabAlinement.SelectedIndex = 2;
-            }
-            else if (SettingsService.Get("SettingsTabAlignment") == "bottom")
-            {
-                comboSettingsTabAlinement.SelectedIndex = 3;
-            }
-
-            if (SettingsService.Get("simulateDate") == "true")
-            {
-                cbtimeMachine.Checked = true;
-                txtTimeMachine.Enabled = true;
-                btnDown.Enabled = true;
-
-                if (!string.IsNullOrEmpty(SettingsService.Get("timeMachine")))
-                {
-                    mcTimeMachine.AddBoldedDate(DateTime.Parse(SettingsService.Get("timeMachine")));
-                    mcTimeMachine.SelectionStart = DateTime.Parse(SettingsService.Get("timeMachine"));
-                    mcTimeMachine.SelectionEnd = DateTime.Parse(SettingsService.Get("timeMachine"));
-                    txtTimeMachine.Text = SettingsService.Get("timeMachine");
-                }
-                else
-                {
-                    mcTimeMachine.AddBoldedDate(DateTime.Now.Date);
-                    mcTimeMachine.SelectionStart = DateTime.Now.Date;
-                    mcTimeMachine.SelectionEnd = DateTime.Now.Date;
-                    txtTimeMachine.Text = DateTime.Now.Date.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", "");
-                    SettingsService.Set("timeMachine", DateTime.Now.Date.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", ""));
-                }
-            }
-            else
-            {
-                cbtimeMachine.Checked = false;
-                txtTimeMachine.Enabled = false;
-                btnDown.Enabled = false;
-
-                mcTimeMachine.AddBoldedDate(DateTime.Now.Date);
-                mcTimeMachine.SelectionStart = DateTime.Now.Date;
-                mcTimeMachine.SelectionEnd = DateTime.Now.Date;
-                txtTimeMachine.Text = DateTime.Now.Date.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", "");
-                SettingsService.Set("timeMachine", DateTime.Now.Date.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", ""));
-            }
-
-            if (Quartz.Services.GetRealTimeInZone.GetRealTimeInComputerTimeZone().Month == 12)
-            {
-                var index = ComboBoxTheme.Items.Count;
-                ComboBoxTheme.Items.Insert(index, "Xmas");
-            }
-
-            String theme;
-            if (SettingsService.GetAutoTheme() != null)
-            {
-                theme = SettingsService.GetAutoTheme();
-            }
-            else
-            {
-                theme = SettingsService.Get("Theme");
-            }
-
-            if (theme == "auto (light/dark)")
-            {
-                ComboBoxTheme.SelectedIndex = 0;
-                PreviousThemeSelectedIndex = ComboBoxTheme.SelectedIndex;
-            }
-            else if (theme == "auto (light/black)")
-            {
-                ComboBoxTheme.SelectedIndex = 1;
-                PreviousThemeSelectedIndex = ComboBoxTheme.SelectedIndex;
-            }
-            else if (theme == "light")
-            {
-                ComboBoxTheme.SelectedIndex = 2;
-                PreviousThemeSelectedIndex = ComboBoxTheme.SelectedIndex;
-            }
-            else if (theme == "dark")
-            {
-                ComboBoxTheme.SelectedIndex = 3;
-                PreviousThemeSelectedIndex = ComboBoxTheme.SelectedIndex;
-            }
-            else if (theme == "black")
-            {
-                ComboBoxTheme.SelectedIndex = 4;
-                PreviousThemeSelectedIndex = ComboBoxTheme.SelectedIndex;
-            }
-            else if (theme == "aqua")
-            {
-                ComboBoxTheme.SelectedIndex = 5;
-                PreviousThemeSelectedIndex = ComboBoxTheme.SelectedIndex;
-            }
-            else if (theme == "xmas" && Quartz.Services.GetRealTimeInZone.GetRealTimeInComputerTimeZone().Month == 12)
-            {
-                ComboBoxTheme.SelectedIndex = 6;
-                PreviousThemeSelectedIndex = ComboBoxTheme.SelectedIndex;
-            }
-
-            //sys webview
-            var sysenv = await CoreWebView2Environment.CreateAsync(null, _browser.GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\", null);
-            var sysoptions = sysenv.CreateCoreWebView2ControllerOptions();
-
-            if (LoadingProgress.CoreWebView2 == null)
-            {
-                await LoadingProgress.EnsureCoreWebView2Async(sysenv, sysoptions);
-            }
-
-            if (SettingsService.Get("MemoryUsage") == "low")
-            {
-                LoadingProgress.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
-
-            }
-            else
-            {
-                LoadingProgress.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Normal;
-            }
-
-
-            this.Text = $"Settings - {Program.profileService.Get(ProfileService.Current).Name}";
-
-            switch (SettingsService.Get("TrackingPreventionLevel"))
-            {
-                case "none":
-                    ComboBoxTracking.SelectedIndex = 0;
-                    break;
-
-                case "basic":
-                    ComboBoxTracking.SelectedIndex = 1;
-                    break;
-
-                case "balanced":
-                    ComboBoxTracking.SelectedIndex = 2;
-                    break;
-
-                case "strict":
-                    ComboBoxTracking.SelectedIndex = 3;
-                    break;
-            }
-
-            NumZoom.Value = Convert.ToDecimal(_browser.wvWebView1.ZoomFactor * 100);
-            BoxDev.Checked = SettingsService.Get("AreDevToolsEnabled") == "true";
-            BoxSwipeNav.Checked = SettingsService.Get("IsSwipeNavigationEnabled") == "true";
-            BoxKeys.Checked = SettingsService.Get("AreBrowserAcceleratorKeysEnabled") == "true";
-            cbAnimation.Checked = SettingsService.Get("Animation") == "true";
-
-            combDefaultFavicon.SelectedIndexChanged -= combDefaultFavicon_SelectedIndexChanged;
-            if (SettingsService.Get("defaultFavicon") == "default")
-            {
-                combDefaultFavicon.SelectedIndex = 0;
-            }
-            else if (SettingsService.Get("defaultFavicon") == "chrome")
-            {
-                combDefaultFavicon.SelectedIndex = 1;
-            }
-            else if (SettingsService.Get("defaultFavicon").StartsWith("custom - "))
-            {
-                combDefaultFavicon.SelectedIndex = 2;
-            }
-            combDefaultFavicon.SelectedIndexChanged += combDefaultFavicon_SelectedIndexChanged;
-
-            if (SettingsService.Get("SearchEngine") == "google")
-            {
-                cbSearchEngine.SelectedIndex = 0;
-                cbDHP.Visible = true;
-            }
-            else if (SettingsService.Get("SearchEngine") == "bing")
-            {
-                cbSearchEngine.SelectedIndex = 1;
-                cbDHP.Visible = true;
-            }
-            else if (SettingsService.Get("SearchEngine") == "yahoo")
-            {
-                cbSearchEngine.SelectedIndex = 2;
-                cbDHP.Visible = true;
-            }
-            else if (SettingsService.Get("SearchEngine") == "duckduckgo")
-            {
-                cbSearchEngine.SelectedIndex = 3;
-                cbDHP.Visible = true;
-            }
-            else if (SettingsService.Get("SearchEngine") == "ecosia")
-            {
-                cbSearchEngine.SelectedIndex = 4;
-                cbDHP.Visible = true;
-            }
-            else if (SettingsService.Get("SearchEngine") == "netflix")
-            {
-                cbSearchEngine.SelectedIndex = 5;
-                cbDHP.Visible = true;
-            }
-            else if (SettingsService.Get("SearchEngine") == "youtube")
-            {
-                cbSearchEngine.SelectedIndex = 6;
-                cbDHP.Visible = true;
-            }
-            else if (SettingsService.Get("SearchEngine") == "googlemaps")
-            {
-                cbSearchEngine.SelectedIndex = 7;
-                cbDHP.Visible = true;
-            }
-            else if (SettingsService.Get("SearchEngine") == "wikipedia")
-            {
-                cbSearchEngine.SelectedIndex = 8;
-                cbDHP.Visible = false;
-            }
-            else if (SettingsService.Get("SearchEngine") == "ebay")
-            {
-                cbSearchEngine.SelectedIndex = 9;
-                cbDHP.Visible = false;
-            }
-            else if (SettingsService.Get("SearchEngine") == "amazon")
-            {
-                cbSearchEngine.SelectedIndex = 10;
-                cbDHP.Visible = false;
-            }
-
-
-            cbESC.Checked = SettingsService.Get("escClose") == "true";
-
-            pictureBox1.BackgroundImage = FaviconHelper.GetFullResDefaultFaviconAsImage();
-
-            txtUpdate.Text = "Update";
-            await LoadingProgress.EnsureCoreWebView2Async();
-            LoadingProgress.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-
-            if (SettingsService.Get("DownloadAlignment") == "TopLeft")
-            {
-                cbDownloadAlighment.SelectedIndex = 1;
-            }
-            else if (SettingsService.Get("DownloadAlignment") == "TopRight")
-            {
-                cbDownloadAlighment.SelectedIndex = 0;
-            }
-            else if (SettingsService.Get("DownloadAlignment") == "BottomLeft")
-            {
-                cbDownloadAlighment.SelectedIndex = 3;
-            }
-            else if (SettingsService.Get("DownloadAlignment") == "BottomRight")
-            {
-                cbDownloadAlighment.SelectedIndex = 2;
-            }
-
-            autofillCheckBox.Checked = SettingsService.Get("IsGeneralAutofillEnabled") == "true";
-            autoSaveCheckBox.Checked = SettingsService.Get("IsPasswordAutosaveEnabled") == "true";
-            checkBoxMemory.Checked = SettingsService.Get("MemoryUsage") == "low";
-            cbScripts.Checked = SettingsService.Get("IsScriptEnabled") == "true";
-            //Zoom
-            zc.Checked = SettingsService.Get("IsZoomControlEnabled") == "true";
-            pz.Checked = SettingsService.Get("IsPinchZoomEnabled") == "true";
-            cbDHP.Checked = SettingsService.Get("DefaultHomePage") == "true";
-            cbDrag.Checked = SettingsService.Get("DraggableForms") == "true";
-
-            if (SettingsService.Get("Theme") == "dark")
-            {
-                txtTimeMachine.Size = new System.Drawing.Size(204, 20);
-                btnDown.Location = new System.Drawing.Point(222, 107);
-                btnDown.Size = new System.Drawing.Size(22, 22);
-            }
-            else if (SettingsService.Get("Theme") == "light")
-            {
-                txtTimeMachine.Size = new System.Drawing.Size(207, 20);
-                btnDown.Location = new System.Drawing.Point(224, 108);
-                btnDown.Size = new System.Drawing.Size(20, 20);
-            }
-            else if (SettingsService.Get("Theme") == "black")
-            {
-                txtTimeMachine.Size = new System.Drawing.Size(207, 20);
-                btnDown.Location = new System.Drawing.Point(224, 108);
-                btnDown.Size = new System.Drawing.Size(20, 20);
-            }
-            else if (SettingsService.Get("Theme") == "aqua")
-            {
-                txtTimeMachine.Size = new System.Drawing.Size(208, 20);
-                btnDown.Location = new System.Drawing.Point(224, 108);
-                btnDown.Size = new System.Drawing.Size(20, 20);
-            }
-            NewControlThemeChanger.ChangeTheme(this);
-            NewControlThemeChanger.ChangeControlTheme(mnuBirthdays);
-            NewControlThemeChanger.ChangeControlTheme(contextMenuStrip1);
-
+            PrepareSettingsForm();
         }
 
         private void autoSaveCheckBox_Click(object sender, EventArgs e)
@@ -669,6 +178,7 @@ namespace Quartz
 
         private void checkBox4_CheckedChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (zc.Checked)
             {
                 _browser.wvWebView1.CoreWebView2.Settings.IsZoomControlEnabled = true;
@@ -683,6 +193,7 @@ namespace Quartz
 
         private void pz_CheckedChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (pz.Checked)
             {
                 _browser.wvWebView1.CoreWebView2.Settings.IsPinchZoomEnabled = true;
@@ -703,6 +214,7 @@ namespace Quartz
 
         private void BoxDev_CheckedChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (BoxDev.Checked)
             {
                 _browser.wvWebView1.CoreWebView2.Settings.AreDevToolsEnabled = true;
@@ -717,6 +229,7 @@ namespace Quartz
 
         private void BoxSwipeNav_CheckedChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (BoxSwipeNav.Checked)
             {
                 _browser.wvWebView1.CoreWebView2.Settings.IsSwipeNavigationEnabled = true;
@@ -731,6 +244,7 @@ namespace Quartz
 
         private void BoxKeys_CheckedChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (BoxKeys.Checked)
             {
                 _browser.wvWebView1.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = true;
@@ -745,12 +259,14 @@ namespace Quartz
 
         private void NumZoom_ValueChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             _browser.wvWebView1.ZoomFactor = Convert.ToDouble(NumZoom.Value / 100);
             SettingsService.Set("Zoom", (NumZoom.Value / 100).ToString());
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (ComboBoxTracking.SelectedIndex == 0)
             {
                 SettingsService.Set("TrackingPreventionLevel", "none");
@@ -775,6 +291,7 @@ namespace Quartz
 
         private void ComboBoxTheme_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             String currenttheme;
             if (SettingsService.GetAutoTheme() != null)
             {
@@ -942,6 +459,7 @@ namespace Quartz
 
         private void cbAnimation_CheckStateChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (cbAnimation.Checked)
             {
                 SettingsService.Set("Animation", "true");
@@ -954,6 +472,7 @@ namespace Quartz
 
         private void cbDHP_CheckedChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (cbDHP.Checked)
             {
                 SettingsService.Set("DefaultHomePage", "true");
@@ -966,6 +485,7 @@ namespace Quartz
 
         private void cbSearchEngine_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (cbSearchEngine.SelectedIndex == 0)
             {
                 SettingsService.Set("SearchEngine", "google");
@@ -1035,24 +555,20 @@ namespace Quartz
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxMemory.Checked)
+            if (_loadingSettings) return;
+            SettingsService.Set("MemoryUsage", checkBoxMemory.Checked ? "low" : "normal");
+            var target = checkBoxMemory.Checked ? CoreWebView2MemoryUsageTargetLevel.Low : CoreWebView2MemoryUsageTargetLevel.Normal;
+            foreach (var view in new[] { _browser.wvWebView1, _browser.wvLoadingProgress, LoadingProgress })
             {
-                SettingsService.Set("MemoryUsage", "low");
-                _browser.wvWebView1.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
-                _browser.wvLoadingProgress.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
-                LoadingProgress.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
-            }
-            else
-            {
-                SettingsService.Set("MemoryUsage", "normal");
-                _browser.wvWebView1.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Normal;
-                _browser.wvLoadingProgress.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Normal;
-                LoadingProgress.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Normal;
+                if (!view.IsDisposed && view.CoreWebView2 != null)
+                    view.CoreWebView2.MemoryUsageTargetLevel = target;
             }
         }
         private void Settings_FormClosing(object sender, FormClosingEventArgs e)
         {
+            updating = false;
             _browser.Shortcuts(true);
+            if (_loadingSettings) return;
             if (!cbPDFnone.Checked
                 && !cbPDFsave.Checked
                 && !cbPDFprint.Checked
@@ -1089,6 +605,7 @@ namespace Quartz
 
         private void cbDrag_CheckedChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (cbDrag.Checked)
             {
                 SettingsService.Set("DraggableForms", "true");
@@ -1101,6 +618,7 @@ namespace Quartz
 
         private void mcTimeMachine_DateChanged(object sender, DateRangeEventArgs e)
         {
+            if (_loadingSettings) return;
             mcTimeMachine.AddBoldedDate(e.Start);
             mcTimeMachine.SelectionStart = e.Start;
             mcTimeMachine.SelectionEnd = e.Start;
@@ -1165,6 +683,7 @@ namespace Quartz
 
         private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (cbtimeMachine.Checked)
             {
                 SettingsService.Set("simulateDate", "true");
@@ -1203,6 +722,7 @@ namespace Quartz
         }
         private void cbESC_CheckedChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (cbESC.Checked)
             {
                 SettingsService.Set("escClose", "true");
@@ -1215,18 +735,21 @@ namespace Quartz
 
         private void cbScripts_CheckedChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             _browser.wvWebView1.CoreWebView2.Settings.IsScriptEnabled = cbScripts.Checked;
             SettingsService.Set("IsScriptEnabled", cbScripts.Checked.ToString().ToLower());
         }
 
         private void cbStatusBar_CheckedChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             _browser.wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = cbStatusBar.Checked;
             SettingsService.Set("IsStatusBarEnabled", cbStatusBar.Checked.ToString().ToLower());
         }
 
         private void cbPDFnone_CheckedChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (cbPDFnone.Checked)
             {
                 SettingsService.Set("HiddenPDFNone", "true");
@@ -1245,7 +768,7 @@ namespace Quartz
             }
             else
             {
-                SettingsService.Set("HiddenPDFNone", "false;");
+                SettingsService.Set("HiddenPDFNone", "false");
                 foreach (Control control in HiddenPDFGroupBox.Controls)
                 {
                     if (control is CheckBox checkBox)
@@ -1443,30 +966,12 @@ namespace Quartz
 
         private void comboSettingsTabAlinement_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboSettingsTabAlinement.SelectedIndex == 0)
-            {
-                SettingsService.Set("SettingsTabAlignment", "top");
-                tabControl1.SizeMode = TabSizeMode.Fixed;
-                tabControl1.Alignment = TabAlignment.Top;
-            }
-            else if (comboSettingsTabAlinement.SelectedIndex == 1)
-            {
-                SettingsService.Set("SettingsTabAlignment", "left");
-                tabControl1.SizeMode = TabSizeMode.Normal;
-                tabControl1.Alignment = TabAlignment.Left;
-            }
-            else if (comboSettingsTabAlinement.SelectedIndex == 2)
-            {
-                SettingsService.Set("SettingsTabAlignment", "right");
-                tabControl1.SizeMode = TabSizeMode.Normal;
-                tabControl1.Alignment = TabAlignment.Right;
-            }
-            else if (comboSettingsTabAlinement.SelectedIndex == 3)
-            {
-                SettingsService.Set("SettingsTabAlignment", "bottom");
-                tabControl1.SizeMode = TabSizeMode.Fixed;
-                tabControl1.Alignment = TabAlignment.Bottom;
-            }
+            if (_loadingSettings) return;
+            int index = comboSettingsTabAlinement.SelectedIndex;
+            string[] values = { "top", "left", "right", "bottom" };
+            if (index < 0 || index >= values.Length) return;
+            SettingsService.Set("SettingsTabAlignment", values[index]);
+            ApplySettingsTabAlignment();
         }
 
         private void mnuBirthdays_Opening(object sender, CancelEventArgs e)
@@ -1711,6 +1216,7 @@ namespace Quartz
 
         private void combDefaultFavicon_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             CDFSelectedIndexChanged();
         }
 
@@ -1793,6 +1299,7 @@ namespace Quartz
 
         private void cbDownloadAlighment_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             if (cbDownloadAlighment.SelectedIndex == 0)
             {
                 _browser.wvWebView1.CoreWebView2.DefaultDownloadDialogCornerAlignment = CoreWebView2DefaultDownloadDialogCornerAlignment.TopRight;
@@ -1817,6 +1324,7 @@ namespace Quartz
 
         private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             string frequency;
 
             switch (cbUpdateCheckFrequency.SelectedIndex)

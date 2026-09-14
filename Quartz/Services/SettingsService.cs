@@ -17,15 +17,41 @@ namespace Quartz.Services
         private static string WindowsTheme = ThemeHelper.GetTheme();
         private static bool DisplayOutOfDateThemeMessage = true;
 
+        [ThreadStatic] private static int _readSnapshotDepth;
+        [ThreadStatic] private static List<SettingModel> _readSnapshot;
+
+        // Use only around synchronous UI work, never across an await. Nested
+        // setup helpers share one read; later events always see fresh settings.
+        internal static IDisposable BeginReadSnapshot()
+        {
+            _readSnapshotDepth++;
+            return new ReadSnapshotScope();
+        }
+
+        private sealed class ReadSnapshotScope : IDisposable
+        {
+            private bool _disposed;
+
+            public void Dispose()
+            {
+                if (_disposed) return;
+                _disposed = true;
+                if (--_readSnapshotDepth == 0) _readSnapshot = null;
+            }
+        }
+
+        private static List<SettingModel> ReadSettings()
+        {
+            if (_readSnapshotDepth > 0 && _readSnapshot != null) return _readSnapshot;
+            string json = File.Exists(_jsonPath) ? File.ReadAllText(_jsonPath) : "[]";
+            var items = JsonConvert.DeserializeObject<List<SettingModel>>(json) ?? new List<SettingModel>();
+            if (_readSnapshotDepth > 0) _readSnapshot = items;
+            return items;
+        }
+
         public static string Get(string name)
         {
-            var jsonString = "[]";
-
-            if (File.Exists(_jsonPath))
-            {
-                jsonString = File.ReadAllText(_jsonPath);
-            }
-            var items = JsonConvert.DeserializeObject<List<SettingModel>>(jsonString);
+            var items = ReadSettings();
 
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("name");
@@ -68,13 +94,7 @@ namespace Quartz.Services
 
         public static SettingModel GetModel(string name)
         {
-            var jsonString = "[]";
-
-            if (File.Exists(_jsonPath))
-            {
-                jsonString = File.ReadAllText(_jsonPath);
-            }
-            var items = JsonConvert.DeserializeObject<List<SettingModel>>(jsonString);
+            var items = ReadSettings();
 
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("name");
@@ -86,14 +106,7 @@ namespace Quartz.Services
         public static string GetAutoTheme()
         {
             var name = "Theme";
-
-            var jsonString = "[]";
-
-            if (File.Exists(_jsonPath))
-            {
-                jsonString = File.ReadAllText(_jsonPath);
-            }
-            var items = JsonConvert.DeserializeObject<List<SettingModel>>(jsonString);
+            var items = ReadSettings();
 
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("name");
@@ -135,6 +148,7 @@ namespace Quartz.Services
 
             var _jsonString = JsonConvert.SerializeObject(items);
             File.WriteAllText(_jsonPath, _jsonString);
+            _readSnapshot = null;
         }
 
         public static string GetWindowsTheme()
@@ -187,6 +201,7 @@ namespace Quartz.Services
 
             var _jsonString = JsonConvert.SerializeObject(items);
             File.WriteAllText(_jsonPath, _jsonString);
+            _readSnapshot = null;
         }
     }
 }

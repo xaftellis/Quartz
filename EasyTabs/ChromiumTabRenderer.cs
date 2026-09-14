@@ -212,7 +212,7 @@ namespace EasyTabs
 
         private readonly object _sync = new object();
         private readonly Dictionary<TitleBarTab, Visual> _visuals = new Dictionary<TitleBarTab, Visual>();
-        private readonly TabLayoutAnimation _animation = new TabLayoutAnimation();
+        private readonly ChromiumBoundsAnimation _animation = new ChromiumBoundsAnimation();
         private readonly Stopwatch _clock = Stopwatch.StartNew();
         private readonly object _addKey = new object();
         private readonly ButtonFeedback _addFeedback = new ButtonFeedback();
@@ -298,9 +298,7 @@ namespace EasyTabs
             {
                 if (_disposed) return;
                 ExitTabClosingMode();
-                // BoundsAnimator uses the same 200 ms EASE_OUT clock for pinning
-                // and insertion. Snapshot displayed bounds so reversals do not jump.
-                _animation.StartInsertion(AnimationTimeMilliseconds);
+                // The next layout animates changed targets from displayed bounds.
                 _pressedFeedback?.Cancel();
                 _pressedFeedback = null;
             }
@@ -345,7 +343,6 @@ namespace EasyTabs
                 }
                 if (!pressed && now - _mouseCloseExitStarted.Value < 300) return false;
                 ExitTabClosingMode();
-                _animation.StartInsertion(now); // ResizeLayoutAnimation: 200 ms EASE_OUT.
                 return true;
             }
         }
@@ -449,12 +446,8 @@ namespace EasyTabs
 
         protected internal override void Overlay_MouseUp(object sender, MouseEventArgs e)
         {
-            // Chromium's StoppedDraggingTab returns the visual to its legal model
-            // slot with BoundsAnimator, including drags across the pinned boundary.
-            if (IsTabRepositioning)
-            {
-                lock (_sync) _animation.StartInsertion(AnimationTimeMilliseconds);
-            }
+            // Once the drag ends, changed targets animate back from their
+            // displayed bounds, including drags across the pinned boundary.
             base.Overlay_MouseUp(sender, e);
             bool redraw;
             lock (_sync)
@@ -579,7 +572,6 @@ namespace EasyTabs
                         if (_visuals.TryGetValue(tab, out existing)) edge = existing.Bounds.Right - OverlapWidth;
                         else _animation.SetInitialBounds(tab, new Rectangle(edge, y, OverlapWidth, Scale(ChromiumTabMetrics.Height)));
                     }
-                    _animation.StartInsertion(now);
                 }
                 int pinnedCount = _parentWindow.PinnedTabCount;
                 int[] widths = ChromiumTabMetrics.LayoutWidths(tabs.Count, pinnedCount, activeIndex,
@@ -666,7 +658,7 @@ namespace EasyTabs
                     visual.Target = new Rectangle(previous == null ? startX : previous.Target.Right - OverlapWidth,
                         y, OverlapWidth, Scale(ChromiumTabMetrics.Height));
                     visual.Bounds = _animation.GetBounds(tab, visual.Target, false, OverlapWidth);
-                    if (visual.Bounds == visual.Target)
+                    if (visual.Bounds == visual.Target && !_animation.IsItemAnimating(tab))
                     {
                         visual.Dispose(); _visuals.Remove(tab); _animation.Forget(tab);
                         continue;
@@ -1041,6 +1033,7 @@ namespace EasyTabs
             // Stay clear of opening/closing tabs, but never cross the fixed limit,
             // including while the window is shrinking or tab widths are animating.
             _addButtonArea.X = Math.Min(maximumX, Math.Max(_addButtonArea.X, visibleRight));
+            _animation.RecordDisplayedBounds(_addKey, _addButtonArea);
             float cx = _addButtonArea.X + _addButtonArea.Width / 2f;
             float cy = _addButtonArea.Y + _addButtonArea.Height / 2f;
             _addHovered = !IsTabRepositioning && IsOverAddButton(cursor);

@@ -255,7 +255,8 @@ namespace Quartz.Services
             {
                 var webview = (WebView2)control;
                 webview.DefaultBackgroundColor = backcolor;
-                webview.CoreWebView2.Profile.PreferredColorScheme = coreWebView2ColorScheme;
+                if (webview.CoreWebView2 != null)
+                    webview.CoreWebView2.Profile.PreferredColorScheme = coreWebView2ColorScheme;
             }
             else if (control is NumericUpDown)
             {

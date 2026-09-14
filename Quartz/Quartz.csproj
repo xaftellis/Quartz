@@ -184,6 +184,13 @@
     <Compile Include="Browser.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Browser.Startup.cs">
+      <DependentUpon>Browser.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\BrowserToolbarPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Browser.Designer.cs">
       <DependentUpon>Browser.cs</DependentUpon>
     </Compile>
@@ -302,6 +309,14 @@
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\FavouriteService.cs" />
     <Compile Include="Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings.Startup.cs">
+      <DependentUpon>Settings.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings.Updates.cs">
+      <DependentUpon>Settings.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Settings.Designer.cs">

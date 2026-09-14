@@ -1045,6 +1045,17 @@ namespace EasyTabs
 							: Point.Empty;
 				_parentForm.TabRenderer.Render(_parentForm.Tabs, graphics, offset, cursorPosition, forceRedraw);
 
+                    // Leave the native frame corners visible instead of painting a
+                    // square overlay over Windows' rounded window outline.
+                    if (_aeroEnabled && _parentForm.WindowState == FormWindowState.Normal &&
+                        _parentForm.TabRenderer.RendersEntireTitleBar)
+                    {
+                        int corner = Math.Max(1, (int)Math.Ceiling(8 * graphics.DpiX / 96f));
+                        graphics.CompositingMode = CompositingMode.SourceCopy;
+                        graphics.FillRectangle(Brushes.Transparent, 0, 0, corner, corner);
+                        graphics.FillRectangle(Brushes.Transparent, Width - corner, 0, corner, corner);
+                        graphics.CompositingMode = CompositingMode.SourceOver;
+                    }
 					// Retain the transparent hole for the underlying classic control box.
 					if (DisplayType == DisplayType.Classic && (_parentForm.ControlBox || _parentForm.MaximizeBox || _parentForm.MinimizeBox))
 					{

@@ -47,6 +47,12 @@ namespace Quartz
         public bool IsDefaultFavicon { get; private set; } = true;
         public event EventHandler LoadingStateChanged;
 
+        private static bool ShouldAnimateLoading(string address)
+        {
+            return !Uri.TryCreate(address, UriKind.Absolute, out Uri uri) ||
+                !string.Equals(uri.Host, "quartz.com", StringComparison.OrdinalIgnoreCase);
+        }
+
         private void SetTabLoading(bool loading, bool waiting = false, bool restart = false)
         {
             if (!restart && IsLoading == loading && IsWaiting == waiting) return;
@@ -153,7 +159,9 @@ namespace Quartz
         #region Constructors
         public Browser(string address, bool newtabrequest)
         {
-            InitializeComponent();
+            using (SettingsService.BeginReadSnapshot())
+                InitializeComponent();
+            DoubleBuffered = true;
             InitializeTabPreview();
             InitializeTabMemory();
             InitializeSiteInfo();
@@ -163,6 +171,9 @@ namespace Quartz
             pnlFavourites.AnimationCompleted += (sender, args) => { if (!IsDisposed && !Disposing) UpdateFavBar(); };
             _newtab = newtabrequest;
             _tabAddress = address;
+            // Set the state before the browser is attached to a tab, avoiding a startup flash.
+            bool animateLoading = ShouldAnimateLoading(_newtab ? _tabAddress : GetHomeUrl());
+            SetTabLoading(animateLoading, animateLoading);
             //lstSuggestions.View = View.Details;
             //lstSuggestions.HeaderStyle = ColumnHeaderStyle.None;
             //lstSuggestions.FullRowSelect = true;
@@ -203,6 +214,12 @@ namespace Quartz
         }
 
         public void LoadTheme()
+        {
+            using (SettingsService.BeginReadSnapshot())
+                ApplyBrowserTheme();
+        }
+
+        private void ApplyBrowserTheme()
         {
             //IMAGES
             Image backImage = Quartz.Properties.Resources.Left;
@@ -371,8 +388,6 @@ namespace Quartz
             NewControlThemeChanger.ChangeControlTheme(mnuMenu);
             NewControlThemeChanger.ChangeControlTheme(mnuUserData);
             NewControlThemeChanger.ChangeControlTheme(mnuDownloadsDropDown);
-            NewControlThemeChanger.ChangeControlTheme(mnuHistory);
-            NewControlThemeChanger.ChangeControlTheme(mnuUserData);
             NewControlThemeChanger.ChangeControlTheme(mnuSearch);
             NewControlThemeChanger.ChangeControlTheme(wvWebView1);
             NewControlThemeChanger.ChangeControlTheme(zoomToolStrip);
@@ -387,6 +402,12 @@ namespace Quartz
         }
 
         public void LoadFavourites()
+        {
+            using (SettingsService.BeginReadSnapshot())
+                LoadFavouriteControls();
+        }
+
+        private void LoadFavouriteControls()
         {
             if (IsDisposed || Disposing) return;
             if (pnlFavourites.IsInteracting)
@@ -568,7 +589,7 @@ namespace Quartz
                 {
                     Content = browser,
                     Caption = "Loading...",
-                    IsLoading = true
+                    IsLoading = browser.IsLoading
                 };
 
                 void AddTab()
@@ -684,42 +705,38 @@ namespace Quartz
         }
         public void UpdateFavBar()
         {
-            bool showFavSetting = SettingsService.Get("showFavouritesBar") == "true";
-
-            // --- Safely check Source ---
-            string currentUrl = wvWebView1?.Source?.ToString() ?? "";
-            bool isHome = currentUrl == GetHomeUrl();
-
-            bool shouldShow = showFavSetting || isHome;
-
-            // Keep the row visible until its last removed favourite finishes fading.
-            if (!pnlFavourites.HasVisibleItems)
-            {
-                pnlFavourites.Visible = false;
-                pnlTop.Height = 43;
+            if (!_formUiPrepared || _loadingFavourites || _updatingFavouriteLayout || IsDisposed || Disposing)
                 return;
-            }
 
-            // --- If user disabled bar AND not home, hide it ---
-            if (!shouldShow)
+            using (SettingsService.BeginReadSnapshot())
             {
-                pnlFavourites.Visible = false;
-                pnlTop.Height = 43;
-                return;
-            }
+                string homeUrl = GetHomeUrl();
+                // Source is not available yet during native form preparation.
+                string currentUrl = wvWebView1?.Source?.ToString() ?? (_newtab ? _tabAddress : homeUrl);
+                bool show = pnlFavourites.HasVisibleItems &&
+                    (SettingsService.Get("showFavouritesBar") == "true" || currentUrl == homeUrl);
 
-            // --- Show favourites bar ---
-            pnlFavourites.Visible = true;
+                // Use the laid-out content extent, even while the row is hidden.
+                // Native scrollbar visibility can still describe its previous size.
+                bool overflow = pnlFavourites.AutoScrollMinSize.Width > pnlFavourites.ClientSize.Width;
+                int rowHeight = overflow ? 47 : 30;
+                int toolbarHeight = show ? (overflow ? 88 : 71) : 43;
 
-            if (pnlFavourites.HorizontalScroll.Visible)
-            {
-                pnlFavourites.Height = 47;
-                pnlTop.Height = 88;
-            }
-            else
-            {
-                pnlFavourites.Height = 30;
-                pnlTop.Height = 71;
+                _updatingFavouriteLayout = true;
+                SuspendLayout();
+                pnlTop.SuspendLayout();
+                try
+                {
+                    if (pnlFavourites.Height != rowHeight) pnlFavourites.Height = rowHeight;
+                    pnlFavourites.Visible = show;
+                    if (pnlTop.Height != toolbarHeight) pnlTop.Height = toolbarHeight;
+                }
+                finally
+                {
+                    pnlTop.ResumeLayout(true);
+                    ResumeLayout(true);
+                    _updatingFavouriteLayout = false;
+                }
             }
         }
 
@@ -754,7 +771,8 @@ namespace Quartz
         #region Events
         private async void Browser_Load(object sender, EventArgs e)
         {
-    
+            PrepareBrowserForm();
+
             // Force the underlying window handle to be created early
             var h = SettingsMenuStrip.Handle;
 
@@ -778,6 +796,7 @@ namespace Quartz
             try
             {
                 env = await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\", null);
+                if (IsDisposed || Disposing) return;
                 options = env.CreateCoreWebView2ControllerOptions();
                 options.ProfileName = ProfileService.Current.ToString();
                 options.IsInPrivateModeEnabled = Program.profileService.Get(ProfileService.Current).isDisposable;
@@ -787,6 +806,7 @@ namespace Quartz
                     await wvWebView1.EnsureCoreWebView2Async(env, options);
                 }
 
+                if (IsDisposed || Disposing) return;
                 await _siteInfoController.InitializeAsync();
 
                 if (Program.profileService.Get(ProfileService.Current).isDisposable)
@@ -809,10 +829,13 @@ namespace Quartz
 
             }
 
-            // Assuming 'webView' is your WebView2 control
-            //wvWebView1.CoreWebView2.Settings.UserAgent = "Mozilla/1.0 (compatible; Mosaic/1.0; Windows 3.1)";
+            if (IsDisposed || Disposing || wvWebView1.CoreWebView2 == null) return;
+            using (SettingsService.BeginReadSnapshot())
+                CompleteBrowserInitialization();
+        }
 
-
+        private void CompleteBrowserInitialization()
+        {
             wvWebView1.CoreWebView2.SetVirtualHostNameToFolderMapping("quartz.com", Application.StartupPath + @"\assets\quartz.com\", CoreWebView2HostResourceAccessKind.Allow);
 
             if (_newtab)
@@ -829,11 +852,9 @@ namespace Quartz
                 this.FullScreen = wvWebView1.CoreWebView2.ContainsFullScreenElement;
             };
 
-            UpdateFavBar();
-            LoadTheme();
-            LoadFavourites();
-            btnStop.Visible = false;
-            wvLoadingProgress.Visible = false;
+            // Native controls are already ready. Only the browser profile's
+            // colour preference requires an initialized WebView2.
+            NewControlThemeChanger.ChangeControlTheme(wvWebView1);
 
             if (SettingsService.Get("HiddenPDFNone") != "true")
             {
@@ -982,7 +1003,6 @@ namespace Quartz
             form.ShowDialog();
         }
 
-        HistoryService historyService = new HistoryService();
         private void txtWebAddress_KeyUp(object sender, KeyEventArgs e)
         {
             Keys key = e.KeyCode;
@@ -1159,7 +1179,7 @@ namespace Quartz
             { 
                 Content = browser,
                 Caption = "Loading...",
-                IsLoading = true
+                IsLoading = browser.IsLoading
             };
 
             if (ParentTabs.InvokeRequired)
@@ -1184,9 +1204,10 @@ namespace Quartz
         {
             PreviewNavigationStarting(e);
             _activeNavigationId = e.NavigationId;
-            SetTabLoading(!e.Cancel, !e.Cancel, !e.IsRedirected);
+            bool animateLoading = !e.Cancel && ShouldAnimateLoading(e.Uri);
+            SetTabLoading(animateLoading, animateLoading, !e.IsRedirected);
 
-            Cursor = Cursors.AppStarting;
+            Cursor = animateLoading ? Cursors.AppStarting : Cursors.Default;
 
             btnRefresh.Visible = false;
             btnStop.Visible = true;
@@ -1194,10 +1215,11 @@ namespace Quartz
 
         private void CoreWebView2_ContentLoading(object sender, CoreWebView2ContentLoadingEventArgs e)
         {
-            if (e.NavigationId == _activeNavigationId && IsLoading)
+            if (e.NavigationId == _activeNavigationId)
             {
                 PreviewContentLoading();
-                SetTabLoading(true);
+                if (IsLoading)
+                    SetTabLoading(true);
             }
         }
 
@@ -2029,7 +2051,7 @@ namespace Quartz
             {
                 Content = browser,
                 Caption = "New Tab",
-                IsLoading = true
+                IsLoading = browser.IsLoading
             };
             if (ParentTabs.InvokeRequired)
             {
@@ -2179,7 +2201,7 @@ namespace Quartz
                 {
                     Content = browser,
                     Caption = "Loading...",
-                    IsLoading = true
+                    IsLoading = browser.IsLoading
                 };
 
                 if (ParentTabs.InvokeRequired)
@@ -2848,7 +2870,7 @@ namespace Quartz
                         {
                             Content = browser,
                             Caption = "Loading...",
-                            IsLoading = true
+                            IsLoading = browser.IsLoading
                         };
 
                         void AddTab()

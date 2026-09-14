@@ -74,7 +74,7 @@
             this.alwaysShowFullURLsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
-            this.pnlTop = new System.Windows.Forms.Panel();
+            this.pnlTop = new Quartz.Controls.BrowserToolbarPanel();
             this.btnSiteInformation = new Quartz.Controls.SiteInfoButton();
             this.pnlFavourites = new Quartz.Controls.FavouritesBar();
             this.txtWebAddress = new System.Windows.Forms.RichTextBox();
@@ -925,7 +925,7 @@
         #endregion
         private System.Windows.Forms.ContextMenuStrip mnuMenu;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
-        private System.Windows.Forms.Panel pnlTop;
+        private Quartz.Controls.BrowserToolbarPanel pnlTop;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.PictureBox UrlLeft;
         private System.Windows.Forms.PictureBox UrlRight;
