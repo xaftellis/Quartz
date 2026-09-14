@@ -154,6 +154,12 @@
     <Compile Include="AppContainer.Designer.cs">
       <DependentUpon>AppContainer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Browser.Focus.cs">
+      <DependentUpon>Browser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FocusAwareContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Browser.SiteInfo.cs">
       <DependentUpon>Browser.cs</DependentUpon>
       <SubType>Form</SubType>

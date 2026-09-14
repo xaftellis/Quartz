@@ -1,4 +1,4 @@
-﻿namespace Quartz
+namespace Quartz
 {
     partial class Browser
     {
@@ -13,6 +13,7 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            if (disposing) DisposeWebViewFocus();
             if (disposing) DisposeTabPreview();
             if (disposing && (components != null))
             {
@@ -31,7 +32,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Browser));
-            this.mnuMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuMenu = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openInNewTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,7 +50,7 @@
             this.sortByAlphabeticallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showFavouritesBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDownload = new System.Windows.Forms.Button();
-            this.mnuDownloadsDropDown = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuDownloadsDropDown = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.locationToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.changeLocationToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.downloadsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,7 +58,7 @@
             this.btnForward = new System.Windows.Forms.Button();
             this.wvLoadingProgress = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.btnBack = new System.Windows.Forms.Button();
-            this.mnuSearch = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuSearch = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.emojiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,17 +80,17 @@
             this.pnlFavourites = new Quartz.Controls.FavouritesBar();
             this.txtWebAddress = new System.Windows.Forms.RichTextBox();
             this.btnSettings = new System.Windows.Forms.Button();
-            this.SettingsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.SettingsMenuStrip = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.newTabToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.newWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator20 = new System.Windows.Forms.ToolStripSeparator();
             this.historyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuHistory = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuHistory = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.historyToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.favouritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuFavourites = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuFavourites = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.addFavouritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -100,7 +101,7 @@
             this.openFileInBrowserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteBrowsingDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expertsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuExperts = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuExperts = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.nameWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.proformanceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -109,7 +110,7 @@
             this.inspectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.userDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuUserData = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuUserData = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.resetToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -923,7 +924,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.ContextMenuStrip mnuMenu;
+        private Quartz.Controls.FocusAwareContextMenuStrip mnuMenu;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private Quartz.Controls.BrowserToolbarPanel pnlTop;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
@@ -940,7 +941,7 @@
         private System.Windows.Forms.ToolStripMenuItem openFileInBrowserToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip mnuDownloadsDropDown;
+        private Quartz.Controls.FocusAwareContextMenuStrip mnuDownloadsDropDown;
         private System.Windows.Forms.ToolStripMenuItem locationToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem changeLocationToolStripMenuItem1;
         public Microsoft.Web.WebView2.WinForms.WebView2 wvLoadingProgress;
@@ -950,18 +951,18 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem downloadsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem expertsToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip mnuExperts;
+        private Quartz.Controls.FocusAwareContextMenuStrip mnuExperts;
         private System.Windows.Forms.ToolStripMenuItem inspectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem webview2TaskManagerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restartToolStripMenuItem;
         public System.Windows.Forms.NotifyIcon notifyIcon1;
-        public System.Windows.Forms.ContextMenuStrip SettingsMenuStrip;
+        public Quartz.Controls.FocusAwareContextMenuStrip SettingsMenuStrip;
         public Microsoft.Web.WebView2.WinForms.WebView2 wvWebView1;
-        private System.Windows.Forms.ContextMenuStrip mnuHistory;
+        private Quartz.Controls.FocusAwareContextMenuStrip mnuHistory;
         private System.Windows.Forms.ToolStripMenuItem historyToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
         private System.Windows.Forms.ToolStripMenuItem userDataToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip mnuUserData;
+        private Quartz.Controls.FocusAwareContextMenuStrip mnuUserData;
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem1;
         private System.Windows.Forms.Panel pnlBottom;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
@@ -975,7 +976,7 @@
         private System.Windows.Forms.ToolStripComboBox zoomToolStrip;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ContextMenuStrip mnuSearch;
+        private Quartz.Controls.FocusAwareContextMenuStrip mnuSearch;
         private System.Windows.Forms.ToolStripMenuItem sortByAlphabeticallyToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator18;
         private System.Windows.Forms.ToolStripMenuItem openInNewTabToolStripMenuItem;
@@ -1014,7 +1015,7 @@
         private System.Windows.Forms.ToolStripMenuItem proformanceToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
         private System.Windows.Forms.ToolStripMenuItem favouritesToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip mnuFavourites;
+        private Quartz.Controls.FocusAwareContextMenuStrip mnuFavourites;
         private System.Windows.Forms.ToolStripMenuItem addFavouritesToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;

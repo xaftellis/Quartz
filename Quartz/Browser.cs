@@ -161,6 +161,7 @@ namespace Quartz
         {
             using (SettingsService.BeginReadSnapshot())
                 InitializeComponent();
+            InitializeWebViewFocus();
             DoubleBuffered = true;
             InitializeTabPreview();
             InitializeTabMemory();
@@ -2392,6 +2393,8 @@ namespace Quartz
                 && _originalURL == txtWebAddress.Text)
             {
                 var uri = wvWebView1.Source;
+                if (uri == null)
+                    return;
 
                 // Get host
                 string host = uri.Host;
@@ -2455,7 +2458,11 @@ namespace Quartz
                 _originalURL = txtWebAddress.Text;
             }
 
-            BeginInvoke((Action)(() => txtWebAddress.SelectAll()));
+            BeginInvoke((Action)(() =>
+            {
+                if (!IsDisposed && !Disposing && txtWebAddress.Focused)
+                    txtWebAddress.SelectAll();
+            }));
         }
 
         public void SortByAlphabetially()
