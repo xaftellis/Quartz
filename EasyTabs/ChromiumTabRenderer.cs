@@ -237,6 +237,11 @@ namespace EasyTabs
         private Point _lastCursor = new Point(int.MinValue, int.MinValue);
         private TitleBarTab _hoveredTab;
         private ChromiumTabTheme _theme = ChromiumTabTheme.Light;
+        private int? _availableWidthDuringMouseClose;
+        private Size _mouseCloseWindowSize;
+        private float _mouseCloseScale;
+        private Rectangle _mouseCloseWatchBounds;
+        private double? _mouseCloseExitStarted;
 
         public ChromiumTabRenderer(TitleBarTabs parentWindow) : base(parentWindow)
         {
@@ -266,7 +271,8 @@ namespace EasyTabs
         public override int TabHeight => Scale(ChromiumTabMetrics.Height) + TopPadding;
         public override int OverlapWidth => Scale(ChromiumTabMetrics.Overlap);
         public override bool RendersEntireTitleBar => IsWindows10;
-        internal override bool IsLayoutAnimating => _animation.IsAnimating || _hoverAnimating || _buttonAnimating || _contentAnimating;
+        internal override bool IsLayoutAnimating => _animation.IsAnimating || _hoverAnimating || _buttonAnimating || _contentAnimating || _mouseCloseExitStarted.HasValue;
+        internal override bool IsTabClosingMode => _availableWidthDuringMouseClose.HasValue;
         protected virtual double AnimationTimeMilliseconds => _clock.Elapsed.TotalMilliseconds;
 
         public override bool IsOverSizingBox(Point cursor) => _sizingBoxes.Contains(cursor);
@@ -281,6 +287,9 @@ namespace EasyTabs
             // Chrome allows background tabs to lose their close buttons. The old
             // image renderer enlarged MinimumSize as if every close button remained.
             _parentWindow.MinimumSize = _originalMinimum;
+            if (e.Modification == ListModification.ItemAdded || e.Modification == ListModification.RangeAdded ||
+                e.Modification == ListModification.Cleared)
+                lock (_sync) ExitTabClosingMode();
         }
 
         internal override void BeginPinnedTabAnimation()
@@ -288,6 +297,7 @@ namespace EasyTabs
             lock (_sync)
             {
                 if (_disposed) return;
+                ExitTabClosingMode();
                 // BoundsAnimator uses the same 200 ms EASE_OUT clock for pinning
                 // and insertion. Snapshot displayed bounds so reversals do not jump.
                 _animation.StartInsertion(AnimationTimeMilliseconds);
@@ -299,8 +309,78 @@ namespace EasyTabs
         internal override bool RequiresHoverRedraw(Point cursor)
         {
             lock (_sync)
+            {
+                if (UpdateTabClosingPointer(cursor)) return true;
                 return cursor != _lastCursor && (_hoveredTab != null || FindTab(cursor) != null ||
                     _addHovered || IsOverAddButton(cursor));
+            }
+        }
+
+        private bool ExitTabClosingMode()
+        {
+            bool wasClosing = IsTabClosingMode;
+            _availableWidthDuringMouseClose = null;
+            _mouseCloseExitStarted = null;
+            return wasClosing;
+        }
+
+        internal override bool UpdateTabClosingPointer(Point cursor, bool pressed = false)
+        {
+            lock (_sync)
+            {
+                if (!IsTabClosingMode) return false;
+                if (_mouseCloseWatchBounds.Contains(cursor))
+                {
+                    bool wasWaiting = _mouseCloseExitStarted.HasValue;
+                    _mouseCloseExitStarted = null;
+                    return wasWaiting;
+                }
+                double now = AnimationTimeMilliseconds;
+                if (!pressed && !_mouseCloseExitStarted.HasValue)
+                {
+                    // Chromium MouseWatcher waits 300 ms after leaving its zone.
+                    // Keep the frame scheduler alive even when all tabs are idle.
+                    _mouseCloseExitStarted = now;
+                    return true;
+                }
+                if (!pressed && now - _mouseCloseExitStarted.Value < 300) return false;
+                ExitTabClosingMode();
+                _animation.StartInsertion(now); // ResizeLayoutAnimation: 200 ms EASE_OUT.
+                return true;
+            }
+        }
+
+        private void KeepMouseCloseWidth(TitleBarTab tab, int index)
+        {
+            var tabs = _parentWindow.Tabs;
+            Visual closing, first, last;
+            if (tabs.Count < 2 || !_visuals.TryGetValue(tab, out closing) ||
+                !_visuals.TryGetValue(tabs[0], out first) || !_visuals.TryGetValue(tabs[tabs.Count - 1], out last))
+            {
+                ExitTabClosingMode();
+                return;
+            }
+
+            int available = _availableWidthDuringMouseClose ?? last.Target.Right - first.Target.Left;
+            if (index < tabs.Count - 1)
+            {
+                // Preserve the following close target. At minimum sizes the next
+                // tab takes the active width, so subtract its former width instead.
+                int removedWidth = closing.Target.Width;
+                Visual next;
+                if (tab.Active && !tab.IsPinned && _visuals.TryGetValue(tabs[index + 1], out next))
+                    removedWidth = next.Target.Width;
+                available -= removedWidth - OverlapWidth;
+            }
+            // Closing the rightmost tab keeps the trailing edge, as in Chromium;
+            // the survivors may grow to fill that existing width budget.
+            _availableWidthDuringMouseClose = Math.Max(1, available);
+            _mouseCloseExitStarted = null;
+            _mouseCloseWindowSize = _parentWindow.ClientSize;
+            _mouseCloseScale = RenderScale;
+            _mouseCloseWatchBounds = new Rectangle(0, 0,
+                _parentWindow._overlay?.Width ?? _parentWindow.ClientSize.Width,
+                (_parentWindow._overlay?.Height ?? TabHeight) + Scale(40));
         }
 
         /// <summary>Show Chromium's former two-stage waiting/loading spinner. Disable for the modern single spinner.</summary>
@@ -309,13 +389,16 @@ namespace EasyTabs
         /// <summary>Borrowed fallback for pinned pages with no visible favicon. Never changes the page's icon.</summary>
         public Icon DefaultFavicon { get; set; } = SystemIcons.Application;
 
-        internal override void BeginTabClose(TitleBarTab tab)
+        internal override void BeginTabClose(TitleBarTab tab, bool fromMouse = false)
         {
             lock (_sync)
             {
                 Visual visual;
                 int index = _parentWindow.Tabs.IndexOf(tab);
-                if (_disposed || index < 0 || !ShouldAnimateLayout() ||
+                if (_disposed || index < 0) return;
+                if (fromMouse) KeepMouseCloseWidth(tab, index);
+                else ExitTabClosingMode();
+                if (!ShouldAnimateLayout() ||
                     (_parentWindow.Tabs.Count == 1 && _parentWindow.ExitOnLastTabClose) ||
                     !_visuals.TryGetValue(tab, out visual) || visual.Geometry == null || visual.Content.Pixels == null) return;
                 visual.Closing = true;
@@ -447,6 +530,11 @@ namespace EasyTabs
                 float step = (float)Math.Max(0, Math.Min(64, now - _lastPaint)) / 200f;
                 _lastPaint = now;
                 bool animate = ShouldAnimateLayout();
+                if (IsTabClosingMode && (_parentWindow.ClientSize != _mouseCloseWindowSize ||
+                    scale != _mouseCloseScale || IsTabRepositioning || _detachedTabX.HasValue || tabs.Count == 0 ||
+                    tabs.Any(tab => !_visuals.ContainsKey(tab))))
+                    ExitTabClosingMode();
+                UpdateTabClosingPointer(cursor);
                 _liveTabs.Clear();
                 foreach (TitleBarTab tab in tabs) _liveTabs.Add(tab);
                 _removedTabs.Clear();
@@ -494,7 +582,8 @@ namespace EasyTabs
                     _animation.StartInsertion(now);
                 }
                 int pinnedCount = _parentWindow.PinnedTabCount;
-                int[] widths = ChromiumTabMetrics.LayoutWidths(tabs.Count, pinnedCount, activeIndex, _maxTabArea.Width, scale);
+                int[] widths = ChromiumTabMetrics.LayoutWidths(tabs.Count, pinnedCount, activeIndex,
+                    _availableWidthDuringMouseClose ?? _maxTabArea.Width, scale);
                 if (_detachedTabWidth.HasValue && tabs.Count == 1) widths[0] = _detachedTabWidth.Value;
                 _tabContentWidth = widths.Length == 0 ? 0 : Math.Max(0, widths[0] - Scale(16));
 

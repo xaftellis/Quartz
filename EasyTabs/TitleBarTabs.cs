@@ -43,6 +43,7 @@ namespace EasyTabs
 
 		/// <summary>Borderless window that is rendered over top of the non-client area of this window.</summary>
 		protected internal TitleBarTabsOverlay _overlay;
+		private TitleBarTab _mouseClosingTab;
 
 		/// <summary>The preview images for each tab used to display each tab when Aero Peek is activated.</summary>
 		protected Dictionary<Form, Bitmap> _previews = new Dictionary<Form, Bitmap>();
@@ -933,6 +934,15 @@ namespace EasyTabs
 			SelectedTabIndex = _tabs.Count - 1;
 		}
 
+		/// <summary>Identifies a strip mouse close without bypassing the content's cancellation handlers.</summary>
+		internal void CloseTabFromMouse(TitleBarTab tab)
+		{
+			TitleBarTab previous = _mouseClosingTab;
+			_mouseClosingTab = tab;
+			try { tab.Content.Close(); }
+			finally { _mouseClosingTab = previous; }
+		}
+
 		/// <summary>Removes <paramref name="closingTab" /> from <see cref="Tabs" /> and selects the next applicable tab in the list.</summary>
 		/// <param name="closingTab">Tab that is being closed.</param>
 		protected virtual void CloseTab(TitleBarTab closingTab)
@@ -940,7 +950,7 @@ namespace EasyTabs
 			int removeIndex = Tabs.IndexOf(closingTab);
 			int selectedTabIndex = SelectedTabIndex;
 
-			TabRenderer?.BeginTabClose(closingTab);
+			TabRenderer?.BeginTabClose(closingTab, ReferenceEquals(closingTab, _mouseClosingTab));
 			Tabs.Remove(closingTab);
 
 			if (selectedTabIndex > removeIndex)

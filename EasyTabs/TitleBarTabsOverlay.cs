@@ -754,6 +754,8 @@ namespace EasyTabs
                 if ((WM)input.wParam.ToInt32() == WM.WM_LBUTTONDOWN)
                 {
                     _wasDragging = false;
+                    if (_parentForm.TabRenderer.UpdateTabClosingPointer(GetRelativeCursorPosition(input.Position), true))
+                        RequestRender();
                 }
                 else if ((WM)input.wParam.ToInt32() == WM.WM_LBUTTONDBLCLK)
                 {
@@ -811,6 +813,7 @@ namespace EasyTabs
                     // Cursor.Position uses the host's DPI coordinate system.
                     Point cursor = Cursor.Position;
                     if (_mouseInside || DesktopBounds.Contains(cursor) || _parentForm.TabRenderer.IsTabRepositioning ||
+                        _parentForm.TabRenderer.IsTabClosingMode ||
                         (_parentForm.TabRenderer.TabDragClickOffset.HasValue) || _singleTabDragOwner == this || _tornTabDragOwner == this)
                     {
                         _latestMousePosition = cursor;
@@ -1223,7 +1226,7 @@ namespace EasyTabs
 							// If the user clicks the middle button/scroll wheel over a tab, close it
 							if ((WM) m.Msg == WM.WM_MBUTTONUP || (WM) m.Msg == WM.WM_NCMBUTTONUP)
 							{
-								clickedTab.Content.Close();
+								_parentForm.CloseTabFromMouse(clickedTab);
 								Render();
 							}
 
@@ -1232,7 +1235,7 @@ namespace EasyTabs
 								// If the user clicked the close button, remove the tab from the list
 								if (_parentForm.TabRenderer.IsOverCloseButton(clickedTab, relativeCursorPosition2))
 								{
-									clickedTab.Content.Close();
+									_parentForm.CloseTabFromMouse(clickedTab);
 									Render();
 								}
 
