@@ -162,26 +162,12 @@ namespace Quartz
         }
 
         private Browser _browser = null;
-        private readonly Guid _settingsProfileId;
         bool opentab = false;
         public Settings(Browser browser, bool tab)
         {
             opentab = tab;
             _browser = browser;
-            _settingsProfileId = browser?.SessionProfileId ?? ProfileService.Current;
             InitializeComponent();
-            bool isDisposable = Program.profileService.Get(_settingsProfileId)?.isDisposable ?? true;
-            cbContinueSession.Enabled = !isDisposable;
-            cbContinueSession.Checked = !isDisposable &&
-                SettingsService.Get(_settingsProfileId, SessionService.ContinueSetting) != "false";
-        }
-
-        private void ContinueSession_Click(object sender, EventArgs e)
-        {
-            SettingsService.Set(_settingsProfileId, SessionService.ContinueSetting,
-                cbContinueSession.Checked ? "true" : "false");
-            if (Program.Session?.ProfileId == _settingsProfileId)
-                Program.Session.SetEnabled(cbContinueSession.Checked);
         }
 
         public event EventHandler QuartzUpdaterClosed;
@@ -1420,6 +1406,11 @@ namespace Quartz
 
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(mnuTimeMachine.Handle, 100, Animation.AW_BLEND);
+            }
+
             if (birthdayService.All().Count != 0)
             {
                 birthdaysToolStripMenuItem.DropDown = mnuBirthdays;
@@ -1513,6 +1504,11 @@ namespace Quartz
             }
 
 
+            //last
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow((sender as ContextMenuStrip).Handle, 100, Animation.AW_BLEND);
+            }
         }
 
 
@@ -1775,6 +1771,14 @@ namespace Quartz
                 birthdayService.Remove(model.Id);
                 birthdayService.SaveChanges();
                 // Refresh your menu or UI if needed
+            }
+        }
+
+        private void contextMenuStrip1_Opening_1(object sender, CancelEventArgs e)
+        {
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow((sender as ContextMenuStrip).Handle, 100, Animation.AW_BLEND);
             }
         }
 

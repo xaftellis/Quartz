@@ -10,7 +10,7 @@ using System.Windows.Media.Animation;
 
 namespace Quartz.Controls
 {
-    public partial class TabContextMenu : FocusAwareContextMenuStrip
+    public partial class TabContextMenu : ContextMenuStrip
     {
         TitleBarTabs _parentForm;
         TitleBarTab _clickedTab;
@@ -254,6 +254,10 @@ namespace Quartz.Controls
 
             //showSiteIconsOnlyToolStripMenuItem.Checked = SettingsService.Get("showSiteIconsOnly") == "true";
 
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(this.Handle, 100, Animation.AW_BLEND);
+            }
         }
 
         public void UpdateMenuItemsEnabledState()

@@ -57,7 +57,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.txtTimeMachine = new System.Windows.Forms.TextBox();
             this.mcTimeMachine = new System.Windows.Forms.MonthCalendar();
-            this.mnuTimeMachine = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
+            this.mnuTimeMachine = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.todayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.goodFridayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,7 +65,7 @@
             this.christmasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.birthdaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuBirthdays = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
+            this.mnuBirthdays = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addBirthdayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.groupBoxDownloadDialog = new System.Windows.Forms.GroupBox();
@@ -84,7 +84,6 @@
             this.autofillCheckBox = new System.Windows.Forms.CheckBox();
             this.autoSaveCheckBox = new System.Windows.Forms.CheckBox();
             this.GeneralPage = new System.Windows.Forms.TabPage();
-            this.cbContinueSession = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cbUpdateCheckFrequency = new System.Windows.Forms.ComboBox();
             this.HiddenPDFGroupBox = new System.Windows.Forms.GroupBox();
@@ -120,7 +119,7 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStrip1 = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tabPageAbout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LoadingProgress)).BeginInit();
@@ -788,7 +787,6 @@
             this.GeneralPage.BackColor = System.Drawing.Color.White;
             this.GeneralPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.GeneralPage.Controls.Add(this.label7);
-            this.GeneralPage.Controls.Add(this.cbContinueSession);
             this.GeneralPage.Controls.Add(this.cbUpdateCheckFrequency);
             this.GeneralPage.Controls.Add(this.HiddenPDFGroupBox);
             this.GeneralPage.Controls.Add(this.cbStatusBar);
@@ -819,7 +817,7 @@
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.Black;
-            this.label7.Location = new System.Drawing.Point(261, 202);
+            this.label7.Location = new System.Drawing.Point(261, 172);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(274, 24);
             this.label7.TabIndex = 31;
@@ -837,24 +835,11 @@
             "Weekly (Default)",
             "Monthly",
             "Never (Not recommended)"});
-            this.cbUpdateCheckFrequency.Location = new System.Drawing.Point(306, 229);
+            this.cbUpdateCheckFrequency.Location = new System.Drawing.Point(306, 199);
             this.cbUpdateCheckFrequency.Name = "cbUpdateCheckFrequency";
             this.cbUpdateCheckFrequency.Size = new System.Drawing.Size(185, 21);
             this.cbUpdateCheckFrequency.TabIndex = 30;
             this.cbUpdateCheckFrequency.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged_1);
-            //
-            // cbContinueSession
-            //
-            this.cbContinueSession.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbContinueSession.AutoSize = true;
-            this.cbContinueSession.Location = new System.Drawing.Point(306, 166);
-            this.cbContinueSession.Name = "cbContinueSession";
-            this.cbContinueSession.Size = new System.Drawing.Size(185, 17);
-            this.cbContinueSession.TabIndex = 32;
-            this.cbContinueSession.Text = "Continue where you left off";
-            this.cbContinueSession.AccessibleDescription = "Reopen this profile's windows and tabs when Quartz starts.";
-            this.cbContinueSession.UseVisualStyleBackColor = true;
-            this.cbContinueSession.Click += new System.EventHandler(this.ContinueSession_Click);
             // 
             // HiddenPDFGroupBox
             // 
@@ -1286,6 +1271,7 @@
             this.deleteToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(108, 54);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening_1);
             // 
             // Settings
             // 
@@ -1423,7 +1409,6 @@
         private System.Windows.Forms.ComboBox cbDownloadAlighment;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox cbUpdateCheckFrequency;
-        private System.Windows.Forms.CheckBox cbContinueSession;
         private System.Windows.Forms.Label label7;
     }
 }

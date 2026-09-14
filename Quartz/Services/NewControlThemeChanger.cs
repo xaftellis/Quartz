@@ -76,7 +76,6 @@ namespace Quartz.Services
         }
         public static void ChangeControlTheme(object _object)
         {
-            if (_object is ToolStripDropDown menu && Controls.ChromiumMenuStyle.IsDesignTime(menu)) return;
             Color backcolor = Color.White;
             Color forecolor = Color.Black;
             Color extrabackcolor = Color.Blue;
@@ -88,6 +87,8 @@ namespace Quartz.Services
             BorderStyle borderStyle = BorderStyle.Fixed3D;
             int buttonbordersize = 1;
             Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme coreWebView2ColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Light;
+            ToolStripProfessionalRenderer renderer = new ToolStripProfessionalRenderer();
+            bool mnuShadow = false;
             
 
             var theme = SettingsService.Get("Theme");
@@ -103,6 +104,7 @@ namespace Quartz.Services
                 borderStyle = BorderStyle.FixedSingle;
                 buttonbordersize = 0;
                 coreWebView2ColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Light;
+                renderer = new WhiteContextMenuRenderer();
 
             }
             else if (theme == "black")
@@ -116,6 +118,7 @@ namespace Quartz.Services
                 checkboxflatstyle = FlatStyle.Flat;
                 borderStyle = BorderStyle.FixedSingle;
                 buttonbordersize = 1;
+                renderer = new BlackContextMenuRenderer();
                 coreWebView2ColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Dark;
             }
             else if (theme == "aqua")
@@ -130,6 +133,7 @@ namespace Quartz.Services
                 borderStyle = BorderStyle.FixedSingle;
                 buttonbordersize = 1;
                 coreWebView2ColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Auto;
+                renderer = new AquaContextMenuRenderer();
             }
             else if (theme == "xmas")
             {
@@ -143,6 +147,7 @@ namespace Quartz.Services
                 borderStyle = BorderStyle.FixedSingle;
                 buttonbordersize = 0;
                 coreWebView2ColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Auto;
+                renderer = new XmasContextMenuRenderer();
             }
             else if (theme == "dark")
             {
@@ -156,6 +161,7 @@ namespace Quartz.Services
                 borderStyle = BorderStyle.FixedSingle;
                 buttonbordersize = 1;
                 coreWebView2ColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Dark;
+                renderer = new DarkContextMenuRenderer();
             }
 
 
@@ -202,7 +208,24 @@ namespace Quartz.Services
             }
             else if (control is ContextMenuStrip)
             {
-                Controls.ChromiumMenuStyle.Apply((ContextMenuStrip)control);
+                var ContextMenuStrip = (ContextMenuStrip)control;
+                if (theme == "dark")
+                {
+                    ContextMenuStrip.BackColor = backcolor;
+                    ContextMenuStrip.ForeColor = forecolor;
+                }
+                else if (theme == "aqua")
+                {
+                    ContextMenuStrip.BackColor = extrabackcolor;
+                    ContextMenuStrip.ForeColor = extraforecolor;
+                }
+                else if (theme == "xmas")
+                {
+                    ContextMenuStrip.BackColor = extrabackcolor;
+                    ContextMenuStrip.ForeColor = extraforecolor;
+                }
+                ContextMenuStrip.Renderer = renderer;
+                //ContextMenuStrip.DropShadowEnabled = true;
             }
             else if (control is TextBox)
             {

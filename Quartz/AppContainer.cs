@@ -4,7 +4,6 @@ using Quartz.Controls;
 using Quartz.Libs;
 using Quartz.Services;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -80,14 +79,11 @@ namespace Quartz
 
             _windowSettingsSaveTimer.Tick += WindowSettingsSaveTimer_Tick;
 
-            ProfileService.LoadCurrentProfile();
-            ProfileId = ProfileService.Current;
             ReadWindowSettings();
             ApplyWindowSettings();
 
-            Tabs.CollectionModified += (sender, e) => Program.Session?.RequestCheckpoint(this);
-            TabSelected += (sender, e) => Program.Session?.RequestCheckpoint(this);
-            Activated += (sender, e) => Program.Session?.RequestCheckpoint(this);
+            ProfileService.LoadCurrentProfile();
+            ProfileId = ProfileService.Current;
             var theme = SettingsService.Get("Theme");
             Icon icon = Quartz.Properties.Resources.favicon;
             System.Drawing.Color barBackColor = System.Drawing.Color.White;
@@ -174,18 +170,7 @@ namespace Quartz
 
         private void ReadWindowSettings()
         {
-            var migration = new Dictionary<string, string>();
-            foreach (string name in new[] { WindowSizeSetting, WindowPositionSetting, WindowStateSetting })
-            {
-                if (SettingsService.Get(ProfileId, name) == null)
-                {
-                    string legacy = MainSettingsService.Get(name);
-                    if (legacy != null) migration[name] = legacy;
-                }
-            }
-            if (migration.Count > 0) SettingsService.SetMany(ProfileId, migration);
-
-            string[] savedSize = SettingsService.Get(ProfileId, WindowSizeSetting)?.Split(',');
+            string[] savedSize = MainSettingsService.Get(WindowSizeSetting)?.Split(',');
             if (savedSize?.Length == 2
                 && int.TryParse(savedSize[0], out int width)
                 && int.TryParse(savedSize[1], out int height))
@@ -195,7 +180,7 @@ namespace Quartz
                     Math.Max(MinimumWindowSize.Height, height));
             }
 
-            string[] savedPosition = SettingsService.Get(ProfileId, WindowPositionSetting)?.Split(',');
+            string[] savedPosition = MainSettingsService.Get(WindowPositionSetting)?.Split(',');
             if (savedPosition?.Length == 2
                 && int.TryParse(savedPosition[0], out int x)
                 && int.TryParse(savedPosition[1], out int y))
@@ -203,7 +188,7 @@ namespace Quartz
                 _savedWindowPosition = new System.Drawing.Point(x, y);
             }
 
-            string savedState = SettingsService.Get(ProfileId, WindowStateSetting);
+            string savedState = MainSettingsService.Get(WindowStateSetting);
             if (savedState == FormWindowState.Maximized.ToString())
             {
                 _savedWindowState = FormWindowState.Maximized;
@@ -289,15 +274,13 @@ namespace Quartz
                 ? _lastNonMinimizedWindowState
                 : WindowState;
 
-            if (Program.profileService.Get(ProfileId) == null) return;
-            SettingsService.SetMany(ProfileId, new Dictionary<string, string>
-            {
-                { WindowSizeSetting, $"{normalBounds.Width},{normalBounds.Height}" },
-                { WindowPositionSetting, $"{normalBounds.X},{normalBounds.Y}" },
-                { WindowStateSetting, savedState == FormWindowState.Maximized
+            MainSettingsService.Set(WindowSizeSetting, $"{normalBounds.Width},{normalBounds.Height}");
+            MainSettingsService.Set(WindowPositionSetting, $"{normalBounds.X},{normalBounds.Y}");
+            MainSettingsService.Set(
+                WindowStateSetting,
+                savedState == FormWindowState.Maximized
                     ? FormWindowState.Maximized.ToString()
-                    : FormWindowState.Normal.ToString() }
-            });
+                    : FormWindowState.Normal.ToString());
         }
 
         private void ScheduleWindowSettingsSave()
@@ -323,32 +306,10 @@ namespace Quartz
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            if (SessionClosing)
-            {
-                base.OnFormClosing(e);
-                return;
-            }
-            bool lastWindow = ApplicationContext == null ||
-                ApplicationContext.OpenWindows.OfType<AppContainer>().Count(w => !w.SessionClosing && !w.IsDisposed) <= 1;
-            bool closingApplication = lastWindow || e.CloseReason == CloseReason.WindowsShutDown ||
-                e.CloseReason == CloseReason.TaskManagerClosing || e.CloseReason == CloseReason.ApplicationExitCall;
-            if (closingApplication) Program.Session?.PrepareForShutdown();
-            SessionClosing = true;
-            Program.Session?.PauseCapture();
-            try
-            {
-                base.OnFormClosing(e);
-                if (!e.Cancel) SaveWindowSettings();
-            }
-            finally
-            {
-                if (e.Cancel)
-                {
-                    SessionClosing = false;
-                    Program.Session?.CancelShutdown();
-                }
-                Program.Session?.ResumeCapture();
-            }
+            base.OnFormClosing(e);
+
+            if (!e.Cancel)
+                SaveWindowSettings();
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)

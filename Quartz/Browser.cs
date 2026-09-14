@@ -154,7 +154,6 @@ namespace Quartz
         public Browser(string address, bool newtabrequest)
         {
             InitializeComponent();
-            InitializeWebViewFocus();
             InitializeTabPreview();
             InitializeTabMemory();
             InitializeSiteInfo();
@@ -780,15 +779,14 @@ namespace Quartz
             {
                 env = await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\", null);
                 options = env.CreateCoreWebView2ControllerOptions();
-                options.ProfileName = SessionProfileId.ToString();
-                options.IsInPrivateModeEnabled = Program.profileService.Get(SessionProfileId).isDisposable;
+                options.ProfileName = ProfileService.Current.ToString();
+                options.IsInPrivateModeEnabled = Program.profileService.Get(ProfileService.Current).isDisposable;
 
                 if (wvWebView1.CoreWebView2 == null)
                 {
                     await wvWebView1.EnsureCoreWebView2Async(env, options);
                 }
 
-                await InitializeSessionWebViewAsync();
                 await _siteInfoController.InitializeAsync();
 
                 if (Program.profileService.Get(ProfileService.Current).isDisposable)
@@ -816,6 +814,15 @@ namespace Quartz
 
 
             wvWebView1.CoreWebView2.SetVirtualHostNameToFolderMapping("quartz.com", Application.StartupPath + @"\assets\quartz.com\", CoreWebView2HostResourceAccessKind.Allow);
+
+            if (_newtab)
+            {
+                SetSource(_tabAddress);
+            }
+            else
+            {
+                SetSource(GetHomeUrl());
+            }
 
             wvWebView1.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) =>
             {
@@ -878,7 +885,6 @@ namespace Quartz
             {
                 wvWebView1.ZoomFactor = Convert.ToDouble(SettingsService.Get("Zoom"));
             }
-            ApplySessionPreferences();
 
             switch (SettingsService.Get("DownloadAlignment"))
             {
@@ -933,11 +939,6 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = SettingsService.Get("AreBrowserAcceleratorKeysEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
-
-            if (_newtab)
-                SetSource(_tabAddress);
-            else
-                SetSource(GetHomeUrl());
 
             notifyIcon1.Text = "Quartz v3.0.0 (Developer Build)";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
@@ -1139,7 +1140,6 @@ namespace Quartz
 
         private void CoreWebView2_ProcessFailed(object sender, CoreWebView2ProcessFailedEventArgs e)
         {
-            Program.Session?.Checkpoint();
             // An unrelated GPU or subframe failure does not mean this page has finished loading.
             if (e.ProcessFailedKind == CoreWebView2ProcessFailedKind.BrowserProcessExited ||
                 e.ProcessFailedKind == CoreWebView2ProcessFailedKind.RenderProcessExited ||
@@ -1183,7 +1183,6 @@ namespace Quartz
         private void wvWebView1_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
             PreviewNavigationStarting(e);
-            SessionNavigationStarting(e);
             _activeNavigationId = e.NavigationId;
             SetTabLoading(!e.Cancel, !e.Cancel, !e.IsRedirected);
 
@@ -1221,7 +1220,6 @@ namespace Quartz
 
             if (e.IsSuccess)
             {
-                RestoreSessionScroll(e);
                 SaveCurrentPageToHistory();
                 return;
             }
@@ -1333,7 +1331,6 @@ namespace Quartz
         private string lastGoodUrl = null;
         private void CoreWebView2_SourceChanged(object sender, CoreWebView2SourceChangedEventArgs e)
         {
-            SessionSourceChanged();
             var currentUri = wvWebView1.Source;
             if (currentUri == null) return;
 
@@ -1506,7 +1503,6 @@ namespace Quartz
 
         private void CoreWebView2_DocumentTitleChanged(object sender, object e)
         {
-            RememberSessionTitle();
             if (lastGoodUrl != string.Empty && isQuartzDotComErrorPages(wvWebView1.Source))
             {
                 this.Text = (new Uri(lastGoodUrl)).Host;
@@ -1728,9 +1724,7 @@ namespace Quartz
 
         private void wvWebView1_ZoomFactorChanged(object sender, EventArgs e)
         {
-            if (!_applyingSessionPreferences)
-                SettingsService.Set(SessionProfileId, "Zoom", wvWebView1.ZoomFactor.ToString());
-            Program.Session?.RequestCheckpoint(this);
+            SettingsService.Set("Zoom", wvWebView1.ZoomFactor.ToString());
         }
 
         private void removeAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1802,6 +1796,10 @@ namespace Quartz
             }
 
 
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(mnuMenu.Handle, 100, Animation.AW_BLEND);
+            }
         }
 
         private void changeProfileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1814,6 +1812,10 @@ namespace Quartz
 
         private void SettingsMenuStrip_Opening(object sender, CancelEventArgs e)
         {
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(SettingsMenuStrip.Handle, 100, Animation.AW_BLEND);
+            }
 
             if (SettingsService.Get("AreDevToolsEnabled") == "true")
             {
@@ -1848,9 +1850,8 @@ namespace Quartz
                 return;
 
             // Get the profile associated with the WebView2 instance
-            var webViewProfileId = SessionProfileId;
+            var webViewProfileId = Guid.Parse(wvWebView1.CoreWebView2.Profile.ProfileName);
             var webViewProfile = Program.profileService.Get(webViewProfileId);
-            if (webViewProfile == null) return;
 
             // Update last active timestamp
             webViewProfile.lastActive = DateTime.Now;
@@ -1870,7 +1871,7 @@ namespace Quartz
                 // Remove profile from service and delete WebView2 profile
                 Program.profileService.Remove(webViewProfileId);
                 Program.profileService.SaveChanges();
-                wvWebView1.CoreWebView2?.Profile.Delete();
+                wvWebView1.CoreWebView2.Profile.Delete();
 
                 // Set the active profile: prioritize override if applicable
                 bool overrideActive = currentActive != null && currentActive.Id != webViewProfileId && currentActive.isDisposable;
@@ -1976,6 +1977,10 @@ namespace Quartz
         {
             locationToolStripMenuItem1.Text = $"Location: {wvWebView1.CoreWebView2.Profile.DefaultDownloadFolderPath}";
 
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(mnuDownloadsDropDown.Handle, 100, Animation.AW_BLEND);
+            }
         }
 
         private void changeLocationToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -2046,6 +2051,14 @@ namespace Quartz
         private void closeTabToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tabbedApp.SelectedTab.Content.Close();
+        }
+
+        private void mnuExperts_Opening(object sender, CancelEventArgs e)
+        {
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(mnuExperts.Handle, 100, Animation.AW_BLEND);
+            }
         }
 
         private void restartToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2140,6 +2153,10 @@ namespace Quartz
             clearHistoryItem.Click += ClearHistoryItem_Click; ;
             mnuHistory.Items.Add(clearHistoryItem);
 
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(mnuHistory.Handle, 100, Animation.AW_BLEND);
+            }
         }
 
         private void ClearHistoryItem_Click(object sender, EventArgs e)
@@ -2225,6 +2242,14 @@ namespace Quartz
 
             MainSettingsService.Set("Reset", "true");
             Power.Restart();
+        }
+
+        private void mnuUserData_Opening(object sender, CancelEventArgs e)
+        {
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(mnuUserData.Handle, 100, Animation.AW_BLEND);
+            }
         }
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2364,8 +2389,6 @@ namespace Quartz
             {
                 var uri = wvWebView1.Source;
 
-                if (uri == null) return;
-
                 // Get host
                 string host = uri.Host;
 
@@ -2428,11 +2451,7 @@ namespace Quartz
                 _originalURL = txtWebAddress.Text;
             }
 
-            BeginInvoke((Action)(() =>
-            {
-                if (!IsDisposed && !Disposing && txtWebAddress.Focused)
-                    txtWebAddress.SelectAll();
-            }));
+            BeginInvoke((Action)(() => txtWebAddress.SelectAll()));
         }
 
         public void SortByAlphabetially()
@@ -2712,6 +2731,10 @@ namespace Quartz
             copyToolStripMenuItem1.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
             deleteToolStripMenuItem.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
 
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(mnuSearch.Handle, 100, Animation.AW_BLEND);
+            }
         }
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2849,6 +2872,10 @@ namespace Quartz
                 mnuFavourites.Items.Add(menuItem);
             }
 
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(mnuFavourites.Handle, 100, Animation.AW_BLEND);
+            }
         }
 
         private void nameWindowToolStripMenuItem_Click(object sender, EventArgs e)

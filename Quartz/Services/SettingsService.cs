@@ -16,11 +16,8 @@ namespace Quartz.Services
         private static string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Xaftellis\Quartz\UserData\jsons", "settings.json");
         private static string WindowsTheme = ThemeHelper.GetTheme();
         private static bool DisplayOutOfDateThemeMessage = true;
-        private static readonly object SettingsWriteLock = new object();
 
-        public static string Get(string name) => Get(ProfileService.Current, name);
-
-        public static string Get(Guid profileId, string name)
+        public static string Get(string name)
         {
             var jsonString = "[]";
 
@@ -33,7 +30,7 @@ namespace Quartz.Services
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("name");
 
-            var _items = items.FirstOrDefault(s => s.ProfileId == profileId && s.Name == name)?.Value;
+            var _items = items.FirstOrDefault(s => s.ProfileId == ProfileService.Current && s.Name == name)?.Value;
 
             if(name == "Theme" && _items == "auto (light/dark)")
             {
@@ -113,34 +110,31 @@ namespace Quartz.Services
             }
         }
 
-        public static void Set(string name, string value) => Set(ProfileService.Current, name, value);
-
-        public static void Set(Guid profileId, string name, string value) =>
-            SetMany(profileId, new Dictionary<string, string> { { name, value } });
-
-        public static void SetMany(Guid profileId, IDictionary<string, string> values)
+        public static void Set(string name, string value)
         {
-            lock (SettingsWriteLock)
-            {
-                var jsonString = File.Exists(_jsonPath) ? File.ReadAllText(_jsonPath) : "[]";
-                var items = JsonConvert.DeserializeObject<List<SettingModel>>(jsonString) ?? new List<SettingModel>();
-                foreach (var entry in values)
-                {
-                    if (string.IsNullOrEmpty(entry.Key)) throw new ArgumentException("name");
-                    var original = items.FirstOrDefault(s => s.ProfileId == profileId && s.Name == entry.Key);
-                    if (original == null)
-                        items.Add(new SettingModel { ProfileId = profileId, Name = entry.Key, Value = entry.Value });
-                    else
-                        original.Value = entry.Value;
-                }
+            var jsonString = "[]";
 
-                Directory.CreateDirectory(Path.GetDirectoryName(_jsonPath));
-                File.WriteAllText(_jsonPath + ".tmp", JsonConvert.SerializeObject(items));
-                if (File.Exists(_jsonPath))
-                    File.Replace(_jsonPath + ".tmp", _jsonPath, null);
-                else
-                    File.Move(_jsonPath + ".tmp", _jsonPath);
+            if (File.Exists(_jsonPath))
+            {
+                jsonString = File.ReadAllText(_jsonPath);
             }
+            var items = JsonConvert.DeserializeObject<List<SettingModel>>(jsonString);
+
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentException("name");
+
+            var original = items.FirstOrDefault(s => s.ProfileId == ProfileService.Current && s.Name == name);
+            if (original == null)
+            {
+                items.Add(new SettingModel() { ProfileId = ProfileService.Current, Name = name, Value = value });
+            }
+            else
+            {
+                original.Value = value;
+            }
+
+            var _jsonString = JsonConvert.SerializeObject(items);
+            File.WriteAllText(_jsonPath, _jsonString);
         }
 
         public static string GetWindowsTheme()
@@ -177,7 +171,6 @@ namespace Quartz.Services
 
         public static void DeleteProfileSettings(Guid profileId)
         {
-            new SessionStore().Delete(profileId);
             var jsonString = "[]";
 
             if (File.Exists(_jsonPath))

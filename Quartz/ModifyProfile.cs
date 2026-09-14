@@ -204,7 +204,6 @@ namespace Quartz
                 SettingsService.Set("AreDevToolsEnabled", "true");
                 SettingsService.Set("AreBrowserAcceleratorKeysEnabled", "true");
                 SettingsService.Set("DefaultHomePage", "true");
-                SettingsService.Set(SessionService.ContinueSetting, "true");
                 SettingsService.Set("IsPasswordAutosaveEnabled", "true");
                 SettingsService.Set("IsGeneralAutofillEnabled", "true");
                 SettingsService.Set("Zoom", "1.0");

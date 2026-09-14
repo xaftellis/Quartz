@@ -239,7 +239,11 @@ namespace Quartz
 
         private void RestartProgram(string[] newArgs)
         {
-            Power.RestartWithArguments(newArgs[0]);
+            // Start a new instance of the program with the new arguments
+            Process.Start(Application.ExecutablePath, string.Join(" ", newArgs));
+
+            // Optionally, terminate the current process to avoid multiple instances
+            Environment.Exit(0);
         }
 
         private void Profiles_Load(object sender, EventArgs e)
@@ -419,6 +423,10 @@ namespace Quartz
                 setDefaultToolStripMenuItem.Text = "Set default";
             }
 
+            if (SettingsService.Get("Animation") == "true")
+            {
+                Animation.AnimateWindow(ContextMenuStripProfiles.Handle, 100, Animation.AW_BLEND);
+            }
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
@@ -527,7 +535,6 @@ namespace Quartz
             SettingsService.Set("AreDevToolsEnabled", "true");
             SettingsService.Set("AreBrowserAcceleratorKeysEnabled", "true");
             SettingsService.Set("DefaultHomePage", "true");
-            SettingsService.Set(SessionService.ContinueSetting, "true");
             SettingsService.Set("IsPasswordAutosaveEnabled", "true");
             SettingsService.Set("IsGeneralAutofillEnabled", "true");
             SettingsService.Set("Zoom", "1.0");
