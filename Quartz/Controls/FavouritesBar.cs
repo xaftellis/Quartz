@@ -348,7 +348,9 @@ namespace Quartz.Controls
 
         internal void PointerUp(Point screen)
         {
-            FinishInteraction(ClientRectangle.Contains(PointToClient(screen)));
+            // Releasing outside the bar still accepts the previewed order.
+            // Escape and capture loss while still held cancel instead.
+            FinishInteraction(true);
         }
 
         public void CancelInteraction() => FinishInteraction(false);
@@ -400,7 +402,14 @@ namespace Quartz.Controls
             _lastFrame = now;
             if (_dragging)
             {
-                if (!_pressedButton.Capture || (MouseButtons & MouseButtons.Left) == 0)
+                // The timer can observe the release before WM_LBUTTONUP is
+                // dispatched. Accept the preview just as PointerUp would.
+                if ((MouseButtons & MouseButtons.Left) == 0)
+                {
+                    PointerUp(MousePosition);
+                    return;
+                }
+                if (!_pressedButton.Capture)
                 {
                     CancelInteraction();
                     return;
@@ -599,7 +608,13 @@ namespace Quartz.Controls
 
         protected override void OnMouseCaptureChanged(EventArgs e)
         {
-            if (!Capture && !_releasingMouse) Bar?.CancelInteraction();
+            if (!Capture && !_releasingMouse)
+            {
+                // Capture can be released before WM_LBUTTONUP reaches this button,
+                // especially outside the bar. Preserve the preview on release.
+                if ((MouseButtons & MouseButtons.Left) == 0) Bar?.PointerUp(MousePosition);
+                else Bar?.CancelInteraction();
+            }
             base.OnMouseCaptureChanged(e);
         }
 
