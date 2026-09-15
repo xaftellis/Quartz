@@ -20,6 +20,7 @@ namespace EasyTabs
             internal ChromiumTabGeometry Geometry;
             internal Rectangle Bounds, Target;
             internal float Hover;
+            internal bool MouseHovered;
             internal Point HoverPoint;
             internal bool Closing, HasIcon;
             internal Visual Previous;
@@ -422,17 +423,23 @@ namespace EasyTabs
             }
         }
 
+        internal override bool BeginCaptionButtonPress(Point cursor)
+        {
+            lock (_sync)
+                return !_disposed && RendersEntireTitleBar && !IsTabRepositioning && _sizingBoxes.PointerDown(cursor);
+        }
+
+        internal override void EndCaptionButtonPress()
+        {
+            lock (_sync) _sizingBoxes.CancelPress();
+        }
+
         internal override void ButtonPointerDown(Point cursor)
         {
             base.ButtonPointerDown(cursor);
             lock (_sync)
             {
                 if (_disposed || IsTabRepositioning) return;
-                if (_sizingBoxes.PointerDown(cursor))
-                {
-                    _parentWindow._overlay?.RequestRender();
-                    return;
-                }
                 _pressedFeedback?.Cancel();
                 _pressedFeedback = null;
                 Rectangle bounds = Rectangle.Empty;
@@ -540,6 +547,8 @@ namespace EasyTabs
             lock (_sync)
             {
                 float scale = RenderScale;
+                bool windowActive = _parentWindow._overlay?.IsWindowActive ?? (Form.ActiveForm == _parentWindow);
+                ChromiumTabTheme.WindowPalette palette = windowActive ? Theme.ActiveWindow : Theme.InactiveWindow;
                 _sizingBoxes.Scale = scale;
                 double now = AnimationTimeMilliseconds;
                 float step = (float)Math.Max(0, Math.Min(64, now - _lastPaint)) / 200f;
@@ -717,22 +726,22 @@ namespace EasyTabs
                 _contentAnimating = false;
                 using (var canvas = new SKCanvas(_pixels))
                 {
-                    canvas.Clear(ToSkia(Theme.Frame));
+                    canvas.Clear(ToSkia(palette.Frame));
                     // A continuous one-DIP connection to the toolbar, also covering
                     // the area below the trailing tabs and the new-tab button.
-                    using (var paint = new SKPaint { Color = ToSkia(Theme.ActiveTab) })
+                    using (var paint = new SKPaint { Color = ToSkia(palette.ActiveTab) })
                         canvas.DrawRect(0, y + Scale(34), _pixels.Width, Scale(1), paint);
                     // Closing visuals are never added to the mouse hit-test order.
                     foreach (TitleBarTab tab in _closingTabs)
-                        if (_visuals.ContainsKey(tab)) PaintTab(canvas, tab, tabs, cursor, now, animate, false);
-                    foreach (TitleBarTab tab in _paintOrder) PaintTab(canvas, tab, tabs, cursor, now, animate, forceRedraw);
-                    PaintAddButton(canvas, tabs, startX, y, cursor, now, animate, closingRight);
+                        if (_visuals.ContainsKey(tab)) PaintTab(canvas, tab, tabs, cursor, now, animate, false, palette);
+                    foreach (TitleBarTab tab in _paintOrder) PaintTab(canvas, tab, tabs, cursor, now, animate, forceRedraw, palette);
+                    PaintAddButton(canvas, tabs, startX, y, cursor, now, animate, closingRight, palette);
                     canvas.Flush();
                 }
                 graphics.DrawImageUnscaled(_buffer, 0, 0);
                 if (IsWindows10)
                 {
-                    _sizingBoxes.Render(graphics, cursor, Theme.Frame, now, animate);
+                    _sizingBoxes.Render(graphics, cursor, palette.Frame, now, animate, palette.IsActive);
                     _buttonAnimating |= _sizingBoxes.IsAnimating;
                 }
                 _lastCursor = cursor;
@@ -742,6 +751,7 @@ namespace EasyTabs
 
         private void UpdateHover(Visual visual, bool hovered, Point cursor, bool animate, float step)
         {
+            visual.MouseHovered = hovered;
             float target = hovered ? 1 : 0;
             visual.Hover = !animate ? target : target > visual.Hover
                 ? Math.Min(target, visual.Hover + step) : Math.Max(target, visual.Hover - step);
@@ -757,7 +767,8 @@ namespace EasyTabs
             _buffer = new Bitmap(width, height, _pixels.RowBytes, PixelFormat.Format32bppPArgb, _pixels.GetPixels());
         }
 
-        private void PaintTab(SKCanvas canvas, TitleBarTab tab, List<TitleBarTab> tabs, Point cursor, double now, bool animate, bool forceRedraw)
+        private void PaintTab(SKCanvas canvas, TitleBarTab tab, List<TitleBarTab> tabs, Point cursor, double now, bool animate, bool forceRedraw,
+            ChromiumTabTheme.WindowPalette palette)
         {
             Visual visual = _visuals[tab];
             ChromiumTabGeometry geometry = visual.Geometry;
@@ -769,9 +780,15 @@ namespace EasyTabs
             float leading = visual.Closing ? 0 : SeparatorOpacity(tab, index > 0 ? tabs[index - 1] : null, true);
             float trailing = visual.Closing ? 0 : SeparatorOpacity(tab, index + 1 < tabs.Count ? tabs[index + 1] : null, false);
             float t = ChromiumTabMetrics.Clamp((geometry.Width / scale - 256) / (32 - 256f), 0, 1);
-            float hoverOpacity = (Theme.HoverMinimum + (Theme.HoverMaximum - Theme.HoverMinimum) * t * t) * visual.Hover;
-            Color background = active ? Theme.ActiveTab : ChromiumTabTheme.Blend(Theme.InactiveTab, Theme.ActiveTab, hoverOpacity);
-            Color foreground = active || hoverOpacity > .5f ? Theme.ActiveForeground : Theme.InactiveForeground;
+            float targetHoverOpacity = palette.HoverMinimum + (palette.HoverMaximum - palette.HoverMinimum) * t * t;
+            float hoverOpacity = targetHoverOpacity * visual.Hover;
+            Color background = active ? palette.ActiveTab : ChromiumTabTheme.Blend(palette.InactiveTab, palette.ActiveTab, hoverOpacity);
+            // GM2TabStyle::CalculateColors uses the intended hover state for text,
+            // independently of the background's fade. Update immediately on enter
+            // and exit so narrow tabs do not switch text shades halfway through.
+            float expectedOpacity = active ? 1 : visual.MouseHovered ? targetHoverOpacity : 0;
+            Color expectedBackground = ChromiumTabTheme.Blend(palette.InactiveTab, palette.ActiveTab, expectedOpacity);
+            Color foreground = palette.Foreground(expectedOpacity > .5f, expectedBackground);
             canvas.Save();
             canvas.Translate(visual.Bounds.X, visual.Bounds.Y);
             using (var paint = new SKPaint { IsAntialias = true, Color = ToSkia(background) })
@@ -780,7 +797,7 @@ namespace EasyTabs
                 if (!active && visual.Hover > 0)
                 {
                     canvas.Save(); canvas.ClipPath(geometry.Fill, SKClipOperation.Intersect, true);
-                    SKColor center = ToSkia(Theme.ActiveTab).WithAlpha((byte)(255 * Theme.RadialOpacity * visual.Hover));
+                    SKColor center = ToSkia(palette.ActiveTab).WithAlpha((byte)(255 * palette.RadialOpacity * visual.Hover));
                     using (var shader = SKShader.CreateRadialGradient(new SKPoint(visual.HoverPoint.X, visual.HoverPoint.Y),
                         Math.Max(geometry.Width / 4f, 16 * scale), new[] { center, center.WithAlpha(0) }, SKShaderTileMode.Clamp))
                     {
@@ -791,12 +808,12 @@ namespace EasyTabs
                 if (geometry.Stroke > 0)
                 {
                     paint.Style = SKPaintStyle.Stroke; paint.StrokeWidth = geometry.Stroke * scale;
-                    paint.Color = ToSkia(Theme.Border); canvas.DrawPath(geometry.Border, paint); paint.Style = SKPaintStyle.Fill;
+                    paint.Color = ToSkia(palette.Border); canvas.DrawPath(geometry.Border, paint); paint.Style = SKPaintStyle.Fill;
                 }
                 float separatorY = (geometry.Height - 20 * scale) / 2;
-                paint.Color = ToSkia(Theme.Separator).WithAlpha((byte)(leading * 255));
+                paint.Color = ToSkia(palette.Separator).WithAlpha((byte)(leading * 255));
                 canvas.DrawRect(geometry.AlignedBounds.Left + 8 * scale, separatorY, scale, 20 * scale, paint);
-                paint.Color = ToSkia(Theme.Separator).WithAlpha((byte)(trailing * 255));
+                paint.Color = ToSkia(palette.Separator).WithAlpha((byte)(trailing * 255));
                 canvas.DrawRect(geometry.AlignedBounds.Right - 9 * scale, separatorY, scale, 20 * scale, paint);
             }
 
@@ -1051,7 +1068,8 @@ namespace EasyTabs
             }
         }
 
-        private void PaintAddButton(SKCanvas canvas, List<TitleBarTab> tabs, int startX, int y, Point cursor, double now, bool animate, int closingRight)
+        private void PaintAddButton(SKCanvas canvas, List<TitleBarTab> tabs, int startX, int y, Point cursor, double now, bool animate, int closingRight,
+            ChromiumTabTheme.WindowPalette palette)
         {
             if (!ShowAddButton)
             {
@@ -1082,8 +1100,8 @@ namespace EasyTabs
             _addHovered = !IsTabRepositioning && IsOverAddButton(cursor);
             _addFeedback.Update(_addHovered, now, animate);
             _buttonAnimating |= _addFeedback.IsAnimating;
-            _addFeedback.Paint(canvas, cx, cy, Scale(14), Theme.Frame);
-            using (var paint = new SKPaint { IsAntialias = true, Color = ToSkia(Theme.InactiveForeground) })
+            _addFeedback.Paint(canvas, cx, cy, Scale(14), palette.Frame);
+            using (var paint = new SKPaint { IsAntialias = true, Color = ToSkia(palette.Foreground(false, palette.InactiveTab)) })
             {
                 paint.Style = SKPaintStyle.Stroke; paint.StrokeWidth = 2 * RenderScale; paint.StrokeCap = SKStrokeCap.Round;
                 canvas.DrawLine(cx - Scale(5), cy, cx + Scale(5), cy, paint);

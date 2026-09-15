@@ -62,6 +62,59 @@ or a tab overflow menu.
 
 ## Verification
 
+### Active and inactive windows
+
+Window activation colours follow the supplied **Chromium 85.0.4183.121** source:
+
+- `chrome/browser/themes/theme_properties.cc`, `GetDefaultTint`: the inactive
+  frame tint `{-1, -1, 0.642}` changes light grey `#DEE1E6` to `#E7EAED`.
+  Only Quartz's light theme uses this default tint.
+- `chrome/browser/themes/browser_theme_pack.cc`, `BuildFromColors`: generated
+  custom themes explicitly disable inactive frame tinting. Quartz's dark, black,
+  aqua and Christmas palettes follow this path, preserving their frame and tab
+  fills in both states. `SetFrameAndToolbarRelatedColors` propagates custom
+  selected-tab text to both states; `GetTabForegroundColor` respects explicit
+  custom foregrounds and fades only the unspecified background-tab foreground.
+  The selected tab retains its toolbar colour in both window states.
+- `chrome/browser/ui/views/tabs/tab_strip.cc`, `GetTabForegroundColor` and
+  `UpdateContrastRatioValues`: use 75% foreground blending for inactive windows,
+  then enforce Chromium's selected/background text contrast targets; recalculate
+  hover highlights and separators against the current frame palette.
+- `ui/gfx/color_utils.cc`, `HSLShift`, `AlphaBlend`, `BlendForMinContrast`:
+  use Chromium's channel rounding and 8-bit contrast search.
+
+The Windows accent-colour tint `{-1, 0.54, 0.567}` is not a generic dark-theme
+transform. Applying its saturation shift to Quartz's neutral `#585858` produced
+the incorrect pink `#746868`. It has been removed. Chromium's default dark palette
+(`#202124` active / `#3C4043` inactive) is a separate choice; Quartz's custom
+palettes keep their existing colours under the generated-theme rules above.
+- `chrome/browser/ui/views/frame/windows_10_caption_button.cc`, `PaintSymbol`:
+  inactive symbols use alpha `0x66`, except while hovered or pressed. Native
+  black/white symbol selection follows `GlassBrowserFrameView::GetReadableFeatureColor`.
+
+`ui/views/widget/widget.cc`, `ShouldPaintAsActive`, separates frame appearance
+from focus; `ui/views/bubble/bubble_dialog_delegate_view.cc` keeps the anchor
+painted active while an owned bubble is active. Quartz maps this to the foreground
+HWND's parent/owner chain, including menus, nested dialogs and the caption overlay.
+Another `TitleBarTabs` window terminates that chain and has its own activation
+state. Context menus have an explicit source control, including nested submenus.
+
+An out-of-context `EVENT_SYSTEM_FOREGROUND` hook schedules a UI-thread repaint
+even when the browser itself has already lost focus to its dialog. This ensures
+switching away from an open dialog still dims the browser. Activation messages are
+coalesced through the message queue, without a delay timer; a transient null
+foreground preserves the preceding appearance. Input cancellation continues to
+use actual focus independently of the paint state. Cached title pixels refresh
+when their foreground colour changes. The hook is removed on disposal.
+
+Hidden-render verification covers all five Quartz palettes, activation reversal,
+theme changes while inactive, selection and geometry preservation, and the rendered
+caption-symbol alpha. Ownership checks cover the caption overlay, menus, nested
+dialogs, embedded tab forms, unrelated windows and another browser's dialog.
+Final visible-window verification is left to the user.
+
+### Existing tab checks
+
 `Tests/Quartz.PinnedTabs.Tests.csproj` exercises the real tab model, renderer,
 context menu and close lifecycle using hidden WinForms content and deterministic
 timestamps. It produces light/dark frame sheets and checks 100%, 125%, 150% and

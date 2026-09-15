@@ -123,7 +123,7 @@ namespace Quartz
                 renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.FromArgb(88, 88, 88),
                     System.Drawing.Color.FromArgb(35, 35, 35),
                     activeForeground: System.Drawing.Color.FromArgb(195, 195, 195),
-                    inactiveForeground: System.Drawing.Color.FromArgb(195, 195, 195));
+                    inactiveForeground: System.Drawing.Color.FromArgb(195, 195, 195), customColors: true);
 
                 barBackColor = System.Drawing.Color.FromArgb(88, 88, 88);
                 textForeColor = System.Drawing.Color.FromArgb(195, 195, 195);
@@ -132,7 +132,7 @@ namespace Quartz
             else if (theme == "black")
             {
                 renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.Black, System.Drawing.Color.Black,
-                    activeForeground: System.Drawing.Color.White, inactiveForeground: System.Drawing.Color.White);
+                    activeForeground: System.Drawing.Color.White, inactiveForeground: System.Drawing.Color.White, customColors: true);
 
                 barBackColor = System.Drawing.Color.Black;
                 textForeColor = System.Drawing.Color.White;
@@ -140,7 +140,7 @@ namespace Quartz
             }
             else if (theme == "aqua")
             {
-                renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.Blue, System.Drawing.Color.Aqua);
+                renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.Blue, System.Drawing.Color.Aqua, customColors: true);
 
                 barBackColor = System.Drawing.Color.Blue;
                 textForeColor = System.Drawing.Color.Aqua;
@@ -148,7 +148,7 @@ namespace Quartz
             }
             else if (theme == "xmas")
             {
-                renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.Lime, System.Drawing.Color.Red);
+                renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.Lime, System.Drawing.Color.Red, customColors: true);
 
                 barBackColor = System.Drawing.Color.Lime;
                 textForeColor = System.Drawing.Color.Red;

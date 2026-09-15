@@ -33,8 +33,7 @@ namespace EasyTabs
         private int _glyphSize;
         private HT _pressedButton = HT.HTNOWHERE;
 
-        internal bool IsAnimating => _minimizeHover.IsAnimating || _maximizeHover.IsAnimating || _closeHover.IsAnimating ||
-            _pressedButton != HT.HTNOWHERE;
+        internal bool IsAnimating => _minimizeHover.IsAnimating || _maximizeHover.IsAnimating || _closeHover.IsAnimating;
 
         internal bool PointerDown(Point cursor)
         {
@@ -147,10 +146,11 @@ namespace EasyTabs
         public void Render(Graphics graphicsContext, Point cursor)
         {
             // Keep the original renderer's immediate hover behaviour.
-            Render(graphicsContext, cursor, Color.FromArgb(222, 225, 230), 0, false);
+            Render(graphicsContext, cursor, Color.FromArgb(222, 225, 230), 0, false,
+                _parentWindow._overlay?.IsWindowActive ?? (Form.ActiveForm == _parentWindow));
         }
 
-        internal void Render(Graphics graphicsContext, Point cursor, Color frame, double now, bool animate)
+        internal void Render(Graphics graphicsContext, Point cursor, Color frame, double now, bool animate, bool windowActive)
         {
             EnsureGlyphs();
             int right = _parentWindow.ClientRectangle.Width;
@@ -160,9 +160,8 @@ namespace EasyTabs
             _maximizeRestoreButtonArea = new Rectangle(right - buttonWidth * 2, 0, buttonWidth, Pixel(29));
             _closeButtonArea = new Rectangle(right - buttonWidth, 0, buttonWidth, Pixel(29));
 
-            // The native caption handler owns mouse capture. Sampling release here
-            // also clears feedback if its modal loop consumes the mouse-up message.
-            if ((Control.MouseButtons & MouseButtons.Left) == 0) CancelPress();
+            // The overlay owns capture and explicitly ends the press on release/cancel.
+            // Do not sample global button state: it may already describe a later event.
             HT hoveredButton = NonClientHitTest(cursor);
             bool minimizePressed = _pressedButton == HT.HTMINBUTTON && hoveredButton == _pressedButton;
             bool maximizePressed = _pressedButton == HT.HTMAXBUTTON && hoveredButton == _pressedButton;
@@ -172,9 +171,7 @@ namespace EasyTabs
             _closeHover.Update(_closeButtonArea.Contains(cursor), now, animate);
 
             // Caption buttons sit on the frame, which can differ from the active tab.
-            double luminance = ChromiumTabTheme.Luminance(frame);
-            Color foreground = (luminance + .05) / .05 >= 1.05 / (luminance + .05)
-                ? Color.Black : Color.White;
+            Color foreground = CaptionForeground(frame);
             PaintHover(graphicsContext, _minimizeButtonArea, _minimizeMaximizeButtonHighlight,
                 foreground, minimizePressed ? 48 : 27, minimizePressed ? 1 : _minimizeHover.Value);
             PaintHover(graphicsContext, _maximizeRestoreButtonArea, _minimizeMaximizeButtonHighlight,
@@ -182,12 +179,25 @@ namespace EasyTabs
             PaintHover(graphicsContext, _closeButtonArea, _closeButtonHighlight,
                 Color.FromArgb(232, 17, 35), closePressed ? 153 : 255, closePressed ? 1 : _closeHover.Value);
 
+            Color closeForeground = !windowActive && hoveredButton != HT.HTCLOSE && !closePressed
+                ? foreground : ChromiumTabTheme.Blend(foreground, Color.White, closePressed ? 1 : _closeHover.Value);
             DrawGlyph(graphicsContext, _closeImage, _closeButtonArea,
-                ChromiumTabTheme.Blend(foreground, Color.White, closePressed ? 1 : _closeHover.Value));
+                CaptionSymbolColor(closeForeground, windowActive, hoveredButton == HT.HTCLOSE, closePressed));
             DrawGlyph(graphicsContext, _parentWindow.WindowState == FormWindowState.Maximized ? _restoreImage : _maximizeImage,
-                _maximizeRestoreButtonArea, foreground);
-            DrawGlyph(graphicsContext, _minimizeImage, _minimizeButtonArea, foreground);
+                _maximizeRestoreButtonArea, CaptionSymbolColor(foreground, windowActive, hoveredButton == HT.HTMAXBUTTON, maximizePressed));
+            DrawGlyph(graphicsContext, _minimizeImage, _minimizeButtonArea,
+                CaptionSymbolColor(foreground, windowActive, hoveredButton == HT.HTMINBUTTON, minimizePressed));
         }
+
+        // Windows10CaptionButton::PaintSymbol / kInactiveTitlebarFeatureAlpha.
+        // Hovered and pressed symbols remain opaque even on an inactive window.
+        internal static Color CaptionSymbolColor(Color color, bool windowActive, bool hovered, bool pressed) =>
+            Color.FromArgb(windowActive || hovered || pressed ? 255 : 0x66, color);
+
+        // GlassBrowserFrameView::GetReadableFeatureColor follows Windows' luma
+        // threshold, which differs from the contrast endpoint used for tab text.
+        internal static Color CaptionForeground(Color frame) =>
+            .25f * frame.R + .625f * frame.G + .125f * frame.B <= 128f ? Color.White : Color.Black;
 
         private static void PaintHover(Graphics graphics, Rectangle area, SolidBrush brush, Color color, int alpha, float amount)
         {
@@ -202,6 +212,7 @@ namespace EasyTabs
             _glyphTint.Matrix40 = color.R / 255f;
             _glyphTint.Matrix41 = color.G / 255f;
             _glyphTint.Matrix42 = color.B / 255f;
+            _glyphTint.Matrix33 = color.A / 255f;
             _glyphAttributes.SetColorMatrix(_glyphTint);
             int padding = _captionFontFamily == null ? 0 : 2;
             GraphicsState state = graphics.Save();

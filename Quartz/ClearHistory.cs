@@ -271,7 +271,7 @@ namespace Quartz
         }
 
         private CoreWebView2BrowsingDataKinds GetSelectedDataKinds()
-        {
+        { 
             CoreWebView2BrowsingDataKinds dataKinds = 0;
             if (chkBrowsingHistory.Checked) dataKinds |= CoreWebView2BrowsingDataKinds.BrowsingHistory;
             if (chkDownloadHistory.Checked) dataKinds |= CoreWebView2BrowsingDataKinds.DownloadHistory;

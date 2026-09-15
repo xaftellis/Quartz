@@ -81,6 +81,7 @@ namespace EasyTabs
 		{
 			if (disposing)
 			{
+				_windowActivation?.Dispose();
 				_loadingAnimationTimer?.Dispose();
 				_loadingAnimationTimer = null;
 				StopMouseInput();
@@ -118,6 +119,7 @@ namespace EasyTabs
 		// Like Chromium's RootView mouse_pressed_handler_, retain the press target.
 		// Selecting a narrow tab may reveal a close button beneath the same pointer.
 		private TitleBarTab _pressedCloseTab;
+		private HT _pressedCaptionButton = HT.HTNOWHERE;
 
 		/// <summary>Overlay that owns the current cross-window tab drag.</summary>
 		protected static TitleBarTabsOverlay _tornTabDragOwner;
@@ -143,6 +145,31 @@ namespace EasyTabs
 
         /// <summary>Flag indicating whether or not the underlying window is active.</summary>
         protected bool _active = false;
+
+        private WindowActivation _windowActivation;
+        private bool _paintAsActive;
+        private bool _activationUpdatePending;
+        private const int ActivationMessage = 0x8000 + 73;
+        protected virtual IntPtr ForegroundWindow => WindowActivation.GetForegroundWindow();
+
+        internal bool IsWindowActive
+        {
+            get
+            {
+                IntPtr foreground = ForegroundWindow;
+                // Windows may report no foreground HWND during the handoff.
+                // Keep the previous appearance until the foreground event arrives.
+                if (foreground != IntPtr.Zero)
+                    _paintAsActive = WindowActivation.BelongsToWindow(foreground, _parentForm);
+                return _paintAsActive;
+            }
+        }
+
+        private void QueueActivationUpdate()
+        {
+            if (_activationUpdatePending || IsDisposed || Disposing || !IsHandleCreated) return;
+            _activationUpdatePending = PostInputMessage(Handle, ActivationMessage, IntPtr.Zero, IntPtr.Zero);
+        }
 
 		/// <summary>Flag indicating whether we should draw the titlebar background (i.e. we are in a non-Aero environment).</summary>
 		protected bool _aeroEnabled = false;
@@ -188,6 +215,8 @@ namespace EasyTabs
 		protected TitleBarTabsOverlay(TitleBarTabs parentForm)
 		{
 			_parentForm = parentForm;
+			_active = Form.ActiveForm == parentForm;
+			_paintAsActive = _active;
 
 			// We don't want this window visible in the taskbar
 			ShowInTaskbar = false;
@@ -199,6 +228,8 @@ namespace EasyTabs
 			Show(_parentForm);
 			_loadingAnimationTimer = new TabFrameScheduler(Handle);
 			AttachHandlers();
+			_windowActivation = new WindowActivation(QueueActivationUpdate);
+			QueueActivationUpdate();
 
 			_hoverCards = new TabHoverCardController(_parentForm, this, GetHoverCardTarget);
 		}
@@ -388,6 +419,7 @@ namespace EasyTabs
 
 		private void StopMouseInput()
 		{
+			CancelCaptionButtonPress();
 			_pressedCloseTab = null;
 			_hoverCards?.Dismiss(true);
 			if (_hookId != IntPtr.Zero) User32.UnhookWindowsHookEx(_hookId);
@@ -710,6 +742,38 @@ namespace EasyTabs
 				cursorPosition.Y - _tornTabWindowCursorOffset.Y, 0, 0, SWP.SWP_NOSIZE | SWP.SWP_NOACTIVATE);
 		}
 
+        private void CancelCaptionButtonPress()
+        {
+            if (_pressedCaptionButton == HT.HTNOWHERE) return;
+            _pressedCaptionButton = HT.HTNOWHERE;
+            _parentForm.TabRenderer?.EndCaptionButtonPress();
+            // Clear the press before releasing capture, which re-enters WndProc.
+            if (Capture) Capture = false;
+            if (!IsDisposed && !Disposing) RequestRender();
+        }
+
+        private void ReleaseCaptionButton(Point screenPosition)
+        {
+            HT pressed = _pressedCaptionButton;
+            Point relative = GetRelativeCursorPosition(screenPosition);
+            HT released = _parentForm.TabRenderer.NonClientHitTest(default(Message), relative);
+            CancelCaptionButtonPress();
+            if (IsDisposed || _parentForm.IsDisposed) return;
+            Render(screenPosition);
+            if (pressed != released || !_parentForm.ControlBox) return;
+            int command;
+            if (pressed == HT.HTMINBUTTON && _parentForm.MinimizeBox) command = 0xF020; // SC_MINIMIZE
+            else if (pressed == HT.HTMAXBUTTON && _parentForm.MaximizeBox)
+                command = _parentForm.WindowState == FormWindowState.Maximized ? 0xF120 : 0xF030; // RESTORE/MAXIMIZE
+            else if (pressed == HT.HTCLOSE) command = 0xF060;
+            else return;
+            // Execute only the completed command. Forwarding the original down
+            // enters Windows' native caption tracking/painting loop behind our overlay.
+            Message action = Message.Create(_parentForm.Handle, (int)WM.WM_SYSCOMMAND, new IntPtr(command),
+                new IntPtr(unchecked((screenPosition.Y << 16) | (screenPosition.X & 0xffff))));
+            _parentForm.ForwardMessage(ref action);
+        }
+
         // Mouse moves are sampled once per frame on the UI thread. Button events
         // retain their original coordinates and are dispatched without waiting for
         // the next animation tick. There is no worker/UI Invoke round trip.
@@ -873,6 +937,10 @@ namespace EasyTabs
                 }
                 else if (message == WM.WM_LBUTTONDOWN || message == WM.WM_LBUTTONUP)
                 {
+                    // Captured caption input is handled by WndProc, once. The hook
+                    // must not also replay its release as a tab/new-tab mouse-up.
+                    if (_pressedCaptionButton != HT.HTNOWHERE)
+                        return User32.CallNextHookEx(_hookId, nCode, wParam, lParam);
                     Point position = Cursor.Position;
                     _mouseEvents.Enqueue(new MouseEvent { nCode = nCode, wParam = wParam, Position = position });
                     if (message == WM.WM_LBUTTONDOWN)
@@ -1152,6 +1220,12 @@ namespace EasyTabs
 		/// <param name="m">Message received by the pump.</param>
 		protected override void WndProc(ref Message m)
 		{
+			if (m.Msg == ActivationMessage)
+			{
+				_activationUpdatePending = false;
+				if (!_parentForm.IsDisposed) Render();
+				return;
+			}
 			if (m.Msg == TabFrameScheduler.Message)
 			{
 				_loadingAnimationTimer?.Acknowledge();
@@ -1212,6 +1286,14 @@ namespace EasyTabs
 					Point relativeCursorPosition = GetRelativeCursorPosition(Cursor.Position);
 					_wasDragging = false;
 					_pressedCloseTab = null;
+					if (_parentForm.TabRenderer.BeginCaptionButtonPress(relativeCursorPosition))
+					{
+						_pressedCaptionButton = _parentForm.TabRenderer.NonClientHitTest(m, relativeCursorPosition);
+						Capture = true;
+						Render();
+						m.Result = IntPtr.Zero;
+						return;
+					}
 					_parentForm.TabRenderer.ButtonPointerDown(relativeCursorPosition);
 					TitleBarTab pressedTab = _parentForm.TabRenderer.OverTab(_parentForm.Tabs, relativeCursorPosition);
 					if (pressedTab != null && _parentForm.TabRenderer.IsOverCloseButton(pressedTab, relativeCursorPosition))
@@ -1273,6 +1355,13 @@ namespace EasyTabs
 				case WM.WM_MBUTTONUP:
 				case WM.WM_NCMBUTTONUP:
 					Point relativeCursorPosition2 = GetRelativeCursorPosition(Cursor.Position);
+					if ((m.Msg == (int)WM.WM_LBUTTONUP || m.Msg == (int)WM.WM_NCLBUTTONUP) &&
+						_pressedCaptionButton != HT.HTNOWHERE)
+					{
+						ReleaseCaptionButton(Cursor.Position);
+						m.Result = IntPtr.Zero;
+						return;
+					}
 
 					if (_parentForm.TabRenderer.OverTab(_parentForm.Tabs, relativeCursorPosition2) == null &&
 						!_parentForm.TabRenderer.IsOverAddButton(relativeCursorPosition2))
@@ -1325,6 +1414,7 @@ namespace EasyTabs
 
 				case WM.WM_CANCELMODE:
 				case WM.WM_CAPTURECHANGED:
+					CancelCaptionButtonPress();
 					_pressedCloseTab = null;
 					base.WndProc(ref m);
 					break;
@@ -1342,7 +1432,7 @@ namespace EasyTabs
 							ContextMenuProvider._clickedTab = _clickedTab;
 
                             Point cursorPos = Control.MousePosition;
-                            ContextMenuProvider._contextMenuStripTab.Show(cursorPos);
+                            ContextMenuProvider._contextMenuStripTab.Show(_parentForm, _parentForm.PointToClient(cursorPos));
                         }
 					}
 					else
@@ -1353,7 +1443,7 @@ namespace EasyTabs
                             ContextMenuProvider._clickedTab = _clickedTab;
 
                             Point cursorPos = Control.MousePosition;
-                            ContextMenuProvider._contextMenuStripNormal.Show(cursorPos);                     
+                            ContextMenuProvider._contextMenuStripNormal.Show(_parentForm, _parentForm.PointToClient(cursorPos));
 						}
                     }
 
@@ -1371,7 +1461,7 @@ namespace EasyTabs
 		private void _parentForm_Activated(object sender, EventArgs e)
 		{
 			_active = true;
-			Render();
+			QueueActivationUpdate();
 		}
 
 		/// <summary>Event handler that is called when <see cref="_parentForm" />'s <see cref="Form.Deactivate" /> event is fired.</summary>
@@ -1379,10 +1469,11 @@ namespace EasyTabs
 		/// <param name="e">Arguments associated with the event.</param>
 		private void _parentForm_Deactivate(object sender, EventArgs e)
 		{
+			CancelCaptionButtonPress();
 			_pressedCloseTab = null;
 			_hoverCards?.Dismiss(true);
 			_active = false;
-			Render();
+			QueueActivationUpdate();
 		}
 
 		/// <summary>Event handler that is called when <see cref="_parentForm" />'s <see cref="Component.Disposed" /> event is fired.</summary>
@@ -1390,6 +1481,7 @@ namespace EasyTabs
 		/// <param name="e">Arguments associated with the event.</param>
 		private void _parentForm_Disposed(object sender, EventArgs e)
 		{
+			_windowActivation?.Dispose();
 			_hoverCards?.Dispose();
 			_loadingAnimationTimer?.Dispose();
 			_loadingAnimationTimer = null;

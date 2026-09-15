@@ -30,6 +30,8 @@ namespace EasyTabs
 		internal virtual bool IsLayoutAnimating { get { return _layoutAnimation.IsAnimating; } }
 		internal virtual bool RequiresHoverRedraw(Point cursor) { return false; }
 		internal virtual void ButtonPointerDown(Point cursor) { _wasTabRepositioning = false; }
+		internal virtual bool BeginCaptionButtonPress(Point cursor) { return false; }
+		internal virtual void EndCaptionButtonPress() { }
 		internal virtual bool IsTabClosingMode => false;
 		internal virtual bool UpdateTabClosingPointer(Point cursor, bool pressed = false) { return false; }
 		internal virtual void BeginTabClose(TitleBarTab tab, bool fromMouse = false) { }
