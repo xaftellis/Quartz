@@ -1090,16 +1090,19 @@ namespace EasyTabs
 					// Preserve the existing offsets for classic and partial-titlebar renderers.
 					_parentForm.TabRenderer.Render(_parentForm.Tabs, graphics, TabRenderOffset, cursorPosition, forceRedraw);
 
-                    // Leave the native frame corners visible instead of painting a
-                    // square overlay over Windows' rounded window outline.
+                    // Match the inside of the native frame, one border pixel in from
+                    // its outer curve. Older Windows and square-corner preferences
+                    // must keep the full rectangular overlay.
+                    int cornerPreference;
                     if (_aeroEnabled && _parentForm.WindowState == FormWindowState.Normal &&
-                        _parentForm.TabRenderer.RendersEntireTitleBar)
+                        _parentForm.TabRenderer.RendersEntireTitleBar &&
+                        DwmGetWindowAttribute(_parentForm.Handle, 33 /* DWMWA_WINDOW_CORNER_PREFERENCE */,
+                            out cornerPreference, sizeof(int)) == 0 && cornerPreference != 1 /* DWMWCP_DONOTROUND */)
                     {
-                        int corner = Math.Max(1, (int)Math.Ceiling(8 * graphics.DpiX / 96f));
-                        graphics.CompositingMode = CompositingMode.SourceCopy;
-                        graphics.FillRectangle(Brushes.Transparent, 0, 0, corner, corner);
-                        graphics.FillRectangle(Brushes.Transparent, Width - corner, 0, corner, corner);
-                        graphics.CompositingMode = CompositingMode.SourceOver;
+                        int outerRadius = cornerPreference == 3 /* DWMWCP_ROUNDSMALL */ ? 4 : 8;
+                        int corner = Math.Max(1, (int)Math.Round(outerRadius * Math.Max(1, _parentForm.DeviceDpi / 96f)) -
+                            SystemInformation.BorderSize.Width);
+                        _surface.ClipTopCorners(corner);
                     }
 					// Retain the transparent hole for the underlying classic control box.
 					if (DisplayType == DisplayType.Classic && (_parentForm.ControlBox || _parentForm.MaximizeBox || _parentForm.MinimizeBox))

@@ -1,8 +1,9 @@
 ﻿using Svg;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -17,12 +18,66 @@ namespace EasyTabs
         protected Image _restoreImage = null;
         protected Image _maximizeImage = null;
         protected Image _closeImage = null;
-        protected Image _closeHighlightImage = null;
-        protected Brush _minimizeMaximizeButtonHighlight = new SolidBrush(Color.FromArgb(27, Color.Black));
-        protected Brush _closeButtonHighlight = new SolidBrush(Color.FromArgb(232, 17, 35));
+        protected SolidBrush _minimizeMaximizeButtonHighlight = new SolidBrush(Color.FromArgb(27, Color.Black));
+        protected SolidBrush _closeButtonHighlight = new SolidBrush(Color.FromArgb(232, 17, 35));
         protected Rectangle _minimizeButtonArea = new Rectangle(0, 0, 45, 29);
         protected Rectangle _maximizeRestoreButtonArea = new Rectangle(45, 0, 45, 29);
         protected Rectangle _closeButtonArea = new Rectangle(90, 0, 45, 29);
+
+        private readonly HoverFade _minimizeHover = new HoverFade();
+        private readonly HoverFade _maximizeHover = new HoverFade();
+        private readonly HoverFade _closeHover = new HoverFade();
+        private readonly ImageAttributes _glyphAttributes = new ImageAttributes();
+        private readonly ColorMatrix _glyphTint = new ColorMatrix { Matrix00 = 0, Matrix11 = 0, Matrix22 = 0 };
+        private readonly FontFamily _captionFontFamily;
+        private int _glyphSize;
+        private HT _pressedButton = HT.HTNOWHERE;
+
+        internal bool IsAnimating => _minimizeHover.IsAnimating || _maximizeHover.IsAnimating || _closeHover.IsAnimating ||
+            _pressedButton != HT.HTNOWHERE;
+
+        internal bool PointerDown(Point cursor)
+        {
+            _pressedButton = NonClientHitTest(cursor);
+            return _pressedButton != HT.HTNOWHERE;
+        }
+
+        internal bool CancelPress()
+        {
+            bool pressed = _pressedButton != HT.HTNOWHERE;
+            _pressedButton = HT.HTNOWHERE;
+            return pressed;
+        }
+
+        private sealed class HoverFade
+        {
+            private float _from, _target;
+            private double _started;
+            internal float Value { get; private set; }
+            internal bool IsAnimating { get; private set; }
+
+            private float At(double now)
+            {
+                float progress = (float)Math.Max(0, Math.Min(1, (now - _started) / 200));
+                progress = progress * progress * (3 - 2 * progress);
+                return _from + (_target - _from) * progress;
+            }
+
+            internal void Update(bool hovered, double now, bool animate)
+            {
+                float target = hovered ? 1 : 0;
+                if (target != _target)
+                {
+                    // Reverse from the current shade when the pointer moves quickly.
+                    _from = At(now);
+                    _target = target;
+                    _started = now;
+                }
+                if (!animate) _from = _target;
+                Value = At(now);
+                IsAnimating = animate && Value != _target;
+            }
+        }
 
         public float Scale { get; set; } = 1;
         private int Pixel(float value) => (int)Math.Round(value * Scale);
@@ -30,11 +85,42 @@ namespace EasyTabs
         public WindowsSizingBoxes(TitleBarTabs parentWindow)
         {
             _parentWindow = parentWindow;
-            _minimizeImage = LoadSvg(Encoding.UTF8.GetString(Resources.Minimize), 10, 10);
-            _restoreImage = LoadSvg(Encoding.UTF8.GetString(Resources.Restore), 10, 10);
-            _maximizeImage = LoadSvg(Encoding.UTF8.GetString(Resources.Maximize), 10, 10);
-            _closeImage = LoadSvg(Encoding.UTF8.GetString(Resources.Close), 10, 10);
-            _closeHighlightImage = LoadSvg(Encoding.UTF8.GetString(Resources.CloseHighlight), 10, 10);
+            try { _captionFontFamily = new FontFamily("Segoe Fluent Icons"); }
+            catch (ArgumentException) { } // Older Windows versions keep the SVG fallback.
+            EnsureGlyphs();
+        }
+
+        private void EnsureGlyphs()
+        {
+            int size = Math.Max(1, Pixel(10));
+            if (_glyphSize == size) return;
+            _minimizeImage?.Dispose(); _restoreImage?.Dispose();
+            _maximizeImage?.Dispose(); _closeImage?.Dispose();
+            // Windows 11's own caption glyphs, rasterized at the current display scale.
+            // https://learn.microsoft.com/windows/apps/design/iconography/segoe-fluent-icons-font
+            _minimizeImage = LoadCaptionGlyph("\uE921", Resources.Minimize, size);
+            _maximizeImage = LoadCaptionGlyph("\uE922", Resources.Maximize, size);
+            _restoreImage = LoadCaptionGlyph("\uE923", Resources.Restore, size);
+            _closeImage = LoadCaptionGlyph("\uE8BB", Resources.Close, size);
+            _glyphSize = size;
+        }
+
+        private Image LoadCaptionGlyph(string glyph, byte[] fallback, int size)
+        {
+            if (_captionFontFamily == null)
+                return LoadSvg(Encoding.UTF8.GetString(fallback), size, size);
+            // Padding retains the antialiased edge pixels. DrawString applies the
+            // font's pixel hinting; converting it to a path loses that hinting.
+            const int padding = 2;
+            var bitmap = new Bitmap(size + padding * 2, size + padding * 2, PixelFormat.Format32bppPArgb);
+            using (var graphics = Graphics.FromImage(bitmap))
+            using (var font = new Font(_captionFontFamily, size, FontStyle.Regular, GraphicsUnit.Pixel))
+            using (var format = StringFormat.GenericTypographic)
+            {
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                graphics.DrawString(glyph, font, Brushes.Black, new PointF(padding, padding), format);
+            }
+            return bitmap;
         }
 
         protected Image LoadSvg(string svgXml, int width, int height)
@@ -60,39 +146,81 @@ namespace EasyTabs
 
         public void Render(Graphics graphicsContext, Point cursor)
         {
+            // Keep the original renderer's immediate hover behaviour.
+            Render(graphicsContext, cursor, Color.FromArgb(222, 225, 230), 0, false);
+        }
+
+        internal void Render(Graphics graphicsContext, Point cursor, Color frame, double now, bool animate)
+        {
+            EnsureGlyphs();
             int right = _parentWindow.ClientRectangle.Width;
-            bool closeButtonHighlighted = false;
             
             int buttonWidth = Pixel(45);
             _minimizeButtonArea = new Rectangle(right - buttonWidth * 3, 0, buttonWidth, Pixel(29));
             _maximizeRestoreButtonArea = new Rectangle(right - buttonWidth * 2, 0, buttonWidth, Pixel(29));
             _closeButtonArea = new Rectangle(right - buttonWidth, 0, buttonWidth, Pixel(29));
 
-            if (_minimizeButtonArea.Contains(cursor))
-            {
-                graphicsContext.FillRectangle(_minimizeMaximizeButtonHighlight, _minimizeButtonArea);
-            }
+            // The native caption handler owns mouse capture. Sampling release here
+            // also clears feedback if its modal loop consumes the mouse-up message.
+            if ((Control.MouseButtons & MouseButtons.Left) == 0) CancelPress();
+            HT hoveredButton = NonClientHitTest(cursor);
+            bool minimizePressed = _pressedButton == HT.HTMINBUTTON && hoveredButton == _pressedButton;
+            bool maximizePressed = _pressedButton == HT.HTMAXBUTTON && hoveredButton == _pressedButton;
+            bool closePressed = _pressedButton == HT.HTCLOSE && hoveredButton == _pressedButton;
+            _minimizeHover.Update(_minimizeButtonArea.Contains(cursor), now, animate);
+            _maximizeHover.Update(_maximizeRestoreButtonArea.Contains(cursor), now, animate);
+            _closeHover.Update(_closeButtonArea.Contains(cursor), now, animate);
 
-            else if (_maximizeRestoreButtonArea.Contains(cursor))
-            {
-                graphicsContext.FillRectangle(_minimizeMaximizeButtonHighlight, _maximizeRestoreButtonArea);
-            }
+            // Caption buttons sit on the frame, which can differ from the active tab.
+            double luminance = ChromiumTabTheme.Luminance(frame);
+            Color foreground = (luminance + .05) / .05 >= 1.05 / (luminance + .05)
+                ? Color.Black : Color.White;
+            PaintHover(graphicsContext, _minimizeButtonArea, _minimizeMaximizeButtonHighlight,
+                foreground, minimizePressed ? 48 : 27, minimizePressed ? 1 : _minimizeHover.Value);
+            PaintHover(graphicsContext, _maximizeRestoreButtonArea, _minimizeMaximizeButtonHighlight,
+                foreground, maximizePressed ? 48 : 27, maximizePressed ? 1 : _maximizeHover.Value);
+            PaintHover(graphicsContext, _closeButtonArea, _closeButtonHighlight,
+                Color.FromArgb(232, 17, 35), closePressed ? 153 : 255, closePressed ? 1 : _closeHover.Value);
 
-            else if (_closeButtonArea.Contains(cursor))
-            {
-                graphicsContext.FillRectangle(_closeButtonHighlight, _closeButtonArea);
-                closeButtonHighlighted = true;
-            }
+            DrawGlyph(graphicsContext, _closeImage, _closeButtonArea,
+                ChromiumTabTheme.Blend(foreground, Color.White, closePressed ? 1 : _closeHover.Value));
+            DrawGlyph(graphicsContext, _parentWindow.WindowState == FormWindowState.Maximized ? _restoreImage : _maximizeImage,
+                _maximizeRestoreButtonArea, foreground);
+            DrawGlyph(graphicsContext, _minimizeImage, _minimizeButtonArea, foreground);
+        }
 
-            graphicsContext.DrawImage(closeButtonHighlighted ? _closeHighlightImage : _closeImage, _closeButtonArea.X + Pixel(17), Pixel(9), Pixel(10), Pixel(10));
-            graphicsContext.DrawImage(_parentWindow.WindowState == FormWindowState.Maximized ? _restoreImage : _maximizeImage, _maximizeRestoreButtonArea.X + Pixel(17), Pixel(9), Pixel(10), Pixel(10));
-            graphicsContext.DrawImage(_minimizeImage, _minimizeButtonArea.X + Pixel(17), Pixel(9), Pixel(10), Pixel(10));
+        private static void PaintHover(Graphics graphics, Rectangle area, SolidBrush brush, Color color, int alpha, float amount)
+        {
+            if (amount <= 0) return;
+            brush.Color = Color.FromArgb((int)Math.Round(alpha * amount), color);
+            graphics.FillRectangle(brush, area);
+        }
+
+        private void DrawGlyph(Graphics graphics, Image image, Rectangle button, Color color)
+        {
+            // Tint the glyph silhouette while preserving its alpha and shape.
+            _glyphTint.Matrix40 = color.R / 255f;
+            _glyphTint.Matrix41 = color.G / 255f;
+            _glyphTint.Matrix42 = color.B / 255f;
+            _glyphAttributes.SetColorMatrix(_glyphTint);
+            int padding = _captionFontFamily == null ? 0 : 2;
+            GraphicsState state = graphics.Save();
+            try
+            {
+                // Copy the hinted pixels one-for-one, without a second smoothing pass.
+                graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+                graphics.PixelOffsetMode = PixelOffsetMode.Half;
+                graphics.DrawImage(image, new Rectangle(button.X + Pixel(17) - padding, Pixel(9) - padding, image.Width, image.Height),
+                    0, 0, image.Width, image.Height, GraphicsUnit.Pixel, _glyphAttributes);
+            }
+            finally { graphics.Restore(state); }
         }
 
         public void Dispose()
         {
             _minimizeImage?.Dispose(); _restoreImage?.Dispose(); _maximizeImage?.Dispose();
-            _closeImage?.Dispose(); _closeHighlightImage?.Dispose();
+            _closeImage?.Dispose(); _glyphAttributes.Dispose();
+            _captionFontFamily?.Dispose();
             _minimizeMaximizeButtonHighlight?.Dispose(); _closeButtonHighlight?.Dispose();
         }
 

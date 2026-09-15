@@ -428,6 +428,11 @@ namespace EasyTabs
             lock (_sync)
             {
                 if (_disposed || IsTabRepositioning) return;
+                if (_sizingBoxes.PointerDown(cursor))
+                {
+                    _parentWindow._overlay?.RequestRender();
+                    return;
+                }
                 _pressedFeedback?.Cancel();
                 _pressedFeedback = null;
                 Rectangle bounds = Rectangle.Empty;
@@ -468,7 +473,7 @@ namespace EasyTabs
             bool redraw;
             lock (_sync)
             {
-                redraw = _pressedFeedback != null;
+                redraw = _sizingBoxes.CancelPress() || _pressedFeedback != null;
                 _pressedFeedback?.Release(AnimationTimeMilliseconds);
                 _pressedFeedback = null;
             }
@@ -479,8 +484,9 @@ namespace EasyTabs
         {
             lock (_sync)
             {
-                if (_pressedFeedback == null) return;
-                _pressedFeedback.Cancel();
+                bool captionPressed = _sizingBoxes.CancelPress();
+                if (_pressedFeedback == null && !captionPressed) return;
+                _pressedFeedback?.Cancel();
                 _pressedFeedback = null;
             }
             _parentWindow.RedrawTabs();
@@ -724,7 +730,11 @@ namespace EasyTabs
                     canvas.Flush();
                 }
                 graphics.DrawImageUnscaled(_buffer, 0, 0);
-                if (IsWindows10) _sizingBoxes.Render(graphics, cursor);
+                if (IsWindows10)
+                {
+                    _sizingBoxes.Render(graphics, cursor, Theme.Frame, now, animate);
+                    _buttonAnimating |= _sizingBoxes.IsAnimating;
+                }
                 _lastCursor = cursor;
                 _previousTabCount = tabs.Count;
             }
