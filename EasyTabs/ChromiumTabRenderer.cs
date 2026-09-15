@@ -22,18 +22,17 @@ namespace EasyTabs
         {
             internal ChromiumTabGeometry Geometry;
             internal Rectangle Bounds, Target;
-            internal float Hover;
+            internal readonly ChromiumHoverAnimation HoverAnimation = new ChromiumHoverAnimation();
+            internal float Hover => (float)HoverAnimation.Value;
             internal bool MouseHovered;
             internal Point HoverPoint;
-            internal bool Closing, HasIcon;
+            internal bool Closing, ClosingTargetInitialized, HasIcon;
             internal Visual Previous;
             internal int Index;
             internal bool ContentInitialized, ShowingIcon, WasLoading;
             internal int LoadingCompletionVersion;
             internal Rectangle TitleBounds, TitleStart, TitleTarget;
             internal double TitleStarted = double.NaN, FaviconStarted = double.NaN;
-            internal double FaviconDuration;
-            internal float FaviconStart, FaviconTarget, FaviconValue;
             internal double WaitingElapsed, SpinningStarted = double.NaN, WaitingArcOffset = double.NaN;
             internal float FaviconProgress = 1;
             internal readonly ButtonFeedback CloseFeedback = new ButtonFeedback();
@@ -118,84 +117,37 @@ namespace EasyTabs
             }
         }
 
-        // Chrome 86 uses a 16% hover highlight and 14% ink drop. Close-button
-        // fading is a Quartz extension: upstream deliberately disables that fade.
+        // Keep the raster composition, with Chromium's separate hover/ripple clocks.
         private sealed class ButtonFeedback : IDisposable
         {
-            private float _hoverFrom, _hoverTarget;
-            private double _hoverStarted;
-            private double? _pressedAt, _releasedAt;
-            private bool _held, _inside;
+            private readonly ChromiumButtonAnimation _animation;
             private SKPath _clip;
             private float _clipRadius;
-            internal float HoverOpacity { get; private set; }
-            internal float InkOpacity { get; private set; }
-            internal float InkProgress { get; private set; }
+            internal float HoverOpacity => _animation.HoverOpacity;
+            internal float InkOpacity => _animation.InkOpacity;
+            internal float InkProgress => _animation.InkProgress;
             internal PointF Origin { get; private set; }
-            internal bool IsAnimating { get; private set; }
+            internal bool IsAnimating => _animation.IsAnimating;
 
-            private static float Progress(double elapsed, double duration) =>
-                (float)Math.Max(0, Math.Min(1, elapsed / duration));
-            private float HoverAt(double now)
+            internal ButtonFeedback(bool immediateHover = false)
             {
-                float t = Progress(now - _hoverStarted, 200);
-                t = t * t * (3 - 2 * t);
-                return _hoverFrom + (_hoverTarget - _hoverFrom) * t;
+                _animation = new ChromiumButtonAnimation(immediateHover);
             }
 
             internal void Press(double now, PointF origin)
             {
-                _pressedAt = now;
-                _releasedAt = null;
-                _held = _inside = true;
                 Origin = origin;
-                IsAnimating = true;
+                _animation.Press(now);
             }
 
-            internal void Release(double now)
-            {
-                if (!_held) return; // The native message and global hook may both release.
-                _held = false;
-                if (_inside) _releasedAt = now;
-                else _pressedAt = _releasedAt = null;
-            }
+            internal void Release(double now, bool inside) => _animation.Release(now, inside);
 
-            internal void Cancel()
-            {
-                _held = false;
-                _pressedAt = _releasedAt = null;
-                InkOpacity = 0;
-            }
+            internal void Cancel() => _animation.Reset();
+            internal void Cancel(double now) => _animation.Cancel(now);
 
-            internal void Update(bool hovered, double now, bool animate)
-            {
-                _inside = hovered;
-                float target = hovered ? 1 : 0;
-                if (target != _hoverTarget)
-                {
-                    _hoverFrom = HoverAt(now);
-                    _hoverTarget = target;
-                    _hoverStarted = now;
-                }
-                if (!animate) _hoverFrom = _hoverTarget;
-                HoverOpacity = .16f * HoverAt(now);
-                IsAnimating = animate && HoverAt(now) != _hoverTarget;
-                InkOpacity = 0;
-                if (!_pressedAt.HasValue) return;
+            internal void Update(bool hovered, double now, bool animate) => _animation.Update(hovered, now, animate);
 
-                float grow = animate ? Progress(now - _pressedAt.Value, 225) : 1;
-                InkProgress = 1 - (float)Math.Pow(1 - grow, 3);
-                float fade = _releasedAt.HasValue ? (animate ? Progress(now - _releasedAt.Value, 160) : 1) : 0;
-                if (fade == 1)
-                {
-                    _pressedAt = _releasedAt = null;
-                    return;
-                }
-                InkOpacity = _held && !hovered ? 0 : .14f * (1 - fade);
-                IsAnimating |= animate && (grow < 1 || _releasedAt.HasValue);
-            }
-
-            internal void Paint(SKCanvas canvas, float cx, float cy, float radius, Color background)
+            internal void Paint(SKCanvas canvas, float cx, float cy, float radius, Color background, float scale)
             {
                 if (HoverOpacity == 0 && InkOpacity == 0) return;
                 double luminance = ChromiumTabTheme.Luminance(background);
@@ -218,9 +170,13 @@ namespace EasyTabs
                     canvas.Translate(cx, cy);
                     canvas.ClipPath(_clip, SKClipOperation.Intersect, true);
                     float x = Origin.X * radius, y = Origin.Y * radius;
-                    float fullRadius = radius + (float)Math.Sqrt(x * x + y * y);
+                    // FloodFillInkDropRipple expands from one DIP to the farthest
+                    // corner of its host bounds, then clips to the button shape.
+                    float dx = radius + Math.Abs(x), dy = radius + Math.Abs(y);
+                    float fullRadius = (float)Math.Sqrt(dx * dx + dy * dy);
+                    float minimumRadius = scale;
                     paint.Color = ink.WithAlpha((byte)(255 * InkOpacity));
-                    canvas.DrawCircle(x, y, fullRadius * (.15f + .85f * InkProgress), paint);
+                    canvas.DrawCircle(x, y, minimumRadius + (fullRadius - minimumRadius) * InkProgress, paint);
                     canvas.Restore();
                 }
             }
@@ -250,7 +206,6 @@ namespace EasyTabs
         private Bitmap _buffer;
         private Font _font;
         private float _fontScale;
-        private double _lastPaint;
         private bool _hoverAnimating, _buttonAnimating, _contentAnimating, _addHovered, _disposed;
         private Point _lastCursor = new Point(int.MinValue, int.MinValue);
         private TitleBarTab _hoveredTab;
@@ -417,11 +372,11 @@ namespace EasyTabs
                     (_parentWindow.Tabs.Count == 1 && _parentWindow.ExitOnLastTabClose) ||
                     !_visuals.TryGetValue(tab, out visual) || visual.Geometry == null || visual.Content.Pixels == null) return;
                 visual.Closing = true;
+                visual.ClosingTargetInitialized = false;
                 visual.Previous = null;
                 if (index > 0) _visuals.TryGetValue(_parentWindow.Tabs[index - 1], out visual.Previous);
                 // Tab::SetClosing does not reset hover. Active tabs track hover
                 // too, so their existing highlight appears when they lose selection.
-                visual.CloseFeedback.Cancel();
                 if (_pressedFeedback == visual.CloseFeedback) _pressedFeedback = null;
             }
         }
@@ -475,8 +430,34 @@ namespace EasyTabs
             base.Overlay_MouseDown(sender, e);
         }
 
+        internal override void ButtonPointerUp(Point cursor)
+        {
+            lock (_sync)
+            {
+                // Hit-test the release before adding a tab can move the button.
+                TitleBarTab tab = FindTab(cursor);
+                bool inside = _pressedFeedback == _addFeedback ? IsOverAddButton(cursor) :
+                    tab != null && _visuals[tab].CloseFeedback == _pressedFeedback && IsOverCloseButton(tab, cursor);
+                _pressedFeedback?.Release(AnimationTimeMilliseconds, inside);
+            }
+        }
+
+        internal override void CancelButtonPress()
+        {
+            lock (_sync)
+            {
+                if (_pressedFeedback == null) return;
+                _pressedFeedback.Cancel(AnimationTimeMilliseconds);
+                _pressedFeedback = null;
+                _buttonAnimating = true;
+            }
+            _parentWindow.RedrawTabs();
+        }
+
         protected internal override void Overlay_MouseUp(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Left)
+                ButtonPointerUp(_parentWindow._overlay.GetRelativeCursorPosition(e.Location));
             // Once the drag ends, changed targets animate back from their
             // displayed bounds, including drags across the pinned boundary.
             base.Overlay_MouseUp(sender, e);
@@ -484,7 +465,6 @@ namespace EasyTabs
             lock (_sync)
             {
                 redraw = _sizingBoxes.CancelPress() || _pressedFeedback != null;
-                _pressedFeedback?.Release(AnimationTimeMilliseconds);
                 _pressedFeedback = null;
             }
             if (redraw) _parentWindow.RedrawTabs();
@@ -496,7 +476,7 @@ namespace EasyTabs
             {
                 bool captionPressed = _sizingBoxes.CancelPress();
                 if (_pressedFeedback == null && !captionPressed) return;
-                _pressedFeedback?.Cancel();
+                _pressedFeedback?.Cancel(AnimationTimeMilliseconds);
                 _pressedFeedback = null;
             }
             _parentWindow.RedrawTabs();
@@ -554,8 +534,6 @@ namespace EasyTabs
                 ChromiumTabTheme.WindowPalette palette = windowActive ? Theme.ActiveWindow : Theme.InactiveWindow;
                 _sizingBoxes.Scale = scale;
                 double now = AnimationTimeMilliseconds;
-                float step = (float)Math.Max(0, Math.Min(64, now - _lastPaint)) / 200f;
-                _lastPaint = now;
                 bool animate = ShouldAnimateLayout();
                 if (IsTabClosingMode && (_parentWindow.ClientSize != _mouseCloseWindowSize ||
                     scale != _mouseCloseScale || IsTabRepositioning || _detachedTabX.HasValue || tabs.Count == 0 ||
@@ -690,8 +668,14 @@ namespace EasyTabs
                     // Chromium closes to the overlap width, matching the distance
                     // the following tabs travel. Only cached pixels are retained;
                     // the content form has already followed its normal close path.
-                    visual.Target = new Rectangle(previous == null ? startX : previous.Target.Right - OverlapWidth,
-                        y, OverlapWidth, Scale(ChromiumTabMetrics.Height));
+                    // StartRemoveTabAnimation computes this target once. Later
+                    // closes must not restart an already closing tab's 200 ms clock.
+                    if (!visual.ClosingTargetInitialized)
+                    {
+                        visual.Target = new Rectangle(previous == null ? startX : previous.Target.Right - OverlapWidth,
+                            y, OverlapWidth, Scale(ChromiumTabMetrics.Height));
+                        visual.ClosingTargetInitialized = true;
+                    }
                     visual.Bounds = _animation.GetBounds(tab, visual.Target, false, OverlapWidth);
                     if (visual.Bounds == visual.Target && !_animation.IsItemAnimating(tab))
                     {
@@ -709,7 +693,7 @@ namespace EasyTabs
                     // tab; on exit it fades normally instead of disappearing at close.
                     bool hovered = visual.Bounds.Contains(cursor) &&
                         visual.Geometry.HitTest.Contains(cursor.X - visual.Bounds.X, cursor.Y - visual.Bounds.Y);
-                    UpdateHover(visual, hovered, cursor, animate, step);
+                    UpdateHover(visual, hovered, cursor, animate, now);
                     closingRight = Math.Max(closingRight, visual.Bounds.Right);
                 }
 
@@ -720,7 +704,7 @@ namespace EasyTabs
                 foreach (TitleBarTab tab in tabs)
                 {
                     Visual visual = _visuals[tab];
-                    UpdateHover(visual, tab == _hoveredTab, cursor, animate, step);
+                    UpdateHover(visual, tab == _hoveredTab, cursor, animate, now);
                 }
                 _paintOrder.Sort(_comparePaintOrder);
 
@@ -752,13 +736,11 @@ namespace EasyTabs
             }
         }
 
-        private void UpdateHover(Visual visual, bool hovered, Point cursor, bool animate, float step)
+        private void UpdateHover(Visual visual, bool hovered, Point cursor, bool animate, double now)
         {
             visual.MouseHovered = hovered;
-            float target = hovered ? 1 : 0;
-            visual.Hover = !animate ? target : target > visual.Hover
-                ? Math.Min(target, visual.Hover + step) : Math.Max(target, visual.Hover - step);
-            _hoverAnimating |= visual.Hover != target;
+            visual.HoverAnimation.Update(hovered, now, animate);
+            _hoverAnimating |= visual.HoverAnimation.IsAnimating;
             if (hovered) visual.HoverPoint = new Point(cursor.X - visual.Bounds.X, cursor.Y - visual.Bounds.Y);
         }
 
@@ -850,7 +832,7 @@ namespace EasyTabs
                     base.IsOverCloseButton(tab, cursor);
                 visual.CloseFeedback.Update(hovered, now, animate);
                 _buttonAnimating |= visual.CloseFeedback.IsAnimating;
-                visual.CloseFeedback.Paint(canvas, closeX + 8 * scale, centerY + 8 * scale, 8 * scale, background);
+                visual.CloseFeedback.Paint(canvas, closeX + 8 * scale, centerY + 8 * scale, 8 * scale, background, scale);
                 PaintClose(canvas, closeX, centerY, scale, foreground);
             }
             else { visual.CloseFeedback.Cancel(); visual.CloseFeedback.Update(false, now, false); }
@@ -912,7 +894,7 @@ namespace EasyTabs
                     spinnerColor = ChromiumTabTheme.Blend(waitingColor, loadingColor,
                         (float)TabLoadingIndicator.LinearOutSlowIn(elapsed / 900));
                 }
-                else TabLoadingIndicator.GetAngles(tab.LoadingElapsedMilliseconds, out start, out sweep, 1);
+                else TabLoadingIndicator.GetAngles(tab.LoadingElapsedMilliseconds, out start, out sweep);
                 _spinnerPaint.Color = ToSkia(spinnerColor);
                 _spinnerPaint.StrokeWidth = 2 * scale; // TabIcon's 2020 stroke width.
                 float inset = scale;
@@ -928,50 +910,29 @@ namespace EasyTabs
 
         private void AnimateFavicon(Visual visual, TitleBarTab tab, double now, bool animate)
         {
-            // Modern TabIcon + gfx::SlideAnimation, pinned at Chromium 9130e7a:
-            // https://chromium.googlesource.com/chromium/src/+/9130e7a5778e8a5e29cbb36b0c3bf3aec6fdb5cf/chrome/browser/ui/views/tabs/tab/tab_icon.cc
-            if (!double.IsNaN(visual.FaviconStarted))
-            {
-                float t = (float)Math.Max(0, Math.Min(1, (now - visual.FaviconStarted) / visual.FaviconDuration));
-                visual.FaviconValue = visual.FaviconStart + (visual.FaviconTarget - visual.FaviconStart) * (1 - (1 - t) * (1 - t));
-                if (t == 1) visual.FaviconStarted = double.NaN;
-            }
+            // Chromium 85 TabIcon: loading immediately uses the small crop;
+            // completion reveals a real favicon over a fresh 250 ms EASE_OUT.
             bool completed = visual.LoadingCompletionVersion != tab.LoadingCompletionVersion;
             if (tab.IsLoading && (!visual.WasLoading || completed))
             {
                 visual.WaitingElapsed = 0;
                 visual.SpinningStarted = visual.WaitingArcOffset = double.NaN;
             }
-            float completionTarget = tab.RevealFaviconOnLoadCompletion ? 1 : 0;
-            if (visual.ContentInitialized && (visual.WasLoading != tab.IsLoading || completed))
-            {
-                // Preserve both transitions if a short load/reload fits between
-                // paints. Reversals start at the current value, not at an endpoint.
-                if (completed && visual.WasLoading == tab.IsLoading)
-                    SetFaviconTarget(visual, tab.IsLoading ? completionTarget : 0, now);
-                SetFaviconTarget(visual, tab.IsLoading ? 0 : completionTarget, now);
-            }
-            if (!animate)
-            {
-                visual.FaviconValue = visual.FaviconTarget;
+            if (tab.IsLoading || !animate)
                 visual.FaviconStarted = double.NaN;
+            else if (visual.ContentInitialized && (visual.WasLoading || completed))
+                visual.FaviconStarted = tab.RevealFaviconOnLoadCompletion ? now : double.NaN;
+
+            visual.FaviconProgress = tab.IsLoading ? 0 : 1;
+            if (!double.IsNaN(visual.FaviconStarted))
+            {
+                float t = (float)Math.Max(0, Math.Min(1, (now - visual.FaviconStarted) / 250));
+                visual.FaviconProgress = 1 - (1 - t) * (1 - t);
+                if (t == 1) visual.FaviconStarted = double.NaN;
+                else _contentAnimating = true;
             }
-            bool changing = !double.IsNaN(visual.FaviconStarted);
-            // SlideAnimation applies EASE_OUT; TabIcon then applies EASE_IN to
-            // that value when interpolating the circular clip's diameter.
-            visual.FaviconProgress = tab.IsLoading || changing ? visual.FaviconValue * visual.FaviconValue : 1;
-            _contentAnimating |= changing;
             visual.WasLoading = tab.IsLoading;
             visual.LoadingCompletionVersion = tab.LoadingCompletionVersion;
-        }
-
-        private static void SetFaviconTarget(Visual visual, float target, double now)
-        {
-            if (target == visual.FaviconTarget) return;
-            visual.FaviconStart = visual.FaviconValue;
-            visual.FaviconTarget = target;
-            visual.FaviconDuration = 250 * Math.Abs(target - visual.FaviconValue);
-            visual.FaviconStarted = visual.FaviconDuration == 0 ? double.NaN : now;
         }
 
         private Rectangle AnimateTitle(Visual visual, Rectangle target, bool showingIcon, double now, bool animate)
@@ -1005,10 +966,8 @@ namespace EasyTabs
             if (!double.IsNaN(visual.TitleStarted))
             {
                 double progress = Math.Max(0, Math.Min(1, (now - visual.TitleStarted) / 100));
-                float eased = (float)TabLoadingIndicator.FastOutSlowIn(progress);
-                visual.TitleBounds = Rectangle.Round(new RectangleF(
-                    visual.TitleStart.X + (target.X - visual.TitleStart.X) * eased, target.Y,
-                    visual.TitleStart.Width + (target.Width - visual.TitleStart.Width) * eased, target.Height));
+                double eased = TabLoadingIndicator.FastOutSlowIn(progress);
+                visual.TitleBounds = ChromiumBoundsAnimation.Interpolate(visual.TitleStart, target, eased);
                 if (progress == 1) visual.TitleStarted = double.NaN;
                 else _contentAnimating = true;
             }
@@ -1025,7 +984,7 @@ namespace EasyTabs
             if (revealing)
             {
                 // TabIcon::MaybePaintFavicon: scale/crop a 10-DIP circle to the
-                // favicon's full diagonal. The modern easing is applied above.
+                // favicon's full diagonal. The reveal easing is applied above.
                 float progress = visual.FaviconProgress;
                 float diameter = (10 + ((float)Math.Sqrt(2) * 16 - 10) * progress) * scale;
                 float cx = (bounds.Left + bounds.Right) / 2f, cy = (bounds.Top + bounds.Bottom) / 2f;
@@ -1095,16 +1054,16 @@ namespace EasyTabs
             int x = Math.Min(maximumX, right);
             var target = new Rectangle(x, y + Scale(3), Scale(28), Scale(28));
             _addButtonArea = _animation.GetBounds(_addKey, target, dragging, target.Width);
-            // Stay clear of opening/closing tabs, but never cross the fixed limit,
-            // including while the window is shrinking or tab widths are animating.
-            _addButtonArea.X = Math.Min(maximumX, Math.Max(_addButtonArea.X, visibleRight));
-            _animation.RecordDisplayedBounds(_addKey, _addButtonArea);
+            // Chromium gives the button its own bounds animation. Only a manual
+            // drag pushes it outside the tabs; normal frames keep that curve intact.
+            if (dragging)
+                _addButtonArea.X = Math.Min(maximumX, Math.Max(_addButtonArea.X, visibleRight));
             float cx = _addButtonArea.X + _addButtonArea.Width / 2f;
             float cy = _addButtonArea.Y + _addButtonArea.Height / 2f;
             _addHovered = !IsTabRepositioning && IsOverAddButton(cursor);
             _addFeedback.Update(_addHovered, now, animate);
             _buttonAnimating |= _addFeedback.IsAnimating;
-            _addFeedback.Paint(canvas, cx, cy, Scale(14), palette.Frame);
+            _addFeedback.Paint(canvas, cx, cy, Scale(14), palette.Frame, RenderScale);
             using (var paint = new SKPaint { IsAntialias = true, Color = ToSkia(palette.Foreground(false, palette.InactiveTab)) })
             {
                 paint.Style = SKPaintStyle.Stroke; paint.StrokeWidth = 2 * RenderScale; paint.StrokeCap = SKStrokeCap.Round;

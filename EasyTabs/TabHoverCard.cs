@@ -18,14 +18,12 @@ namespace EasyTabs
         internal const int CardWidth = 256, PreviewHeight = 144, ShadowMargin = 12;
         private readonly LayeredWindowBuffer _surface = new LayeredWindowBuffer();
         private TabFrameScheduler _frames;
-        private Bitmap _header, _oldHeader, _thumbnail, _oldThumbnail, _footer, _oldFooter;
+        private Bitmap _header, _oldHeader, _thumbnail, _footer, _oldFooter;
         private bool _showPreview;
-        private double _imageStart;
         private float _scale = 1;
         private Color _background, _foreground;
         internal event EventHandler Frame;
         internal int HeaderHeight => _header?.Height ?? 0;
-        internal bool HasImageAnimation => _oldThumbnail != null;
         internal int FooterHeight => _footer?.Height ?? 0;
         internal Size CardSize => new Size(Pixel(CardWidth), HeaderHeight + (_showPreview ? Pixel(PreviewHeight) : 0) + FooterHeight);
 
@@ -95,12 +93,12 @@ namespace EasyTabs
             _header = MakeHeader(title, domain);
             _footer = string.IsNullOrEmpty(footer) ? null : MakeFooter(footer);
             _showPreview = showPreview;
-            SetThumbnail(showPreview ? MakeThumbnail(preview, crashed) : null, transition, now);
+            SetThumbnail(showPreview ? MakeThumbnail(preview, crashed) : null);
         }
 
         internal void UpdateThumbnail(Image preview, bool crashed, bool animate, double now)
         {
-            if (_showPreview) SetThumbnail(MakeThumbnail(preview, crashed), animate, now);
+            if (_showPreview) SetThumbnail(MakeThumbnail(preview, crashed));
         }
 
         internal void UpdateFooter(string text)
@@ -128,33 +126,11 @@ namespace EasyTabs
             outgoing = snapshot; current = null;
         }
 
-        private void SetThumbnail(Bitmap next, bool animate, double now)
+        private void SetThumbnail(Bitmap next)
         {
-            if (!animate)
-            {
-                _oldThumbnail?.Dispose(); _oldThumbnail = null;
-                _thumbnail?.Dispose(); _thumbnail = next;
-                return;
-            }
-            // ThumbnailView's three-way crossfade: keep the occluding image in
-            // the first half; after halfway, promote the old target and rewind.
-            if (_oldThumbnail != null)
-            {
-                double progress = TabHoverCardAnimation.Clamp((now - _imageStart) / 200);
-                if (progress <= .5)
-                {
-                    _thumbnail?.Dispose(); _thumbnail = next;
-                    return;
-                }
-                _oldThumbnail.Dispose();
-                _oldThumbnail = _thumbnail;
-                _imageStart = now - (1 - progress) * 200;
-            }
-            else
-            {
-                _oldThumbnail = _thumbnail;
-                _imageStart = now;
-            }
+            // Chromium 85 replaces a delivered preview immediately; the card's
+            // position and text still follow the 75 ms tab-switch animation.
+            _thumbnail?.Dispose();
             _thumbnail = next;
         }
 
@@ -319,15 +295,12 @@ namespace EasyTabs
                     DrawAlpha(graphics, _oldHeader, shadow, shadow, 1 - textProgress);
                 graphics.Restore(headerClip);
                 int thumbnailHeight = Math.Max(0, size.Height - headerHeight - footerHeight);
-                if ((_thumbnail != null || _oldThumbnail != null) && thumbnailHeight > 0)
+                if (_thumbnail != null && thumbnailHeight > 0)
                 {
                     int y = shadow + headerHeight;
                     var imageClip = graphics.Save();
                     graphics.SetClip(new Rectangle(shadow, y, size.Width, thumbnailHeight), CombineMode.Intersect);
                     if (_thumbnail != null) graphics.DrawImageUnscaled(_thumbnail, shadow, y);
-                    double progress = TabHoverCardAnimation.Clamp((now - _imageStart) / 200);
-                    if (_oldThumbnail != null && progress < 1)
-                        DrawAlpha(graphics, _oldThumbnail, shadow, y, 1 - progress);
                     graphics.Restore(imageClip);
                 }
                 int footerY = shadow + size.Height - footerHeight;
@@ -342,7 +315,6 @@ namespace EasyTabs
                 _oldHeader?.Dispose(); _oldHeader = null;
                 _oldFooter?.Dispose(); _oldFooter = null;
             }
-            if (now - _imageStart >= 200) { _oldThumbnail?.Dispose(); _oldThumbnail = null; }
         }
 
         private static void DrawAlpha(Graphics graphics, Bitmap bitmap, int x, int y, double opacity)
@@ -387,7 +359,7 @@ namespace EasyTabs
                 _surface.DeviceContext, ref source, 0, ref blend, ULW.ULW_ALPHA))
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             if (!Visible) Show(owner);
-            SetAnimating(animation.IsAnimating || HasImageAnimation);
+            SetAnimating(animation.IsAnimating);
         }
 
         internal void Clear()
@@ -400,7 +372,6 @@ namespace EasyTabs
             _header?.Dispose(); _header = null;
             _oldHeader?.Dispose(); _oldHeader = null;
             _thumbnail?.Dispose(); _thumbnail = null;
-            _oldThumbnail?.Dispose(); _oldThumbnail = null;
             _footer?.Dispose(); _footer = null;
             _oldFooter?.Dispose(); _oldFooter = null;
         }

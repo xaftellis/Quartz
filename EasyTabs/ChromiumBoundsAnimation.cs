@@ -93,7 +93,7 @@ namespace EasyTabs
             return item.Bounds;
         }
 
-        private static Rectangle Interpolate(Rectangle start, Rectangle target, double value)
+        internal static Rectangle Interpolate(Rectangle start, Rectangle target, double value)
         {
             // Tween::RectValueBetween rounds edges, not position and width
             // separately. Shared edges therefore round to the same pixel.

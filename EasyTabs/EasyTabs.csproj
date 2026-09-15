@@ -128,6 +128,8 @@
     <Compile Include="LayeredWindowBuffer.cs" />
     <Compile Include="TabLayoutAnimation.cs" />
     <Compile Include="ChromiumBoundsAnimation.cs" />
+    <Compile Include="ChromiumHoverAnimation.cs" />
+    <Compile Include="ChromiumButtonAnimation.cs" />
     <Compile Include="TabFrameScheduler.cs" />
     <Compile Include="ChromeTabRenderer.cs" />
     <Compile Include="ChromiumTabRenderer.cs" />

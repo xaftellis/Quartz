@@ -81,7 +81,7 @@ namespace EasyTabs
             else
             {
                 float scale = Math.Max(1, _parent.DeviceDpi / 96f);
-                double width = _parent.Tabs.Max(tab => tab.Area.Width) / scale;
+                double width = target.Area.Width / scale;
                 _delay.Interval = Math.Max(1, (int)Math.Round(TabHoverCardAnimation.ShowDelay(width)));
                 _delay.Start();
             }

@@ -50,31 +50,19 @@ namespace EasyTabs
 
         private sealed class HoverFade
         {
-            private float _from, _target;
-            private double _started;
-            internal float Value { get; private set; }
-            internal bool IsAnimating { get; private set; }
+            // Windows10CaptionButton inherits Button's 150 ms EASE_OUT slide
+            // in both directions; pressed -> hovered snaps to the hovered state.
+            private readonly ChromiumHoverAnimation _animation = new ChromiumHoverAnimation(150, false);
+            private bool _pressed;
+            internal float Value => (float)_animation.Value;
+            internal bool IsAnimating => _animation.IsAnimating;
 
-            private float At(double now)
+            internal void Update(bool hovered, bool pressed, double now, bool animate)
             {
-                float progress = (float)Math.Max(0, Math.Min(1, (now - _started) / 200));
-                progress = progress * progress * (3 - 2 * progress);
-                return _from + (_target - _from) * progress;
-            }
-
-            internal void Update(bool hovered, double now, bool animate)
-            {
-                float target = hovered ? 1 : 0;
-                if (target != _target)
-                {
-                    // Reverse from the current shade when the pointer moves quickly.
-                    _from = At(now);
-                    _target = target;
-                    _started = now;
-                }
-                if (!animate) _from = _target;
-                Value = At(now);
-                IsAnimating = animate && Value != _target;
+                if (pressed) _animation.Reset(0);
+                else if (_pressed) _animation.Reset(hovered ? 1 : 0);
+                else _animation.Update(hovered, now, animate);
+                _pressed = pressed;
             }
         }
 
@@ -166,9 +154,9 @@ namespace EasyTabs
             bool minimizePressed = _pressedButton == HT.HTMINBUTTON && hoveredButton == _pressedButton;
             bool maximizePressed = _pressedButton == HT.HTMAXBUTTON && hoveredButton == _pressedButton;
             bool closePressed = _pressedButton == HT.HTCLOSE && hoveredButton == _pressedButton;
-            _minimizeHover.Update(_minimizeButtonArea.Contains(cursor), now, animate);
-            _maximizeHover.Update(_maximizeRestoreButtonArea.Contains(cursor), now, animate);
-            _closeHover.Update(_closeButtonArea.Contains(cursor), now, animate);
+            _minimizeHover.Update(_minimizeButtonArea.Contains(cursor), minimizePressed, now, animate);
+            _maximizeHover.Update(_maximizeRestoreButtonArea.Contains(cursor), maximizePressed, now, animate);
+            _closeHover.Update(_closeButtonArea.Contains(cursor), closePressed, now, animate);
 
             // Caption buttons sit on the frame, which can differ from the active tab.
             Color foreground = CaptionForeground(frame);

@@ -5,13 +5,13 @@ using System.Drawing;
 
 namespace EasyTabs
 {
-    // A timestamp-driven port of WidgetFadeAnimator and BubbleSlideAnimator.
+    // Chromium 85 TabHoverCardBubbleView's fade and slide delegates.
     // No timers or HWNDs here: interrupted animations can be checked deterministically.
     internal sealed class TabHoverCardAnimation
     {
-        internal const int SlideDuration = 200, FadeInDuration = 200, FadeOutDuration = 150;
+        internal const int SlideDuration = 75, FadeInDuration = 200, FadeOutDuration = 150;
         private RectangleF _from, _target;
-        private double _slideStart, _slideOffset, _fadeStart;
+        private double _slideStart, _fadeStart;
         private int _fade; // 1 = in, -1 = out
         private bool _sliding;
         internal RectangleF Bounds { get; private set; }
@@ -28,13 +28,13 @@ namespace EasyTabs
             if (!_sliding) Bounds = _from = bounds;
         }
 
-        internal static double ShowDelay(double widestTabDip)
+        internal static double ShowDelay(double tabWidthDip)
         {
-            // Current TabStyle: pinned=64 DIP, standard=256 DIP. Use the
-            // largest tab, including when the hovered tab itself is pinned.
-            if (widestTabDip <= 64) return 300;
-            return 300 + 500 * Math.Log(widestTabDip - 64 + 1) / Math.Log(256 - 64 + 1)
-                + (widestTabDip >= 256 ? 500 : 0);
+            // Chromium 85's default delay group: 300..800 ms, based on the
+            // hovered tab (55-DIP pinned / 256-DIP standard), not the widest tab.
+            if (tabWidthDip <= ChromiumTabMetrics.PinnedWidth) return 300;
+            return 300 + 500 * Math.Log(tabWidthDip - ChromiumTabMetrics.PinnedWidth + 1) /
+                Math.Log(ChromiumTabMetrics.StandardWidth - ChromiumTabMetrics.PinnedWidth + 1);
         }
 
         internal static double Clamp(double value) => Math.Max(0, Math.Min(1, value));
@@ -78,11 +78,8 @@ namespace EasyTabs
                 TextProgress = 1;
                 return;
             }
-            double value = Ease((now - _slideStart) / SlideDuration);
-            // Retarget from the displayed frame, preserving the running clock
-            // until 80% progress, exactly as BubbleSlideAnimator does.
-            if (!_sliding || value > .8) { _slideStart = now; _slideOffset = 0; }
-            else _slideOffset = value;
+            // The 85 delegate restarts a full 75 ms slide on each new anchor.
+            _slideStart = now;
             TextProgress = 0;
             _sliding = true;
         }
@@ -107,11 +104,8 @@ namespace EasyTabs
             }
             if (!_sliding) return;
             double value = Ease((now - _slideStart) / SlideDuration);
-            TextProgress = Clamp((value - _slideOffset) / (1 - _slideOffset));
-            float t2 = (float)TextProgress;
-            Bounds = new RectangleF(_from.X + (_target.X - _from.X) * t2,
-                _from.Y + (_target.Y - _from.Y) * t2, _from.Width + (_target.Width - _from.Width) * t2,
-                _from.Height + (_target.Height - _from.Height) * t2);
+            TextProgress = value;
+            Bounds = ChromiumBoundsAnimation.Interpolate(Rectangle.Round(_from), Rectangle.Round(_target), value);
             if (value >= 1) { Bounds = _target; TextProgress = 1; _sliding = false; }
         }
     }

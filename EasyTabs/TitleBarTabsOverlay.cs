@@ -69,6 +69,9 @@ namespace EasyTabs
 
 		private void LoadingAnimation_Tick(object sender, EventArgs e)
 		{
+			// A low-level hook runs before Windows applies the mouse move. Sample
+			// here, after dispatch, so the last move out of the strip is not stale.
+			if (_mouseMovePending) _latestMousePosition = Cursor.Position;
 			ProcessPendingMouseMove();
 			UpdateLoadingAnimation();
 			// Render samples the latest pointer once for the shared frame. The timer
@@ -191,6 +194,33 @@ namespace EasyTabs
 		private readonly Queue<MouseEvent> _mouseEvents = new Queue<MouseEvent>();
 		private bool _mouseInputQueued, _mouseMovePending, _mouseInside;
 		private Point _latestMousePosition;
+		private int _mouseLeaveTracking;
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct MouseTracking
+		{
+			internal int Size, Flags;
+			internal IntPtr Window;
+			internal int HoverTime;
+		}
+
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool TrackMouseEvent(ref MouseTracking tracking);
+
+		private void QueueNativeMouseMove(bool nonClient)
+		{
+			int flags = 2 /* TME_LEAVE */ | (nonClient ? 16 /* TME_NONCLIENT */ : 0);
+			if (_mouseLeaveTracking != flags)
+			{
+				var tracking = new MouseTracking { Size = Marshal.SizeOf(typeof(MouseTracking)), Flags = flags, Window = Handle };
+				if (TrackMouseEvent(ref tracking)) _mouseLeaveTracking = flags;
+			}
+			_mouseInside = true;
+			_latestMousePosition = Cursor.Position;
+			_mouseMovePending = true;
+			UpdateLoadingAnimation();
+		}
 
 		[DllImport("user32.dll", EntryPoint = "PostMessageW")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -928,7 +958,8 @@ namespace EasyTabs
                 WM message = (WM)wParam.ToInt32();
                 if (message == WM.WM_MOUSEMOVE)
                 {
-                    // Cursor.Position uses the host's DPI coordinate system.
+                    // Only use this position to wake the frame sampler. The
+                    // low-level hook can still see the previous cursor position.
                     Point cursor = Cursor.Position;
                     if (_mouseInside || DesktopBounds.Contains(cursor) || _parentForm.TabRenderer.IsTabRepositioning ||
                         _parentForm.TabRenderer.IsTabClosingMode ||
@@ -1224,6 +1255,26 @@ namespace EasyTabs
 		/// <param name="m">Message received by the pump.</param>
 		protected override void WndProc(ref Message m)
 		{
+			if (_parentForm != null && _parentForm.TabRenderer != null)
+			{
+				if (m.Msg == 0x200 /* WM_MOUSEMOVE */ || m.Msg == 0xA0 /* WM_NCMOUSEMOVE */)
+				{
+					QueueNativeMouseMove(m.Msg == 0xA0);
+					// Dispatch our screen-coordinate MouseMove once on the frame.
+					m.Result = IntPtr.Zero;
+					return;
+				}
+				else if (m.Msg == 0x2A3 /* WM_MOUSELEAVE */ || m.Msg == 0x2A2 /* WM_NCMOUSELEAVE */)
+				{
+					_mouseLeaveTracking = 0;
+					_mouseInside = false;
+					_latestMousePosition = Cursor.Position;
+					_mouseMovePending = true;
+					// Leaving the non-client overlay for WebView/toolbar content
+					// must start the fade even after the animation scheduler idles.
+					RequestRender();
+				}
+			}
 			if (m.Msg == ActivationMessage)
 			{
 				_activationUpdatePending = false;
@@ -1408,6 +1459,7 @@ namespace EasyTabs
 						else if (((WM)m.Msg == WM.WM_LBUTTONUP || (WM)m.Msg == WM.WM_NCLBUTTONUP) &&
 							_parentForm.TabRenderer.IsOverAddButton(relativeCursorPosition2))
 						{
+							_parentForm.TabRenderer.ButtonPointerUp(relativeCursorPosition2);
 							_parentForm.AddNewTab();
 						}
 
@@ -1420,6 +1472,7 @@ namespace EasyTabs
 				case WM.WM_CANCELMODE:
 				case WM.WM_CAPTURECHANGED:
 					CancelCaptionButtonPress();
+					_parentForm.TabRenderer?.CancelButtonPress();
 					_pressedCloseTab = null;
 					base.WndProc(ref m);
 					break;

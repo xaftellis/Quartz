@@ -7,7 +7,7 @@ namespace EasyTabs
     /// <summary>Paints the Chromium-style spinner used by tab headers and the Quartz animation test.</summary>
     public static class TabLoadingIndicator
     {
-        private const double ArcTime = 2000.0 / 3.0;
+        private const double ArcTime = 666.666; // Chromium TimeDelta's integer microseconds.
         private const double RotationTime = 1568.0;
         /// <summary>Draws a frame without allocating a bitmap or changing the caller's graphics settings.</summary>
         /// <param name="graphics">Destination graphics.</param>
@@ -33,7 +33,7 @@ namespace EasyTabs
             if (sweepFrame % 2 == 0)
                 sweep -= maximumArcSize;
 
-            double startAngle = 270.0 + Math.Round((elapsedMs / RotationTime) * 360.0, MidpointRounding.AwayFromZero);
+            double startAngle = 270.0 + Math.Floor((elapsedMs / RotationTime) * 360.0);
             if (sweep >= 0.0 && sweep < minimumArcSize)
             {
                 startAngle -= minimumArcSize - sweep;
@@ -52,9 +52,8 @@ namespace EasyTabs
 
         internal static void GetWaitingAngles(double elapsedMs, out float angle, out float arc)
         {
-            // Last Chromium waiting implementation, before its October 2024 removal:
-            // https://chromium.googlesource.com/chromium/src/+/e8b04254875e840f401e669680ae05005895d71c/ui/gfx/paint_throbber.cc
-            double finish = 90 + Math.Round(Math.Max(0, elapsedMs) / 1320 * 360, MidpointRounding.AwayFromZero);
+            // Chromium 85 CalculateWaitingAngles uses integer angle division.
+            double finish = 90 + Math.Floor(Math.Max(0, elapsedMs) / 1320 * 360);
             angle = (float)(-finish % 360);
             arc = (float)Math.Min(180, finish - 90);
         }
@@ -80,8 +79,8 @@ namespace EasyTabs
             double effectiveTime = Math.Max(0, elapsedMs) + arcOffset;
             GetAngles(effectiveTime, out angle, out arc);
             angle = (float)((angle + waitingAngle - 270 +
-                Math.Round(elapsedMs / RotationTime * 360, MidpointRounding.AwayFromZero) -
-                Math.Round(effectiveTime / RotationTime * 360, MidpointRounding.AwayFromZero)) % 360);
+                Math.Floor(elapsedMs / RotationTime * 360) -
+                Math.Floor(effectiveTime / RotationTime * 360)) % 360);
         }
 
         private static void DrawArc(Graphics graphics, Rectangle bounds, Color color, float startAngle, float sweep)
