@@ -165,6 +165,10 @@ namespace Quartz
                 !(theme == "dark" || theme == "black" || theme == "aqua" || theme == "xmas")
                 ? System.Drawing.Color.FromArgb(66, 133, 244)
                 : textForeColor;
+            // Aqua and Xmas need contrasting spinner colours on their selected tabs.
+            renderer.ActiveLoadingIndicatorColor = theme == "aqua"
+                ? System.Drawing.Color.Blue
+                : theme == "xmas" ? System.Drawing.Color.Lime : (System.Drawing.Color?)null;
 
             Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
 

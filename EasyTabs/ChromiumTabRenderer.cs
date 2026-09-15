@@ -15,6 +15,9 @@ namespace EasyTabs
     /// <summary>Chrome 86 vector tabs presented through EasyTabs' existing overlay.</summary>
     public class ChromiumTabRenderer : BaseTabRenderer
     {
+        /// <summary>Optional loading colour for the selected tab's different background.</summary>
+        public Color? ActiveLoadingIndicatorColor { get; set; }
+
         private sealed class Visual : IDisposable
         {
             internal ChromiumTabGeometry Geometry;
@@ -890,8 +893,9 @@ namespace EasyTabs
             {
                 float start, sweep;
                 var phase = tab.Content as ITabLoadingPhase;
-                Color waitingColor = ChromiumTabTheme.Blend(background, LoadingIndicatorColor, 0x47 / 255f);
-                Color spinnerColor = LoadingIndicatorColor;
+                Color loadingColor = tab.Active ? ActiveLoadingIndicatorColor ?? LoadingIndicatorColor : LoadingIndicatorColor;
+                Color waitingColor = ChromiumTabTheme.Blend(background, loadingColor, 0x47 / 255f);
+                Color spinnerColor = loadingColor;
                 if (ShowWaitingAnimation && phase != null && phase.IsWaiting)
                 {
                     visual.WaitingElapsed = tab.LoadingElapsedMilliseconds;
@@ -905,7 +909,7 @@ namespace EasyTabs
                     double elapsed = Math.Max(0, now - visual.SpinningStarted);
                     TabLoadingIndicator.GetAnglesAfterWaiting(elapsed, visual.WaitingElapsed,
                         ref visual.WaitingArcOffset, out start, out sweep);
-                    spinnerColor = ChromiumTabTheme.Blend(waitingColor, LoadingIndicatorColor,
+                    spinnerColor = ChromiumTabTheme.Blend(waitingColor, loadingColor,
                         (float)TabLoadingIndicator.LinearOutSlowIn(elapsed / 900));
                 }
                 else TabLoadingIndicator.GetAngles(tab.LoadingElapsedMilliseconds, out start, out sweep, 1);
