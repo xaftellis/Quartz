@@ -16,7 +16,28 @@ namespace Quartz
 {
     public partial class AppContainer : TitleBarTabs
     {
-        private static readonly Size MinimumWindowSize = new Size(816, 489);
+        // Chromium 85 BrowserViewLayout: 500 DIP content width, 1 DIP content
+        // height, plus the browser controls. Include Quartz's native frame too.
+        private Size MinimumWindowSize
+        {
+            get
+            {
+                float scale = Math.Max(1f, DeviceDpi / 96f);
+                int toolbarHeight = SelectedTab?.Content.Controls["pnlTop"]?.Height
+                    ?? (int)Math.Ceiling(43 * scale);
+                int contentTop = FormBorderStyle == FormBorderStyle.None
+                    ? 0 : Math.Max(0, Padding.Top - 1);
+                return SizeFromClientSize(new Size((int)Math.Ceiling(500 * scale),
+                    contentTop + toolbarHeight + (int)Math.Ceiling(scale)));
+            }
+        }
+
+        internal void UpdateMinimumWindowSize()
+        {
+            Size minimum = MinimumWindowSize;
+            if (MinimumSize != minimum)
+                MinimumSize = minimum;
+        }
         private const int MinimumVisibleWindowEdge = 30;
         private const string WindowSizeSetting = "WindowSize";
         private const string WindowPositionSetting = "WindowPosition";
@@ -347,6 +368,7 @@ namespace Quartz
         {
             Browser browser = (Browser)SelectedTab.Content;
             browser.tabbedApp = (AppContainer)browser.Parent;
+            UpdateMinimumWindowSize();
 
             if(_windowName == string.Empty)
                  this.Text = e.Tab.Content.Text;
@@ -404,8 +426,7 @@ namespace Quartz
 
         private void AppContainer_SizeChanged(object sender, EventArgs e)
         {
-            if (MinimumSize != MinimumWindowSize)
-                MinimumSize = MinimumWindowSize;
+            UpdateMinimumWindowSize();
 
             FormWindowState currentState = WindowState;
             if (currentState != FormWindowState.Minimized)

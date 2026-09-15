@@ -762,6 +762,8 @@ namespace Quartz
                     ResumeLayout(true);
                     _updatingFavouriteLayout = false;
                 }
+                if (Parent is AppContainer container && container.SelectedTab?.Content == this)
+                    container.UpdateMinimumWindowSize();
             }
         }
 
