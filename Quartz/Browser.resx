@@ -216,7 +216,7 @@
     <value>mnuMenu</value>
   </data>
   <data name="&gt;&gt;mnuMenu.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -382,7 +382,7 @@
     <value>mnuDownloadsDropDown</value>
   </data>
   <data name="&gt;&gt;mnuDownloadsDropDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnAddFavourite.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1378,7 +1378,7 @@
     <value>mnuSearch</value>
   </data>
   <data name="&gt;&gt;mnuSearch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnRefresh.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -2230,10 +2230,10 @@
     <value>Flat</value>
   </data>
   <data name="btnSiteInformation.Location" type="System.Drawing.Point, System.Drawing">
-    <value>140, 8</value>
+    <value>139, 8</value>
   </data>
   <data name="btnSiteInformation.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>26, 26</value>
+    <value>24, 24</value>
   </data>
   <data name="btnSiteInformation.Size" type="System.Drawing.Size, System.Drawing">
     <value>26, 26</value>
@@ -2497,7 +2497,7 @@
     <value>mnuHistory</value>
   </data>
   <data name="&gt;&gt;mnuHistory.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="historyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 22</value>
@@ -2527,7 +2527,7 @@
     <value>mnuFavourites</value>
   </data>
   <data name="&gt;&gt;mnuFavourites.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="favouritesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 22</value>
@@ -2614,7 +2614,7 @@
     <value>mnuExperts</value>
   </data>
   <data name="&gt;&gt;mnuExperts.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="expertsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 22</value>
@@ -2650,7 +2650,7 @@
     <value>mnuUserData</value>
   </data>
   <data name="&gt;&gt;mnuUserData.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="userDataToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 22</value>
@@ -2689,7 +2689,7 @@
     <value>SettingsMenuStrip</value>
   </data>
   <data name="&gt;&gt;SettingsMenuStrip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnSettings.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>

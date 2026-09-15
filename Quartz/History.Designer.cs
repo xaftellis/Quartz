@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.panel2 = new System.Windows.Forms.Panel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -50,7 +50,6 @@
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.button2 = new System.Windows.Forms.Button();
             this.pnlDivider = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -146,9 +145,9 @@
             // When
             // 
             this.When.DataPropertyName = "When";
-            dataGridViewCellStyle1.Format = "F";
-            dataGridViewCellStyle1.NullValue = null;
-            this.When.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Format = "F";
+            dataGridViewCellStyle3.NullValue = null;
+            this.When.DefaultCellStyle = dataGridViewCellStyle3;
             this.When.FillWeight = 99.49239F;
             this.When.HeaderText = "When";
             this.When.Name = "When";
@@ -233,16 +232,15 @@
             // 
             this.button1.Location = new System.Drawing.Point(12, 12);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(108, 23);
             this.button1.TabIndex = 5;
-            this.button1.Text = "Clear History";
+            this.button1.Text = "Clear browsing data";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.Transparent;
-            this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.txtSearch);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -250,16 +248,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(800, 45);
             this.panel1.TabIndex = 6;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(93, 12);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "Clear Cache";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.BtnCache_Click);
             // 
             // pnlDivider
             // 
@@ -308,7 +296,6 @@
         private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Id;
         private System.Windows.Forms.DataGridViewCheckBoxColumn CheckBox;
         private System.Windows.Forms.DataGridViewImageColumn FaviconColumn;

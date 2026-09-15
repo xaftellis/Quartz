@@ -110,39 +110,11 @@ namespace Quartz
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are You Sure Want To Clear All History?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            using (var dialog = new ClearHistory(_browser.wvWebView1))
             {
-                _service.Clear();
-                _service.SaveChanges();
-
-                Rebind();
-
-                _browser.wvWebView1.CoreWebView2.Profile.ClearBrowsingDataAsync(Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.BrowsingHistory, Quartz.Services.GetRealTimeInZone.GetRealTimeInComputerTimeZone().AddYears(-999), Quartz.Services.GetRealTimeInZone.GetRealTimeInComputerTimeZone());
+                dialog.ShowDialog(this);
+                if (dialog.DataChanged) Rebind();
             }
-        }
-
-        private void BtnCache_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Are You Sure Want To Clear All Cache?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                try
-                {
-                    var dir = new DirectoryInfo(_browser.GetCachePath());
-                    foreach (var file in dir.EnumerateFiles("*.*"))
-                        file.Delete();
-
-                    FaviconService faviconService = new FaviconService();
-                    faviconService.Clear();
-                    faviconService.SaveChanges();
-
-                    Rebind();
-                }
-                catch (Exception a)
-                {
-                    var msg = MessageBox.Show($"{a.Message}", "This Isn't Right", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-
         }
 
 

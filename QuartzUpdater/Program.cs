@@ -8,6 +8,8 @@ namespace QuartzUpdater
 {
     internal static class Program
     {
+        // Quartz uses this to dismiss Settings before the worker closes the browser.
+        internal const int ApplyWorkerStartedExitCode = 2;
         [STAThread]
         private static void Main(string[] args)
         {
@@ -27,10 +29,14 @@ namespace QuartzUpdater
             int ownerProcessId = GetOwnerProcessId(args, applyJobPath);
             IntPtr ownerWindowHandle = GetOwnerWindowHandle(args, applyJobPath);
 
-            Application.Run(new Form1(
+            using (var window = new Form1(
                 applyJobPath,
-                ownerProcessId,
-                ownerWindowHandle));
+                GetArgumentValue(args, "--theme")))
+            {
+                // Apply workers have no Quartz owner: they must survive its shutdown.
+                if (!OwnerWindow.TryShowDialog(window, ownerProcessId, ownerWindowHandle))
+                    Application.Run(window);
+            }
         }
 
         internal static async Task<int> RunCheckOnlyAsync()

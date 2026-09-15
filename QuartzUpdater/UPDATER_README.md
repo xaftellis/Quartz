@@ -129,3 +129,21 @@ workers deliberately ignore both parent arguments and remain standalone.
 
 The updater owns the version check, download, installation, restart, and error
 handling. Quartz does not need to duplicate the GitHub release logic.
+
+## Matching Quartz's theme
+
+Quartz's Settings window passes its resolved active-profile theme using
+`--theme light`, `dark`, `black`, `aqua`, or `xmas`. Both automatic theme modes
+are resolved by Quartz before launch. The existing updater layout uses the
+matching background, text, buttons, links, progress bar and supported title-bar
+colours. Windows high-contrast colours take precedence.
+The light palette keeps the standard Windows progress bar and its animations.
+
+The chosen theme is stored in the update job and passed to the temporary worker,
+so installation and retry screens keep it after Quartz closes. Direct launches,
+unknown theme names, and older jobs without a theme fall back to Windows
+light/dark. No Quartz profile files or browser assemblies are loaded for styling.
+Hidden `--check-only` runs continue without creating a window.
+
+Building Quartz also builds QuartzUpdater and copies its EXE and configuration
+beside Quartz.exe, so the Settings button opens the current updater automatically.

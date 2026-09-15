@@ -58,6 +58,7 @@ namespace QuartzUpdater
         public int ParentUpdaterProcessId { get; set; }
         public List<int> QuartzProcessIds { get; set; }
         public bool RestartAfterUpdate { get; set; }
+        public string Theme { get; set; }
 
         public UpdateJob()
         {

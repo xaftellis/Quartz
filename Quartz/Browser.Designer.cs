@@ -510,6 +510,7 @@ namespace Quartz
             this.btnSiteInformation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
             this.btnSiteInformation.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSiteInformation.ForeColor = System.Drawing.Color.Black;
+            this.btnSiteInformation.IconSize = 16;
             this.btnSiteInformation.Name = "btnSiteInformation";
             this.btnSiteInformation.UseVisualStyleBackColor = false;
             // 

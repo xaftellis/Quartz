@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -9,49 +8,17 @@ namespace QuartzUpdater
 {
     internal static class OwnerWindow
     {
-        private const int GwlpHwndParent = -8;
-        private const uint GwOwner = 4;
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct NativeRect
+        private sealed class WindowOwner : IWin32Window
         {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
+            internal WindowOwner(IntPtr handle) { Handle = handle; }
+            public IntPtr Handle { get; private set; }
         }
-
-        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
-        private static extern IntPtr SetWindowLongPtr64(
-            IntPtr windowHandle,
-            int index,
-            IntPtr newValue);
-
-        [DllImport("user32.dll", EntryPoint = "SetWindowLongW", SetLastError = true)]
-        private static extern int SetWindowLong32(
-            IntPtr windowHandle,
-            int index,
-            int newValue);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetWindow(IntPtr windowHandle, uint command);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetWindowRect(
-            IntPtr windowHandle,
-            out NativeRect rectangle);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool IsWindow(IntPtr windowHandle);
 
-        internal static bool TryAttach(Form window, int quartzProcessId)
-        {
-            return TryAttach(window, quartzProcessId, IntPtr.Zero);
-        }
-
-        internal static bool TryAttach(
+        internal static bool TryShowDialog(
             Form window,
             int quartzProcessId,
             IntPtr requestedOwnerHandle)
@@ -65,26 +32,12 @@ namespace QuartzUpdater
             if (ownerHandle == IntPtr.Zero)
                 return false;
 
-            try
-            {
-                window.ShowInTaskbar = false;
-                IntPtr windowHandle = window.Handle;
-                SetOwner(windowHandle, ownerHandle);
-
-                if (GetWindow(windowHandle, GwOwner) != ownerHandle)
-                {
-                    window.ShowInTaskbar = true;
-                    return false;
-                }
-
-                CenterOverOwner(window, ownerHandle);
-                return true;
-            }
-            catch
-            {
-                window.ShowInTaskbar = true;
-                return false;
-            }
+            // Supply the owner to WinForms before the window is shown. A modal
+            // dialog preserves ownership through its normal visibility lifecycle.
+            window.ShowInTaskbar = false;
+            window.StartPosition = FormStartPosition.CenterParent;
+            window.ShowDialog(new WindowOwner(ownerHandle));
+            return true;
         }
 
         internal static IntPtr FindQuartzWindow(int quartzProcessId)
@@ -148,35 +101,5 @@ namespace QuartzUpdater
             IntPtr windowHandle,
             out uint processId);
 
-        private static void SetOwner(IntPtr windowHandle, IntPtr ownerHandle)
-        {
-            if (IntPtr.Size == 8)
-                SetWindowLongPtr64(windowHandle, GwlpHwndParent, ownerHandle);
-            else
-                SetWindowLong32(windowHandle, GwlpHwndParent, ownerHandle.ToInt32());
-        }
-
-        private static void CenterOverOwner(Form window, IntPtr ownerHandle)
-        {
-            NativeRect ownerRectangle;
-            if (!GetWindowRect(ownerHandle, out ownerRectangle))
-                return;
-
-            Rectangle workingArea = Screen.FromHandle(ownerHandle).WorkingArea;
-            int ownerWidth = ownerRectangle.Right - ownerRectangle.Left;
-            int ownerHeight = ownerRectangle.Bottom - ownerRectangle.Top;
-            int left = ownerRectangle.Left + (ownerWidth - window.Width) / 2;
-            int top = ownerRectangle.Top + (ownerHeight - window.Height) / 2;
-
-            left = Math.Max(
-                workingArea.Left,
-                Math.Min(left, workingArea.Right - window.Width));
-            top = Math.Max(
-                workingArea.Top,
-                Math.Min(top, workingArea.Bottom - window.Height));
-
-            window.StartPosition = FormStartPosition.Manual;
-            window.Location = new Point(left, top);
-        }
     }
 }

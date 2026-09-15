@@ -161,6 +161,7 @@ namespace Quartz
         {
             using (SettingsService.BeginReadSnapshot())
                 InitializeComponent();
+            InitializeUpdateAvailableMenuItem();
             InitializeWebViewFocus();
             DoubleBuffered = true;
             InitializeTabPreview();
@@ -1832,6 +1833,7 @@ namespace Quartz
 
         private void SettingsMenuStrip_Opening(object sender, CancelEventArgs e)
         {
+            RefreshUpdateAvailableMenuItem();
             Animation.AnimateWindow(SettingsMenuStrip.Handle, 100, Animation.AW_BLEND);
 
             if (SettingsService.Get("AreDevToolsEnabled") == "true")
@@ -2161,7 +2163,7 @@ namespace Quartz
 
 
             ToolStripMenuItem clearHistoryItem = new ToolStripMenuItem("Clear browsing data...");
-            clearHistoryItem.Click += ClearHistoryItem_Click; ;
+            clearHistoryItem.Click += ClearHistoryItem_Click;
             mnuHistory.Items.Add(clearHistoryItem);
 
             Animation.AnimateWindow(mnuHistory.Handle, 100, Animation.AW_BLEND);
@@ -2169,8 +2171,8 @@ namespace Quartz
 
         private void ClearHistoryItem_Click(object sender, EventArgs e)
         {
-            ClearHistory clearHistoryForm = new ClearHistory(wvWebView1);
-            clearHistoryForm.ShowDialog();
+            using (var dialog = new ClearHistory(wvWebView1))
+                dialog.ShowDialog(this);
         }
 
         private void MenuItem_MouseUp(object sender, MouseEventArgs e)
@@ -2891,8 +2893,7 @@ namespace Quartz
 
         private void deleteBrowsingDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ClearHistory clearHistoryForm = new ClearHistory(wvWebView1);
-            clearHistoryForm.ShowDialog();
+            ClearHistoryItem_Click(sender, e);
         }
 
         private void pasteToolStripMenuItem1_Click(object sender, EventArgs e)

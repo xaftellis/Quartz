@@ -156,6 +156,7 @@
     </Compile>
     <Compile Include="Browser.Focus.cs">
       <DependentUpon>Browser.cs</DependentUpon>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\FocusAwareContextMenuStrip.cs">
       <SubType>Component</SubType>
@@ -316,6 +317,10 @@
     <Compile Include="Services\ThemeService.cs" />
     <Compile Include="Services\InternalPageTheme.cs" />
     <Compile Include="Browser.Theme.cs">
+      <DependentUpon>Browser.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Browser.Updates.cs">
       <DependentUpon>Browser.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
@@ -1215,8 +1220,20 @@
       <Project>{690ba0f7-d8fe-4ebe-ba39-8058086c7a09}</Project>
       <Name>EasyTabs</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QuartzUpdater\QuartzUpdater.csproj">
+      <Project>{D779532F-7E30-4E21-AA95-76196C5E878A}</Project>
+      <Name>QuartzUpdater</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>QuartzUpdaterOutput</OutputItemType>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="CopyQuartzUpdater" AfterTargets="CopyFilesToOutputDirectory" Condition="'$(DesignTimeBuild)' != 'true' and '@(QuartzUpdaterOutput)' != ''">
+    <Copy SourceFiles="@(QuartzUpdaterOutput);@(QuartzUpdaterOutput->'%(FullPath).config')" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <ItemGroup>
+      <FileWrites Include="$(OutDir)QuartzUpdater.exe;$(OutDir)QuartzUpdater.exe.config" />
+    </ItemGroup>
+  </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>

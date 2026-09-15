@@ -115,6 +115,9 @@ namespace EasyTabs
 
 		private bool _tornTabWindowReady;
 		private TitleBarTab _selectionBeforeDrag;
+		// Like Chromium's RootView mouse_pressed_handler_, retain the press target.
+		// Selecting a narrow tab may reveal a close button beneath the same pointer.
+		private TitleBarTab _pressedCloseTab;
 
 		/// <summary>Overlay that owns the current cross-window tab drag.</summary>
 		protected static TitleBarTabsOverlay _tornTabDragOwner;
@@ -267,26 +270,33 @@ namespace EasyTabs
 			}
 		}
 
-		/// <summary>Screen area in which tabs can be dragged to and dropped for this window.</summary>
+		// Use the same origin for rendering and drag bounds, including classic titlebar offsets.
+		private Point TabRenderOffset => _parentForm.WindowState != FormWindowState.Maximized && DisplayType == DisplayType.Classic && !_parentForm.TabRenderer.RendersEntireTitleBar
+			? new Point(0, SystemInformation.CaptionButtonSize.Height)
+			: _parentForm.WindowState != FormWindowState.Maximized && !_parentForm.TabRenderer.RendersEntireTitleBar
+				? new Point(0, SystemInformation.VerticalResizeBorderThickness - SystemInformation.BorderSize.Height)
+				: Point.Empty;
+
+		/// <summary>Screen area in which dragged tabs stay attached or can be dropped, including the vertical drag margin.</summary>
 		public Rectangle TabDropArea
 		{
 			get
 			{
-				RECT windowRectangle;
-				User32.GetWindowRect(_parentForm.Handle, out windowRectangle);
-				Rectangle tabDragArea = _parentForm.TabRenderer == null
-					? Rectangle.Empty
-					: _parentForm.TabRenderer.MaxTabArea;
-				int left = tabDragArea.Width > 0
-					? tabDragArea.Left
-					: windowRectangle.left + SystemInformation.HorizontalResizeBorderThickness;
-				int width = tabDragArea.Width > 0
-					? tabDragArea.Width
-					: ClientRectangle.Width;
+				BaseTabRenderer renderer = _parentForm.TabRenderer;
+				if (renderer == null || renderer.MaxTabArea.Width <= 0 || renderer.TabHeight <= 0)
+					return Rectangle.Empty;
 
-				return new Rectangle(
-					left, windowRectangle.top + SystemInformation.VerticalResizeBorderThickness,
-					width, _parentForm.NonClientAreaHeight - SystemInformation.VerticalResizeBorderThickness);
+				// Chromium's DoesTabStripContain uses the rendered strip with 15 DIP of
+				// vertical magnetism on both sides, and no horizontal expansion.
+				// DeviceDpi matches Cursor.Position, including Windows DPI virtualization.
+				int margin = Math.Max(0, (int)Math.Round(renderer.TabTearDragDistance *
+					Math.Max(1, _parentForm.DeviceDpi / 96f), MidpointRounding.AwayFromZero));
+				var area = new Rectangle(renderer.MaxTabArea.Left, Top + TabRenderOffset.Y + renderer.TopPadding,
+					renderer.MaxTabArea.Width, renderer.TabHeight - renderer.TopPadding);
+				area.Inflate(0, margin);
+				// Chromium includes the bottom threshold; Rectangle.Contains excludes Bottom.
+				area.Height += 1;
+				return area;
 			}
 		}
 
@@ -378,6 +388,7 @@ namespace EasyTabs
 
 		private void StopMouseInput()
 		{
+			_pressedCloseTab = null;
 			_hoverCards?.Dismiss(true);
 			if (_hookId != IntPtr.Zero) User32.UnhookWindowsHookEx(_hookId);
 			_hookId = IntPtr.Zero;
@@ -558,8 +569,25 @@ namespace EasyTabs
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
+			// Both the native message and the global hook can deliver a release.
+			// Consume the press once, before callbacks or ending the drag change layout.
+			TitleBarTab pressedCloseTab = _pressedCloseTab;
+			if (e.Button == MouseButtons.Left) _pressedCloseTab = null;
+			BaseTabRenderer renderer = _parentForm.TabRenderer;
+			Point relative = GetRelativeCursorPosition(e.Location);
+			bool closeTab = e.Button == MouseButtons.Left && pressedCloseTab != null &&
+				!_wasDragging && _tornTab == null && _singleTabDragOwner == null &&
+				renderer != null && !renderer.IsTabRepositioning &&
+				_parentForm.Tabs.Contains(pressedCloseTab) &&
+				renderer.OverTab(_parentForm.Tabs, relative) == pressedCloseTab &&
+				renderer.IsOverCloseButton(pressedCloseTab, relative);
 			base.OnMouseUp(e);
 			_selectionBeforeDrag = null;
+			if (closeTab && !_parentForm.IsDisposed && _parentForm.Tabs.Contains(pressedCloseTab))
+			{
+				_parentForm.CloseTabFromMouse(pressedCloseTab);
+				if (!IsDisposed && !_parentForm.IsDisposed) Render();
+			}
 		}
 
 		/// <summary>Moves a tab into a real window as soon as it leaves its current tab strip.</summary>
@@ -732,9 +760,7 @@ namespace EasyTabs
             {
                 _wasDragging = true;
                 HideTooltip();
-                Rectangle dragArea = TabDropArea;
-                dragArea.Inflate(renderer.TabTearDragDistance, renderer.TabTearDragDistance);
-                if (!dragArea.Contains(cursor) && _tornTab == null)
+                if (!TabDropArea.Contains(cursor) && _tornTab == null)
                 {
                     renderer.IsTabRepositioning = false;
                     CreateLiveTornTabWindow(cursor);
@@ -1062,12 +1088,7 @@ namespace EasyTabs
 					DrawTitleBarBackground(graphics);
 
 					// Preserve the existing offsets for classic and partial-titlebar renderers.
-					Point offset = _parentForm.WindowState != FormWindowState.Maximized && DisplayType == DisplayType.Classic && !_parentForm.TabRenderer.RendersEntireTitleBar
-						? new Point(0, SystemInformation.CaptionButtonSize.Height)
-						: _parentForm.WindowState != FormWindowState.Maximized && !_parentForm.TabRenderer.RendersEntireTitleBar
-							? new Point(0, SystemInformation.VerticalResizeBorderThickness - SystemInformation.BorderSize.Height)
-							: Point.Empty;
-				_parentForm.TabRenderer.Render(_parentForm.Tabs, graphics, offset, cursorPosition, forceRedraw);
+					_parentForm.TabRenderer.Render(_parentForm.Tabs, graphics, TabRenderOffset, cursorPosition, forceRedraw);
 
                     // Leave the native frame corners visible instead of painting a
                     // square overlay over Windows' rounded window outline.
@@ -1186,7 +1207,12 @@ namespace EasyTabs
 				case WM.WM_NCLBUTTONDOWN:
 				case WM.WM_LBUTTONDOWN:
 					Point relativeCursorPosition = GetRelativeCursorPosition(Cursor.Position);
+					_wasDragging = false;
+					_pressedCloseTab = null;
 					_parentForm.TabRenderer.ButtonPointerDown(relativeCursorPosition);
+					TitleBarTab pressedTab = _parentForm.TabRenderer.OverTab(_parentForm.Tabs, relativeCursorPosition);
+					if (pressedTab != null && _parentForm.TabRenderer.IsOverCloseButton(pressedTab, relativeCursorPosition))
+						_pressedCloseTab = pressedTab;
 
 					// If we were over a tab, set the capture state for the window so that we'll actually receive a WM_LBUTTONUP message
 					if (_parentForm.TabRenderer.OverTab(_parentForm.Tabs, relativeCursorPosition) == null &&
@@ -1208,17 +1234,16 @@ namespace EasyTabs
 								return;
 							}
 
-							// If the user clicked the close button, remove the tab from the list
-							if (!_parentForm.TabRenderer.IsOverCloseButton(clickedTab, relativeCursorPosition))
+							// Only a tab-body press selects the tab and arms dragging.
+							if (_pressedCloseTab == null)
 							{
 								RememberSelectionBeforeDrag(clickedTab);
 								_parentForm.ResizeTabContents(clickedTab);
 								_parentForm.SelectedTabIndex = _parentForm.Tabs.IndexOf(clickedTab);
 
 								Render();
+								OnMouseDown(new MouseEventArgs(MouseButtons.Left, 1, Cursor.Position.X, Cursor.Position.Y, 0));
 							}
-
-							OnMouseDown(new MouseEventArgs(MouseButtons.Left, 1, Cursor.Position.X, Cursor.Position.Y, 0));
 						}
 
 						_parentForm.Activate();
@@ -1268,14 +1293,8 @@ namespace EasyTabs
 
 							else
 							{
-								// If the user clicked the close button, remove the tab from the list
-								if (_parentForm.TabRenderer.IsOverCloseButton(clickedTab, relativeCursorPosition2))
-								{
-									_parentForm.CloseTabFromMouse(clickedTab);
-									Render();
-								}
-
-								else
+								// Closing is handled once in OnMouseUp, against the original press.
+								if (_pressedCloseTab == null)
 								{
 									_parentForm.OnTabClicked(
 										new TitleBarTabEventArgs
@@ -1295,12 +1314,16 @@ namespace EasyTabs
 							_parentForm.AddNewTab();
 						}
 
-						if ((WM) m.Msg == WM.WM_LBUTTONUP || (WM) m.Msg == WM.WM_NCLBUTTONUP)
-						{
-							OnMouseUp(new MouseEventArgs(MouseButtons.Left, 1, Cursor.Position.X, Cursor.Position.Y, 0));
-						}
 					}
+					if (!IsDisposed && ((WM) m.Msg == WM.WM_LBUTTONUP || (WM) m.Msg == WM.WM_NCLBUTTONUP))
+						OnMouseUp(new MouseEventArgs(MouseButtons.Left, 1, Cursor.Position.X, Cursor.Position.Y, 0));
 
+					break;
+
+				case WM.WM_CANCELMODE:
+				case WM.WM_CAPTURECHANGED:
+					_pressedCloseTab = null;
+					base.WndProc(ref m);
 					break;
 
 				case WM.WM_NCRBUTTONDOWN:
@@ -1353,6 +1376,7 @@ namespace EasyTabs
 		/// <param name="e">Arguments associated with the event.</param>
 		private void _parentForm_Deactivate(object sender, EventArgs e)
 		{
+			_pressedCloseTab = null;
 			_hoverCards?.Dismiss(true);
 			_active = false;
 			Render();

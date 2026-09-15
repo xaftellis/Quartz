@@ -1,5 +1,12 @@
 # Launching QuartzUpdater from Quartz
 
+The integrated `Quartz/Settings.Updates.cs` also passes `--theme` with the resolved
+active-profile theme (`light`, `dark`, `black`, `aqua`, or `xmas`). When adapting
+the example below to another Quartz form, append the same allowlisted theme.
+Omitting it uses Windows light/dark. Quartz's project builds and copies the
+updater beside its executable automatically; the updater remains a separate
+process and is not an assembly reference.
+
 The Check For Updates button should launch the adjacent updater and pass the
 current Quartz process ID:
 

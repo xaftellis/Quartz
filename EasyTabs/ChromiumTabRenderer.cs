@@ -424,6 +424,7 @@ namespace EasyTabs
 
         internal override void ButtonPointerDown(Point cursor)
         {
+            base.ButtonPointerDown(cursor);
             lock (_sync)
             {
                 if (_disposed || IsTabRepositioning) return;

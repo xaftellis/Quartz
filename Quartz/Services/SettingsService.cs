@@ -50,12 +50,17 @@ namespace Quartz.Services
 
         public static string Get(string name)
         {
+            return Get(name, ProfileService.Current);
+        }
+
+        public static string Get(string name, Guid profileId)
+        {
             var items = ReadSettings();
 
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("name");
 
-            var _items = items.FirstOrDefault(s => s.ProfileId == ProfileService.Current && s.Name == name)?.Value;
+            var _items = items.FirstOrDefault(s => s.ProfileId == profileId && s.Name == name)?.Value;
 
             if(name == "Theme" && _items == "auto (light/dark)")
             {
@@ -124,6 +129,11 @@ namespace Quartz.Services
 
         public static void Set(string name, string value)
         {
+            Set(name, value, ProfileService.Current);
+        }
+
+        public static void Set(string name, string value, Guid profileId)
+        {
             var jsonString = "[]";
 
             if (File.Exists(_jsonPath))
@@ -135,10 +145,10 @@ namespace Quartz.Services
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("name");
 
-            var original = items.FirstOrDefault(s => s.ProfileId == ProfileService.Current && s.Name == name);
+            var original = items.FirstOrDefault(s => s.ProfileId == profileId && s.Name == name);
             if (original == null)
             {
-                items.Add(new SettingModel() { ProfileId = ProfileService.Current, Name = name, Value = value });
+                items.Add(new SettingModel() { ProfileId = profileId, Name = name, Value = value });
             }
             else
             {

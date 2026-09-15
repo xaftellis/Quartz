@@ -176,6 +176,7 @@ namespace QuartzUpdater
 
             job.ParentUpdaterProcessId = Process.GetCurrentProcess().Id;
             job.QuartzProcessIds = FindRunningQuartzProcesses(job.InstallDirectory);
+            job.Theme = UpdaterTheme.Resolve(job.Theme);
             job.State = "LaunchingWorker";
             SaveUpdateJob(job);
 
@@ -207,7 +208,8 @@ namespace QuartzUpdater
             var startInfo = new ProcessStartInfo
             {
                 FileName = targetExecutable,
-                Arguments = "--apply-job " + QuoteArgument(job.JobFilePath),
+                Arguments = "--apply-job " + QuoteArgument(job.JobFilePath) +
+                    " --theme " + job.Theme,
                 WorkingDirectory = workerDirectory,
                 UseShellExecute = false
             };

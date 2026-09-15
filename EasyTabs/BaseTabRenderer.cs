@@ -29,7 +29,7 @@ namespace EasyTabs
 
 		internal virtual bool IsLayoutAnimating { get { return _layoutAnimation.IsAnimating; } }
 		internal virtual bool RequiresHoverRedraw(Point cursor) { return false; }
-		internal virtual void ButtonPointerDown(Point cursor) { }
+		internal virtual void ButtonPointerDown(Point cursor) { _wasTabRepositioning = false; }
 		internal virtual bool IsTabClosingMode => false;
 		internal virtual bool UpdateTabClosingPointer(Point cursor, bool pressed = false) { return false; }
 		internal virtual void BeginTabClose(TitleBarTab tab, bool fromMouse = false) { }
@@ -138,7 +138,7 @@ namespace EasyTabs
 			_parentWindow = parentWindow;
 			ShowAddButton = true;
 			TabRepositionDragDistance = 10;
-			TabTearDragDistance = 10;
+			TabTearDragDistance = 15;
 
 			parentWindow.Tabs.CollectionModified += Tabs_CollectionModified;
 
@@ -301,7 +301,7 @@ namespace EasyTabs
 			set;
 		}
 
-		/// <summary>Distance that a user must drag a tab outside of the tab area before it shows up as "torn" from its parent window.</summary>
+		/// <summary>Vertical margin above and below the tab strip, in logical pixels, used for both tearing off and accepting dragged tabs.</summary>
 		public virtual int TabTearDragDistance
 		{
 			get;
@@ -604,7 +604,7 @@ namespace EasyTabs
 		/// <returns>True if the <paramref name="tab" />'s <see cref="TitleBarTab.CloseButtonArea" /> contains <paramref name="cursor" />, false otherwise.</returns>
 		public virtual bool IsOverCloseButton(TitleBarTab tab, Point cursor)
 		{
-			if (tab.IsPinned || !tab.ShowCloseButton || _wasTabRepositioning)
+			if (tab.IsPinned || !tab.ShowCloseButton || IsTabRepositioning || _wasTabRepositioning || _detachedTabX.HasValue)
 			{
 				return false;
 			}

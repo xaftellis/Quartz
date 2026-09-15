@@ -11,8 +11,7 @@ namespace QuartzUpdater
     public partial class Form1 : Form
     {
         private readonly string _applyJobPath;
-        private readonly int _ownerProcessId;
-        private readonly IntPtr _ownerWindowHandle;
+        private string _themeName;
         private UpdateCheckResult _checkResult;
         private UpdateJob _applyJob;
         private CancellationTokenSource _operationCancellation;
@@ -22,41 +21,45 @@ namespace QuartzUpdater
         private string _visibleLogPath;
 
         public Form1()
-            : this(null, 0, IntPtr.Zero)
+            : this(null, null)
         {
         }
 
         internal Form1(string applyJobPath)
-            : this(applyJobPath, 0, IntPtr.Zero)
-        {
-        }
-
-        internal Form1(string applyJobPath, int ownerProcessId)
-            : this(applyJobPath, ownerProcessId, IntPtr.Zero)
+            : this(applyJobPath, null)
         {
         }
 
         internal Form1(
             string applyJobPath,
-            int ownerProcessId,
-            IntPtr ownerWindowHandle)
+            string themeName)
         {
             _applyJobPath = applyJobPath;
-            _ownerProcessId = ownerProcessId;
-            _ownerWindowHandle = ownerWindowHandle;
+            _themeName = UpdaterTheme.Resolve(themeName);
             InitializeComponent();
+            // Switching between marquee and determinate progress recreates its handle.
+            progressBar.HandleCreated += (sender, e) =>
+                UpdaterTheme.ApplyProgressBar(progressBar, _themeName == "light");
+            ApplyTheme(_themeName);
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            UpdaterTheme.ApplyTitleBar(Handle, _themeName);
+        }
+
+        private void ApplyTheme(string name)
+        {
+            _themeName = UpdaterTheme.Resolve(name);
+            UpdaterTheme.Apply(this, _themeName,
+                currentVersionCaption, latestVersionCaption, detailLabel);
         }
 
         private async void Form1_Load(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(_applyJobPath))
-            {
-                OwnerWindow.TryAttach(
-                    this,
-                    _ownerProcessId,
-                    _ownerWindowHandle);
                 await CheckForUpdatesAsync();
-            }
             else
                 await RunApplyModeAsync();
         }
@@ -131,6 +134,7 @@ namespace QuartzUpdater
                 return;
 
             DialogResult confirmation = MessageBox.Show(
+                this,
                 "Quartz " + _checkResult.Release.Version +
                 " will be downloaded and installed. Quartz will close and restart when the package is ready. Continue?",
                 "Install Quartz update",
@@ -164,9 +168,11 @@ namespace QuartzUpdater
                 statusLabel.Text = "Starting the safe installer...";
                 SetDetailText("Quartz will close and restart automatically.");
 
+                job.Theme = _themeName;
                 UpdaterClass.StartApplyWorker(job);
                 _closingForWorker = true;
-                Application.Exit();
+                Environment.ExitCode = Program.ApplyWorkerStartedExitCode;
+                Close();
             }
             catch (OperationCanceledException)
             {
@@ -204,6 +210,7 @@ namespace QuartzUpdater
             {
                 job = UpdaterClass.LoadUpdateJob(_applyJobPath);
                 _applyJob = job;
+                ApplyTheme(job.Theme ?? _themeName);
             }
             catch (Exception exception)
             {
@@ -251,6 +258,7 @@ namespace QuartzUpdater
                 closeButton.Visible = true;
 
                 MessageBox.Show(
+                    this,
                     exception.Message + Environment.NewLine + Environment.NewLine +
                     "Select Open update log for details.",
                     "Quartz update failed",
@@ -392,6 +400,7 @@ namespace QuartzUpdater
                 if (string.IsNullOrWhiteSpace(logPath) || !File.Exists(logPath))
                 {
                     MessageBox.Show(
+                        this,
                         "The update log is no longer available.",
                         "Quartz update log",
                         MessageBoxButtons.OK,
@@ -408,6 +417,7 @@ namespace QuartzUpdater
             catch (Exception exception)
             {
                 MessageBox.Show(
+                    this,
                     "The update log could not be opened. " +
                     UpdateApplier.GetUserFacingError(exception),
                     "Quartz update log",
@@ -441,6 +451,7 @@ namespace QuartzUpdater
             {
                 e.Cancel = true;
                 MessageBox.Show(
+                    this,
                     "Quartz is being replaced or restored. Please wait for the operation to finish.",
                     "Update in progress",
                     MessageBoxButtons.OK,

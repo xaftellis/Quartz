@@ -118,8 +118,7 @@
             this.lblNotice.Name = "lblNotice";
             this.lblNotice.Size = new System.Drawing.Size(464, 36);
             this.lblNotice.TabIndex = 0;
-            this.lblNotice.Text = "Cookies and site data can sign you out. Saved passwords are only removed when tha" +
-    "t option is selected.";
+            this.lblNotice.Text = "Cookies and site data can sign you out. Saved passwords are only removed when that option is selected.";
             // 
             // pnlItems
             // 
@@ -188,7 +187,7 @@
             this.lblCacheInfo.Name = "lblCacheInfo";
             this.lblCacheInfo.Size = new System.Drawing.Size(435, 31);
             this.lblCacheInfo.TabIndex = 7;
-            this.lblCacheInfo.Text = "Calculating cached data...";
+            this.lblCacheInfo.Text = "Web cache for the selected range. All time also clears shared website icons.";
             // 
             // chkCache
             // 
@@ -235,6 +234,8 @@
             // chkDownloadHistory
             // 
             this.chkDownloadHistory.AutoSize = true;
+            this.chkDownloadHistory.Checked = true;
+            this.chkDownloadHistory.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDownloadHistory.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.chkDownloadHistory.Location = new System.Drawing.Point(3, 58);
             this.chkDownloadHistory.Name = "chkDownloadHistory";
@@ -279,6 +280,7 @@
             this.cboTimeRange.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboTimeRange.FormattingEnabled = true;
             this.cboTimeRange.Items.AddRange(new object[] {
+            "Last 15 minutes",
             "Last hour",
             "Last 24 hours",
             "Last 7 days",
@@ -306,8 +308,7 @@
             this.lblSubtitle.Name = "lblSubtitle";
             this.lblSubtitle.Size = new System.Drawing.Size(490, 36);
             this.lblSubtitle.TabIndex = 13;
-            this.lblSubtitle.Text = "Choose what Quartz removes from the current profile. Downloaded files and favouri" +
-    "tes are kept.";
+            this.lblSubtitle.Text = "Choose what Quartz removes. Downloaded files and favourites are kept.";
             // 
             // lblTitle
             // 
@@ -321,6 +322,8 @@
             // 
             // ClearHistory
             // 
+            this.AcceptButton = this.btnDelete;
+            this.CancelButton = this.btnCancel;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
@@ -342,7 +345,7 @@
             this.Name = "ClearHistory";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "ClearHistory";
+            this.Text = "Clear browsing data";
             this.Load += new System.EventHandler(this.ClearHistory_Load);
             this.pnlNotice.ResumeLayout(false);
             this.pnlItems.ResumeLayout(false);

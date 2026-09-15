@@ -12,11 +12,18 @@ namespace Quartz.Services
 {
     public class HistoryService
     {
-        private string _jsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Xaftellis\Quartz\UserData\jsons", "history.json");
+        private readonly string _jsonPath;
         private List<HistoryModel> _items = null;
 
         public HistoryService()
+            : this(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                @"Xaftellis\Quartz\UserData\jsons\history.json"))
         {
+        }
+
+        internal HistoryService(string jsonPath)
+        {
+            _jsonPath = jsonPath;
             Reload();
         }
 
@@ -92,13 +99,13 @@ namespace Quartz.Services
             {
                 jsonString = File.ReadAllText(_jsonPath);
             }
-            _items = JsonConvert.DeserializeObject<List<HistoryModel>>(jsonString);
+            _items = JsonConvert.DeserializeObject<List<HistoryModel>>(jsonString) ?? new List<HistoryModel>();
         }
 
         public List<HistoryModel> GetProfileHistoryFromRange(
-      Guid profileId,
-      DateTime? startTime,
-      DateTime endTime)
+            Guid profileId,
+            DateTime? startTime,
+            DateTime endTime)
         {
             IEnumerable<HistoryModel> profileHistory =
                 _items.Where(item =>
@@ -118,6 +125,7 @@ namespace Quartz.Services
 
         public void DeleteProfileHistory(Guid profileId, DateTime? startTime = null, DateTime? endTime = null)
         {
+            Reload();
             IEnumerable<HistoryModel> profileHistory =
                 _items.Where(item => item.ProfileId == profileId);
 
@@ -127,8 +135,29 @@ namespace Quartz.Services
             if (endTime.HasValue)
                 profileHistory = profileHistory.Where(item => item.When <= endTime.Value);
 
-            foreach (HistoryModel item in profileHistory.ToList())
+            var historyToDelete = profileHistory.ToList();
+            if (historyToDelete.Count == 0)
+            {
+                return;
+            }
+
+            string jsonDirectory = Path.GetDirectoryName(_jsonPath);
+            string cacheDirectory = Path.Combine(Path.GetDirectoryName(jsonDirectory), "cache");
+            var favourites = new FavouriteService(Path.Combine(jsonDirectory, "favourites.json"));
+            var faviconService = new FaviconService(Path.Combine(jsonDirectory, "favicons.json"));
+            var remainingHistory = _items.Except(historyToDelete).ToList();
+            var addressesToKeep = remainingHistory.Select(item => item.WebAddress).ToList();
+            addressesToKeep.AddRange(favourites.GetAllWebAddresses());
+
+            // Finish icon cleanup before saving history, so a failure retains the
+            // affected URLs for a retry. Preserve references from every profile.
+            faviconService.RemoveHistoryIcons(
+                historyToDelete.Select(item => item.WebAddress), addressesToKeep, cacheDirectory);
+
+            foreach (HistoryModel item in historyToDelete)
+            {
                 _items.Remove(item);
+            }
 
             SaveChanges();
         }
@@ -136,7 +165,26 @@ namespace Quartz.Services
         public void SaveChanges()
         {
             var jsonString = JsonConvert.SerializeObject(_items);
-            File.WriteAllText(_jsonPath, jsonString);
+            string temporaryPath = _jsonPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+            try
+            {
+                File.WriteAllText(temporaryPath, jsonString);
+                if (File.Exists(_jsonPath))
+                {
+                    File.Replace(temporaryPath, _jsonPath, null);
+                }
+                else
+                {
+                    File.Move(temporaryPath, _jsonPath);
+                }
+            }
+            finally
+            {
+                if (File.Exists(temporaryPath))
+                {
+                    File.Delete(temporaryPath);
+                }
+            }
         }
     }
 }

@@ -66,6 +66,11 @@ namespace Quartz.Services
             return _items.Where(f => f.ProfileId == ProfileService.Current).ToList();
         }
 
+        internal IEnumerable<string> GetAllWebAddresses()
+        {
+            return _items.Select(item => item.WebAddress);
+        }
+
         public FavouriteModel Get(Guid id)
         {
             return _items.FirstOrDefault(f => f.ProfileId == ProfileService.Current && f.Id == id);
