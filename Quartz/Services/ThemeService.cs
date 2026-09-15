@@ -70,6 +70,7 @@ namespace Quartz.Services
                             continue;
                         if (form is Settings settings) settings.ApplyLiveTheme();
                         else if (form is History history) history.ApplyLiveTheme();
+                        else if (form is ClearHistory clearHistory) clearHistory.ApplyLiveTheme();
                         else if (form.GetType().Namespace == typeof(Browser).Namespace)
                             NewControlThemeChanger.ChangeTheme(form);
                         form.Invalidate(true);

@@ -13,8 +13,8 @@ namespace Quartz
         {
             if (_formUiPrepared) return;
 
-            // Load runs at the host's actual size, before the first visible
-            // frame. Finish native controls before any asynchronous browser work.
+            // Finish the native UI in the constructor, while the entire tab is
+            // hidden. Load is too late to establish its initial colors and bounds.
             using (SettingsService.BeginReadSnapshot())
             {
                 SuspendLayout();
@@ -40,6 +40,21 @@ namespace Quartz
                 UpdateFavBar();
                 _favouritesPreparedForActivation = true;
             }
+        }
+
+        protected override void SetVisibleCore(bool value)
+        {
+            if (value && _formUiPrepared && !IsDisposed && !Disposing)
+            {
+                // EasyTabs has assigned the host size before selecting this tab.
+                // Resolve anchoring and scrollbar overflow while it is still hidden.
+                PerformLayout();
+                pnlTop.PerformLayout();
+                pnlFavourites.PerformLayout();
+                UpdateFavBar();
+                pnlBottom.PerformLayout();
+            }
+            base.SetVisibleCore(value);
         }
 
         internal async Task RefreshFavouritesOnActivationAsync()

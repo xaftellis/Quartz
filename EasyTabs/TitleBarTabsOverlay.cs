@@ -238,6 +238,10 @@ namespace EasyTabs
 		/// Makes sure that the window is created with an <see cref="WS_EX.WS_EX_LAYERED" /> flag set so that it can be alpha-blended properly with the content (
 		/// <see cref="_parentForm" />) underneath the overlay.
 		/// </summary>
+		// WS_EX_NOACTIVATE prevents click activation, but WinForms Show() also
+		// needs this override to avoid activating the overlay during host Load.
+		protected override bool ShowWithoutActivation => true;
+
 		protected override CreateParams CreateParams
 		{
 			get
@@ -1401,7 +1405,8 @@ namespace EasyTabs
 						}
 
 						// Otherwise, if the user clicked the add button, call CreateTab to add a new tab to the list and select it
-						else if (_parentForm.TabRenderer.IsOverAddButton(relativeCursorPosition2))
+						else if (((WM)m.Msg == WM.WM_LBUTTONUP || (WM)m.Msg == WM.WM_NCLBUTTONUP) &&
+							_parentForm.TabRenderer.IsOverAddButton(relativeCursorPosition2))
 						{
 							_parentForm.AddNewTab();
 						}

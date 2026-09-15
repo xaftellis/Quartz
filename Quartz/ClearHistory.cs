@@ -36,11 +36,15 @@ namespace Quartz
         {
             _webView = webView ?? throw new ArgumentNullException(nameof(webView));
             InitializeComponent();
+            KeyPreview = true;
+            // Escape follows the same preference as the other Quartz dialogs.
+            CancelButton = null;
+            cboTimeRange.DrawMode = DrawMode.OwnerDrawFixed;
+            cboTimeRange.DrawItem += TimeRange_DrawItem;
             SetDefaultSelection();
             foreach (CheckBox option in SelectionOptions)
                 option.CheckedChanged += Selection_CheckedChanged;
-            NewControlThemeChanger.ChangeTheme(this);
-            ApplyVisualFinishing();
+            ApplyLiveTheme();
             UpdateSelectionState();
         }
 
@@ -52,6 +56,9 @@ namespace Quartz
 
         private async void ClearHistory_Load(object sender, EventArgs e)
         {
+            if (SettingsService.Get("DraggableForms") == "true")
+                new MouseDragger(this);
+
             try
             {
                 if (_webView.IsDisposed || _webView.CoreWebView2 == null)
@@ -167,6 +174,16 @@ namespace Quartz
                 "Quartz couldn't finish clearing all the selected data. Some data may already have been removed."
                 + Environment.NewLine + Environment.NewLine + string.Join(Environment.NewLine, errors),
                 "Clear browsing data", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            base.OnKeyUp(e);
+            if (e.KeyCode == Keys.Escape && SettingsService.Get("escClose") == "true" && !_isBusy)
+            {
+                e.Handled = true;
+                Close();
+            }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -360,10 +377,19 @@ namespace Quartz
             }
         }
 
+        internal void ApplyLiveTheme()
+        {
+            NewControlThemeChanger.ChangeTheme(this);
+            ApplyVisualFinishing();
+            Invalidate(true);
+        }
+
         private void ApplyVisualFinishing()
         {
+            string theme = SettingsService.Get("Theme");
+            bool colorfulTheme = theme == "aqua" || theme == "xmas";
             bool darkBackground = BackColor.GetBrightness() < 0.45f;
-            Color secondaryText = darkBackground
+            Color secondaryText = colorfulTheme ? ForeColor : darkBackground
                 ? Color.FromArgb(175, 175, 175)
                 : Color.FromArgb(95, 99, 104);
 
@@ -376,21 +402,19 @@ namespace Quartz
                 lblCacheInfo,
                 lblPasswordsInfo,
                 lblAutofillInfo,
-                //lblNotice,
+                lblNotice,
                 lblStatus
             };
 
             foreach (Label label in secondaryLabels)
                 label.ForeColor = secondaryText;
 
-            pnlNotice.BackColor = darkBackground
+            pnlNotice.BackColor = colorfulTheme ? BackColor : darkBackground
                 ? Color.FromArgb(48, 48, 48)
                 : Color.FromArgb(241, 243, 244);
-            lblNotice.BackColor = darkBackground
-                ? Color.FromArgb(48, 48, 48)
-                : Color.FromArgb(241, 243, 244);
+            lblNotice.BackColor = Color.Transparent;
 
-            Color dividerColor = darkBackground
+            Color dividerColor = colorfulTheme ? ForeColor : darkBackground
                 ? Color.FromArgb(70, 70, 70)
                 : Color.FromArgb(218, 220, 224);
             pnlTopDivider.BackColor = dividerColor;
@@ -400,11 +424,33 @@ namespace Quartz
             btnDelete.ForeColor = Color.White;
             btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.FlatAppearance.BorderSize = 0;
+            btnDelete.UseVisualStyleBackColor = false;
+            btnDelete.FlatAppearance.MouseOverBackColor = Color.FromArgb(23, 103, 209);
+            btnDelete.FlatAppearance.MouseDownBackColor = Color.FromArgb(20, 92, 186);
+
+            // DropDownList's native themed surface ignores the dark background.
+            cboTimeRange.FlatStyle = FlatStyle.Flat;
         }
 
         private void Selection_CheckedChanged(object sender, EventArgs e)
         {
             UpdateSelectionState();
+        }
+
+        private void TimeRange_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            bool highlighted = (e.State & DrawItemState.Selected) != 0 &&
+                (e.State & DrawItemState.ComboBoxEdit) == 0;
+            Color background = highlighted ? SystemColors.Highlight : cboTimeRange.BackColor;
+            Color foreground = highlighted ? SystemColors.HighlightText : cboTimeRange.ForeColor;
+            using (var brush = new SolidBrush(background))
+                e.Graphics.FillRectangle(brush, e.Bounds);
+            int index = e.Index >= 0 ? e.Index : cboTimeRange.SelectedIndex;
+            if (index >= 0)
+                TextRenderer.DrawText(e.Graphics, cboTimeRange.GetItemText(cboTimeRange.Items[index]),
+                    e.Font, Rectangle.Inflate(e.Bounds, -2, 0), foreground,
+                    TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPrefix);
+            e.DrawFocusRectangle();
         }
 
         private void cboTimeRange_SelectedIndexChanged(object sender, EventArgs e)

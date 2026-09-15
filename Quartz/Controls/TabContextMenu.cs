@@ -38,6 +38,10 @@ namespace Quartz.Controls
             newTabLeftStripMenuItem = new ToolStripMenuItem("New tab to the left");
             newTabRightStripMenuItem = new ToolStripMenuItem("New tab to the right");
             moveTabToolStripMenuItem = new ToolStripMenuItem("Move tab to new window");
+            moveTabToolStripMenuItem.DropDown.Opening += (sender, e) =>
+            {
+                Animation.AnimateWindow(moveTabToolStripMenuItem.DropDown.Handle, 100, Animation.AW_BLEND);
+            };
             moveTabToolStripMenuItem.Click += (sender, e) =>
             {
                 if (!moveTabToolStripMenuItem.HasDropDownItems) MoveTabToNewWindow();

@@ -160,7 +160,12 @@ namespace Quartz
         public Browser(string address, bool newtabrequest)
         {
             using (SettingsService.BeginReadSnapshot())
+            {
                 InitializeComponent();
+                // Set the native placeholder before the tab is attached/shown.
+                NewControlThemeChanger.ChangeControlTheme(this);
+                NewControlThemeChanger.ChangeControlTheme(wvWebView1);
+            }
             InitializeUpdateAvailableMenuItem();
             InitializeWebViewFocus();
             DoubleBuffered = true;
@@ -192,6 +197,7 @@ namespace Quartz
 
            //suggestionsClass = new Omnibox.OmniBoxUI(this, txtWebAddress);
             themeClass = new Omnibox.OmniBoxTheme(txtWebAddress);
+            PrepareBrowserForm();
         }
 
         #endregion
@@ -384,6 +390,12 @@ namespace Quartz
 
             //MODERN THEME SYSTEM
             NewControlThemeChanger.ChangeControlTheme(this);
+            // These surfaces always use the browser background. Paint it directly
+            // instead of asking a transparent child to replay its parent's paint
+            // while the favourites row and the content divider are being moved.
+            pnlTop.BackColor = BackColor;
+            pnlFavourites.BackColor = BackColor;
+            pnlBottom.BackColor = BackColor;
             NewControlThemeChanger.ChangeControlTheme(SettingsMenuStrip);
             NewControlThemeChanger.ChangeControlTheme(mnuExperts);
             NewControlThemeChanger.ChangeControlTheme(mnuHistory);
@@ -562,9 +574,21 @@ namespace Quartz
                 }
             }
 
-            button.AccessibleName = name;
-            button.Text = FitFavouriteButtonText(button, name, MaximumFavouriteButtonWidth);
-            button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
+            // Use the normal animated content update so measuring the preview
+            // cannot snap neighbouring buttons through intermediate text widths.
+            Action updatePreview = () =>
+            {
+                button.AccessibleName = name;
+                button.Text = FitFavouriteButtonText(button, name, MaximumFavouriteButtonWidth);
+                button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
+            };
+            if (button is Quartz.Controls.FavouriteButton && button.Parent == pnlFavourites)
+            {
+                pnlFavourites.UpdateItems(pnlFavourites.Controls.OfType<Quartz.Controls.FavouriteButton>().ToList(),
+                    item => { if (ReferenceEquals(item, button)) updatePreview(); }, true);
+            }
+            else if (!button.IsDisposed)
+                updatePreview();
             UpdateFavBar();
             return button;
         }
@@ -801,6 +825,9 @@ namespace Quartz
                 options = env.CreateCoreWebView2ControllerOptions();
                 options.ProfileName = ProfileService.Current.ToString();
                 options.IsInPrivateModeEnabled = Program.profileService.Get(ProfileService.Current).isDisposable;
+                // Supply the color at controller creation, before its first paint.
+                // Setting the control property alone can still produce a white flash.
+                options.DefaultBackgroundColor = wvWebView1.DefaultBackgroundColor;
 
                 if (wvWebView1.CoreWebView2 == null)
                 {
@@ -837,6 +864,8 @@ namespace Quartz
 
         private void CompleteBrowserInitialization()
         {
+            // Apply the profile color preference before the first navigation.
+            NewControlThemeChanger.ChangeControlTheme(wvWebView1);
             wvWebView1.CoreWebView2.SetVirtualHostNameToFolderMapping("quartz.com", Application.StartupPath + @"\assets\quartz.com\", CoreWebView2HostResourceAccessKind.Allow);
 
             if (_newtab)
@@ -852,10 +881,6 @@ namespace Quartz
             {
                 this.FullScreen = wvWebView1.CoreWebView2.ContainsFullScreenElement;
             };
-
-            // Native controls are already ready. Only the browser profile's
-            // colour preference requires an initialized WebView2.
-            NewControlThemeChanger.ChangeControlTheme(wvWebView1);
 
             if (SettingsService.Get("HiddenPDFNone") != "true")
             {
