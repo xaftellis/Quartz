@@ -1,4 +1,4 @@
-using EasyTabs;
+﻿using EasyTabs;
 using Quartz.Services;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Windows.Media.Animation;
 
 namespace Quartz.Controls
 {
-    public partial class TabContextMenu : ContextMenuStrip
+    public partial class TabContextMenu : AnimatedContextMenuStrip
     {
         TitleBarTabs _parentForm;
         TitleBarTab _clickedTab;
@@ -38,10 +38,7 @@ namespace Quartz.Controls
             newTabLeftStripMenuItem = new ToolStripMenuItem("New tab to the left");
             newTabRightStripMenuItem = new ToolStripMenuItem("New tab to the right");
             moveTabToolStripMenuItem = new ToolStripMenuItem("Move tab to new window");
-            moveTabToolStripMenuItem.DropDown.Opening += (sender, e) =>
-            {
-                Animation.AnimateWindow(moveTabToolStripMenuItem.DropDown.Handle, 100, Animation.AW_BLEND);
-            };
+            moveTabToolStripMenuItem.DropDown = new AnimatedContextMenuStrip();
             moveTabToolStripMenuItem.Click += (sender, e) =>
             {
                 if (!moveTabToolStripMenuItem.HasDropDownItems) MoveTabToNewWindow();
@@ -258,7 +255,6 @@ namespace Quartz.Controls
 
             //showSiteIconsOnlyToolStripMenuItem.Checked = SettingsService.Get("showSiteIconsOnly") == "true";
 
-            Animation.AnimateWindow(this.Handle, 100, Animation.AW_BLEND);
         }
 
         public void UpdateMenuItemsEnabledState()

@@ -1,4 +1,4 @@
-using EasyTabs;
+﻿using EasyTabs;
 using Microsoft.SqlServer.Server;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
@@ -165,6 +165,11 @@ namespace Quartz
                 // Set the native placeholder before the tab is attached/shown.
                 NewControlThemeChanger.ChangeControlTheme(this);
                 NewControlThemeChanger.ChangeControlTheme(wvWebView1);
+            }
+            // These choices are fixed; only the current zoom changes when opening.
+            for (int zoom = 25; zoom <= 500; zoom += 25)
+            {
+                zoomToolStrip.Items.Add(zoom.ToString() + "%");
             }
             InitializeUpdateAvailableMenuItem();
             InitializeWebViewFocus();
@@ -1845,9 +1850,6 @@ namespace Quartz
                 openInNewWindowToolStripMenuItem.Text = "Open in new window" + $" ({favouriteService.All().Count})";
                 openInNewTabToolStripMenuItem.Text = "Open in new tab" + $" ({favouriteService.All().Count})";
             }
-
-
-            Animation.AnimateWindow(mnuMenu.Handle, 100, Animation.AW_BLEND);
         }
 
         private void changeProfileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1861,7 +1863,6 @@ namespace Quartz
         private void SettingsMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             RefreshUpdateAvailableMenuItem();
-            Animation.AnimateWindow(SettingsMenuStrip.Handle, 100, Animation.AW_BLEND);
 
             if (SettingsService.Get("AreDevToolsEnabled") == "true")
             {
@@ -1873,13 +1874,6 @@ namespace Quartz
             }
 
             historyToolStripMenuItem.Enabled = Program.profileService.Get(ProfileService.Current).isDisposable != true;
-
-            zoomToolStrip.Items.Clear();
-
-            for (double f = 25; f <= 500; f = f + 25)
-            {
-                zoomToolStrip.Items.Add(f.ToString() + "%");
-            }
 
             zoomToolStrip.Text = (wvWebView1.ZoomFactor * 100).ToString() + "%";
         }
@@ -2022,8 +2016,6 @@ namespace Quartz
         private void mnuDownloadsDropDown_Opening(object sender, CancelEventArgs e)
         {
             locationToolStripMenuItem1.Text = $"Location: {wvWebView1.CoreWebView2.Profile.DefaultDownloadFolderPath}";
-
-            Animation.AnimateWindow(mnuDownloadsDropDown.Handle, 100, Animation.AW_BLEND);
         }
 
         private void changeLocationToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -2096,11 +2088,6 @@ namespace Quartz
             tabbedApp.SelectedTab.Content.Close();
         }
 
-        private void mnuExperts_Opening(object sender, CancelEventArgs e)
-        {
-            Animation.AnimateWindow(mnuExperts.Handle, 100, Animation.AW_BLEND);
-        }
-
         private void restartToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program._bypassPassword = true;
@@ -2138,62 +2125,68 @@ namespace Quartz
 
         private void mnuHistory_Opening(object sender, CancelEventArgs e)
         {
-            HistoryService historyService = new HistoryService();
-            int count = 0;
-            int limit = 10;
-
-            mnuHistory.Items.Clear();
-
-            ToolStripMenuItem historyItem = new ToolStripMenuItem();
-            historyItem.Text = "History";
-            historyItem.Click += historyToolStripMenuItem_Click;
-            mnuHistory.Items.Add(historyItem);
-
-            ToolStripSeparator separatorItem = new ToolStripSeparator();
-            mnuHistory.Items.Add(separatorItem);
-
-            if (historyService.All().Count >= 1)
+            mnuHistory.SuspendLayout();
+            try
             {
-                var orderedHistory = historyService.All()
-                                   .OrderByDescending(i => i.When)
-                                   .ToList(); // materialize
+                HistoryService historyService = new HistoryService();
+                int count = 0;
+                int limit = 10;
 
-                foreach (HistoryModel history in orderedHistory)
+                mnuHistory.Items.Clear();
+
+                ToolStripMenuItem historyItem = new ToolStripMenuItem();
+                historyItem.Text = "History";
+                historyItem.Click += historyToolStripMenuItem_Click;
+                mnuHistory.Items.Add(historyItem);
+
+                ToolStripSeparator separatorItem = new ToolStripSeparator();
+                mnuHistory.Items.Add(separatorItem);
+
+                if (historyService.All().Count >= 1)
                 {
-                    if (count <= limit)
+                    var orderedHistory = historyService.All()
+                                       .OrderByDescending(i => i.When)
+                                       .ToList(); // materialize
+
+                    foreach (HistoryModel history in orderedHistory)
                     {
-                        ToolStripMenuItem menuItem = new ToolStripMenuItem();
+                        if (count <= limit)
+                        {
+                            ToolStripMenuItem menuItem = new ToolStripMenuItem();
 
-                        menuItem.Text = history.Title.Length > 64 ? history.Title.Substring(0, 64) + "..." : history.Title;
-                        menuItem.Tag = history.WebAddress;
-                        menuItem.Image = FaviconHelper.GetFaviconFileExternalAsImage(history.WebAddress);
-                        menuItem.ToolTipText = history.WebAddress;
-                        menuItem.Click += MenuItem_Click;
-                        menuItem.MouseUp += MenuItem_MouseUp;
+                            menuItem.Text = history.Title.Length > 64 ? history.Title.Substring(0, 64) + "..." : history.Title;
+                            menuItem.Tag = history.WebAddress;
+                            menuItem.Image = FaviconHelper.GetFaviconFileExternalAsImage(history.WebAddress);
+                            menuItem.ToolTipText = history.WebAddress;
+                            menuItem.Click += MenuItem_Click;
+                            menuItem.MouseUp += MenuItem_MouseUp;
 
-                        mnuHistory.Items.Add(menuItem);
+                            mnuHistory.Items.Add(menuItem);
 
-                        count++;
+                            count++;
+                        }
                     }
                 }
+                else
+                {
+                    ToolStripMenuItem lohItem = new ToolStripMenuItem();
+                    lohItem.Text = "No recent pages";
+                    lohItem.Enabled = false;
+                    mnuHistory.Items.Add(lohItem);
+                }
+
+                ToolStripSeparator separatorItem2 = new ToolStripSeparator();
+                mnuHistory.Items.Add(separatorItem2);
+
+
+                ToolStripMenuItem clearHistoryItem = new ToolStripMenuItem("Clear browsing data...");
+                clearHistoryItem.Click += ClearHistoryItem_Click;
+                mnuHistory.Items.Add(clearHistoryItem);
             }
-            else
+            finally
             {
-                ToolStripMenuItem lohItem = new ToolStripMenuItem();
-                lohItem.Text = "No recent pages";
-                lohItem.Enabled = false;
-                mnuHistory.Items.Add(lohItem);
+                mnuHistory.ResumeLayout(true);
             }
-
-            ToolStripSeparator separatorItem2 = new ToolStripSeparator();
-            mnuHistory.Items.Add(separatorItem2);
-
-
-            ToolStripMenuItem clearHistoryItem = new ToolStripMenuItem("Clear browsing data...");
-            clearHistoryItem.Click += ClearHistoryItem_Click;
-            mnuHistory.Items.Add(clearHistoryItem);
-
-            Animation.AnimateWindow(mnuHistory.Handle, 100, Animation.AW_BLEND);
         }
 
         private void ClearHistoryItem_Click(object sender, EventArgs e)
@@ -2279,11 +2272,6 @@ namespace Quartz
 
             MainSettingsService.Set("Reset", "true");
             Power.Restart();
-        }
-
-        private void mnuUserData_Opening(object sender, CancelEventArgs e)
-        {
-            Animation.AnimateWindow(mnuUserData.Handle, 100, Animation.AW_BLEND);
         }
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2770,8 +2758,6 @@ namespace Quartz
             cutToolStripMenuItem.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
             copyToolStripMenuItem1.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
             deleteToolStripMenuItem.Enabled = !String.IsNullOrEmpty(txtWebAddress.SelectedText);
-
-            Animation.AnimateWindow(mnuSearch.Handle, 100, Animation.AW_BLEND);
         }
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2839,77 +2825,83 @@ namespace Quartz
             SendKeys.SendWait("^f");
         }
 
-        private async void mnuFavourites_Opening(object sender, CancelEventArgs e)
+        private void mnuFavourites_Opening(object sender, CancelEventArgs e)
         {
-            ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem("Add favourite");
-            toolStripMenuItem.Click += btnAddFavourite_Click;
-
-            ToolStripSeparator toolStripSeparator = new ToolStripSeparator();
-
-            mnuFavourites.Items.Clear();
-            mnuFavourites.Items.Add(toolStripMenuItem);
-            mnuFavourites.Items.Add(toolStripSeparator);
-
-
-
-            FavouriteService favouriteService = new FavouriteService();
-            foreach (var favourite in favouriteService.All().OrderBy(f => f.Index).ToList())
+            mnuFavourites.SuspendLayout();
+            try
             {
-                var menuItem = new ToolStripMenuItem
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem("Add favourite");
+                toolStripMenuItem.Click += btnAddFavourite_Click;
+
+                ToolStripSeparator toolStripSeparator = new ToolStripSeparator();
+
+                mnuFavourites.Items.Clear();
+                mnuFavourites.Items.Add(toolStripMenuItem);
+                mnuFavourites.Items.Add(toolStripSeparator);
+
+
+
+                FavouriteService favouriteService = new FavouriteService();
+                foreach (var favourite in favouriteService.All().OrderBy(f => f.Index).ToList())
                 {
-                    Name = "smi" + favourite.Id.ToString("N"),
-                    Text = favourite.Name,
-                    Tag = favourite.WebAddress,
-                };
+                    var menuItem = new ToolStripMenuItem
+                    {
+                        Name = "smi" + favourite.Id.ToString("N"),
+                        Text = favourite.Name,
+                        Tag = favourite.WebAddress,
+                    };
 
-                if (SettingsService.Get("showFavouriteIcon") == "true")
-                {
-                    menuItem.Image = FaviconHelper.GetFaviconFileExternalAsImage(favourite.WebAddress);
-                }
-
-                menuItem.ToolTipText = favourite.Name + Environment.NewLine + favourite.WebAddress;
-
-                menuItem.Click += (_s, _e) =>
-                {
-                    SetSource(favourite.WebAddress);
-                };
-
-                menuItem.MouseUp += async (_s, _e) =>
-                {
-                    if (_e.Button == MouseButtons.Middle)
-                    {                        
-                        var browser = new Browser(favourite.WebAddress, true);
-                        browser.InitializeTab();
-
-                        var newTab = new TitleBarTab(ParentTabs)
-                        {
-                            Content = browser,
-                            Caption = "Loading...",
-                            IsLoading = browser.IsLoading
-                        };
-
-                        void AddTab()
-                        {
-                            int index = ParentTabs.SelectedTabIndex + 1;
-                            ParentTabs.Tabs.Insert(index, newTab);
-                            ParentTabs.SelectedTab = newTab;
-                            ParentTabs.RedrawTabs();
-                        }
-
-                        if (ParentTabs.InvokeRequired)
-                            ParentTabs.Invoke(new Action(AddTab));
-                        else
-                            AddTab();
-
-                        // Instant UI activation (0–1ms)
-                         await Task.Yield();
+                    if (SettingsService.Get("showFavouriteIcon") == "true")
+                    {
+                        menuItem.Image = FaviconHelper.GetFaviconFileExternalAsImage(favourite.WebAddress);
                     }
-                };
 
-                mnuFavourites.Items.Add(menuItem);
+                    menuItem.ToolTipText = favourite.Name + Environment.NewLine + favourite.WebAddress;
+
+                    menuItem.Click += (_s, _e) =>
+                    {
+                        SetSource(favourite.WebAddress);
+                    };
+
+                    menuItem.MouseUp += async (_s, _e) =>
+                    {
+                        if (_e.Button == MouseButtons.Middle)
+                        {
+                            var browser = new Browser(favourite.WebAddress, true);
+                            browser.InitializeTab();
+
+                            var newTab = new TitleBarTab(ParentTabs)
+                            {
+                                Content = browser,
+                                Caption = "Loading...",
+                                IsLoading = browser.IsLoading
+                            };
+
+                            void AddTab()
+                            {
+                                int index = ParentTabs.SelectedTabIndex + 1;
+                                ParentTabs.Tabs.Insert(index, newTab);
+                                ParentTabs.SelectedTab = newTab;
+                                ParentTabs.RedrawTabs();
+                            }
+
+                            if (ParentTabs.InvokeRequired)
+                                ParentTabs.Invoke(new Action(AddTab));
+                            else
+                                AddTab();
+
+                            // Instant UI activation (0–1ms)
+                             await Task.Yield();
+                        }
+                    };
+
+                    mnuFavourites.Items.Add(menuItem);
+                }
             }
-
-            Animation.AnimateWindow(mnuFavourites.Handle, 100, Animation.AW_BLEND);
+            finally
+            {
+                mnuFavourites.ResumeLayout(true);
+            }
         }
 
         private void nameWindowToolStripMenuItem_Click(object sender, EventArgs e)

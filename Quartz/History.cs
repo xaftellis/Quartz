@@ -1,4 +1,4 @@
-using EasyTabs;
+﻿using EasyTabs;
 using Quartz.Controls;
 using Quartz.Libs;
 using Quartz.Models;
@@ -547,7 +547,6 @@ namespace Quartz
                 copyLinkToolStripMenuItem.Text = "Copy link";
             }
 
-            Animation.AnimateWindow(contextMenuStrip1.Handle, 100, Animation.AW_BLEND);
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)

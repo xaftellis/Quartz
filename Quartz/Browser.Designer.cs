@@ -1,4 +1,4 @@
-namespace Quartz
+﻿namespace Quartz
 {
     partial class Browser
     {
@@ -718,7 +718,6 @@ namespace Quartz
             this.mnuExperts.Name = "mnuExperts";
             this.mnuExperts.OwnerItem = this.expertsToolStripMenuItem;
             resources.ApplyResources(this.mnuExperts, "mnuExperts");
-            this.mnuExperts.Opening += new System.ComponentModel.CancelEventHandler(this.mnuExperts_Opening);
             // 
             // nameWindowToolStripMenuItem
             // 
@@ -768,7 +767,6 @@ namespace Quartz
             this.mnuUserData.Name = "mnuUserData";
             this.mnuUserData.OwnerItem = this.userDataToolStripMenuItem;
             resources.ApplyResources(this.mnuUserData, "mnuUserData");
-            this.mnuUserData.Opening += new System.ComponentModel.CancelEventHandler(this.mnuUserData_Opening);
             // 
             // openFolderToolStripMenuItem
             // 

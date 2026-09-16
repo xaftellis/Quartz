@@ -40,7 +40,7 @@
             this.WebAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.When = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Delete = new System.Windows.Forms.DataGridViewImageColumn();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip1 = new Quartz.Controls.AnimatedContextMenuStrip(this.components);
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openInNewTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -289,7 +289,7 @@
         #endregion
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private Quartz.Controls.AnimatedContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.DataGridView dataGridView1;

@@ -55,7 +55,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.txtTimeMachine = new System.Windows.Forms.TextBox();
             this.mcTimeMachine = new System.Windows.Forms.MonthCalendar();
-            this.mnuTimeMachine = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuTimeMachine = new Quartz.Controls.AnimatedContextMenuStrip(this.components);
             this.todayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.goodFridayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,7 +63,7 @@
             this.christmasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.birthdaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuBirthdays = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuBirthdays = new Quartz.Controls.AnimatedContextMenuStrip(this.components);
             this.addBirthdayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.groupBoxDownloadDialog = new System.Windows.Forms.GroupBox();
@@ -117,7 +117,7 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip1 = new Quartz.Controls.AnimatedContextMenuStrip(this.components);
             this.tabPageAbout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LoadingProgress)).BeginInit();
@@ -1245,7 +1245,6 @@
             this.deleteToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(108, 54);
-            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening_1);
             // 
             // Settings
             // 
@@ -1357,7 +1356,7 @@
         private System.Windows.Forms.CheckBox pz;
         private System.Windows.Forms.CheckBox zc;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.ContextMenuStrip mnuTimeMachine;
+        private Quartz.Controls.AnimatedContextMenuStrip mnuTimeMachine;
         private System.Windows.Forms.ToolStripMenuItem todayToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem christmasToolStripMenuItem;
@@ -1368,7 +1367,7 @@
         private System.Windows.Forms.Label CoppyRightLable;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem birthdaysToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip mnuBirthdays;
+        private Quartz.Controls.AnimatedContextMenuStrip mnuBirthdays;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox combDefaultFavicon;
         private System.Windows.Forms.ToolStripMenuItem addBirthdayToolStripMenuItem;
@@ -1376,7 +1375,7 @@
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private Quartz.Controls.AnimatedContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox cbDownloadAlighment;
         private System.Windows.Forms.Label label10;

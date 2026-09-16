@@ -756,7 +756,6 @@ namespace Quartz
 
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Animation.AnimateWindow(mnuTimeMachine.Handle, 100, Animation.AW_BLEND);
 
             if (birthdayService.All().Count != 0)
             {
@@ -834,7 +833,6 @@ namespace Quartz
 
 
             //last
-            Animation.AnimateWindow((sender as ContextMenuStrip).Handle, 100, Animation.AW_BLEND);
         }
 
 
@@ -1099,11 +1097,6 @@ namespace Quartz
                 birthdayService.SaveChanges();
                 // Refresh your menu or UI if needed
             }
-        }
-
-        private void contextMenuStrip1_Opening_1(object sender, CancelEventArgs e)
-        {
-            Animation.AnimateWindow((sender as ContextMenuStrip).Handle, 100, Animation.AW_BLEND);
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)

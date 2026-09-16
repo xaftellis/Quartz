@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.btnCreate = new System.Windows.Forms.Button();
-            this.ContextMenuStripProfiles = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ContextMenuStripProfiles = new Quartz.Controls.AnimatedContextMenuStrip(this.components);
             this.setDefaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -204,7 +204,7 @@
 
         #endregion
         private System.Windows.Forms.Button btnCreate;
-        private System.Windows.Forms.ContextMenuStrip ContextMenuStripProfiles;
+        private Quartz.Controls.AnimatedContextMenuStrip ContextMenuStripProfiles;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.Label LabelTitle;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;

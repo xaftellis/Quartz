@@ -158,6 +158,9 @@
       <DependentUpon>Browser.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Controls\AnimatedContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\FocusAwareContextMenuStrip.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -423,7 +423,6 @@ namespace Quartz
                 setDefaultToolStripMenuItem.Text = "Set default";
             }
 
-            Animation.AnimateWindow(ContextMenuStripProfiles.Handle, 100, Animation.AW_BLEND);
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)

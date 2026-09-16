@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Quartz.Controls
 {
-    public class DefaultContextMenu : ContextMenuStrip
+    public class DefaultContextMenu : AnimatedContextMenuStrip
     {
         TitleBarTabs _parentForm;
         TitleBarTab _clickedTab;
@@ -160,7 +160,6 @@ namespace Quartz.Controls
         {
             DefineVarables();
 
-            Animation.AnimateWindow(this.Handle, 100, Animation.AW_BLEND);
 
             // Enable or disable items based on window state and capabilities
             restoreToolStripMenuItem.Enabled = (_parentForm.WindowState != FormWindowState.Normal);

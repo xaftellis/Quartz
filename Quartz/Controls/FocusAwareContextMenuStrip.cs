@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace Quartz.Controls
 {
-    public class FocusAwareContextMenuStrip : ContextMenuStrip
+    public class FocusAwareContextMenuStrip : AnimatedContextMenuStrip
     {
         public FocusAwareContextMenuStrip() { }
 
