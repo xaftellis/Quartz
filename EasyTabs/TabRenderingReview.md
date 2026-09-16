@@ -18,7 +18,7 @@ edges are rounded separately using `Height` and `ToolbarOverlap`, rather than
 rounding its position and thickness separately. Active tabs retain their seamless
 connection to the same toolbar colour.
 
-Source: [Quartz paint order](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:753),
+Source: [Quartz paint order](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:760),
 [Chromium overlap geometry](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/tabs/tab_style_views.cc:239>),
 [Chromium tab-strip child creation](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/frame/browser_view.cc:525>)
 and [later toolbar child creation](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/frame/browser_view.cc:566>).
@@ -47,6 +47,23 @@ Source: `ChromiumTabRenderer.ShouldShowTab`, `FindTab`, `Render`, and
 No runtime or build checks were run for this follow-up; visual testing is left to
 the user. This adds overflow hiding, not scrolling or an overflow menu.
 
+## Applied: title movement during tab closing — 17 September 2026
+
+The user confirmed that closing titles visibly shift left in Quartz while staying
+in place in Chrome. Quartz recalculated the title's left edge from its shrinking
+width, dropping the content inset from 20 to 16 DIP at the 100-DIP tab-width
+threshold. Its cached favicon already retained its original position.
+
+`ContentCache.UpdateClosingTitle` now retains the last painted title X coordinate.
+Only the available right edge and fade follow the shrinking tab. This also avoids
+a jump if an icon/title transition was in progress when closure began. Title
+colours can still update, and the cached favicon remains in place.
+
+This follows the purpose of Chromium's frozen closing padding in
+[Tab::UpdateIconVisibility](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/tabs/tab.cc:915>).
+The patch has not been built or runtime-tested; visual confirmation remains with
+the user.
+
 ## Additional findings — not changed
 
 1. **Shared separators can disagree by one physical pixel at 150% scaling.**
@@ -61,22 +78,10 @@ the user. This adds overflow hiding, not scrolling or an overflow menu.
    constant offset applied to one separator.
 
    Sources: [Quartz alignment](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabGeometry.cs:86),
-   [separator painting](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:845),
+   [separator painting](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:852),
    [Chromium alignment](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/tabs/tab_style_views.cc:912>).
 
-2. **Closing titles can shift left as the tab shrinks.** Quartz recalculates
-   `roomy`, content padding and icon centring from the current animated width,
-   then redraws the closing title using those new bounds. Crossing the 100-DIP
-   tab-width threshold drops the left content inset from 20 to 16 DIP, so a title
-   can move by 4 DIP during closure. The cached favicon retains its original
-   bounds. Chromium deliberately freezes the extra padding and centring decisions
-   while closing to prevent this shift.
-
-   Sources: [Quartz content layout](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:855),
-   [closing title update](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:910),
-   [Chromium closing-state rules](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/tabs/tab.cc:915>).
-
-3. **Remainder pixels skip the active tab even when all tabs have equal sizing
+2. **Remainder pixels skip the active tab even when all tabs have equal sizing
    rules.** Quartz reserves the active tab's floored width, then distributes the
    remaining pixels among inactive tabs. Chromium distributes them left to right
    among all eligible tabs; the active tab is excluded only when its constrained
@@ -112,8 +117,8 @@ padding for mouse targeting, so the larger padded view is not a larger mouse
 close target. Its touch mode uses a separate 24-DIP size; that is not the desktop
 mouse sizing used here.
 
-Sources: [Quartz hit box and hover circle](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:875),
-[Quartz cross](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:1069),
+Sources: [Quartz hit box and hover circle](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:882),
+[Quartz cross](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:1076),
 [Chromium cross and mouse targeting](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/tabs/tab_close_button.cc:152>),
 [Chromium circle radius](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/ui/views/layout/layout_provider.cc:145>).
 

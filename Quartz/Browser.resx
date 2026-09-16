@@ -216,7 +216,7 @@
     <value>mnuMenu</value>
   </data>
   <data name="&gt;&gt;mnuMenu.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -352,7 +352,7 @@
     <value>7</value>
   </data>
   <metadata name="mnuDownloadsDropDown.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>257, 19</value>
+    <value>265, 29</value>
   </metadata>
   <data name="locationToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>164, 22</value>
@@ -366,15 +366,6 @@
   <data name="changeLocationToolStripMenuItem1.Text" xml:space="preserve">
     <value>Change Location</value>
   </data>
-  <data name="downloadsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+J</value>
-  </data>
-  <data name="downloadsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
-  </data>
-  <data name="downloadsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Downloads</value>
-  </data>
   <data name="mnuDownloadsDropDown.Size" type="System.Drawing.Size, System.Drawing">
     <value>165, 48</value>
   </data>
@@ -382,7 +373,16 @@
     <value>mnuDownloadsDropDown</value>
   </data>
   <data name="&gt;&gt;mnuDownloadsDropDown.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="downloadsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+J</value>
+  </data>
+  <data name="downloadsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>225, 22</value>
+  </data>
+  <data name="downloadsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Downloads</value>
   </data>
   <data name="btnAddFavourite.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1378,7 +1378,7 @@
     <value>mnuSearch</value>
   </data>
   <data name="&gt;&gt;mnuSearch.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnRefresh.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -2245,7 +2245,7 @@
     <value>btnSiteInformation</value>
   </data>
   <data name="&gt;&gt;btnSiteInformation.Type" xml:space="preserve">
-    <value>Quartz.Controls.SiteInfoButton, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.SiteInfoButton, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;btnSiteInformation.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -2278,7 +2278,7 @@
     <value>pnlFavourites</value>
   </data>
   <data name="&gt;&gt;pnlFavourites.Type" xml:space="preserve">
-    <value>Quartz.Controls.FavouritesBar, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FavouritesBar, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlFavourites.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -2449,7 +2449,7 @@
     <value>Ctrl+T</value>
   </data>
   <data name="newTabToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="newTabToolStripMenuItem1.Text" xml:space="preserve">
     <value>New tab</value>
@@ -2458,7 +2458,7 @@
     <value>Ctrl+N</value>
   </data>
   <data name="newWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="newWindowToolStripMenuItem.Text" xml:space="preserve">
     <value>New window</value>
@@ -2467,13 +2467,13 @@
     <value>Ctrl+Shift+M</value>
   </data>
   <data name="changeProfileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="changeProfileToolStripMenuItem.Text" xml:space="preserve">
     <value>Profiles</value>
   </data>
   <data name="toolStripSeparator20.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 6</value>
+    <value>222, 6</value>
   </data>
   <metadata name="mnuHistory.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>105, 18</value>
@@ -2497,10 +2497,10 @@
     <value>mnuHistory</value>
   </data>
   <data name="&gt;&gt;mnuHistory.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="historyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="historyToolStripMenuItem.Text" xml:space="preserve">
     <value>History</value>
@@ -2521,34 +2521,34 @@
     <value>185, 6</value>
   </data>
   <data name="mnuFavourites.Size" type="System.Drawing.Size, System.Drawing">
-    <value>189, 32</value>
+    <value>189, 54</value>
   </data>
   <data name="&gt;&gt;mnuFavourites.Name" xml:space="preserve">
     <value>mnuFavourites</value>
   </data>
   <data name="&gt;&gt;mnuFavourites.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="favouritesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="favouritesToolStripMenuItem.Text" xml:space="preserve">
     <value>Favourites</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 6</value>
+    <value>222, 6</value>
   </data>
   <data name="zoomToolStrip.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 23</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 6</value>
+    <value>222, 6</value>
   </data>
   <data name="findToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+F</value>
   </data>
   <data name="findToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="findToolStripMenuItem.Text" xml:space="preserve">
     <value>Find</value>
@@ -2557,67 +2557,67 @@
     <value>Ctrl+P</value>
   </data>
   <data name="printToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="printToolStripMenuItem.Text" xml:space="preserve">
     <value>Print</value>
   </data>
+  <data name="openFileInBrowserToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+O</value>
+  </data>
   <data name="openFileInBrowserToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="openFileInBrowserToolStripMenuItem.Text" xml:space="preserve">
     <value>Open File In Browser</value>
-  </data>
-  <data name="deleteBrowsingDataToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
-  </data>
-  <data name="deleteBrowsingDataToolStripMenuItem.Text" xml:space="preserve">
-    <value>Delete browsing data</value>
   </data>
   <metadata name="mnuExperts.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>592, 62</value>
   </metadata>
   <data name="nameWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 22</value>
+    <value>183, 22</value>
   </data>
   <data name="nameWindowToolStripMenuItem.Text" xml:space="preserve">
     <value>Name window...</value>
   </data>
   <data name="toolStripSeparator12.Size" type="System.Drawing.Size, System.Drawing">
-    <value>157, 6</value>
+    <value>180, 6</value>
   </data>
   <data name="webview2TaskManagerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 22</value>
+    <value>183, 22</value>
   </data>
   <data name="webview2TaskManagerToolStripMenuItem.Text" xml:space="preserve">
     <value>Task manager</value>
   </data>
   <data name="toolStripSeparator13.Size" type="System.Drawing.Size, System.Drawing">
-    <value>157, 6</value>
+    <value>180, 6</value>
+  </data>
+  <data name="inspectToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F12</value>
   </data>
   <data name="inspectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 22</value>
+    <value>183, 22</value>
   </data>
   <data name="inspectToolStripMenuItem.Text" xml:space="preserve">
     <value>Developer Tools</value>
   </data>
   <data name="mnuExperts.Size" type="System.Drawing.Size, System.Drawing">
-    <value>161, 82</value>
+    <value>184, 82</value>
   </data>
   <data name="&gt;&gt;mnuExperts.Name" xml:space="preserve">
     <value>mnuExperts</value>
   </data>
   <data name="&gt;&gt;mnuExperts.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="expertsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="expertsToolStripMenuItem.Text" xml:space="preserve">
     <value>More tools</value>
   </data>
   <data name="toolStripSeparator7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 6</value>
+    <value>222, 6</value>
   </data>
   <metadata name="mnuUserData.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>958, 58</value>
@@ -2644,37 +2644,37 @@
     <value>mnuUserData</value>
   </data>
   <data name="&gt;&gt;mnuUserData.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="userDataToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="userDataToolStripMenuItem.Text" xml:space="preserve">
     <value>UserData</value>
   </data>
   <data name="settingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="settingsToolStripMenuItem.Text" xml:space="preserve">
     <value>Settings</value>
   </data>
   <data name="toolStripSeparator16.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 6</value>
+    <value>222, 6</value>
   </data>
   <data name="restartToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="restartToolStripMenuItem.Text" xml:space="preserve">
     <value>Restart</value>
   </data>
   <data name="exitToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>225, 22</value>
   </data>
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
   <data name="SettingsMenuStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 391</value>
+    <value>226, 369</value>
   </data>
   <data name="SettingsMenuStrip.Text" xml:space="preserve">
     <value>Options</value>
@@ -2683,7 +2683,7 @@
     <value>SettingsMenuStrip</value>
   </data>
   <data name="&gt;&gt;SettingsMenuStrip.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnSettings.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
@@ -2866,13 +2866,13 @@
     <value>pnlTop</value>
   </data>
   <data name="&gt;&gt;pnlTop.Type" xml:space="preserve">
-    <value>Quartz.Controls.BrowserToolbarPanel, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.BrowserToolbarPanel, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlTop.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlTop.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>4</value>
   </data>
   <data name="pnlDivider.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -5633,7 +5633,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlBottom.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>3</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -8607,12 +8607,6 @@
     <value>openFileInBrowserToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;openFileInBrowserToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;deleteBrowsingDataToolStripMenuItem.Name" xml:space="preserve">
-    <value>deleteBrowsingDataToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;deleteBrowsingDataToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;expertsToolStripMenuItem.Name" xml:space="preserve">

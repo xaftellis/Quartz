@@ -91,7 +91,14 @@ namespace EasyTabs
 
             internal void UpdateClosingTitle(Rectangle titleBounds, Color foreground, float scale, Font font)
             {
-                if (Pixels == null || (_titleBounds == titleBounds && _foreground == foreground && _scale == scale)) return;
+                if (Pixels == null) return;
+                // Chromium keeps the content padding from before closure. Anchor
+                // the title to its last painted position, just like the cached
+                // favicon, while its right edge and fade follow the shrinking tab.
+                int right = titleBounds.Right;
+                titleBounds.X = _titleBounds.X;
+                titleBounds.Width = Math.Max(0, right - titleBounds.X);
+                if (_titleBounds == titleBounds && _foreground == foreground && _scale == scale) return;
                 // The page form is already disposed. Keep the cached favicon
                 // pixels; only clear/redraw the title side of the shared bitmap.
                 var state = _graphics.Save();

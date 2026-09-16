@@ -166,12 +166,20 @@ namespace Quartz
                 NewControlThemeChanger.ChangeControlTheme(this);
                 NewControlThemeChanger.ChangeControlTheme(wvWebView1);
             }
-            // These choices are fixed; only the current zoom changes when opening.
-            for (int zoom = 25; zoom <= 500; zoom += 25)
-            {
-                zoomToolStrip.Items.Add(zoom.ToString() + "%");
-            }
             InitializeUpdateAvailableMenuItem();
+            InitializeZoomMenuRow();
+            wvWebView1.KeyDown += (sender, e) =>
+            {
+                if (e.KeyData != Keys.F11) return;
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                // Let WebView2 finish handling the key before resizing its window.
+                BeginInvoke(new Action(() =>
+                {
+                    if (!IsDisposed && !Disposing)
+                        fullscreenToolStripMenuItem_Click(this, EventArgs.Empty);
+                }));
+            };
             InitializeWebViewFocus();
             DoubleBuffered = true;
             InitializeTabPreview();
@@ -409,7 +417,7 @@ namespace Quartz
             NewControlThemeChanger.ChangeControlTheme(mnuDownloadsDropDown);
             NewControlThemeChanger.ChangeControlTheme(mnuSearch);
             NewControlThemeChanger.ChangeControlTheme(wvWebView1);
-            NewControlThemeChanger.ChangeControlTheme(zoomToolStrip);
+            UpdateZoomMenuRow();
             NewControlThemeChanger.ChangeControlTheme(mnuFavourites);
             _siteInfoController?.ApplyTheme(txtWebAddress.BackColor, txtWebAddress.ForeColor);
         }
@@ -994,7 +1002,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v3.0.0 (Developer Build)";
+            notifyIcon1.Text = "Quartz v3.0.0";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
         }
@@ -1030,6 +1038,7 @@ namespace Quartz
 
         private void btnAddFavourite_Click(object sender, EventArgs e)
         {
+            if (wvWebView1.CoreWebView2 == null || wvWebView1.Source == null) return;
             Shortcuts(false);
             var form = new Favourite(this, wvWebView1.CoreWebView2.DocumentTitle, wvWebView1.Source.ToString(), false, null);
             form.Owner = this;
@@ -1875,7 +1884,7 @@ namespace Quartz
 
             historyToolStripMenuItem.Enabled = Program.profileService.Get(ProfileService.Current).isDisposable != true;
 
-            zoomToolStrip.Text = (wvWebView1.ZoomFactor * 100).ToString() + "%";
+            UpdateZoomMenuRow();
         }
         private void Browser_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -2136,6 +2145,7 @@ namespace Quartz
 
                 ToolStripMenuItem historyItem = new ToolStripMenuItem();
                 historyItem.Text = "History";
+                historyItem.ShortcutKeys = Keys.Control | Keys.H;
                 historyItem.Click += historyToolStripMenuItem_Click;
                 mnuHistory.Items.Add(historyItem);
 
@@ -2180,6 +2190,7 @@ namespace Quartz
 
 
                 ToolStripMenuItem clearHistoryItem = new ToolStripMenuItem("Clear browsing data...");
+                clearHistoryItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.Delete; 
                 clearHistoryItem.Click += ClearHistoryItem_Click;
                 mnuHistory.Items.Add(clearHistoryItem);
             }
@@ -2830,19 +2841,42 @@ namespace Quartz
             mnuFavourites.SuspendLayout();
             try
             {
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem("Add favourite");
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem("Add this tab to favourites...");
+                toolStripMenuItem.ShortcutKeys = Keys.Control | Keys.D;
+                toolStripMenuItem.Enabled = wvWebView1.CoreWebView2 != null && wvWebView1.Source != null;
                 toolStripMenuItem.Click += btnAddFavourite_Click;
 
-                ToolStripSeparator toolStripSeparator = new ToolStripSeparator();
+                var addAllTabs = new ToolStripMenuItem("Add all tabs to favourites");
+                addAllTabs.ShortcutKeys = Keys.Control | Keys.Shift | Keys.D;
+                addAllTabs.Enabled = ParentTabs != null && ParentTabs.Tabs.Count > 1 && GetTabsToFavourite().Count > 0;
+                addAllTabs.Click += AddAllTabsToFavourites_Click;
+
+                var showBar = new ToolStripMenuItem("Show favourites bar")
+                {
+                    ShortcutKeys = Keys.Control | Keys.Shift | Keys.B,
+                    Checked = SettingsService.Get("showFavouritesBar") == "true",
+                    CheckOnClick = true
+                };
+                showBar.Click += (s, args) =>
+                {
+                    SettingsService.Set("showFavouritesBar", showBar.Checked.ToString().ToLower());
+                    UpdateFavBar();
+                };
 
                 mnuFavourites.Items.Clear();
                 mnuFavourites.Items.Add(toolStripMenuItem);
-                mnuFavourites.Items.Add(toolStripSeparator);
+                mnuFavourites.Items.Add(addAllTabs);
 
-
+                mnuFavourites.Items.Add(new ToolStripSeparator());
+                mnuFavourites.Items.Add(showBar);
 
                 FavouriteService favouriteService = new FavouriteService();
-                foreach (var favourite in favouriteService.All().OrderBy(f => f.Index).ToList())
+                var favourites = favouriteService.All().OrderBy(f => f.Index).ToList();
+
+                if (favourites.Count > 0)
+                    mnuFavourites.Items.Add(new ToolStripSeparator());
+
+                foreach (var favourite in favourites)
                 {
                     var menuItem = new ToolStripMenuItem
                     {
@@ -2891,7 +2925,7 @@ namespace Quartz
                                 AddTab();
 
                             // Instant UI activation (0–1ms)
-                             await Task.Yield();
+                            await Task.Yield();
                         }
                     };
 
@@ -2901,6 +2935,72 @@ namespace Quartz
             finally
             {
                 mnuFavourites.ResumeLayout(true);
+            }
+        }
+
+        private List<FavouriteModel> GetTabsToFavourite()
+        {
+            var favourites = new List<FavouriteModel>();
+
+            if (ParentTabs == null)
+                return favourites;
+
+            foreach (var tab in ParentTabs.Tabs)
+            {
+                if (tab.Content is Browser browser && !browser.IsDisposed && !browser.Disposing)
+                {
+                    string address = browser.wvWebView1.Source?.AbsoluteUri;
+
+                    if (string.IsNullOrWhiteSpace(address))
+                        address = browser._newtab ? browser._tabAddress : GetHomeUrl();
+
+                    if (!Uri.IsWellFormedUriString(address, UriKind.Absolute))
+                        continue;
+
+                    string title = browser.wvWebView1.CoreWebView2?.DocumentTitle;
+
+                    favourites.Add(new FavouriteModel
+                    {
+                        Name = string.IsNullOrWhiteSpace(title) ? address : title,
+                        WebAddress = address
+                    });
+                }
+            }
+
+            return favourites;
+        }
+
+        private void AddAllTabsToFavourites_Click(object sender, EventArgs e)
+        {
+            if (ParentTabs == null || ParentTabs.Tabs.Count <= 1)
+                return;
+
+            var favourites = GetTabsToFavourite();
+
+            if (favourites.Count == 0)
+                return;
+
+            try
+            {
+                var service = new FavouriteService();
+
+                foreach (var favourite in favourites)
+                    service.Add(favourite);
+
+                if (SettingsService.Get("sortFavouritesBy") == "alphabetically")
+                    service.SortAlphabetically();
+
+                service.SaveChanges();
+                LoadFavourites();
+            }
+            catch (Exception error)
+            {
+                MessageBox.Show(
+                    this,
+                    "Couldn't save the tabs to favourites. " + error.Message,
+                    "Favourites",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 

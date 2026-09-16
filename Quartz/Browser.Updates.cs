@@ -10,6 +10,7 @@ namespace Quartz
     public partial class Browser
     {
         private ToolStripMenuItem updateAvailableToolStripMenuItem;
+        private ToolStripSeparator updateAvailableSeparator;
 
         private void InitializeUpdateAvailableMenuItem()
         {
@@ -21,10 +22,16 @@ namespace Quartz
             };
             updateAvailableToolStripMenuItem.Click += UpdateAvailableToolStripMenuItem_Click;
 
+            updateAvailableSeparator = new ToolStripSeparator
+            {
+                Name = "updateAvailableSeparator",
+                Visible = false
+            };
+
             int settingsIndex = SettingsMenuStrip.Items.IndexOf(settingsToolStripMenuItem);
-            SettingsMenuStrip.Items.Insert(
-                settingsIndex >= 0 ? settingsIndex : SettingsMenuStrip.Items.Count,
-                updateAvailableToolStripMenuItem);
+            int insertIndex = settingsIndex >= 0 ? settingsIndex + 1 : SettingsMenuStrip.Items.Count;
+            SettingsMenuStrip.Items.Insert(insertIndex, updateAvailableSeparator);
+            SettingsMenuStrip.Items.Insert(insertIndex + 1, updateAvailableToolStripMenuItem);
         }
 
         private void RefreshUpdateAvailableMenuItem()
@@ -35,6 +42,7 @@ namespace Quartz
                 !string.IsNullOrWhiteSpace(status.LatestVersion);
 
             updateAvailableToolStripMenuItem.Visible = visible;
+            updateAvailableSeparator.Visible = visible;
             updateAvailableToolStripMenuItem.Text = "Update available";
         }
 
