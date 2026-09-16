@@ -18,7 +18,7 @@ edges are rounded separately using `Height` and `ToolbarOverlap`, rather than
 rounding its position and thickness separately. Active tabs retain their seamless
 connection to the same toolbar colour.
 
-Source: [Quartz paint order](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:712),
+Source: [Quartz paint order](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:753),
 [Chromium overlap geometry](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/tabs/tab_style_views.cc:239>),
 [Chromium tab-strip child creation](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/frame/browser_view.cc:525>)
 and [later toolbar child creation](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/frame/browser_view.cc:566>).
@@ -27,23 +27,29 @@ At the user's request, no build or regression checks were run after applying the
 fix; visual confirmation is left to the user. The temporary test source and runner
 created earlier in this task were removed.
 
+## Applied: crowded tabs entering the add-button area
+
+Quartz retained minimum tab widths when there was insufficient room, but painted
+every tab without restricting the canvas to the available tab area. The fix uses
+Chromium's trailing-edge visibility rule: a tab that does not fit is hidden and
+excluded from mouse targeting, including its close button. Background tabs before
+the active tab also reserve the extra width they would need when selected.
+
+The add button is now laid out before tab visibility and mouse targeting are
+calculated. Its current animated position bounds tab painting, so open/close
+animations cannot paint underneath it. The tab canvas is clipped at that boundary
+to contain antialiased edges too. Resizing immediately keeps the add button inside
+its newly available space instead of letting its previous animation position
+extend toward the caption controls. Closing visuals use the same paint boundary.
+
+Source: `ChromiumTabRenderer.ShouldShowTab`, `FindTab`, `Render`, and
+`LayoutAddButton`; [Chromium visibility rule](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/tabs/tab_strip.cc:1404>).
+No runtime or build checks were run for this follow-up; visual testing is left to
+the user. This adds overflow hiding, not scrolling or an overflow menu.
+
 ## Additional findings — not changed
 
-1. **Overcrowded tabs can paint outside their allocated strip.** Quartz retains
-   minimum tab widths when there is insufficient room, but then paints every tab
-   without restricting the canvas to the available tab area. Hit testing likewise
-   considers those tab bounds without an overflow visibility rule. The full-window
-   bitmap only clips at the window edge, allowing tab content into the space
-   reserved for the plus button and caption controls. Chromium explicitly hides
-   tabs that cross the tab area's trailing edge, including cases where selecting
-   a tab would cause overflow. This is the most consequential remaining finding.
-
-   Sources: [Quartz minimum widths](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabGeometry.cs:47),
-   [paint loop](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:721),
-   [hit testing](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:491),
-   [Chromium visibility rule](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/tabs/tab_strip.cc:1404>).
-
-2. **Shared separators can disagree by one physical pixel at 150% scaling.**
+1. **Shared separators can disagree by one physical pixel at 150% scaling.**
    Quartz rounds the overlap to an integer pixel and aligns each path in local
    coordinates. Chromium aligns the original tab bounds in strip coordinates,
    allowing both tabs to round the same shared edge. For example, at 150%, a
@@ -55,10 +61,10 @@ created earlier in this task were removed.
    constant offset applied to one separator.
 
    Sources: [Quartz alignment](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabGeometry.cs:86),
-   [separator painting](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:801),
+   [separator painting](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:845),
    [Chromium alignment](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/tabs/tab_style_views.cc:912>).
 
-3. **Closing titles can shift left as the tab shrinks.** Quartz recalculates
+2. **Closing titles can shift left as the tab shrinks.** Quartz recalculates
    `roomy`, content padding and icon centring from the current animated width,
    then redraws the closing title using those new bounds. Crossing the 100-DIP
    tab-width threshold drops the left content inset from 20 to 16 DIP, so a title
@@ -66,11 +72,11 @@ created earlier in this task were removed.
    bounds. Chromium deliberately freezes the extra padding and centring decisions
    while closing to prevent this shift.
 
-   Sources: [Quartz content layout](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:811),
-   [closing title update](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:866),
+   Sources: [Quartz content layout](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:855),
+   [closing title update](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:910),
    [Chromium closing-state rules](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/tabs/tab.cc:915>).
 
-4. **Remainder pixels skip the active tab even when all tabs have equal sizing
+3. **Remainder pixels skip the active tab even when all tabs have equal sizing
    rules.** Quartz reserves the active tab's floored width, then distributes the
    remaining pixels among inactive tabs. Chromium distributes them left to right
    among all eligible tabs; the active tab is excluded only when its constrained
@@ -106,8 +112,8 @@ padding for mouse targeting, so the larger padded view is not a larger mouse
 close target. Its touch mode uses a separate 24-DIP size; that is not the desktop
 mouse sizing used here.
 
-Sources: [Quartz hit box and hover circle](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:831),
-[Quartz cross](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:1025),
+Sources: [Quartz hit box and hover circle](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:875),
+[Quartz cross](C:/Users/admin/source/repos/Quartz/EasyTabs/ChromiumTabRenderer.cs:1069),
 [Chromium cross and mouse targeting](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/chrome/browser/ui/views/tabs/tab_close_button.cc:152>),
 [Chromium circle radius](<C:/Users/admin/source/repos/Quartz - CHATGPT/Chromium85Reference/ui/views/layout/layout_provider.cc:145>).
 

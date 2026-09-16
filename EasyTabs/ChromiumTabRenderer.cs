@@ -24,7 +24,7 @@ namespace EasyTabs
             internal Rectangle Bounds, Target;
             internal readonly ChromiumHoverAnimation HoverAnimation = new ChromiumHoverAnimation();
             internal float Hover => (float)HoverAnimation.Value;
-            internal bool MouseHovered;
+            internal bool MouseHovered, Visible;
             internal Point HoverPoint;
             internal bool Closing, ClosingTargetInitialized, HasIcon;
             internal Visual Previous;
@@ -203,6 +203,7 @@ namespace EasyTabs
         private float _fontScale;
         private bool _hoverAnimating, _buttonAnimating, _contentAnimating, _addHovered, _disposed;
         private Point _lastCursor = new Point(int.MinValue, int.MinValue);
+        private Rectangle _tabPaintBounds;
         private TitleBarTab _hoveredTab;
         private ChromiumTabTheme _theme = ChromiumTabTheme.Light;
         private int? _availableWidthDuringMouseClose;
@@ -365,7 +366,7 @@ namespace EasyTabs
                 else ExitTabClosingMode();
                 if (!ShouldAnimateLayout() ||
                     (_parentWindow.Tabs.Count == 1 && _parentWindow.ExitOnLastTabClose) ||
-                    !_visuals.TryGetValue(tab, out visual) || visual.Geometry == null || visual.Content.Pixels == null) return;
+                    !_visuals.TryGetValue(tab, out visual) || !visual.Visible || visual.Geometry == null || visual.Content.Pixels == null) return;
                 visual.Closing = true;
                 visual.ClosingTargetInitialized = false;
                 visual.Previous = null;
@@ -490,6 +491,7 @@ namespace EasyTabs
 
         private TitleBarTab FindTab(Point cursor, IEnumerable<TitleBarTab> candidates = null)
         {
+            if (!_tabPaintBounds.Contains(cursor)) return null;
             // Exactly the reverse of painting, including hovered and dragged tabs.
             for (int i = _paintOrder.Count - 1; i >= 0; --i)
             {
@@ -501,6 +503,19 @@ namespace EasyTabs
                     return tab;
             }
             return null;
+        }
+
+        private bool ShouldShowTab(TitleBarTab tab, Visual visual, int activeIndex, int[] widths)
+        {
+            // TabStrip::ShouldTabBeVisible hides tabs that cross the trailing
+            // edge, rather than leaving a partial tab beside the + button.
+            if (visual.Bounds.Right > _tabPaintBounds.Right || visual.Bounds.Right <= _tabPaintBounds.Left)
+                return false;
+            if (visual.Closing || tab.IsPinned || activeIndex <= visual.Index) return true;
+
+            // A background tab before the active one must still fit if selected.
+            int extraWidth = Math.Max(0, widths[activeIndex] - widths[visual.Index]);
+            return visual.Bounds.Right + extraWidth <= _tabPaintBounds.Right;
         }
 
         public override bool IsOverAddButton(Point cursor)
@@ -570,6 +585,7 @@ namespace EasyTabs
                 int y = offset.Y + TopPadding;
                 _maxTabArea = new Rectangle(screenOrigin.X + startX, screenOrigin.Y + offset.Y,
                     GetMaxTabAreaWidth(tabs, offset), TabHeight);
+                _tabPaintBounds = new Rectangle(startX, y, _maxTabArea.Width, Scale(ChromiumTabMetrics.Height));
                 int activeIndex = tabs.FindIndex(t => t.Active);
                 bool inserting = animate && !IsTabRepositioning && !_detachedTabX.HasValue &&
                     tabs.Any(tab => !_visuals.ContainsKey(tab)) && tabs.Any(tab => _visuals.ContainsKey(tab));
@@ -690,16 +706,38 @@ namespace EasyTabs
                             scale, 0, geometry.ExtendHit, geometry.First);
                         geometry.Dispose();
                     }
-                    // Keep the highlight while the pointer is inside the shrinking
-                    // tab; on exit it fades normally instead of disappearing at close.
-                    bool hovered = visual.Bounds.Contains(cursor) &&
-                        visual.Geometry.HitTest.Contains(cursor.X - visual.Bounds.X, cursor.Y - visual.Bounds.Y);
-                    UpdateHover(visual, hovered, cursor, animate, now);
                     closingRight = Math.Max(closingRight, visual.Bounds.Right);
                 }
 
+                LayoutAddButton(tabs, startX, y, closingRight, now);
+                if (ShowAddButton)
+                    _tabPaintBounds.Width = Math.Max(0, Math.Min(_tabPaintBounds.Right, _addButtonArea.Left) - startX);
+
+                foreach (TitleBarTab tab in _closingTabs)
+                {
+                    Visual visual;
+                    if (!_visuals.TryGetValue(tab, out visual)) continue;
+                    visual.Visible = ShouldShowTab(tab, visual, activeIndex, widths);
+                    // Keep the highlight while the pointer is inside a visible
+                    // shrinking tab; hidden overflow cannot hover under buttons.
+                    bool hovered = visual.Visible && _tabPaintBounds.Contains(cursor) && visual.Bounds.Contains(cursor) &&
+                        visual.Geometry.HitTest.Contains(cursor.X - visual.Bounds.X, cursor.Y - visual.Bounds.Y);
+                    UpdateHover(visual, hovered, cursor, animate, now);
+                }
+
                 _paintOrder.Clear();
-                _paintOrder.AddRange(tabs);
+                foreach (TitleBarTab tab in tabs)
+                {
+                    Visual visual = _visuals[tab];
+                    visual.Visible = ShouldShowTab(tab, visual, activeIndex, widths);
+                    if (visual.Visible) _paintOrder.Add(tab);
+                    else
+                    {
+                        tab.CloseButtonArea = Rectangle.Empty;
+                        visual.CloseFeedback.Cancel();
+                        if (_pressedFeedback == visual.CloseFeedback) _pressedFeedback = null;
+                    }
+                }
                 _paintOrder.Sort(_comparePaintOrder);
                 _hoveredTab = IsTabRepositioning ? null : FindTab(cursor);
                 foreach (TitleBarTab tab in tabs)
@@ -715,11 +753,16 @@ namespace EasyTabs
                 using (var canvas = new SKCanvas(_pixels))
                 {
                     canvas.Clear(ToSkia(palette.Frame));
+                    canvas.Save();
+                    // Also contain antialiasing and aligned paths at fractional DPI.
+                    canvas.ClipRect(new SKRect(_tabPaintBounds.Left, _tabPaintBounds.Top,
+                        _tabPaintBounds.Right, _tabPaintBounds.Bottom));
                     // Closing visuals are never added to the mouse hit-test order.
                     foreach (TitleBarTab tab in _closingTabs)
                         if (_visuals.ContainsKey(tab)) PaintTab(canvas, tab, tabs, cursor, now, animate, false, palette);
                     foreach (TitleBarTab tab in _paintOrder) PaintTab(canvas, tab, tabs, cursor, now, animate, forceRedraw, palette);
-                    PaintAddButton(canvas, tabs, startX, y, cursor, now, animate, closingRight, palette);
+                    canvas.Restore();
+                    PaintAddButton(canvas, cursor, now, animate, palette);
                     // The toolbar covers the tabs' bottom overlap in Chromium.
                     // Paint this join last so inactive fills and hover effects
                     // cannot extend into it. Round its two edges independently.
@@ -759,6 +802,7 @@ namespace EasyTabs
             ChromiumTabTheme.WindowPalette palette)
         {
             Visual visual = _visuals[tab];
+            if (!visual.Visible) return;
             ChromiumTabGeometry geometry = visual.Geometry;
             // Chromium's IsActiveTab returns false once a tab leaves the model.
             // The retained visual must not inherit the removed tab's Active flag.
@@ -1034,8 +1078,7 @@ namespace EasyTabs
             }
         }
 
-        private void PaintAddButton(SKCanvas canvas, List<TitleBarTab> tabs, int startX, int y, Point cursor, double now, bool animate, int closingRight,
-            ChromiumTabTheme.WindowPalette palette)
+        private void LayoutAddButton(List<TitleBarTab> tabs, int startX, int y, int closingRight, double now)
         {
             if (!ShowAddButton)
             {
@@ -1061,6 +1104,19 @@ namespace EasyTabs
             // drag pushes it outside the tabs; normal frames keep that curve intact.
             if (dragging)
                 _addButtonArea.X = Math.Min(maximumX, Math.Max(_addButtonArea.X, visibleRight));
+            // A window resize can leave the old animated bounds outside the new
+            // tab area. Keep the button clear of the caption controls immediately.
+            if (_addButtonArea.X > maximumX)
+            {
+                _addButtonArea.X = maximumX;
+                _animation.RecordDisplayedBounds(_addKey, _addButtonArea);
+            }
+        }
+
+        private void PaintAddButton(SKCanvas canvas, Point cursor, double now, bool animate,
+            ChromiumTabTheme.WindowPalette palette)
+        {
+            if (!ShowAddButton) return;
             float cx = _addButtonArea.X + _addButtonArea.Width / 2f;
             float cy = _addButtonArea.Y + _addButtonArea.Height / 2f;
             _addHovered = !IsTabRepositioning && IsOverAddButton(cursor);
