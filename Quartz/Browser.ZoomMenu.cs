@@ -405,8 +405,7 @@ namespace Quartz
                         renderer.ColorTable.MenuItemSelected;
 
                     button.FlatAppearance.MouseDownBackColor =
-                        renderer.ColorTable
-                            .MenuItemPressedGradientMiddle;
+                        renderer.ColorTable.MenuItemSelected;
                 }
             }
 
