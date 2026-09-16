@@ -715,15 +715,17 @@ namespace EasyTabs
                 using (var canvas = new SKCanvas(_pixels))
                 {
                     canvas.Clear(ToSkia(palette.Frame));
-                    // A continuous one-DIP connection to the toolbar, also covering
-                    // the area below the trailing tabs and the new-tab button.
-                    using (var paint = new SKPaint { Color = ToSkia(palette.ActiveTab) })
-                        canvas.DrawRect(0, y + Scale(34), _pixels.Width, Scale(1), paint);
                     // Closing visuals are never added to the mouse hit-test order.
                     foreach (TitleBarTab tab in _closingTabs)
                         if (_visuals.ContainsKey(tab)) PaintTab(canvas, tab, tabs, cursor, now, animate, false, palette);
                     foreach (TitleBarTab tab in _paintOrder) PaintTab(canvas, tab, tabs, cursor, now, animate, forceRedraw, palette);
                     PaintAddButton(canvas, tabs, startX, y, cursor, now, animate, closingRight, palette);
+                    // The toolbar covers the tabs' bottom overlap in Chromium.
+                    // Paint this join last so inactive fills and hover effects
+                    // cannot extend into it. Round its two edges independently.
+                    int toolbarTop = y + Scale(ChromiumTabMetrics.Height - ChromiumTabMetrics.ToolbarOverlap);
+                    using (var paint = new SKPaint { Color = ToSkia(palette.ActiveTab) })
+                        canvas.DrawRect(0, toolbarTop, _pixels.Width, y + Scale(ChromiumTabMetrics.Height) - toolbarTop, paint);
                     canvas.Flush();
                 }
                 graphics.DrawImageUnscaled(_buffer, 0, 0);
