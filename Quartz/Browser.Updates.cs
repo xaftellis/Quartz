@@ -35,9 +35,7 @@ namespace Quartz
                 !string.IsNullOrWhiteSpace(status.LatestVersion);
 
             updateAvailableToolStripMenuItem.Visible = visible;
-            updateAvailableToolStripMenuItem.Text = visible
-                ? "Update available - " + status.LatestVersion
-                : "Update available";
+            updateAvailableToolStripMenuItem.Text = "Update available";
         }
 
         private void UpdateAvailableToolStripMenuItem_Click(object sender, EventArgs e)

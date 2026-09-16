@@ -120,7 +120,7 @@ namespace EasyTabs
         // Keep the raster composition, with Chromium's separate hover/ripple clocks.
         private sealed class ButtonFeedback : IDisposable
         {
-            private readonly ChromiumButtonAnimation _animation;
+            private readonly ChromiumButtonAnimation _animation = new ChromiumButtonAnimation();
             private SKPath _clip;
             private float _clipRadius;
             internal float HoverOpacity => _animation.HoverOpacity;
@@ -128,11 +128,6 @@ namespace EasyTabs
             internal float InkProgress => _animation.InkProgress;
             internal PointF Origin { get; private set; }
             internal bool IsAnimating => _animation.IsAnimating;
-
-            internal ButtonFeedback(bool immediateHover = false)
-            {
-                _animation = new ChromiumButtonAnimation(immediateHover);
-            }
 
             internal void Press(double now, PointF origin)
             {
@@ -434,12 +429,19 @@ namespace EasyTabs
         {
             lock (_sync)
             {
+                if (_pressedFeedback == null) return;
                 // Hit-test the release before adding a tab can move the button.
                 TitleBarTab tab = FindTab(cursor);
                 bool inside = _pressedFeedback == _addFeedback ? IsOverAddButton(cursor) :
                     tab != null && _visuals[tab].CloseFeedback == _pressedFeedback && IsOverCloseButton(tab, cursor);
-                _pressedFeedback?.Release(AnimationTimeMilliseconds, inside);
+                ButtonFeedback released = _pressedFeedback;
+                _pressedFeedback = null;
+                released.Release(AnimationTimeMilliseconds, inside);
+                _buttonAnimating |= released.IsAnimating;
             }
+            // Consume the press before the click callback changes focus/capture.
+            // A later cancellation must not abort an already committed ripple.
+            _parentWindow.RedrawTabs();
         }
 
         internal override void CancelButtonPress()
@@ -464,8 +466,7 @@ namespace EasyTabs
             bool redraw;
             lock (_sync)
             {
-                redraw = _sizingBoxes.CancelPress() || _pressedFeedback != null;
-                _pressedFeedback = null;
+                redraw = _sizingBoxes.CancelPress();
             }
             if (redraw) _parentWindow.RedrawTabs();
         }

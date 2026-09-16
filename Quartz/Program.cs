@@ -80,26 +80,30 @@ namespace Quartz
             ThemeService.Start();
 
             string frequency = MainSettingsService.Get("UpdateCheckFrequency");
-            DateTime lastChecked = UpdateStatusService.Get().CheckedAtUtc;
-            DateTime now = DateTime.Now;
+            UpdateStatusModel updateStatus = UpdateStatusService.Get();
+
+            DateTime nowUtc = DateTime.UtcNow;
+            DateTime lastCheckedUtc = updateStatus != null
+                ? updateStatus.CheckedAtUtc
+                : DateTime.MinValue;
 
             bool shouldCheck;
-            switch (frequency)
+            switch ((frequency ?? string.Empty).Trim().ToLowerInvariant())
             {
                 case "startup":
                     shouldCheck = true;
                     break;
 
                 case "daily":
-                    shouldCheck = now >= lastChecked.AddDays(1);
+                    shouldCheck = updateStatus == null || nowUtc >= lastCheckedUtc.AddDays(1);
                     break;
 
                 case "weekly":
-                    shouldCheck = now >= lastChecked.AddDays(7);
+                    shouldCheck = updateStatus == null || nowUtc >= lastCheckedUtc.AddDays(7);
                     break;
 
                 case "monthly":
-                    shouldCheck = now >= lastChecked.AddMonths(1);
+                    shouldCheck = updateStatus == null || nowUtc >= lastCheckedUtc.AddMonths(1);
                     break;
 
                 case "never":
@@ -110,10 +114,13 @@ namespace Quartz
 
             if (shouldCheck)
             {
-                Process.Start(
-                    Path.Combine(Application.StartupPath, "QuartzUpdater.exe"),
-                    "--check-only");
+                string updaterPath = Path.Combine(Application.StartupPath, "QuartzUpdater.exe");
+                if (File.Exists(updaterPath))
+                {
+                    Process.Start(updaterPath, "--check-only");
+                }
             }
+
 
             bool runBrowser = MainSettingsService.Get("RunBrowser") == "true";
 

@@ -1,3 +1,4 @@
+// Portions adapted from Chromium. See Chromium-LICENSE.txt.
 using System;
 
 namespace EasyTabs
@@ -7,17 +8,12 @@ namespace EasyTabs
     internal sealed class ChromiumButtonAnimation
     {
         private enum Ripple { Hidden, Pending, Triggered, Hiding }
-        private readonly double _hoverDuration;
+        private const double HoverDuration = 250;
         private Ripple _ripple;
         private bool _held, _inside;
         private double _hoverFrom, _hoverTarget, _hoverStarted, _hoverTime;
         private double _pressedAt, _fadeAt, _hideAt, _hideOpacity, _hideProgress;
         private bool _hoverAnimating, _rippleAnimating;
-
-        internal ChromiumButtonAnimation(bool immediateHover = false)
-        {
-            _hoverDuration = immediateHover ? 0 : 250;
-        }
 
         internal float HoverOpacity { get; private set; }
         internal float InkOpacity { get; private set; }
@@ -88,7 +84,7 @@ namespace EasyTabs
             Sample(now, true);
             _held = _inside = false;
             HideRipple(now);
-            Highlight(false, now, _hoverDuration);
+            Highlight(false, now, HoverDuration);
         }
 
         internal void Reset()
@@ -113,7 +109,7 @@ namespace EasyTabs
             // Pointer exit does not remove the highlight while a committed click
             // is playing. It fades over 120 ms when that ripple becomes hidden.
             if (_ripple == Ripple.Hidden || _ripple == Ripple.Hiding)
-                Highlight(hovered, now, _hoverDuration);
+                Highlight(hovered, now, HoverDuration);
             Sample(now, animate);
         }
 
@@ -122,6 +118,7 @@ namespace EasyTabs
             _rippleAnimating = false;
             if (_ripple == Ripple.Pending || _ripple == Ripple.Triggered)
             {
+                if (!animate) _pressedAt = Math.Min(_pressedAt, now - 240);
                 double grow = animate ? Progress(now - _pressedAt, 240) : 1;
                 InkProgress = (float)TabLoadingIndicator.FastOutSlowIn(grow);
                 double fade = _ripple == Ripple.Triggered
@@ -149,6 +146,7 @@ namespace EasyTabs
             double t = animate ? Progress(now - _hoverStarted, _hoverTime) : 1;
             HoverOpacity = (float)(.16 * (_hoverFrom + (_hoverTarget - _hoverFrom) * EaseInOut(t)));
             _hoverAnimating = animate && t < 1 && _hoverFrom != _hoverTarget;
+            if (!animate) { _hoverFrom = _hoverTarget; _hoverTime = 0; }
         }
     }
 }

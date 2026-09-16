@@ -216,7 +216,7 @@
     <value>mnuMenu</value>
   </data>
   <data name="&gt;&gt;mnuMenu.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -382,7 +382,7 @@
     <value>mnuDownloadsDropDown</value>
   </data>
   <data name="&gt;&gt;mnuDownloadsDropDown.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnAddFavourite.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1378,7 +1378,7 @@
     <value>mnuSearch</value>
   </data>
   <data name="&gt;&gt;mnuSearch.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnRefresh.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -2245,7 +2245,7 @@
     <value>btnSiteInformation</value>
   </data>
   <data name="&gt;&gt;btnSiteInformation.Type" xml:space="preserve">
-    <value>Quartz.Controls.SiteInfoButton, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.SiteInfoButton, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;btnSiteInformation.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -2278,7 +2278,7 @@
     <value>pnlFavourites</value>
   </data>
   <data name="&gt;&gt;pnlFavourites.Type" xml:space="preserve">
-    <value>Quartz.Controls.FavouritesBar, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FavouritesBar, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlFavourites.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -2497,7 +2497,7 @@
     <value>mnuHistory</value>
   </data>
   <data name="&gt;&gt;mnuHistory.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="historyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 22</value>
@@ -2527,7 +2527,7 @@
     <value>mnuFavourites</value>
   </data>
   <data name="&gt;&gt;mnuFavourites.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="favouritesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 22</value>
@@ -2586,12 +2586,6 @@
   <data name="toolStripSeparator12.Size" type="System.Drawing.Size, System.Drawing">
     <value>157, 6</value>
   </data>
-  <data name="proformanceToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 22</value>
-  </data>
-  <data name="proformanceToolStripMenuItem.Text" xml:space="preserve">
-    <value>Proformance</value>
-  </data>
   <data name="webview2TaskManagerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>160, 22</value>
   </data>
@@ -2608,13 +2602,13 @@
     <value>Developer Tools</value>
   </data>
   <data name="mnuExperts.Size" type="System.Drawing.Size, System.Drawing">
-    <value>161, 104</value>
+    <value>161, 82</value>
   </data>
   <data name="&gt;&gt;mnuExperts.Name" xml:space="preserve">
     <value>mnuExperts</value>
   </data>
   <data name="&gt;&gt;mnuExperts.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="expertsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 22</value>
@@ -2650,7 +2644,7 @@
     <value>mnuUserData</value>
   </data>
   <data name="&gt;&gt;mnuUserData.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="userDataToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 22</value>
@@ -2689,7 +2683,7 @@
     <value>SettingsMenuStrip</value>
   </data>
   <data name="&gt;&gt;SettingsMenuStrip.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnSettings.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
@@ -2872,7 +2866,7 @@
     <value>pnlTop</value>
   </data>
   <data name="&gt;&gt;pnlTop.Type" xml:space="preserve">
-    <value>Quartz.Controls.BrowserToolbarPanel, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.BrowserToolbarPanel, Quartz, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlTop.Parent" xml:space="preserve">
     <value>$this</value>
@@ -8638,12 +8632,6 @@
   </data>
   <data name="&gt;&gt;toolStripSeparator12.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;proformanceToolStripMenuItem.Name" xml:space="preserve">
-    <value>proformanceToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;proformanceToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;webview2TaskManagerToolStripMenuItem.Name" xml:space="preserve">
     <value>webview2TaskManagerToolStripMenuItem</value>

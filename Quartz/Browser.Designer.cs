@@ -104,7 +104,6 @@ namespace Quartz
             this.mnuExperts = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.nameWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
-            this.proformanceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.webview2TaskManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.inspectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -713,7 +712,6 @@ namespace Quartz
             this.mnuExperts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.nameWindowToolStripMenuItem,
             this.toolStripSeparator12,
-            this.proformanceToolStripMenuItem,
             this.webview2TaskManagerToolStripMenuItem,
             this.toolStripSeparator13,
             this.inspectToolStripMenuItem});
@@ -732,11 +730,6 @@ namespace Quartz
             // 
             this.toolStripSeparator12.Name = "toolStripSeparator12";
             resources.ApplyResources(this.toolStripSeparator12, "toolStripSeparator12");
-            // 
-            // proformanceToolStripMenuItem
-            // 
-            this.proformanceToolStripMenuItem.Name = "proformanceToolStripMenuItem";
-            resources.ApplyResources(this.proformanceToolStripMenuItem, "proformanceToolStripMenuItem");
             // 
             // webview2TaskManagerToolStripMenuItem
             // 
@@ -1013,7 +1006,6 @@ namespace Quartz
         private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nameWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
-        private System.Windows.Forms.ToolStripMenuItem proformanceToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
         private System.Windows.Forms.ToolStripMenuItem favouritesToolStripMenuItem;
         private Quartz.Controls.FocusAwareContextMenuStrip mnuFavourites;

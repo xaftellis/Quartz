@@ -36,7 +36,7 @@ TabRenderer = new ChromiumTabRenderer(this)
 };
 ```
 
-Content implementing `ITabLoadingPhase` supplies the waiting state; existing `ITabLoadingState` implementations still work. `ITabFaviconState` identifies the default placeholder. The favicon transition uses [modern Chromium's reversible animation](https://chromium.googlesource.com/chromium/src/+/9130e7a5778e8a5e29cbb36b0c3bf3aec6fdb5cf/chrome/browser/ui/views/tabs/tab/tab_icon.cc); the optional waiting stage uses [Chromium's implementation immediately before its October 2024 removal](https://chromium.googlesource.com/chromium/src/+/e8b04254875e840f401e669680ae05005895d71c/ui/gfx/paint_throbber.cc).
+Content implementing `ITabLoadingPhase` supplies the waiting state; existing `ITabLoadingState` implementations still work. `ITabFaviconState` identifies the default placeholder. Favicon and waiting transitions follow the local Chromium 85 reference: loading immediately crops a real favicon, completion reveals it over 250 ms, and icon visibility changes move the title over 100 ms. See [TabAnimationComparison.md](TabAnimationComparison.md) for source locations, behavior, and verification limits.
 
 The library comes with a renderer for Chrome-like tabs (`ChromeTabRenderer`), but you can implement your own by creating a class inheriting from `BaseTabRenderer`.  The TestApp directory contains the project for a tabbed web browser test application that you can use as a starting point for implementing your own functionality.
 

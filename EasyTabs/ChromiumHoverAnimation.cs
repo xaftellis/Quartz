@@ -1,3 +1,4 @@
+// Portions adapted from Chromium. See Chromium-LICENSE.txt.
 using System;
 
 namespace EasyTabs
