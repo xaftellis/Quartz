@@ -366,15 +366,6 @@
   <data name="changeLocationToolStripMenuItem1.Text" xml:space="preserve">
     <value>Change Location</value>
   </data>
-  <data name="mnuDownloadsDropDown.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 48</value>
-  </data>
-  <data name="&gt;&gt;mnuDownloadsDropDown.Name" xml:space="preserve">
-    <value>mnuDownloadsDropDown</value>
-  </data>
-  <data name="&gt;&gt;mnuDownloadsDropDown.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
   <data name="downloadsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+J</value>
   </data>
@@ -383,6 +374,15 @@
   </data>
   <data name="downloadsToolStripMenuItem.Text" xml:space="preserve">
     <value>Downloads</value>
+  </data>
+  <data name="mnuDownloadsDropDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>165, 48</value>
+  </data>
+  <data name="&gt;&gt;mnuDownloadsDropDown.Name" xml:space="preserve">
+    <value>mnuDownloadsDropDown</value>
+  </data>
+  <data name="&gt;&gt;mnuDownloadsDropDown.Type" xml:space="preserve">
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnAddFavourite.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -2521,7 +2521,7 @@
     <value>185, 6</value>
   </data>
   <data name="mnuFavourites.Size" type="System.Drawing.Size, System.Drawing">
-    <value>189, 54</value>
+    <value>189, 32</value>
   </data>
   <data name="&gt;&gt;mnuFavourites.Name" xml:space="preserve">
     <value>mnuFavourites</value>
@@ -2872,7 +2872,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlTop.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>1</value>
   </data>
   <data name="pnlDivider.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -5633,7 +5633,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;pnlBottom.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
