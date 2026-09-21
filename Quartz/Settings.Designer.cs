@@ -235,14 +235,17 @@
             // 
             this.buttonChech.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.buttonChech.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.buttonChech.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.buttonChech.FocusRingColor = System.Drawing.Color.Empty;
             this.buttonChech.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonChech.ForeColor = System.Drawing.Color.Black;
+            this.buttonChech.InkColor = System.Drawing.Color.Empty;
             this.buttonChech.Location = new System.Drawing.Point(327, 218);
             this.buttonChech.Name = "buttonChech";
+            this.buttonChech.Padding = new System.Windows.Forms.Padding(6);
             this.buttonChech.Size = new System.Drawing.Size(137, 38);
             this.buttonChech.TabIndex = 1;
             this.buttonChech.Text = "Check For Updates";
+            this.buttonChech.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.buttonChech.UseVisualStyleBackColor = true;
             this.buttonChech.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -416,13 +419,14 @@
             // 
             // btnDown
             // 
-            this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDown.FocusRingColor = System.Drawing.Color.Empty;
+            this.btnDown.InkColor = System.Drawing.Color.Empty;
             this.btnDown.Location = new System.Drawing.Point(225, 104);
             this.btnDown.Name = "btnDown";
-            this.btnDown.Padding = System.Windows.Forms.Padding.Empty;
             this.btnDown.Size = new System.Drawing.Size(28, 28);
             this.btnDown.TabIndex = 13;
             this.btnDown.Text = "▼";
+            this.btnDown.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnDown.UseVisualStyleBackColor = true;
             this.btnDown.Click += new System.EventHandler(this.button1_Click_1);
             // 

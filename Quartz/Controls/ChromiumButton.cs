@@ -17,6 +17,7 @@ namespace Quartz.Controls
         // TEMPORARY click-colour test: set this to false to restore all original colours.
         internal static readonly bool TestModernLightClickColor = true;
         internal static bool IsLightThemeForClickColorTest { get; set; }
+
         private readonly ChromiumButtonAnimation _animation = new ChromiumButtonAnimation();
         private readonly ChromiumButtonImage _imageRenderer = new ChromiumButtonImage();
         private bool _mouseDown, _keyDown, _hovered, _active, _menuActive, _releasingMouse, _keyboardFocus;
@@ -29,6 +30,10 @@ namespace Quartz.Controls
         private PointF _origin;
         private Point _releasePoint;
         private bool _releasingKey, _touchMouseMessage;
+        private MouseButtons _triggerButtons = MouseButtons.Left, _pressedMouseButton;
+        private MouseEventArgs _middleClickEvent;
+        private bool _middleClickRaised;
+        private int _popupClickDepth;
         private ContextMenuStrip _observedMenu;
         private Color _inkColor = Color.Empty;
         private Color _focusRingColor = Color.Empty;
@@ -37,6 +42,12 @@ namespace Quartz.Controls
         private SKPaint _paint;
         private SKRoundRect _clip;
         private Bitmap _buffer;
+        private double _paintedHighlight, _paintedOpacity, _paintedRadius;
+        private string _measuredText;
+        private Font _measuredFont;
+        private TextFormatFlags _measuredFlags;
+        private float _measuredScale;
+        private Size _measuredLabel;
         internal bool SuppressSnapshotImage { get; set; }
         internal bool SuppressSnapshotText { get; set; }
 
@@ -81,12 +92,30 @@ namespace Quartz.Controls
                 if (_active == value) return;
                 _active = value;
                 UpdateActivation();
-                if (IsHandleCreated) AccessibilityNotifyClients(AccessibleEvents.StateChange, -1);
             }
         }
 
         [Browsable(false)]
-        public bool IsPressed => Enabled && (_active || _menuActive || _keyDown || (_mouseDown && _hovered));
+        public bool IsPressed => Enabled && (Activated || _keyDown || (_mouseDown && _hovered));
+
+        [Category("Behavior"), DefaultValue(MouseButtons.Left)]
+        [Description("Mouse buttons that invoke Click. Chromium navigation buttons also accept Middle.")]
+        public MouseButtons TriggerButtons
+        {
+            get => _triggerButtons;
+            set
+            {
+                if ((value & ~(MouseButtons.Left | MouseButtons.Middle)) != 0)
+                    throw new ArgumentOutOfRangeException(nameof(value));
+                if (_triggerButtons == value) return;
+                _triggerButtons = value;
+                ResetFeedback();
+            }
+        }
+
+        [Category("Behavior"), DefaultValue(false)]
+        [Description("Keep the pending ripple active while Click opens a popup. IsActive or the observed menu owns it afterwards.")]
+        public bool HoldActiveOnClick { get; set; }
 
         [Category("Behavior"), DefaultValue(true)]
         public bool FocusOnPress { get; set; } = true;
@@ -185,7 +214,7 @@ namespace Quartz.Controls
 
         protected virtual float DpiScale => DeviceDpi / 96f;
         protected bool IsHovered => _hovered;
-        private bool Activated => _active || _menuActive;
+        private bool Activated => _active || _menuActive || _popupClickDepth > 0;
         private bool CanAnimate => _animationEnabled && _systemAnimations && !DesignMode;
         protected Color SurfaceColor => OpaqueBackground(this);
         protected Color ContentColor => Enabled ? ForeColor : Blend(ForeColor, SurfaceColor, 110 / 255f);
@@ -215,23 +244,32 @@ namespace Quartz.Controls
             _paint.Style = SKPaintStyle.Fill;
             _paint.Color = ToSkia(SurfaceColor);
             _canvas.DrawRoundRect(_clip, _paint);
-            _canvas.Flush();
-            e.Graphics.DrawImageUnscaled(_buffer, 0, 0);
 
             // Retain Quartz's decorative backgrounds (including seasonal snow).
             if (BackgroundImage != null)
+            {
+                _canvas.Flush();
+                e.Graphics.DrawImageUnscaled(_buffer, 0, 0);
                 DrawBackgroundImage(e.Graphics);
+                _canvas.Clear(SKColors.Transparent);
+            }
 
-            _canvas.Clear(SKColors.Transparent);
-            _canvas.Save();
-            _canvas.ClipRoundRect(_clip, SKClipOperation.Intersect, true);
             // Chromium 85's platform high-contrast ink-drop feature is disabled
             // by default. Toolbar ink still uses maximum contrast in that mode.
             Color ink = _inkColor.IsEmpty ? DefaultInkColor : _inkColor;
             double highlight = Enabled ? _animation.Highlight(now) : 0;
             double opacity = Enabled ? _animation.Opacity(now) : 0;
-            _paint.Color = ToSkia(ink, highlight * HighlightOpacity);
-            _canvas.DrawRect(ToSkia(bounds), _paint);
+            double rippleProgress = opacity > 0 ? _animation.Radius(now) : 0;
+            if (highlight > 0 || opacity > 0)
+            {
+                _canvas.Save();
+                _canvas.ClipRoundRect(_clip, SKClipOperation.Intersect, true);
+            }
+            if (highlight > 0)
+            {
+                _paint.Color = ToSkia(ink, highlight * HighlightOpacity);
+                _canvas.DrawRect(ToSkia(bounds), _paint);
+            }
             if (opacity > 0)
             {
                 // FloodFillInkDropRipple expands to the farthest HOST corner;
@@ -239,22 +277,20 @@ namespace Quartz.Controls
                 double dx = Math.Max(Math.Abs(_origin.X), Math.Abs(Width - _origin.X));
                 double dy = Math.Max(Math.Abs(_origin.Y), Math.Abs(Height - _origin.Y));
                 float maximum = (float)Math.Sqrt(dx * dx + dy * dy);
-                float rippleRadius = DpiScale + (maximum - DpiScale) * (float)_animation.Radius(now);
-                // ORIGINAL (kept for easy rollback):
-                // _paint.Color = ToSkia(ink, opacity * RippleOpacity);
-                // Chrome's baseline light kColorSysStateRipplePrimary:
-                // kColorRefPrimary70 (#7CACF8), alpha 0x52. Used by profile/menu
-                // buttons; applied to every shared button here only for this test.
-                // References: ui/color/{ref,sys}_color_mixer.cc in modern Chromium.
+                float rippleRadius = DpiScale + (maximum - DpiScale) * (float)rippleProgress;
+                // Temporary light-theme click-colour experiment; v85 ink remains the fallback.
                 bool testClickColor = TestModernLightClickColor && IsLightThemeForClickColorTest;
                 _paint.Color = testClickColor
                     ? ToSkia(Color.FromArgb(0x7C, 0xAC, 0xF8), opacity * (0x52 / 255d))
                     : ToSkia(ink, opacity * RippleOpacity);
                 _canvas.DrawCircle(_origin.X, _origin.Y, rippleRadius, _paint);
             }
-            _canvas.Restore();
+            if (highlight > 0 || opacity > 0) _canvas.Restore();
             _canvas.Flush();
             e.Graphics.DrawImageUnscaled(_buffer, 0, 0);
+            _paintedHighlight = highlight;
+            _paintedOpacity = opacity;
+            _paintedRadius = rippleProgress;
             PaintButtonContent(e.Graphics);
 
             if (Enabled && Focused && (!FocusOnPress || (ShowFocusCues && _keyboardFocus)))
@@ -286,24 +322,10 @@ namespace Quartz.Controls
             GetContentBounds(out Rectangle imageBounds, out Rectangle textBounds);
             if (!SuppressSnapshotImage && HasImage && imageBounds.Width > 0 && imageBounds.Height > 0)
             {
-                EnsureBuffer();
-                _canvas.Clear(SKColors.Transparent);
-                _canvas.Save();
-                if (_mirrorImageInRtl && RightToLeft == RightToLeft.Yes)
-                {
-                    _canvas.Translate(imageBounds.Left + imageBounds.Right, 0);
-                    _canvas.Scale(-1, 1);
-                }
-                _paint.Style = SKPaintStyle.Fill;
-                _paint.Color = new SKColor(255, 255, 255, Enabled ? (byte)255 : (byte)110);
-                // Rasterize once at device scale and then copy pixels 1:1. Hover
-                // and press change ink, never the glyph or its position.
-                SKBitmap pixels = _imageRenderer.Get(Image, VectorIcon, imageBounds.Size, ForeColor);
-                _canvas.DrawBitmap(pixels, imageBounds.Left, imageBounds.Top,
-                    new SKSamplingOptions(SKFilterMode.Nearest, SKMipmapMode.None), _paint);
-                _canvas.Restore();
-                _canvas.Flush();
-                graphics.DrawImageUnscaled(_buffer, 0, 0);
+                // Copy only the cached icon, not another full button-sized bitmap.
+                Bitmap icon = _imageRenderer.GetDrawingImage(Image, VectorIcon, imageBounds.Size, ForeColor,
+                    Enabled, _mirrorImageInRtl && RightToLeft == RightToLeft.Yes);
+                graphics.DrawImageUnscaled(icon, imageBounds.Location);
             }
             if (!SuppressSnapshotText && textBounds.Width > 0 && textBounds.Height > 0 && !string.IsNullOrEmpty(Text))
                 TextRenderer.DrawText(graphics, Text, Font, textBounds, ContentColor, GetTextFlags());
@@ -389,8 +411,21 @@ namespace Quartz.Controls
             return new Size(width, height);
         }
 
-        private Size MeasureLabel() => string.IsNullOrEmpty(Text) ? Size.Empty : TextRenderer.MeasureText(Text, Font,
-            new Size(int.MaxValue, int.MaxValue), GetTextFlags());
+        private Size MeasureLabel()
+        {
+            if (string.IsNullOrEmpty(Text)) return Size.Empty;
+            TextFormatFlags flags = GetTextFlags();
+            if (_measuredText != Text || !ReferenceEquals(_measuredFont, Font) ||
+                _measuredFlags != flags || _measuredScale != DpiScale)
+            {
+                _measuredText = Text;
+                _measuredFont = Font;
+                _measuredFlags = flags;
+                _measuredScale = DpiScale;
+                _measuredLabel = TextRenderer.MeasureText(Text, Font, new Size(int.MaxValue, int.MaxValue), flags);
+            }
+            return _measuredLabel;
+        }
 
         protected override void OnMouseEnter(EventArgs e)
         {
@@ -401,17 +436,22 @@ namespace Quartz.Controls
         protected override void OnMouseLeave(EventArgs e)
         {
             SetHovered(false);
-            if (_mouseDown && !Activated) _animation.Cancel(ButtonFrames.Now);
-            WakeAnimation();
+            if (_mouseDown && !Activated)
+            {
+                _animation.Cancel(ButtonFrames.Now);
+                WakeAnimation();
+            }
             base.OnMouseLeave(e);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
             if (FocusOnPress) _keyboardFocus = false;
-            if (Enabled && e.Button == MouseButtons.Left && HitTest(e.Location))
+            if (Enabled && !_mouseDown && (TriggerButtons & e.Button) != 0 && HitTest(e.Location))
             {
                 _mouseDown = true;
+                _pressedMouseButton = e.Button;
+                if (e.Button == MouseButtons.Middle) Capture = true;
                 SetHovered(!_touchMouseMessage);
                 if (!Activated && CanStartRippleFromInput())
                 {
@@ -429,13 +469,18 @@ namespace Quartz.Controls
             SetHovered(inside && !_touchMouseMessage);
             if (_mouseDown && !Activated)
             {
-                if (!inside) _animation.Cancel(ButtonFrames.Now);
-                else if (CanStartRippleFromInput() && (_animation.State == ChromiumButtonAnimation.InkState.Hiding || _animation.State == ChromiumButtonAnimation.InkState.Hidden))
+                if (!inside && _animation.State == ChromiumButtonAnimation.InkState.Pending)
+                {
+                    _animation.Cancel(ButtonFrames.Now);
+                    WakeAnimation();
+                }
+                else if (inside && CanStartRippleFromInput() &&
+                    (_animation.State == ChromiumButtonAnimation.InkState.Hiding || _animation.State == ChromiumButtonAnimation.InkState.Hidden))
                 {
                     _origin = e.Location;
                     _animation.Press(ButtonFrames.Now);
+                    WakeAnimation();
                 }
-                WakeAnimation();
             }
             base.OnMouseMove(e);
         }
@@ -444,12 +489,31 @@ namespace Quartz.Controls
         {
             // Button.OnMouseUp raises Click BEFORE the public MouseUp event.
             // Keep our press alive until that call has accepted or rejected it.
-            try { base.OnMouseUp(e); }
+            bool releasedPress = _mouseDown && e.Button == _pressedMouseButton;
+            try
+            {
+                if (releasedPress && e.Button == MouseButtons.Middle && Enabled &&
+                    HitTest(e.Location) && IsPointOverControl(PointToScreen(e.Location), false))
+                {
+                    // PerformClick retains Button's validation and DialogResult
+                    // contract. Pass the real input on to the Click subscriber.
+                    _middleClickEvent = e;
+                    _middleClickRaised = false;
+                    try
+                    {
+                        PerformClick();
+                        if (_middleClickRaised && !IsDisposed) OnMouseClick(e);
+                    }
+                    finally { _middleClickEvent = null; }
+                }
+                if (!IsDisposed) base.OnMouseUp(e);
+            }
             finally
             {
-                if (e.Button == MouseButtons.Left && !IsDisposed)
+                if (releasedPress && !IsDisposed)
                 {
                     _mouseDown = false;
+                    _pressedMouseButton = MouseButtons.None;
                     if (_animation.State == ChromiumButtonAnimation.InkState.Pending)
                         _animation.Cancel(ButtonFrames.Now);
                     WakeAnimation();
@@ -459,15 +523,39 @@ namespace Quartz.Controls
 
         protected override void OnClick(EventArgs e)
         {
-            if ((_releasingMouse && (!_mouseDown || !HitTest(_releasePoint))) || (_releasingKey && !_keyDown)) return;
-            if (Enabled && !Activated && CanStartRippleFromInput())
+            if (_middleClickEvent != null)
+            {
+                e = _middleClickEvent;
+                _middleClickEvent = null;
+            }
+            var mouse = e as MouseEventArgs;
+            if ((_releasingMouse && mouse != null && (!_mouseDown || mouse.Button != _pressedMouseButton || !HitTest(_releasePoint))) ||
+                (_releasingKey && !_keyDown)) return;
+            if (!Enabled) return;
+            bool holdForPopup = HoldActiveOnClick && !Activated;
+            if (holdForPopup)
+            {
+                ++_popupClickDepth;
+                UpdateActivation();
+            }
+            else if (!Activated && CanStartRippleFromInput())
             {
                 if (!_mouseDown && !_keyDown) _origin = CenterPoint();
                 _animation.Trigger(ButtonFrames.Now);
                 WakeAnimation();
             }
             _mouseDown = _keyDown = false;
-            base.OnClick(e); // preserves validation, DialogResult and all existing handlers
+            _pressedMouseButton = MouseButtons.None;
+            if (mouse?.Button == MouseButtons.Middle) _middleClickRaised = true;
+            try { base.OnClick(e); } // preserves DialogResult and all existing handlers
+            finally
+            {
+                if (holdForPopup)
+                {
+                    --_popupClickDepth;
+                    UpdateActivation();
+                }
+            }
         }
 
         protected override void OnMouseCaptureChanged(EventArgs e)
@@ -475,6 +563,7 @@ namespace Quartz.Controls
             if (!Capture && !_releasingMouse && !_releasingKey)
             {
                 _mouseDown = false;
+                _pressedMouseButton = MouseButtons.None;
                 _animation.Cancel(ButtonFrames.Now);
                 SetHovered(IsPointerOver());
                 WakeAnimation();
@@ -498,6 +587,7 @@ namespace Quartz.Controls
             if (e.KeyCode == Keys.Escape && (_mouseDown || _keyDown))
             {
                 _mouseDown = _keyDown = false;
+                _pressedMouseButton = MouseButtons.None;
                 _animation.Cancel(ButtonFrames.Now);
                 Capture = false;
                 WakeAnimation();
@@ -536,8 +626,10 @@ namespace Quartz.Controls
 
         protected override void WndProc(ref Message m)
         {
-            bool release = m.Msg == 0x0202; // capture may be released before Click/MouseUp
-            bool suppressFocus = !FocusOnPress && (m.Msg == 0x0201 || m.Msg == 0x0203);
+            bool release = m.Msg == 0x0202 || m.Msg == 0x0208; // left / middle mouse up
+            bool suppressFocus = !FocusOnPress && (m.Msg == 0x0201 || m.Msg == 0x0203 || m.Msg == 0x0207 || m.Msg == 0x0209);
+            bool previousRelease = _releasingMouse;
+            Point previousReleasePoint = _releasePoint;
             bool selectable = GetStyle(ControlStyles.Selectable);
             bool previousTouchMessage = _touchMouseMessage;
             // ui/events/win/events_win_utils.cc: Windows-promoted touch mouse
@@ -555,7 +647,11 @@ namespace Quartz.Controls
             finally
             {
                 if (suppressFocus) SetStyle(ControlStyles.Selectable, selectable);
-                if (release) _releasingMouse = false;
+                if (release)
+                {
+                    _releasingMouse = previousRelease;
+                    _releasePoint = previousReleasePoint;
+                }
                 _touchMouseMessage = previousTouchMessage;
             }
             if (m.Msg == 0x001A) ReadAnimationPreference(); // WM_SETTINGCHANGE
@@ -626,12 +722,26 @@ namespace Quartz.Controls
 
         private void SetHovered(bool hovered)
         {
+            if (_hovered == hovered) return;
             _hovered = hovered;
             _animation.SetHovered(hovered, ButtonFrames.Now);
             WakeAnimation();
         }
 
-        private bool IsPointerOver() => IsHandleCreated && Enabled && Visible && HitTest(PointToClient(MousePosition));
+        private bool IsPointerOver()
+        {
+            if (!IsHandleCreated || !Enabled || !Visible) return false;
+            Point point = MousePosition;
+            return HitTest(PointToClient(point)) && IsPointOverControl(point);
+        }
+
+        private bool IsPointOverControl(Point screenPoint, bool includeChildren = true)
+        {
+            IntPtr capture = GetCapture();
+            if (capture != IntPtr.Zero && capture != Handle && !IsChild(Handle, capture)) return false;
+            IntPtr window = WindowFromPoint(screenPoint);
+            return window == Handle || (includeChildren && IsChild(Handle, window));
+        }
         private bool CanStartRippleFromInput() => !_touchMouseMessage ||
             (_animation.State != ChromiumButtonAnimation.InkState.Hidden && _animation.State != ChromiumButtonAnimation.InkState.Hiding);
         private PointF CenterPoint() => new PointF(Width / 2f, Height / 2f);
@@ -646,15 +756,22 @@ namespace Quartz.Controls
         internal bool AdvanceFrame(double now)
         {
             if (IsDisposed || Disposing || !IsHandleCreated || !Visible) return false;
-            bool animating = _animation.IsAnimating(now);
-            Invalidate();
-            return animating;
+            _animation.Advance(now);
+            double highlight = Enabled ? _animation.Highlight(now) : 0;
+            double opacity = Enabled ? _animation.Opacity(now) : 0;
+            double radius = opacity > 0 ? _animation.Radius(now) : 0;
+            // A hidden ripple can still have a shrinking transform scheduled.
+            // Complete its state transition without repainting invisible frames.
+            if (highlight != _paintedHighlight || opacity != _paintedOpacity || radius != _paintedRadius)
+                Invalidate();
+            return !IsDisposed && _animation.IsAnimating(now);
         }
 
         private void ResetFeedback()
         {
             if (_animation == null) return;
             _mouseDown = _keyDown = false;
+            _pressedMouseButton = MouseButtons.None;
             _hovered = IsPointerOver();
             _animation.AnimationsEnabled = CanAnimate;
             _origin = CenterPoint();
@@ -701,6 +818,12 @@ namespace Quartz.Controls
         private static extern bool SystemParametersInfo(int action, uint parameter, ref int value, uint flags);
         [DllImport("user32.dll")]
         private static extern IntPtr GetMessageExtraInfo();
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetCapture();
+        [DllImport("user32.dll")]
+        private static extern IntPtr WindowFromPoint(Point point);
+        [DllImport("user32.dll")]
+        private static extern bool IsChild(IntPtr parent, IntPtr child);
 
         protected override AccessibleObject CreateAccessibilityInstance() => new ChromiumButtonAccessibleObject(this);
 
@@ -848,27 +971,40 @@ namespace Quartz.Controls
             [ThreadStatic] private static ButtonFrames _current;
             private static readonly Stopwatch Clock = Stopwatch.StartNew();
             private readonly HashSet<ChromiumButton> _buttons = new HashSet<ChromiumButton>();
+            private readonly List<ChromiumButton> _frameButtons = new List<ChromiumButton>();
             private readonly Timer _timer = new Timer { Interval = 15 };
+            private bool _ticking;
             internal static double Now => Clock.Elapsed.TotalMilliseconds;
 
             private ButtonFrames()
             {
                 _timer.Tick += (sender, args) =>
                 {
-                    double now = Now;
-                    var buttons = new ChromiumButton[_buttons.Count];
-                    _buttons.CopyTo(buttons);
-                    foreach (var button in buttons)
-                        if (!button.AdvanceFrame(now)) _buttons.Remove(button);
-                    if (_buttons.Count == 0) _timer.Stop();
+                    if (_ticking) return;
+                    _ticking = true;
+                    try
+                    {
+                        double now = Now;
+                        // Reuse the snapshot; Invalidated subscribers may change
+                        // the active set or run a nested message loop.
+                        _frameButtons.AddRange(_buttons);
+                        foreach (var button in _frameButtons)
+                            if (_buttons.Contains(button) && !button.AdvanceFrame(now)) _buttons.Remove(button);
+                    }
+                    finally
+                    {
+                        _frameButtons.Clear();
+                        _ticking = false;
+                        if (_buttons.Count == 0) _timer.Stop();
+                    }
                 };
             }
 
             internal static void Add(ChromiumButton button)
             {
                 if (_current == null) _current = new ButtonFrames();
-                _current._buttons.Add(button);
-                _current._timer.Start();
+                if (_current._buttons.Add(button) && !_current._timer.Enabled)
+                    _current._timer.Start();
             }
 
             internal static void Remove(ChromiumButton button)

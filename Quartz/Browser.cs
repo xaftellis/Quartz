@@ -461,7 +461,6 @@ namespace Quartz
                         TextImageRelation = TextImageRelation.ImageBeforeText,
                         UseMnemonic = false
                     };
-                    button.MouseUp += Button_MouseUp;
                     button.Click += btnGotoFavourite_Click;
                 }
                 else available.Remove(button);
@@ -606,6 +605,11 @@ namespace Quartz
         }
         private void btnGotoFavourite_Click(object sender, EventArgs e)
         {
+            if (e is MouseEventArgs mouse && mouse.Button == MouseButtons.Middle)
+            {
+                Button_MouseUp(sender, mouse);
+                return;
+            }
             if (sender is Button)
             {
                 var button = (Button)sender;

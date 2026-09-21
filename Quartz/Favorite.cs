@@ -17,7 +17,7 @@ namespace Quartz
 {
     public partial class Favourite : Form
     {
-        private FavouriteService _service = new FavouriteService();
+        private FavouriteService _service;
         private Browser _browser;
         private string _text;
         private string _webAddress;

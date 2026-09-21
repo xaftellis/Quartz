@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Quartz.Controls;
 
@@ -37,7 +38,7 @@ internal static class Verify
             // release flag bug. Native input verification is still required.
             Field("_releasePoint").SetValue(this, p);
             Field("_releasingMouse").SetValue(this, true);
-            try { OnClick(EventArgs.Empty); OnMouseUp(new MouseEventArgs(MouseButtons.Left, 1, p.X, p.Y, 0)); }
+            try { OnClick(new MouseEventArgs(MouseButtons.Left, 1, p.X, p.Y, 0)); OnMouseUp(new MouseEventArgs(MouseButtons.Left, 1, p.X, p.Y, 0)); }
             finally { Field("_releasingMouse").SetValue(this, false); }
         }
         internal void PressKey(Keys key) => OnKeyDown(new KeyEventArgs(key));
@@ -54,17 +55,210 @@ internal static class Verify
             Application.EnableVisualStyles();
             AnimationChecks();
             ControlChecks();
+            NativeInputChecks();
+            FeedbackChecks();
             ImageChecks();
             ProfileChecks();
             FavouriteChecks();
             RenderSheet(args.Length == 0 ? "rendered-buttons.png" : args[0]);
-            Console.WriteLine("PASS: " + _checks + " assertions. Offscreen controls; no physical GUI validation.");
+            Console.WriteLine("PASS: " + _checks + " assertions. Includes Windows message dispatch in an isolated window; no physical input or live Quartz validation.");
             return 0;
         }
         catch (Exception error)
         {
             Console.Error.WriteLine(error);
             return 1;
+        }
+    }
+
+    private sealed class InputWindow : Form
+    {
+        protected override bool ShowWithoutActivation => true;
+    }
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr SendMessage(IntPtr window, int message, IntPtr wParam, IntPtr lParam);
+    [DllImport("user32.dll")]
+    private static extern IntPtr WindowFromPoint(Point point);
+    [DllImport("user32.dll")]
+    private static extern bool ReleaseCapture();
+
+    private static void Mouse(Control control, int message, int flags, int x = 8, int y = 12)
+    {
+        SendMessage(control.Handle, message, new IntPtr(flags), new IntPtr((y << 16) | (x & 0xffff)));
+    }
+
+    private static string State(ChromiumButton button) => AnimationType.GetProperty("State", Members)
+        .GetValue(Field("_animation").GetValue(button)).ToString();
+
+    private static void NativeInputChecks()
+    {
+        // Button.OnMouseUp checks WindowFromPoint before invoking Click. Use a
+        // real, non-activating test window; never synthesize Click in this test.
+        Rectangle screen = Screen.PrimaryScreen.WorkingArea;
+        using (var window = new InputWindow { ShowInTaskbar = false, TopMost = true,
+            FormBorderStyle = FormBorderStyle.None, StartPosition = FormStartPosition.Manual,
+            Bounds = new Rectangle(screen.Right - 190, screen.Bottom - 65, 180, 55) })
+        using (var button = new Probe { Bounds = new Rectangle(5, 5, 150, 28), FocusOnPress = false,
+            TriggerButtons = MouseButtons.Left | MouseButtons.Middle })
+        {
+            window.Controls.Add(button);
+            window.Show();
+            window.Update();
+            Check(WindowFromPoint(button.PointToScreen(new Point(8, 12))) == button.Handle, "native test target is unobscured");
+            Field("_systemAnimations").SetValue(button, true);
+            button.AnimationEnabled = true;
+            int clicks = 0, middleMouseClicks = 0, mouseUps = 0;
+            MouseButtons lastButton = MouseButtons.None;
+            button.Click += (s, e) => { clicks++; lastButton = (e as MouseEventArgs)?.Button ?? MouseButtons.None; };
+            button.MouseClick += (s, e) => { if (e.Button == MouseButtons.Middle) middleMouseClicks++; };
+            button.MouseUp += (s, e) => mouseUps++;
+
+            Mouse(button, 0x201, 1);
+            Mouse(button, 0x202, 0);
+            Check(clicks == 1 && lastButton == MouseButtons.Left && State(button) == "Triggered",
+                "native left release raises one Click and takes the triggered path");
+            Mouse(button, 0x207, 16);
+            Mouse(button, 0x208, 0);
+            Check(clicks == 2 && lastButton == MouseButtons.Middle && middleMouseClicks == 1 && mouseUps == 2,
+                "native middle release raises one Click, MouseClick and MouseUp");
+            Check(State(button) == "Triggered", "middle release uses the same ripple fade");
+
+            Mouse(button, 0x207, 16);
+            Mouse(button, 0x200, 16, 160);
+            Mouse(button, 0x208, 0, 160);
+            Check(clicks == 2, "middle drag outside cancels action");
+            Mouse(button, 0x207, 16);
+            Mouse(button, 0x200, 16, 160);
+            Mouse(button, 0x200, 16, 9);
+            Mouse(button, 0x208, 0, 9);
+            Check(clicks == 3, "middle drag back inside accepts action once");
+            Mouse(button, 0x207, 16);
+            ReleaseCapture();
+            Mouse(button, 0x208, 0);
+            Check(clicks == 3, "middle capture loss cancels action");
+            Mouse(button, 0x208, 0);
+            Check(clicks == 3, "middle release without press does not click");
+            button.TriggerButtons = MouseButtons.Left;
+            Mouse(button, 0x207, 16);
+            Mouse(button, 0x208, 0);
+            Check(clicks == 3, "ordinary buttons keep middle click disabled");
+            button.TriggerButtons |= MouseButtons.Middle;
+            button.Enabled = false;
+            Mouse(button, 0x207, 16);
+            Mouse(button, 0x208, 0);
+            Check(clicks == 3, "disabled button rejects middle click");
+            button.Enabled = true;
+
+            button.HoldActiveOnClick = true;
+            EventHandler opened = (s, e) =>
+            {
+                Check(State(button) == "Activated" && button.IsPressed, "popup is activated before its Click handler");
+                Check((PointF)Field("_origin").GetValue(button) == new PointF(3, 9), "popup handoff retains pointer origin");
+                object animation = Field("_animation").GetValue(button);
+                Near(Convert.ToDouble(AnimationType.GetMethod("Opacity", Members).Invoke(animation, new object[] { 1e9 })),
+                    1, "popup handoff preserves pending opacity instead of queuing a click fade");
+                button.IsActive = true;
+            };
+            button.Click += opened;
+            Mouse(button, 0x201, 1, 3, 9);
+            Mouse(button, 0x202, 0, 3, 9);
+            button.Click -= opened;
+            Check(State(button) == "Activated" && button.IsPressed, "popup owns active state after Click returns");
+            button.LoseCapture();
+            button.MovePointer(new Point(160, 12));
+            Check(State(button) == "Activated", "active popup survives capture loss and pointer exit");
+            button.IsActive = false;
+            Check(State(button) == "Deactivated", "popup close queues deactivation fade");
+            button.PerformClick();
+            Check(State(button) == "Deactivated" && !button.IsPressed, "popup click without an owner releases its temporary state");
+            EventHandler failure = (s, e) => { throw new InvalidOperationException("test popup failure"); };
+            button.Click += failure;
+            try { button.PerformClick(); }
+            catch (InvalidOperationException error) { Check(error.Message == "test popup failure", "popup exception is preserved"); }
+            finally { button.Click -= failure; }
+            Check(!button.IsPressed && State(button) == "Deactivated", "popup exception does not leave a pressed lock");
+
+            button.HoldActiveOnClick = false;
+            using (var edit = new TextBox { Bounds = new Rectangle(5, 34, 150, 20) })
+            {
+                window.Controls.Add(edit);
+                window.AutoValidate = AutoValidate.EnablePreventFocusChange;
+                window.ActiveControl = edit;
+                int validations = 0;
+                edit.Validating += (s, e) => { validations++; e.Cancel = true; };
+                int beforeValidation = clicks;
+                Mouse(button, 0x207, 16);
+                Mouse(button, 0x208, 0);
+                Check(validations > 0 && clicks == beforeValidation, "middle click respects cancelling form validation");
+                button.CausesValidation = false;
+                Mouse(button, 0x207, 16);
+                Mouse(button, 0x208, 0);
+                Check(clicks == beforeValidation + 1, "middle click respects CausesValidation=false");
+            }
+
+            button.HoldActiveOnClick = true;
+            bool modalChecked = false;
+            EventHandler modal = (s, e) =>
+            {
+                using (var popup = new InputWindow { ShowInTaskbar = false, FormBorderStyle = FormBorderStyle.None,
+                    StartPosition = FormStartPosition.Manual, Bounds = new Rectangle(window.Left - 80, window.Top, 70, 45) })
+                {
+                    popup.Shown += (sender, args) => popup.BeginInvoke((Action)(() =>
+                    {
+                        modalChecked = button.IsPressed && State(button) == "Activated";
+                        popup.Close();
+                    }));
+                    popup.ShowDialog(window);
+                }
+                Check(button.IsPressed, "temporary popup hold survives the nested modal loop");
+            };
+            button.Click += modal;
+            Mouse(button, 0x201, 1);
+            Mouse(button, 0x202, 0);
+            button.Click -= modal;
+            Check(modalChecked, "persistent feedback remains active while another form is modal");
+            Check(!button.IsPressed && State(button) == "Deactivated", "modal close releases feedback after Click returns");
+            window.Close();
+        }
+    }
+
+    private static void FeedbackChecks()
+    {
+        using (var button = new Probe { AnimationEnabled = false, Text = "Stable label", Image = new Bitmap(16, 16) })
+        {
+            button.CreateControl();
+            button.MovePointer(new Point(8, 12));
+            int invalidations = 0;
+            button.Invalidated += (s, e) => invalidations++;
+            for (int i = 0; i < 1000; i++) button.MovePointer(new Point(8 + i % 5, 12));
+            Check(invalidations == 0, "unchanged hover does not request repainting");
+            using (var bitmap = Render(button)) { }
+            Size shortLabel = button.GetPreferredSize(Size.Empty);
+            button.Text = "A substantially longer label for measurement cache invalidation";
+            Check(button.GetPreferredSize(Size.Empty).Width > shortLabel.Width, "label measurement follows changed text");
+            using (var bitmap = Render(button)) { }
+            object renderer = Field("_imageRenderer").GetValue(button);
+            FieldInfo drawing = renderer.GetType().GetField("_drawingImage", Members);
+            object cached = drawing.GetValue(renderer);
+            using (var bitmap = Render(button)) { }
+            Check(ReferenceEquals(cached, drawing.GetValue(renderer)), "GDI icon presentation is reused across paints");
+
+            object animation = Field("_animation").GetValue(button);
+            AnimationType.GetProperty("AnimationsEnabled", Members).SetValue(animation, true);
+            AnimationType.GetMethod("Reset", Members).Invoke(animation, new object[] { false, false, 0d });
+            AnimationType.GetMethod("Press", Members).Invoke(animation, new object[] { 0d });
+            AnimationType.GetMethod("Cancel", Members).Invoke(animation, new object[] { 300d });
+            Field("_paintedHighlight").SetValue(button, 0d);
+            Field("_paintedOpacity").SetValue(button, 0d);
+            Field("_paintedRadius").SetValue(button, 0d);
+            invalidations = 0;
+            typeof(ChromiumButton).GetMethod("AdvanceFrame", Members).Invoke(button, new object[] { 550d });
+            Check(invalidations == 0, "invisible cancellation tail does not repaint");
+            Check(!(bool)typeof(ChromiumButton).GetMethod("AdvanceFrame", Members).Invoke(button, new object[] { 600d }),
+                "invisible cancellation tail still completes its state transition");
+            button.Image.Dispose();
+            button.Image = null;
         }
     }
 

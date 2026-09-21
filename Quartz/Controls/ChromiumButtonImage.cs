@@ -22,6 +22,9 @@ namespace Quartz.Controls
         private Size _size;
         private Color _color;
         private SKBitmap _pixels;
+        private SKBitmap _drawingPixels;
+        private Bitmap _drawingImage;
+        private bool _drawingEnabled, _drawingMirrored;
 
         internal SKBitmap Get(Image source, ChromiumIcon icon, Size size, Color color)
         {
@@ -51,6 +54,46 @@ namespace Quartz.Controls
                 Marshal.Copy(output, 0, _pixels.GetPixels(), output.Length);
             }
             return _pixels;
+        }
+
+        internal Bitmap GetDrawingImage(Image source, ChromiumIcon icon, Size size, Color color, bool enabled, bool mirrored)
+        {
+            SKBitmap pixels = Get(source, icon, size, color);
+            if (_drawingImage != null && _drawingEnabled == enabled && _drawingMirrored == mirrored)
+                return _drawingImage;
+
+            DisposeDrawingImage();
+            _drawingEnabled = enabled;
+            _drawingMirrored = mirrored;
+            if (!enabled || mirrored)
+            {
+                _drawingPixels = NewBitmap(size.Width, size.Height);
+                using (var canvas = new SKCanvas(_drawingPixels))
+                using (var paint = new SKPaint { Color = new SKColor(255, 255, 255, enabled ? (byte)255 : (byte)110) })
+                {
+                    canvas.Clear(SKColors.Transparent);
+                    if (mirrored)
+                    {
+                        canvas.Translate(size.Width, 0);
+                        canvas.Scale(-1, 1);
+                    }
+                    canvas.DrawBitmap(pixels, 0, 0, new SKSamplingOptions(SKFilterMode.Nearest), paint);
+                    canvas.Flush();
+                }
+                pixels = _drawingPixels;
+            }
+            _drawingImage = new Bitmap(size.Width, size.Height, pixels.RowBytes,
+                PixelFormat.Format32bppPArgb, pixels.GetPixels());
+            return _drawingImage;
+        }
+
+        private void DisposeDrawingImage()
+        {
+            // GDI's bitmap borrows the Skia pixels; release it first.
+            _drawingImage?.Dispose();
+            _drawingImage = null;
+            _drawingPixels?.Dispose();
+            _drawingPixels = null;
         }
 
         internal static SKBitmap NewBitmap(int width, int height) =>
@@ -241,6 +284,7 @@ namespace Quartz.Controls
 
         public void Dispose()
         {
+            DisposeDrawingImage();
             _pixels?.Dispose();
             _pixels = null;
             _source = null;

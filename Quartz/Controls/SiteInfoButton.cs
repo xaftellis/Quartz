@@ -39,6 +39,7 @@ namespace Quartz.Controls
         {
             Size = new Size(26, 26);
             UseToolbarGeometry = false;
+            HoldActiveOnClick = true;
             Cursor = Cursors.Hand;
             AccessibleName = "Site information";
             Padding = Padding.Empty;

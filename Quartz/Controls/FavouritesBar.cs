@@ -588,6 +588,7 @@ namespace Quartz.Controls
             ImageAlign = ContentAlignment.MiddleLeft;
             Font = SystemFonts.MessageBoxFont;
             FocusOnPress = false;
+            TriggerButtons = MouseButtons.Left | MouseButtons.Middle;
             ApplyButtonMetrics();
         }
 

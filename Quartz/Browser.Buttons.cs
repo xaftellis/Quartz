@@ -2,6 +2,7 @@ using Microsoft.Web.WebView2.Core;
 using Quartz.Controls;
 using System;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace Quartz
 {
@@ -35,6 +36,9 @@ namespace Quartz
                 button.FocusOnPress = false;
             }
             btnSiteInformation.FocusOnPress = false;
+            btnBack.TriggerButtons = btnForward.TriggerButtons = btnRefresh.TriggerButtons =
+                MouseButtons.Left | MouseButtons.Middle;
+            btnDownload.HoldActiveOnClick = btnAddFavourite.HoldActiveOnClick = btnSettings.HoldActiveOnClick = true;
             btnBack.AccessibleName = "Back";
             btnForward.AccessibleName = "Forward";
             _refreshButtonImage = btnRefresh.Image;
