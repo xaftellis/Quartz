@@ -1,4 +1,4 @@
-﻿namespace Quartz
+namespace Quartz
 {
     partial class ClearHistory
     {
@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnDelete = new Quartz.Controls.ChromiumButton();
+            this.btnCancel = new Quartz.Controls.ChromiumButton();
             this.lblStatus = new System.Windows.Forms.Label();
             this.pnlBottomDivider = new System.Windows.Forms.Panel();
             this.pnlNotice = new System.Windows.Forms.Panel();
@@ -356,8 +356,8 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.Button btnCancel;
+        private Quartz.Controls.ChromiumButton btnDelete;
+        private Quartz.Controls.ChromiumButton btnCancel;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Panel pnlBottomDivider;
         private System.Windows.Forms.Panel pnlNotice;

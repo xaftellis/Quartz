@@ -32,7 +32,7 @@
             this.NameLabel = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.txtExists = new System.Windows.Forms.Label();
-            this.btnCreate = new System.Windows.Forms.Button();
+            this.btnCreate = new Quartz.Controls.ChromiumButton();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.circularImageButton1 = new Quartz.Controls.CircularImageButton();
@@ -82,9 +82,9 @@
             // btnCreate
             // 
             this.btnCreate.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCreate.Location = new System.Drawing.Point(325, 208);
+            this.btnCreate.Location = new System.Drawing.Point(325, 205);
             this.btnCreate.Name = "btnCreate";
-            this.btnCreate.Size = new System.Drawing.Size(75, 23);
+            this.btnCreate.Size = new System.Drawing.Size(75, 28);
             this.btnCreate.TabIndex = 3;
             this.btnCreate.Text = "Create";
             this.btnCreate.UseVisualStyleBackColor = true;
@@ -167,7 +167,7 @@
         private System.Windows.Forms.Label NameLabel;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.Label txtExists;
-        private System.Windows.Forms.Button btnCreate;
+        private Quartz.Controls.ChromiumButton btnCreate;
         private Quartz.Controls.CircularImageButton circularImageButton1;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Label label1;

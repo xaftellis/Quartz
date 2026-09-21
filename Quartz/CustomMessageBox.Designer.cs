@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.pnlBottom = new System.Windows.Forms.Panel();
-            this.btnButton3 = new System.Windows.Forms.Button();
-            this.btnButton2 = new System.Windows.Forms.Button();
-            this.btnButton1 = new System.Windows.Forms.Button();
+            this.btnButton3 = new Quartz.Controls.ChromiumButton();
+            this.btnButton2 = new Quartz.Controls.ChromiumButton();
+            this.btnButton1 = new Quartz.Controls.ChromiumButton();
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pnlBottom.SuspendLayout();
@@ -53,9 +53,9 @@
             // btnButton3
             // 
             this.btnButton3.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnButton3.Location = new System.Drawing.Point(155, 9);
+            this.btnButton3.Location = new System.Drawing.Point(155, 6);
             this.btnButton3.Name = "btnButton3";
-            this.btnButton3.Size = new System.Drawing.Size(75, 23);
+            this.btnButton3.Size = new System.Drawing.Size(75, 28);
             this.btnButton3.TabIndex = 2;
             this.btnButton3.Text = "button3";
             this.btnButton3.UseVisualStyleBackColor = true;
@@ -64,9 +64,9 @@
             // btnButton2
             // 
             this.btnButton2.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnButton2.Location = new System.Drawing.Point(236, 9);
+            this.btnButton2.Location = new System.Drawing.Point(236, 6);
             this.btnButton2.Name = "btnButton2";
-            this.btnButton2.Size = new System.Drawing.Size(75, 23);
+            this.btnButton2.Size = new System.Drawing.Size(75, 28);
             this.btnButton2.TabIndex = 1;
             this.btnButton2.Text = "button2";
             this.btnButton2.UseVisualStyleBackColor = true;
@@ -76,9 +76,9 @@
             // 
             this.btnButton1.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnButton1.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.btnButton1.Location = new System.Drawing.Point(317, 9);
+            this.btnButton1.Location = new System.Drawing.Point(317, 6);
             this.btnButton1.Name = "btnButton1";
-            this.btnButton1.Size = new System.Drawing.Size(75, 23);
+            this.btnButton1.Size = new System.Drawing.Size(75, 28);
             this.btnButton1.TabIndex = 0;
             this.btnButton1.Text = "button1";
             this.btnButton1.UseVisualStyleBackColor = true;
@@ -132,11 +132,11 @@
         #endregion
 
         private System.Windows.Forms.Panel pnlBottom;
-        private System.Windows.Forms.Button button1;
+        private Quartz.Controls.ChromiumButton button1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnButton1;
-        private System.Windows.Forms.Button btnButton3;
-        private System.Windows.Forms.Button btnButton2;
+        private Quartz.Controls.ChromiumButton btnButton1;
+        private Quartz.Controls.ChromiumButton btnButton3;
+        private Quartz.Controls.ChromiumButton btnButton2;
         private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.btnCreate = new System.Windows.Forms.Button();
+            this.btnCreate = new Quartz.Controls.ChromiumButton();
             this.ContextMenuStripProfiles = new Quartz.Controls.AnimatedContextMenuStrip(this.components);
             this.setDefaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,7 +38,7 @@
             this.LabelTitle = new System.Windows.Forms.Label();
             this.pnlProfiles = new System.Windows.Forms.FlowLayoutPanel();
             this.txtSearch = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.button1 = new Quartz.Controls.ChromiumButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.cbSortBy = new System.Windows.Forms.ComboBox();
@@ -49,12 +49,15 @@
             // btnCreate
             // 
             this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCreate.Location = new System.Drawing.Point(706, 398);
+            this.btnCreate.FocusRingColor = System.Drawing.Color.Empty;
+            this.btnCreate.InkColor = System.Drawing.Color.Empty;
+            this.btnCreate.Location = new System.Drawing.Point(706, 395);
             this.btnCreate.Name = "btnCreate";
-            this.btnCreate.Size = new System.Drawing.Size(82, 23);
+            this.btnCreate.Padding = new System.Windows.Forms.Padding(6);
+            this.btnCreate.Size = new System.Drawing.Size(82, 28);
             this.btnCreate.TabIndex = 1;
             this.btnCreate.Text = "Create Profile";
+            this.btnCreate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
@@ -130,11 +133,15 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(563, 398);
+            this.button1.FocusRingColor = System.Drawing.Color.Empty;
+            this.button1.InkColor = System.Drawing.Color.Empty;
+            this.button1.Location = new System.Drawing.Point(563, 395);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(137, 23);
+            this.button1.Padding = new System.Windows.Forms.Padding(6);
+            this.button1.Size = new System.Drawing.Size(137, 28);
             this.button1.TabIndex = 3;
             this.button1.Text = "Create Disposable Profile";
+            this.button1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -203,7 +210,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button btnCreate;
+        private Quartz.Controls.ChromiumButton btnCreate;
         private Quartz.Controls.AnimatedContextMenuStrip ContextMenuStripProfiles;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.Label LabelTitle;
@@ -211,7 +218,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.FlowLayoutPanel pnlProfiles;
         private System.Windows.Forms.TextBox txtSearch;
-        private System.Windows.Forms.Button button1;
+        private Quartz.Controls.ChromiumButton button1;
         private System.Windows.Forms.ToolStripMenuItem setDefaultToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;

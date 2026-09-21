@@ -916,8 +916,10 @@ namespace Quartz.Controls
 
         private Button AddAction(string text, Func<Task> action)
         {
-            var button = new Button
+            var button = new ChromiumButton
             {
+                UseToolbarGeometry = false,
+                CornerRadius = 4,
                 Text = text,
                 AccessibleName = text,
                 TextAlign = ContentAlignment.MiddleLeft,
@@ -936,35 +938,9 @@ namespace Quartz.Controls
                 },
                 Cursor = Cursors.Hand
             };
-            button.Paint += PopupButton_Paint;
             button.Click += async (s, e) => await RunActionAsync(action);
             _content.Controls.Add(button);
             return button;
-        }
-
-        private void PopupButton_Paint(object sender, PaintEventArgs e)
-        {
-            Button button = (Button)sender;
-            if (button.Enabled)
-            {
-                return;
-            }
-
-            // WinForms' default disabled text can disappear on the black theme.
-            using (var brush = new SolidBrush(BackColor))
-            {
-                e.Graphics.FillRectangle(brush, button.ClientRectangle);
-            }
-
-            TextFormatFlags alignment = TextFormatFlags.Left;
-            if (button.TextAlign == ContentAlignment.MiddleCenter)
-            {
-                alignment = TextFormatFlags.HorizontalCenter;
-            }
-
-            Rectangle textBounds = Rectangle.Inflate(button.ClientRectangle, -ScalePixels(4), 0);
-            TextRenderer.DrawText(e.Graphics, button.Text, button.Font, textBounds, BlendThemeColor(65),
-                alignment | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
         }
 
         private void AddNavigation(string label, string page)

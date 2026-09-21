@@ -37,7 +37,7 @@
             this.labelVersion = new System.Windows.Forms.Label();
             this.LoadingProgress = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.AboutTitle = new System.Windows.Forms.Label();
-            this.buttonChech = new System.Windows.Forms.Button();
+            this.buttonChech = new Quartz.Controls.ChromiumButton();
             this.tabPagePrivacy = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
             this.ComboBoxTracking = new System.Windows.Forms.ComboBox();
@@ -51,7 +51,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.tabPageApp = new System.Windows.Forms.TabPage();
             this.cbtimeMachine = new System.Windows.Forms.CheckBox();
-            this.btnDown = new System.Windows.Forms.Button();
+            this.btnDown = new Quartz.Controls.ChromiumButton();
             this.label6 = new System.Windows.Forms.Label();
             this.txtTimeMachine = new System.Windows.Forms.TextBox();
             this.mcTimeMachine = new System.Windows.Forms.MonthCalendar();
@@ -417,9 +417,10 @@
             // btnDown
             // 
             this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDown.Location = new System.Drawing.Point(225, 108);
+            this.btnDown.Location = new System.Drawing.Point(225, 104);
             this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(20, 20);
+            this.btnDown.Padding = System.Windows.Forms.Padding.Empty;
+            this.btnDown.Size = new System.Drawing.Size(28, 28);
             this.btnDown.TabIndex = 13;
             this.btnDown.Text = "▼";
             this.btnDown.UseVisualStyleBackColor = true;
@@ -1294,7 +1295,7 @@
 
         #endregion
         private System.Windows.Forms.TabPage tabPageAbout;
-        private System.Windows.Forms.Button buttonChech;
+        private Quartz.Controls.ChromiumButton buttonChech;
         private System.Windows.Forms.Label txtUpdate;
         private System.Windows.Forms.Label labelVersion;
         public Microsoft.Web.WebView2.WinForms.WebView2 LoadingProgress;
@@ -1312,7 +1313,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TabPage tabPageApp;
         private System.Windows.Forms.CheckBox cbtimeMachine;
-        private System.Windows.Forms.Button btnDown;
+        private Quartz.Controls.ChromiumButton btnDown;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtTimeMachine;
         private System.Windows.Forms.MonthCalendar mcTimeMachine;

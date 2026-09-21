@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -324,10 +324,10 @@
     <value>Microsoft Sans Serif, 9.75pt</value>
   </data>
   <data name="btnDownload.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1096, 11</value>
+    <value>1098, 5</value>
   </data>
   <data name="btnDownload.Size" type="System.Drawing.Size, System.Drawing">
-    <value>22, 22</value>
+    <value>34, 34</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnDownload.TabIndex" type="System.Int32, mscorlib">
@@ -757,10 +757,10 @@
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="btnAddFavourite.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1054, 11</value>
+    <value>1060, 5</value>
   </data>
   <data name="btnAddFavourite.Size" type="System.Drawing.Size, System.Drawing">
-    <value>22, 22</value>
+    <value>34, 34</value>
   </data>
   <data name="btnAddFavourite.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -1047,10 +1047,10 @@
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="btnForward.Location" type="System.Drawing.Point, System.Drawing">
-    <value>59, 9</value>
+    <value>46, 5</value>
   </data>
   <data name="btnForward.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 25</value>
+    <value>34, 34</value>
   </data>
   <data name="btnForward.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -1276,10 +1276,10 @@
     <value>NoControl</value>
   </data>
   <data name="btnBack.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 9</value>
+    <value>8, 5</value>
   </data>
   <data name="btnBack.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 25</value>
+    <value>34, 34</value>
   </data>
   <data name="btnBack.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -2112,10 +2112,10 @@
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="btnRefresh.Location" type="System.Drawing.Point, System.Drawing">
-    <value>99, 11</value>
+    <value>84, 5</value>
   </data>
   <data name="btnRefresh.Size" type="System.Drawing.Size, System.Drawing">
-    <value>22, 22</value>
+    <value>34, 34</value>
   </data>
   <data name="btnRefresh.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -2131,97 +2131,6 @@
   </data>
   <data name="&gt;&gt;btnRefresh.ZOrder" xml:space="preserve">
     <value>11</value>
-  </data>
-  <data name="btnStop.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        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
-</value>
-  </data>
-  <data name="btnStop.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Zoom</value>
-  </data>
-  <data name="btnStop.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="btnStop.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt</value>
-  </data>
-  <data name="btnStop.Location" type="System.Drawing.Point, System.Drawing">
-    <value>101, 13</value>
-  </data>
-  <data name="btnStop.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
-    <value>Yes</value>
-  </data>
-  <data name="btnStop.Size" type="System.Drawing.Size, System.Drawing">
-    <value>18, 18</value>
-  </data>
-  <data name="btnStop.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="btnStop.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopCenter</value>
-  </data>
-  <data name="&gt;&gt;btnStop.Name" xml:space="preserve">
-    <value>btnStop</value>
-  </data>
-  <data name="&gt;&gt;btnStop.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnStop.Parent" xml:space="preserve">
-    <value>pnlTop</value>
-  </data>
-  <data name="&gt;&gt;btnStop.ZOrder" xml:space="preserve">
-    <value>9</value>
   </data>
   <data name="btnSiteInformation.AccessibleName" xml:space="preserve">
     <value>Site information</value>
@@ -2695,13 +2604,13 @@
     <value>NoControl</value>
   </data>
   <data name="btnSettings.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1135, 9</value>
+    <value>1136, 5</value>
   </data>
   <data name="btnSettings.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
     <value>No</value>
   </data>
   <data name="btnSettings.Size" type="System.Drawing.Size, System.Drawing">
-    <value>28, 28</value>
+    <value>34, 34</value>
   </data>
   <data name="btnSettings.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>

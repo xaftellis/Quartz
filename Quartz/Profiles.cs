@@ -27,6 +27,7 @@ namespace Quartz
         string address;
 
         public Browser _browser = null;
+        private ToolTip _profileToolTip;
 
         public Profiles(Browser browser, string url)
         {
@@ -104,7 +105,10 @@ namespace Quartz
 
         public void LoadProfiles()
         {
-            pnlProfiles.Controls.Clear();
+            if (_profileToolTip == null) _profileToolTip = new ToolTip(components);
+            _profileToolTip.RemoveAll();
+            // Removing a tile must release its Skia/GDI cache and menu observers.
+            foreach (Control oldButton in pnlProfiles.Controls.Cast<Control>().ToArray()) oldButton.Dispose();
 
             List<ProfileModel> dataSource = null;
 
@@ -147,12 +151,12 @@ namespace Quartz
 
                 NewControlThemeChanger.ChangeControlTheme(button);
 
-                if (Program.profileService.GetProfilePicture(profile.Id) != null)
+                var picture = Program.profileService.GetProfilePicture(profile.Id);
+                if (picture != null)
                 {
-                    button.CircularImage = Program.profileService.GetProfilePicture(profile.Id);
+                    button.CircularImage = picture;
+                    button.Disposed += (sender, e) => picture.Dispose();
                 }
-
-                ToolTip toolTip = new ToolTip();
 
                 string lastActive;
                 if (profile.Active == true && Application.OpenForms["AppContainer"] != null)
@@ -171,7 +175,7 @@ namespace Quartz
 {lastActive}
 {dateCreated}";
 
-                toolTip.SetToolTip(button, tooltip);
+                _profileToolTip.SetToolTip(button, tooltip);
 
                 pnlProfiles.Controls.Add(button);
                 button.Click += button_click;
@@ -188,7 +192,7 @@ namespace Quartz
 
                 if (ProfileService.Current == Guid.Parse(button.Tag.ToString()) && Application.OpenForms["AppContainer"] != null)
                 {
-                    MessageBox.Show("This is already the current profile, silly!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    //MessageBox.Show("This is already the current profile, silly!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 

@@ -576,8 +576,42 @@ namespace Quartz.Controls
         }
     }
 
-    internal partial class FavouriteButton : Button
+    internal partial class FavouriteButton : ChromiumButton
     {
+        public FavouriteButton()
+        {
+            IconSize = 16;
+            ImageTextSpacing = 8; // ChromeLayoutProvider: kHarmonyLayoutUnit / 2
+            MirrorImageInRtl = false;
+            TextImageRelation = TextImageRelation.ImageBeforeText;
+            TextAlign = ContentAlignment.MiddleLeft;
+            ImageAlign = ContentAlignment.MiddleLeft;
+            Font = SystemFonts.MessageBoxFont;
+            FocusOnPress = false;
+            ApplyButtonMetrics();
+        }
+
+        private void ApplyButtonMetrics()
+        {
+            int height = (int)Math.Round(28 * DpiScale);
+            Padding = new Padding((int)Math.Round(6 * DpiScale));
+            Margin = new Padding(0, 0, (int)Math.Round(4 * DpiScale), 0);
+            MinimumSize = new Size(0, height);
+            MaximumSize = new Size((int)Math.Round(150 * DpiScale), height);
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            ApplyButtonMetrics();
+        }
+
+        protected override void OnDpiChangedAfterParent(EventArgs e)
+        {
+            base.OnDpiChangedAfterParent(e);
+            ApplyButtonMetrics();
+        }
+
         internal bool SuppressMouseClick { get; set; }
         private bool _releasingMouse;
         private FavouritesBar Bar => Parent as FavouritesBar;

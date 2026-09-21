@@ -1,4 +1,4 @@
-﻿namespace Quartz
+namespace Quartz
 {
     partial class Browser
     {
@@ -49,15 +49,15 @@
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
             this.sortByAlphabeticallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showFavouritesBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnDownload = new System.Windows.Forms.Button();
+            this.btnDownload = new Quartz.Controls.ChromiumButton();
             this.mnuDownloadsDropDown = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.locationToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.changeLocationToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.downloadsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnAddFavourite = new System.Windows.Forms.Button();
-            this.btnForward = new System.Windows.Forms.Button();
+            this.btnAddFavourite = new Quartz.Controls.ChromiumButton();
+            this.btnForward = new Quartz.Controls.ChromiumButton();
             this.wvLoadingProgress = new Microsoft.Web.WebView2.WinForms.WebView2();
-            this.btnBack = new System.Windows.Forms.Button();
+            this.btnBack = new Quartz.Controls.ChromiumButton();
             this.mnuSearch = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.emojiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
@@ -73,13 +73,12 @@
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator21 = new System.Windows.Forms.ToolStripSeparator();
             this.alwaysShowFullURLsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnRefresh = new System.Windows.Forms.Button();
-            this.btnStop = new System.Windows.Forms.Button();
+            this.btnRefresh = new Quartz.Controls.ChromiumButton();
             this.pnlTop = new Quartz.Controls.BrowserToolbarPanel();
             this.btnSiteInformation = new Quartz.Controls.SiteInfoButton();
             this.pnlFavourites = new Quartz.Controls.FavouritesBar();
             this.txtWebAddress = new System.Windows.Forms.RichTextBox();
-            this.btnSettings = new System.Windows.Forms.Button();
+            this.btnSettings = new Quartz.Controls.ChromiumButton();
             this.SettingsMenuStrip = new Quartz.Controls.FocusAwareContextMenuStrip(this.components);
             this.newTabToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.newWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -272,7 +271,9 @@
             this.btnDownload.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnDownload.FlatAppearance.BorderSize = 0;
             this.btnDownload.ForeColor = System.Drawing.Color.White;
+            this.btnDownload.IconSize = 20;
             this.btnDownload.Name = "btnDownload";
+            this.btnDownload.UseToolbarGeometry = false;
             this.btnDownload.UseVisualStyleBackColor = false;
             this.btnDownload.Click += new System.EventHandler(this.btnDownload_Click);
             // 
@@ -313,7 +314,9 @@
             this.btnAddFavourite.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnAddFavourite.FlatAppearance.BorderSize = 0;
             this.btnAddFavourite.ForeColor = System.Drawing.Color.White;
+            this.btnAddFavourite.IconSize = 20;
             this.btnAddFavourite.Name = "btnAddFavourite";
+            this.btnAddFavourite.UseToolbarGeometry = false;
             this.btnAddFavourite.UseVisualStyleBackColor = false;
             this.btnAddFavourite.Click += new System.EventHandler(this.btnAddFavourite_Click);
             // 
@@ -324,7 +327,9 @@
             this.btnForward.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnForward.FlatAppearance.BorderSize = 0;
             this.btnForward.ForeColor = System.Drawing.Color.White;
+            this.btnForward.IconSize = 20;
             this.btnForward.Name = "btnForward";
+            this.btnForward.UseToolbarGeometry = false;
             this.btnForward.UseVisualStyleBackColor = false;
             this.btnForward.EnabledChanged += new System.EventHandler(this.btnForward_EnabledChanged);
             this.btnForward.Click += new System.EventHandler(this.btnForward_Click);
@@ -349,7 +354,9 @@
             this.btnBack.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.btnBack.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btnBack.ForeColor = System.Drawing.Color.Transparent;
+            this.btnBack.IconSize = 20;
             this.btnBack.Name = "btnBack";
+            this.btnBack.UseToolbarGeometry = false;
             this.btnBack.UseVisualStyleBackColor = false;
             this.btnBack.EnabledChanged += new System.EventHandler(this.btnBack_EnabledChanged);
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
@@ -466,20 +473,11 @@
             this.btnRefresh.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnRefresh.FlatAppearance.BorderSize = 0;
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
+            this.btnRefresh.IconSize = 20;
             this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.UseToolbarGeometry = false;
             this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
-            // btnStop
-            // 
-            this.btnStop.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.btnStop, "btnStop");
-            this.btnStop.Cursor = System.Windows.Forms.Cursors.Default;
-            this.btnStop.FlatAppearance.BorderSize = 0;
-            this.btnStop.ForeColor = System.Drawing.Color.Transparent;
-            this.btnStop.Name = "btnStop";
-            this.btnStop.UseVisualStyleBackColor = false;
-            this.btnStop.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // pnlTop
             // 
@@ -493,7 +491,6 @@
             this.pnlTop.Controls.Add(this.btnSettings);
             this.pnlTop.Controls.Add(this.btnDownload);
             this.pnlTop.Controls.Add(this.btnAddFavourite);
-            this.pnlTop.Controls.Add(this.btnStop);
             this.pnlTop.Controls.Add(this.UrlBox);
             this.pnlTop.Controls.Add(this.btnRefresh);
             this.pnlTop.Controls.Add(this.UrlLeft);
@@ -545,7 +542,9 @@
             this.btnSettings.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnSettings.FlatAppearance.BorderSize = 0;
             this.btnSettings.ForeColor = System.Drawing.Color.White;
+            this.btnSettings.IconSize = 20;
             this.btnSettings.Name = "btnSettings";
+            this.btnSettings.UseToolbarGeometry = false;
             this.btnSettings.UseVisualStyleBackColor = false;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
@@ -950,13 +949,12 @@
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem1;
         private System.Windows.Forms.Panel pnlBottom;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
-        public System.Windows.Forms.Button btnDownload;
-        public System.Windows.Forms.Button btnAddFavourite;
-        public System.Windows.Forms.Button btnForward;
-        public System.Windows.Forms.Button btnStop;
-        public System.Windows.Forms.Button btnSettings;
-        public System.Windows.Forms.Button btnBack;
-        public System.Windows.Forms.Button btnRefresh;
+        public Quartz.Controls.ChromiumButton btnDownload;
+        public Quartz.Controls.ChromiumButton btnAddFavourite;
+        public Quartz.Controls.ChromiumButton btnForward;
+        public Quartz.Controls.ChromiumButton btnSettings;
+        public Quartz.Controls.ChromiumButton btnBack;
+        public Quartz.Controls.ChromiumButton btnRefresh;
         private System.Windows.Forms.ToolStripComboBox zoomToolStrip;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;

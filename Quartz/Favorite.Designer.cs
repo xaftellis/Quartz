@@ -30,7 +30,7 @@
         {
             this.NameLabel = new System.Windows.Forms.Label();
             this.NameTextBox = new System.Windows.Forms.TextBox();
-            this.SaveButton = new System.Windows.Forms.Button();
+            this.SaveButton = new Quartz.Controls.ChromiumButton();
             this.NameMessage = new System.Windows.Forms.Label();
             this.AddressTextBox = new System.Windows.Forms.TextBox();
             this.AddressLabel = new System.Windows.Forms.Label();
@@ -62,9 +62,9 @@
             this.SaveButton.BackColor = System.Drawing.Color.Black;
             this.SaveButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.SaveButton.ForeColor = System.Drawing.Color.White;
-            this.SaveButton.Location = new System.Drawing.Point(311, 78);
+            this.SaveButton.Location = new System.Drawing.Point(311, 75);
             this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(75, 23);
+            this.SaveButton.Size = new System.Drawing.Size(75, 28);
             this.SaveButton.TabIndex = 3;
             this.SaveButton.Text = "Save";
             this.SaveButton.UseVisualStyleBackColor = false;
@@ -147,7 +147,7 @@
 
         private System.Windows.Forms.Label NameLabel;
         private System.Windows.Forms.TextBox NameTextBox;
-        private System.Windows.Forms.Button SaveButton;
+        private Quartz.Controls.ChromiumButton SaveButton;
         private System.Windows.Forms.Label NameMessage;
         private System.Windows.Forms.TextBox AddressTextBox;
         private System.Windows.Forms.Label AddressLabel;

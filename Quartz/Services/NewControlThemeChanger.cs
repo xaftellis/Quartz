@@ -1,4 +1,4 @@
-﻿using Microsoft.Web.WebView2.WinForms;
+using Microsoft.Web.WebView2.WinForms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -93,6 +93,7 @@ namespace Quartz.Services
             
 
             var theme = SettingsService.Get("Theme");
+            Quartz.Controls.ChromiumButton.IsLightThemeForClickColorTest = theme == "light";
             if (theme == "light")
             {
                 backcolor = Color.White;
@@ -191,7 +192,7 @@ namespace Quartz.Services
             if (control is Button)
             {
                 var button = (Button)control;
-                button.FlatStyle = flatStyle;
+                button.FlatStyle = button is Quartz.Controls.ChromiumButton ? FlatStyle.Flat : flatStyle;
 
                 if (buttonimage != null)
                 {

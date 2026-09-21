@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
+            this.button1 = new Quartz.Controls.ChromiumButton();
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnDown = new System.Windows.Forms.Button();
+            this.btnDown = new Quartz.Controls.ChromiumButton();
             this.txtDOB = new System.Windows.Forms.TextBox();
             this.mcCalender = new System.Windows.Forms.MonthCalendar();
             this.txtExists = new System.Windows.Forms.Label();
@@ -40,9 +40,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(201, 70);
+            this.button1.Location = new System.Drawing.Point(201, 67);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(75, 28);
             this.button1.TabIndex = 4;
             this.button1.Text = "Done";
             this.button1.UseVisualStyleBackColor = true;
@@ -77,9 +77,10 @@
             // btnDown
             // 
             this.btnDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDown.Location = new System.Drawing.Point(258, 38);
+            this.btnDown.Location = new System.Drawing.Point(258, 34);
             this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(20, 20);
+            this.btnDown.Padding = System.Windows.Forms.Padding.Empty;
+            this.btnDown.Size = new System.Drawing.Size(28, 28);
             this.btnDown.TabIndex = 3;
             this.btnDown.Text = "▼";
             this.btnDown.UseVisualStyleBackColor = true;
@@ -144,11 +145,11 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button button1;
+        private Quartz.Controls.ChromiumButton button1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button btnDown;
+        private Quartz.Controls.ChromiumButton btnDown;
         private System.Windows.Forms.TextBox txtDOB;
         private System.Windows.Forms.MonthCalendar mcCalender;
         private System.Windows.Forms.Label txtExists;

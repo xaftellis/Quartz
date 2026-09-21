@@ -48,7 +48,7 @@
             this.copyLinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtSearch = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.button1 = new Quartz.Controls.ChromiumButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pnlDivider = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -230,9 +230,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 12);
+            this.button1.Location = new System.Drawing.Point(12, 9);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(108, 23);
+            this.button1.Size = new System.Drawing.Size(108, 28);
             this.button1.TabIndex = 5;
             this.button1.Text = "Clear browsing data";
             this.button1.UseVisualStyleBackColor = true;
@@ -294,7 +294,7 @@
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.TextBox txtSearch;
-        private System.Windows.Forms.Button button1;
+        private Quartz.Controls.ChromiumButton button1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Id;
         private System.Windows.Forms.DataGridViewCheckBoxColumn CheckBox;

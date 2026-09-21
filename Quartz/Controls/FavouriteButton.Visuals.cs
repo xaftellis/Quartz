@@ -10,7 +10,6 @@ namespace Quartz.Controls
     {
         private const double ContentDuration = 180;
         private Image _ownedIcon;
-        private Font _iconFont, _noIconFont;
         private Button _previousFace;
         private Button _currentFace;
         private Bitmap _previousFrame;
@@ -29,7 +28,6 @@ namespace Quartz.Controls
 
         internal void SetIconVisibility(bool visible, Func<Image> loadIcon)
         {
-            if (_noIconFont == null) _noIconFont = Font;
             if (visible)
             {
                 Image icon = loadIcon();
@@ -41,18 +39,15 @@ namespace Quartz.Controls
                     Image = null;
                     old?.Dispose();
                 }
-                if (_iconFont == null) _iconFont = new Font("Segoe UI", 8);
                 Image = _ownedIcon;
-                Font = _iconFont;
             }
             else
             {
                 Image = null;
-                Font = _noIconFont;
             }
         }
 
-        // The old face uses normal Button painting at the current animated width,
+        // The old face uses the shared Chromium renderer at its animated width,
         // keeping text crisp instead of stretching a screenshot during resizing.
         internal void ChangeContent(Action update, bool animate)
         {
@@ -138,8 +133,10 @@ namespace Quartz.Controls
 
         private Button CopyFace()
         {
-            var face = new Button
+            var face = new ChromiumButton
             {
+                UseToolbarGeometry = UseToolbarGeometry, CornerRadius = CornerRadius, IconSize = IconSize,
+                ImageTextSpacing = ImageTextSpacing, MirrorImageInRtl = MirrorImageInRtl,
                 Text = Text, Font = (Font)Font.Clone(), Image = (Image)Image?.Clone(),
                 BackColor = BackColor, ForeColor = ForeColor, FlatStyle = FlatStyle,
                 Padding = Padding, TextAlign = TextAlign, ImageAlign = ImageAlign,
@@ -171,7 +168,14 @@ namespace Quartz.Controls
             {
                 face.Size = AutoSize ? GetPreferredSize(Size.Empty) : Size;
                 _entranceFrame = new Bitmap(Math.Max(1, face.Width), Math.Max(1, face.Height));
-                face.DrawToBitmap(_entranceFrame, new Rectangle(Point.Empty, _entranceFrame.Size));
+                Point origin;
+                using (var label = CaptureForeground(face, true, out origin))
+                using (var icon = CaptureForeground(face, false, out origin))
+                using (var graphics = Graphics.FromImage(_entranceFrame))
+                {
+                    graphics.DrawImageUnscaled(label, 0, 0);
+                    graphics.DrawImageUnscaled(icon, 0, 0);
+                }
             }
             finally { DisposeFace(face); }
             Invalidate();
@@ -208,49 +212,25 @@ namespace Quartz.Controls
             return IsContentAnimating;
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void PaintButtonContent(Graphics graphics)
         {
             if (IsEntering && !IsContentAnimating)
             {
-                PaintClippedFace(e.Graphics, _entranceFrame, ClientRectangle);
+                PaintClippedFace(graphics, _entranceFrame, ClientRectangle);
                 return;
             }
             if (!IsContentAnimating || Width <= 0 || Height <= 0)
             {
-                base.OnPaint(e);
+                base.PaintButtonContent(graphics);
                 return;
             }
-            using (var current = new Bitmap(Width, Height))
+            // Keep the live ink drop beneath the moving foreground layers.
+            if (!_captureWithoutText)
             {
-                using (Graphics graphics = Graphics.FromImage(current))
-                {
-                    // Never paint this live button underneath the moving label.
-                    // Button's native adapter can retain its caption layout, so
-                    // temporarily overriding Text during OnPaint is insufficient.
-                    // These independent faces have genuinely empty captions.
-                    _currentFace.Size = Size;
-                    _currentFace.DrawToBitmap(current, ClientRectangle);
-                    if (_previousFace != null)
-                    {
-                        _previousFace.Size = Size;
-                        using (var previous = new Bitmap(Width, Height))
-                        {
-                            _previousFace.DrawToBitmap(previous, ClientRectangle);
-                            DrawFaded(graphics, previous, ClientRectangle, 1 - ContentProgress);
-                        }
-                    }
-                    else if (_previousFrame != null)
-                        DrawFaded(graphics, _previousFrame, ClientRectangle, 1 - ContentProgress);
-                    if (!_captureWithoutText)
-                    {
-                        DrawMovingIcon(graphics);
-                        DrawMovingText(graphics);
-                    }
-                }
-                e.Graphics.DrawImageUnscaled(current, Point.Empty);
+                DrawMovingIcon(graphics);
+                DrawMovingText(graphics);
             }
         }
-
         private Point MovingTextOrigin
         {
             get
@@ -303,7 +283,7 @@ namespace Quartz.Controls
             _iconLayer?.Dispose();
             Point origin;
             _iconLayer = CaptureForeground(face, false, out origin);
-            _iconBounds = new Rectangle(origin, face.Image.Size);
+            _iconBounds = new Rectangle(origin, new Size((int)Math.Ceiling(IconSize * DpiScale), (int)Math.Ceiling(IconSize * DpiScale)));
         }
 
         private static void RemoveFaceIcon(Button face)
@@ -326,23 +306,29 @@ namespace Quartz.Controls
 
         private static Bitmap CaptureForeground(Button face, bool label, out Point origin)
         {
-            // Isolate native-rendered glyphs from an otherwise identical blank
+            // Isolate our rendered glyphs from an otherwise identical blank
             // face. The label can then move independently of the fading icon,
             // with its glyphs retained at their native resolution.
-            Image icon = face.Image;
-            string text = face.Text;
-            if (label) face.Image = null;
-            else face.Text = string.Empty;
+            var renderer = (ChromiumButton)face;
             var bounds = new Rectangle(Point.Empty, face.Size);
             var glyphs = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
             using (var blank = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb))
             {
-                face.DrawToBitmap(glyphs, bounds);
-                face.Text = string.Empty;
-                face.Image = null;
-                face.DrawToBitmap(blank, bounds);
-                face.Text = text;
-                face.Image = icon;
+                // Hide paint layers without changing layout. Removing Image to
+                // capture the label used to move the label into the icon's slot,
+                // leaving that entire slot as extra space at the right edge.
+                try
+                {
+                    renderer.SuppressSnapshotImage = label;
+                    renderer.SuppressSnapshotText = !label;
+                    face.DrawToBitmap(glyphs, bounds);
+                    renderer.SuppressSnapshotImage = renderer.SuppressSnapshotText = true;
+                    face.DrawToBitmap(blank, bounds);
+                }
+                finally
+                {
+                    renderer.SuppressSnapshotImage = renderer.SuppressSnapshotText = false;
+                }
                 BitmapData glyphData = glyphs.LockBits(bounds, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
                 BitmapData blankData = blank.LockBits(bounds, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
                 int left = bounds.Width, top = bounds.Height;
@@ -440,8 +426,6 @@ namespace Quartz.Controls
                 Image = null;
                 _ownedIcon?.Dispose();
                 _ownedIcon = null;
-                _iconFont?.Dispose();
-                _iconFont = null;
             }
             base.Dispose(disposing);
         }

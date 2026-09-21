@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -87,6 +87,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="SkiaSharp, Version=4.152.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkiaSharp.4.152.1\lib\net48\SkiaSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Svg, Version=3.4.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
       <HintPath>..\packages\Svg.3.4.8\lib\net481\Svg.dll</HintPath>
     </Reference>
@@ -214,6 +217,22 @@
     </Compile>
     <Compile Include="ClearHistory.Designer.cs">
       <DependentUpon>ClearHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ChromiumButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ChromiumButtonAnimation.cs" />
+    <Compile Include="Controls\ChromiumButtonImage.cs" />
+    <EmbeddedResource Include="Controls\ChromiumIcons\*.icon">
+      <LogicalName>Quartz.ChromiumIcons.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <Content Include="..\docs\Chromium-LICENSE">
+      <Link>Chromium-LICENSE.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Compile Include="Browser.Buttons.cs">
+      <DependentUpon>Browser.cs</DependentUpon>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\CircularImageButton.cs">
       <SubType>Component</SubType>
@@ -1253,6 +1272,8 @@
     <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets'))" />
     <Error Condition="!Exists('..\packages\Magick.NET-Q8-AnyCPU.14.17.1\build\netstandard20\Magick.NET-Q8-AnyCPU.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Magick.NET-Q8-AnyCPU.14.17.1\build\netstandard20\Magick.NET-Q8-AnyCPU.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.4191.47\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.4191.47\build\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\packages\SkiaSharp.NativeAssets.macOS.4.152.1\build\net48\SkiaSharp.NativeAssets.macOS.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SkiaSharp.NativeAssets.macOS.4.152.1\build\net48\SkiaSharp.NativeAssets.macOS.targets'))" />
+    <Error Condition="!Exists('..\packages\SkiaSharp.NativeAssets.Win32.4.152.1\build\net48\SkiaSharp.NativeAssets.Win32.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SkiaSharp.NativeAssets.Win32.4.152.1\build\net48\SkiaSharp.NativeAssets.Win32.targets'))" />
   </Target>
   <Import Project="..\packages\Microsoft.Web.WebView2.1.0.3405.78\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.3405.78\build\Microsoft.Web.WebView2.targets')" />
   <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2957.106\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2957.106\build\Microsoft.Web.WebView2.targets')" />
@@ -1261,4 +1282,6 @@
   <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets')" />
   <Import Project="..\packages\Magick.NET-Q8-AnyCPU.14.17.1\build\netstandard20\Magick.NET-Q8-AnyCPU.targets" Condition="Exists('..\packages\Magick.NET-Q8-AnyCPU.14.17.1\build\netstandard20\Magick.NET-Q8-AnyCPU.targets')" />
   <Import Project="..\packages\Microsoft.Web.WebView2.1.0.4191.47\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.4191.47\build\Microsoft.Web.WebView2.targets')" />
+  <Import Project="..\packages\SkiaSharp.NativeAssets.macOS.4.152.1\build\net48\SkiaSharp.NativeAssets.macOS.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.macOS.4.152.1\build\net48\SkiaSharp.NativeAssets.macOS.targets')" />
+  <Import Project="..\packages\SkiaSharp.NativeAssets.Win32.4.152.1\build\net48\SkiaSharp.NativeAssets.Win32.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.Win32.4.152.1\build\net48\SkiaSharp.NativeAssets.Win32.targets')" />
 </Project>

@@ -37,6 +37,21 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SkiaSharp, Version=4.152.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkiaSharp.4.152.1\lib\net48\SkiaSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>..\packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Buffers">
+      <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics.Vectors">
+      <HintPath>..\packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -58,6 +73,23 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="..\Quartz\Controls\ChromiumButton.cs">
+      <Link>Controls\ChromiumButton.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\Quartz\Controls\ChromiumButtonAnimation.cs">
+      <Link>Controls\ChromiumButtonAnimation.cs</Link>
+    </Compile>
+    <Compile Include="..\Quartz\Controls\ChromiumButtonImage.cs">
+      <Link>Controls\ChromiumButtonImage.cs</Link>
+    </Compile>
+    <EmbeddedResource Include="..\Quartz\Controls\ChromiumIcons\*.icon">
+      <LogicalName>Quartz.ChromiumIcons.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <Content Include="..\docs\Chromium-LICENSE">
+      <Link>Chromium-LICENSE.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Compile Include="OwnerWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -96,4 +128,5 @@
     <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\SkiaSharp.NativeAssets.Win32.4.152.1\build\net48\SkiaSharp.NativeAssets.Win32.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.Win32.4.152.1\build\net48\SkiaSharp.NativeAssets.Win32.targets')" />
 </Project>

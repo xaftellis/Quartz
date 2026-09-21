@@ -22,8 +22,7 @@ namespace Quartz
                 try
                 {
                     LoadTheme();
-                    btnStop.Visible = false;
-                    btnRefresh.Visible = true;
+                    SetRefreshButtonState(RefreshButtonState.Refresh);
                     wvLoadingProgress.Visible = false;
                     btnBack.Enabled = false;
                     btnForward.Enabled = false;

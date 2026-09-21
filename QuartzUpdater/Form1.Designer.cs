@@ -24,10 +24,10 @@ namespace QuartzUpdater
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.detailLabel = new System.Windows.Forms.Label();
             this.logLinkLabel = new System.Windows.Forms.LinkLabel();
-            this.updateButton = new System.Windows.Forms.Button();
-            this.retryButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.updateButton = new Quartz.Controls.ChromiumButton();
+            this.retryButton = new Quartz.Controls.ChromiumButton();
+            this.cancelButton = new Quartz.Controls.ChromiumButton();
+            this.closeButton = new Quartz.Controls.ChromiumButton();
             this.logToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
@@ -205,10 +205,10 @@ namespace QuartzUpdater
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Label detailLabel;
         private System.Windows.Forms.LinkLabel logLinkLabel;
-        private System.Windows.Forms.Button updateButton;
-        private System.Windows.Forms.Button retryButton;
-        private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Button closeButton;
+        private Quartz.Controls.ChromiumButton updateButton;
+        private Quartz.Controls.ChromiumButton retryButton;
+        private Quartz.Controls.ChromiumButton cancelButton;
+        private Quartz.Controls.ChromiumButton closeButton;
         private System.Windows.Forms.ToolTip logToolTip;
     }
 }

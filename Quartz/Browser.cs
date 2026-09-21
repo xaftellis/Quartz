@@ -1,4 +1,4 @@
-﻿using EasyTabs;
+using EasyTabs;
 using Microsoft.SqlServer.Server;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
@@ -61,10 +61,6 @@ namespace Quartz
             LoadingStateChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private const int MaximumFavouriteButtonWidth = 150;
-        private const int FavouriteButtonHeight = 23;
-        // Preserve the original overlay layout's room for the favicon.
-        private static readonly string FavouriteIconTextPrefix = new string(' ', 6);
         private ToolTip _favouriteToolTip;
         private bool _reloadFavourites;
         private bool _loadingFavourites;
@@ -162,6 +158,7 @@ namespace Quartz
             using (SettingsService.BeginReadSnapshot())
             {
                 InitializeComponent();
+                InitializeChromiumButtons();
                 // Set the native placeholder before the tab is attached/shown.
                 NewControlThemeChanger.ChangeControlTheme(this);
                 NewControlThemeChanger.ChangeControlTheme(wvWebView1);
@@ -261,6 +258,7 @@ namespace Quartz
             Color dividerColor = Color.FromArgb(219, 220, 221);
 
             string theme = SettingsService.Get("Theme");
+            Quartz.Controls.ChromiumButton.IsLightThemeForClickColorTest = theme == "light";
 
             if (theme == "dark")
             {
@@ -345,12 +343,12 @@ namespace Quartz
 
 
             //BUTTONS
-            btnBack.BackgroundImage = backImage;
+            btnBack.Image = backImage;
             btnBack.FlatAppearance.MouseOverBackColor = mouseOver;
             btnBack.FlatAppearance.MouseDownBackColor = mouseOver;
             btnBack.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnForward.BackgroundImage = forwardImage;
+            btnForward.Image = forwardImage;
             btnForward.FlatAppearance.MouseOverBackColor = mouseOver;
             btnForward.FlatAppearance.MouseDownBackColor = mouseOver;
             btnForward.FlatAppearance.BorderColor = PanelforeColor;
@@ -360,27 +358,24 @@ namespace Quartz
             //btnHome.FlatAppearance.MouseDownBackColor = mouseOver;
             //btnHome.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnRefresh.BackgroundImage = refreshImage;
+            _refreshButtonImage = refreshImage;
+            _stopButtonImage = stopImage;
+            SetRefreshButtonState(_refreshButtonState);
             btnRefresh.FlatAppearance.MouseOverBackColor = mouseOver;
             btnRefresh.FlatAppearance.MouseDownBackColor = mouseOver;
             btnRefresh.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnStop.BackgroundImage = stopImage;
-            btnStop.FlatAppearance.MouseOverBackColor = mouseOver;
-            btnStop.FlatAppearance.MouseDownBackColor = mouseOver;
-            btnStop.FlatAppearance.BorderColor = PanelforeColor;
-
-            btnDownload.BackgroundImage = downloadImage;
+            btnDownload.Image = downloadImage;
             btnDownload.FlatAppearance.MouseOverBackColor = mouseOver;
             btnDownload.FlatAppearance.MouseDownBackColor = mouseOver;
             btnDownload.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnAddFavourite.BackgroundImage = favImage;
+            btnAddFavourite.Image = favImage;
             btnAddFavourite.FlatAppearance.MouseOverBackColor = mouseOver;
             btnAddFavourite.FlatAppearance.MouseDownBackColor = mouseOver;
             btnAddFavourite.FlatAppearance.BorderColor = PanelforeColor;
 
-            btnSettings.BackgroundImage = settingsImage;
+            btnSettings.Image = settingsImage;
             btnSettings.FlatAppearance.MouseOverBackColor = mouseOver;
             btnSettings.FlatAppearance.MouseDownBackColor = mouseOver;
             btnSettings.FlatAppearance.BorderColor = PanelforeColor;
@@ -462,8 +457,8 @@ namespace Quartz
                         AutoSize = true,
                         AutoSizeMode = AutoSizeMode.GrowAndShrink,
                         ImageAlign = ContentAlignment.MiddleLeft,
-                        TextAlign = ContentAlignment.MiddleCenter,
-                        TextImageRelation = TextImageRelation.Overlay,
+                        TextAlign = ContentAlignment.MiddleLeft,
+                        TextImageRelation = TextImageRelation.ImageBeforeText,
                         UseMnemonic = false
                     };
                     button.MouseUp += Button_MouseUp;
@@ -489,8 +484,7 @@ namespace Quartz
                         button.ThemeKey = theme;
                     }
                     button.SetIconVisibility(showFavouriteIcon, () => FaviconHelper.GetFaviconFileExternalAsImage(favourite.WebAddress));
-                    button.Text = FitFavouriteButtonText(button, favourite.Name, MaximumFavouriteButtonWidth);
-                    button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
+                    button.Text = favourite.Name;
                     _favouriteToolTip.SetToolTip(button, favourite.Name + Environment.NewLine + favourite.WebAddress);
                 }, _favouritesLoaded);
                 _favouritesLoaded = true;
@@ -529,42 +523,6 @@ namespace Quartz
                 BeginInvoke((Action)(() => { if (_reloadFavourites) LoadFavourites(); }));
         }
 
-        private static string FitFavouriteButtonText(Button button, string fullText, int maximumWidth)
-        {
-            string prefix = button.Image == null ? string.Empty : FavouriteIconTextPrefix;
-            string displayText = prefix + fullText;
-            Size originalMaximumSize = button.MaximumSize;
-            button.MaximumSize = Size.Empty;
-
-            try
-            {
-                button.Text = displayText;
-                if (button.GetPreferredSize(Size.Empty).Width <= maximumWidth)
-                    return displayText;
-
-                const string ellipsis = "...";
-                int minimum = 0;
-                int maximum = fullText.Length;
-
-                while (minimum < maximum)
-                {
-                    int length = (minimum + maximum + 1) / 2;
-                    button.Text = prefix + fullText.Substring(0, length) + ellipsis;
-
-                    if (button.GetPreferredSize(Size.Empty).Width <= maximumWidth)
-                        minimum = length;
-                    else
-                        maximum = length - 1;
-                }
-
-                return prefix + fullText.Substring(0, minimum) + ellipsis;
-            }
-            finally
-            {
-                button.MaximumSize = originalMaximumSize;
-            }
-        }
-
         internal Button UpdateFavouriteButtonPreview(Button button, string name)
         {
             if (button == null)
@@ -592,8 +550,7 @@ namespace Quartz
             Action updatePreview = () =>
             {
                 button.AccessibleName = name;
-                button.Text = FitFavouriteButtonText(button, name, MaximumFavouriteButtonWidth);
-                button.MaximumSize = new Size(MaximumFavouriteButtonWidth, FavouriteButtonHeight);
+                button.Text = name;
             };
             if (button is Quartz.Controls.FavouriteButton && button.Parent == pnlFavourites)
             {
@@ -757,14 +714,19 @@ namespace Quartz
                 // Use the laid-out content extent, even while the row is hidden.
                 // Native scrollbar visibility can still describe its previous size.
                 bool overflow = pnlFavourites.AutoScrollMinSize.Width > pnlFavourites.ClientSize.Width;
-                int rowHeight = overflow ? 47 : 30;
-                int toolbarHeight = show ? (overflow ? 88 : 71) : 43;
+                float scale = DeviceDpi / 96f;
+                int rowHeight = (int)Math.Round(32 * scale) + (overflow ? SystemInformation.HorizontalScrollBarHeight : 0);
+                int toolbarBaseHeight = (int)Math.Round(43 * scale);
+                int toolbarHeight = toolbarBaseHeight + (show ? rowHeight : 0);
 
                 _updatingFavouriteLayout = true;
                 SuspendLayout();
                 pnlTop.SuspendLayout();
                 try
                 {
+                    pnlFavourites.Top = toolbarBaseHeight;
+                    pnlFavourites.Padding = new Padding((int)Math.Round(4 * scale), 0,
+                        (int)Math.Round(4 * scale), (int)Math.Round(4 * scale));
                     if (pnlFavourites.Height != rowHeight) pnlFavourites.Height = rowHeight;
                     pnlFavourites.Visible = show;
                     if (pnlTop.Height != toolbarHeight) pnlTop.Height = toolbarHeight;
@@ -1011,7 +973,9 @@ namespace Quartz
             Shortcuts(false);
             Settings setting = new Settings(this);
             setting.Owner = this;
-            setting.ShowDialog();
+            btnSettings.IsActive = true;
+            try { setting.ShowDialog(); }
+            finally { btnSettings.IsActive = false; setting.Dispose(); }
         }
 
         private void btnBack_Click(object sender, EventArgs e)
@@ -1032,7 +996,11 @@ namespace Quartz
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            wvWebView1.Reload();
+            if (wvWebView1.CoreWebView2 == null) return;
+            if (_refreshButtonState == RefreshButtonState.Stop)
+                wvWebView1.CoreWebView2.Stop();
+            else
+                wvWebView1.Reload();
         }
 
         private void btnAddFavourite_Click(object sender, EventArgs e)
@@ -1041,7 +1009,9 @@ namespace Quartz
             Shortcuts(false);
             var form = new Favourite(this, wvWebView1.CoreWebView2.DocumentTitle, wvWebView1.Source.ToString(), false, null);
             form.Owner = this;
-            form.ShowDialog();
+            btnAddFavourite.IsActive = true;
+            try { form.ShowDialog(); }
+            finally { btnAddFavourite.IsActive = false; form.Dispose(); }
         }
 
         private void txtWebAddress_KeyUp(object sender, KeyEventArgs e)
@@ -1189,6 +1159,7 @@ namespace Quartz
                 //UpdateTitleWithEvent("CoreWebView2InitializationCompleted failed");
                 return;
             }
+            InitializeDownloadButtonFeedback();
             wvWebView1.CoreWebView2.SourceChanged += CoreWebView2_SourceChanged;
             wvWebView1.CoreWebView2.HistoryChanged += CoreWebView2_HistoryChanged;
             wvWebView1.CoreWebView2.DocumentTitleChanged += CoreWebView2_DocumentTitleChanged;
@@ -1208,6 +1179,7 @@ namespace Quartz
             {
                 PreviewProcessFailed();
                 SetTabLoading(false);
+                SetRefreshButtonState(RefreshButtonState.Refresh);
             }
         }
 
@@ -1250,8 +1222,7 @@ namespace Quartz
 
             Cursor = animateLoading ? Cursors.AppStarting : Cursors.Default;
 
-            btnRefresh.Visible = false;
-            btnStop.Visible = true;
+            SetRefreshButtonState(e.Cancel ? RefreshButtonState.Refresh : RefreshButtonState.Stop);
         }
 
         private void CoreWebView2_ContentLoading(object sender, CoreWebView2ContentLoadingEventArgs e)
@@ -1278,8 +1249,7 @@ namespace Quartz
                 loadnum++;
 
             Cursor = Cursors.Default;
-            btnRefresh.Visible = true;
-            btnStop.Visible = false;
+            SetRefreshButtonState(RefreshButtonState.Refresh);
 
             if (e.IsSuccess)
             {
@@ -1668,122 +1638,12 @@ namespace Quartz
 
         private void btnBack_EnabledChanged(object sender, EventArgs e)
         {
-            var theme = SettingsService.Get("Theme");
-            if (theme == "light")
-            {
-                if (btnBack.Enabled)
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Left;
-                }
-                else
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.DLeft;
-                }
-            }
-            else if (theme == "dark")
-            {
-                if (btnBack.Enabled)
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.DLeft;
-                }
-                else
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Left;
-                }
-            }
-            else if (theme == "black")
-            {
-                if (btnBack.Enabled)
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Black_Left;
-                }
-                else
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Left;
-                }
-            }
-            else if (theme == "aqua")
-            {
-                if (btnBack.Enabled)
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Aqua_Icon_Left;
-                }
-                else
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.Aqua_Left_Inactive;
-                }
-            }
-            else if (theme == "xmas")
-            {
-                if (btnBack.Enabled)
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.XLeft;
-                }
-                else
-                {
-                    btnBack.BackgroundImage = Quartz.Properties.Resources.XLeft_disabled;
-                }
-            }
+            btnBack.Invalidate();
         }
 
         private void btnForward_EnabledChanged(object sender, EventArgs e)
         {
-            var theme = SettingsService.Get("Theme");
-            if (theme == "light")
-            {
-                if (btnForward.Enabled)
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Right;
-                }
-                else
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.DRight;
-                }
-            }
-            else if (theme == "dark")
-            {
-                if (btnForward.Enabled)
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.DRight;
-                }
-                else
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Right;
-                }
-            }
-            else if (theme == "black")
-            {
-                if (btnForward.Enabled)
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Black_Right;
-                }
-                else
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Right;
-                }
-            }
-            else if (theme == "aqua")
-            {
-                if (btnForward.Enabled)
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Aqua_Icon_Right;
-                }
-                else
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.Aqua_Right_Inactive;
-                }
-            }
-            else if (theme == "xmas")
-            {
-                if (btnForward.Enabled)
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.XRight;
-                }
-                else
-                {
-                    btnForward.BackgroundImage = Quartz.Properties.Resources.XRight_disabled;
-                }
-            }
+            btnForward.Invalidate();
         }
 
         private void wvWebView1_ZoomFactorChanged(object sender, EventArgs e)
@@ -2335,7 +2195,9 @@ namespace Quartz
             Shortcuts(false);
             Settings setting = new Settings(this);
             setting.Owner = this;
-           setting.ShowDialog();
+            btnSettings.IsActive = true;
+            try { setting.ShowDialog(); }
+            finally { btnSettings.IsActive = false; setting.Dispose(); }
         }
 
         private void Item_Click(object sender, EventArgs e)

@@ -30,7 +30,7 @@
         {
             this.label2 = new System.Windows.Forms.Label();
             this.txtCurrent = new System.Windows.Forms.TextBox();
-            this.btnEnter = new System.Windows.Forms.Button();
+            this.btnEnter = new Quartz.Controls.ChromiumButton();
             this.labelCurrent = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -59,9 +59,9 @@
             // 
             // btnEnter
             // 
-            this.btnEnter.Location = new System.Drawing.Point(499, 55);
+            this.btnEnter.Location = new System.Drawing.Point(499, 52);
             this.btnEnter.Name = "btnEnter";
-            this.btnEnter.Size = new System.Drawing.Size(75, 23);
+            this.btnEnter.Size = new System.Drawing.Size(75, 28);
             this.btnEnter.TabIndex = 3;
             this.btnEnter.Text = "Enter";
             this.btnEnter.UseVisualStyleBackColor = true;
@@ -102,7 +102,7 @@
         #endregion
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtCurrent;
-        private System.Windows.Forms.Button btnEnter;
+        private Quartz.Controls.ChromiumButton btnEnter;
         private System.Windows.Forms.Label labelCurrent;
     }
 }

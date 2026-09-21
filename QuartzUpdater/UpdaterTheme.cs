@@ -107,6 +107,7 @@ namespace QuartzUpdater
 
         internal static void Apply(Form form, string name, params Control[] secondaryLabels)
         {
+            Quartz.Controls.ChromiumButton.IsLightThemeForClickColorTest = name == "light";
             Palette palette = GetPalette(name);
             ApplyControl(form, palette, name == "light");
             foreach (Control label in secondaryLabels)
@@ -124,7 +125,7 @@ namespace QuartzUpdater
             if (button != null)
             {
                 button.UseVisualStyleBackColor = SystemInformation.HighContrast;
-                button.FlatStyle = palette.ButtonStyle;
+                button.FlatStyle = button is Quartz.Controls.ChromiumButton ? FlatStyle.Flat : palette.ButtonStyle;
                 button.BackColor = palette.ButtonBackground;
                 button.ForeColor = palette.ButtonForeground;
                 button.FlatAppearance.BorderSize = palette.ButtonBorder;
