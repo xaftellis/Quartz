@@ -1,8 +1,6 @@
 // Algorithms and icon data derived from Chromium 85. See docs/Chromium-LICENSE.
 using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -10,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using SkiaSharp;
 
@@ -33,25 +30,15 @@ namespace Quartz.Controls
 
         internal SKBitmap Get(Image source, ChromiumIcon icon, Size size, Color color)
         {
-            long stage = Stopwatch.GetTimestamp();
             if (_pixels != null && ReferenceEquals(source, _source) && _icon == icon &&
                 size == _size && color == _color)
-            {
-                IconTiming.Record("pixel_cache_hit", stage, icon, source, size);
                 return _pixels;
-            }
-            IconTiming.Record("pixel_cache_miss", stage, icon, source, size);
-            stage = Stopwatch.GetTimestamp();
             Dispose();
             _source = source; _icon = icon; _size = size; _color = color;
             _pixels = NewBitmap(size.Width, size.Height);
-            IconTiming.Record("pixel_allocate", stage, icon, source, size);
             if (icon != ChromiumIcon.None)
             {
-                stage = Stopwatch.GetTimestamp();
                 VectorRep rep = GetRepresentation(icon, Math.Max(size.Width, size.Height));
-                IconTiming.Record("vector_representation", stage, icon, source, size);
-                stage = Stopwatch.GetTimestamp();
                 using (var canvas = new SKCanvas(_pixels))
                 using (var paint = new SKPaint { IsAntialias = true, Color = new SKColor(color.R, color.G, color.B, color.A) })
                 {
@@ -59,7 +46,6 @@ namespace Quartz.Controls
                     canvas.Scale(size.Width / (float)rep.Dimension, size.Height / (float)rep.Dimension);
                     canvas.DrawPath(rep.Path, paint);
                 }
-                IconTiming.Record("vector_draw", stage, icon, source, size);
             }
             else if (source != null)
             {
@@ -67,38 +53,22 @@ namespace Quartz.Controls
                 // Chromium ImageView requests RESIZE_BEST (Lanczos3) when a
                 // representation for the current device scale is unavailable.
                 byte[] output;
-                if (ToolbarPreparation.TryGet(source, size, out output))
+                if (!ToolbarPreparation.TryGet(source, size, out output))
                 {
-                    IconTiming.Record("prepared_cache_hit", Stopwatch.GetTimestamp(), icon, source, size);
-                }
-                else
-                {
-                    stage = Stopwatch.GetTimestamp();
                     byte[] input = ReadPremultipliedPixels(source);
-                    IconTiming.Record("source_read", stage, icon, source, size);
-                    stage = Stopwatch.GetTimestamp();
                     output = source.Size == size ? input : Resize(input, source.Width, source.Height, size.Width, size.Height);
-                    IconTiming.Record(source.Size == size ? "resize_skipped" : "resize", stage, icon, source, size);
                 }
-                stage = Stopwatch.GetTimestamp();
                 Marshal.Copy(output, 0, _pixels.GetPixels(), output.Length);
-                IconTiming.Record("pixel_copy", stage, icon, source, size);
             }
             return _pixels;
         }
 
         internal Bitmap GetDrawingImage(Image source, ChromiumIcon icon, Size size, Color color, bool enabled, bool mirrored)
         {
-            long stage = Stopwatch.GetTimestamp();
             SKBitmap pixels = Get(source, icon, size, color);
-            IconTiming.Record("get_pixels_total", stage, icon, source, size);
             if (_drawingImage != null && _drawingEnabled == enabled && _drawingMirrored == mirrored)
-            {
-                IconTiming.Record("drawing_cache_hit", Stopwatch.GetTimestamp(), icon, source, size);
                 return _drawingImage;
-            }
 
-            stage = Stopwatch.GetTimestamp();
             DisposeDrawingImage();
             _drawingEnabled = enabled;
             _drawingMirrored = mirrored;
@@ -119,11 +89,8 @@ namespace Quartz.Controls
                 }
                 pixels = _drawingPixels;
             }
-            IconTiming.Record("drawing_transform", stage, icon, source, size);
-            stage = Stopwatch.GetTimestamp();
             _drawingImage = new Bitmap(size.Width, size.Height, pixels.RowBytes,
                 PixelFormat.Format32bppPArgb, pixels.GetPixels());
-            IconTiming.Record("drawing_bitmap_wrapper", stage, icon, source, size);
             return _drawingImage;
         }
 
@@ -192,56 +159,6 @@ namespace Quartz.Controls
                 }
                 pixels = task.Result;
                 return true;
-            }
-        }
-
-        // Enabled only when the process is launched with QUARTZ_ICON_TIMING_LOG.
-        // Background writes avoid adding disk I/O to the measured UI path.
-        private static class IconTiming
-        {
-            private static readonly string LogPath = Environment.GetEnvironmentVariable("QUARTZ_ICON_TIMING_LOG");
-            private static readonly ConcurrentQueue<string> Rows = new ConcurrentQueue<string>();
-            private static readonly Stopwatch Clock = Stopwatch.StartNew();
-            private static readonly System.Threading.Timer Writer = StartWriter();
-            private static int _writing;
-
-            private static System.Threading.Timer StartWriter()
-            {
-                if (string.IsNullOrEmpty(LogPath)) return null;
-                Rows.Enqueue("elapsed_ms,event,duration_ms,kind,source_width,source_height,target_width,target_height");
-                AppDomain.CurrentDomain.ProcessExit += (sender, args) => Flush();
-                return new System.Threading.Timer(state =>
-                {
-                    Flush();
-                    if (Clock.ElapsedMilliseconds >= 180000)
-                        Writer?.Change(Timeout.Infinite, Timeout.Infinite);
-                }, null, 500, 500);
-            }
-
-            internal static void Record(string name, long start, ChromiumIcon icon, Image source, Size target)
-            {
-                if (string.IsNullOrEmpty(LogPath) || Clock.ElapsedMilliseconds >= 180000) return;
-                double duration = (Stopwatch.GetTimestamp() - start) * 1000d / Stopwatch.Frequency;
-                string kind = icon != ChromiumIcon.None ? icon.ToString() : source == null ? "none" : "raster";
-                Rows.Enqueue(Clock.Elapsed.TotalMilliseconds.ToString("F3", CultureInfo.InvariantCulture) + "," +
-                    name + "," + duration.ToString("F3", CultureInfo.InvariantCulture) + "," + kind + "," +
-                    (source?.Width ?? 0) + "," + (source?.Height ?? 0) + "," + target.Width + "," + target.Height);
-            }
-
-            private static void Flush()
-            {
-                if (Interlocked.Exchange(ref _writing, 1) != 0) return;
-                try
-                {
-                    using (var output = new StreamWriter(LogPath, true))
-                    {
-                        string row;
-                        while (Rows.TryDequeue(out row)) output.WriteLine(row);
-                    }
-                }
-                catch (IOException) { }
-                catch (UnauthorizedAccessException) { }
-                finally { Interlocked.Exchange(ref _writing, 0); }
             }
         }
 
