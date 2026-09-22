@@ -158,6 +158,13 @@
     <Compile Include="AppContainer.Designer.cs">
       <DependentUpon>AppContainer.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShortcutManager.cs" />
+    <Compile Include="AppContainer.FullScreen.cs">
+      <DependentUpon>AppContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Browser.Shortcuts.cs">
+      <DependentUpon>Browser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Browser.ZoomMenu.cs">
       <DependentUpon>Browser.cs</DependentUpon>
       <SubType>Form</SubType>

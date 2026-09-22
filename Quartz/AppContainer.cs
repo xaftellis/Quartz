@@ -55,6 +55,11 @@ namespace Quartz
 
         public Guid ProfileId { get; }
 
+        internal ShortcutManager Shortcuts { get; }
+
+        internal bool IsTabStripHandle(IntPtr handle) =>
+            _overlay != null && _overlay.IsHandleCreated && handle == _overlay.Handle;
+
         public override bool CanReceiveTabsFrom(TitleBarTabs source) =>
             base.CanReceiveTabsFrom(source) && source is AppContainer window && window.ProfileId == ProfileId;
 
@@ -113,6 +118,7 @@ namespace Quartz
 
             ContextMenuProvider._contextMenuStripNormal = new DefaultContextMenu();
             ContextMenuProvider._contextMenuStripTab = new TabContextMenu();
+            Shortcuts = new ShortcutManager(this);
         }
 
         internal void ApplyWindowTheme()
@@ -292,7 +298,7 @@ namespace Quartz
 
         private void SaveWindowSettings()
         {
-            if (_restoringWindowSettings)
+            if (_restoringWindowSettings || FullScreen)
                 return;
 
             Rectangle normalBounds = WindowState == FormWindowState.Normal ? Bounds : RestoreBounds;
@@ -314,7 +320,7 @@ namespace Quartz
 
         private void ScheduleWindowSettingsSave()
         {
-            if (_restoringWindowSettings || WindowState != FormWindowState.Normal)
+            if (_restoringWindowSettings || FullScreen || WindowState != FormWindowState.Normal)
                 return;
 
             _windowSettingsSaveTimer.Stop();
@@ -368,6 +374,7 @@ namespace Quartz
         {
             Browser browser = (Browser)SelectedTab.Content;
             browser.tabbedApp = (AppContainer)browser.Parent;
+            browser.ApplyFullscreenChrome(FullScreen);
             UpdateMinimumWindowSize();
 
             if(_windowName == string.Empty)

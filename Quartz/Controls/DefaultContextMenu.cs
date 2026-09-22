@@ -61,10 +61,10 @@ namespace Quartz.Controls
 
             var sep2 = new ToolStripSeparator();
             taskManagerToolStripMenuItem = new ToolStripMenuItem("Task manager");
-            taskManagerToolStripMenuItem.ShortcutKeyDisplayString = "Shift+Esc";
+            ShortcutManager.SetMenuShortcut(taskManagerToolStripMenuItem, BrowserCommand.TaskManager);
             var sep3 = new ToolStripSeparator();
             closeToolStripMenuItem = new ToolStripMenuItem("Close");
-            closeToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
+            ShortcutManager.SetMenuShortcut(closeToolStripMenuItem, BrowserCommand.CloseWindow);
 
             this.Items.AddRange(new ToolStripItem[]
             {
@@ -147,7 +147,7 @@ namespace Quartz.Controls
 
         private void TaskManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((Browser)_parentForm.SelectedTab.Content).wvWebView1.CoreWebView2.OpenTaskManagerWindow();
+            ShortcutManager.ExecuteCommand(_parentForm?.SelectedTab?.Content as Browser, BrowserCommand.TaskManager);
         }
 
         public void DefineVarables()
@@ -203,7 +203,7 @@ namespace Quartz.Controls
 
         private void DoClose()
         {
-            _parentForm.Close();
+            ShortcutManager.ExecuteCommand(_parentForm?.SelectedTab?.Content as Browser, BrowserCommand.CloseWindow);
         }
 
         private void DoMove()

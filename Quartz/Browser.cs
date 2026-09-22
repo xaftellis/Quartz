@@ -76,9 +76,6 @@ namespace Quartz
         public string _tabAddress = string.Empty;
         private Settings _settings;
         int loadnum = 0;
-        FormWindowState _windowState;
-        Size size;
-        Point point;
 
         public HttpClient httpClient = new HttpClient();
         //ListView lstSuggestions = new ListView();
@@ -106,44 +103,13 @@ namespace Quartz
             DwmSetWindowAttribute(hWnd, DWWMA_BORDER_COLOR, border, 4);
         }
 
-        private bool fullScreen = false;
         [DefaultValue(false)]
         public bool FullScreen
         {
-            get { return fullScreen; }
+            get { return (ParentTabs as AppContainer)?.FullScreen ?? false; }
             set
             {
-                if (fullScreen == value) return;
-
-                fullScreen = value;
-                if (value)
-                {
-                    _windowState = tabbedApp.WindowState;
-                    Rectangle normalBounds = _windowState == FormWindowState.Normal
-                        ? tabbedApp.Bounds : tabbedApp.RestoreBounds;
-                    size = normalBounds.Size;
-                    point = normalBounds.Location;
-                    tabbedApp.OverlayVisible = false;
-                    tabbedApp.WindowState = FormWindowState.Normal;
-                    tabbedApp.FormBorderStyle = FormBorderStyle.None;
-                    tabbedApp.WindowState = FormWindowState.Maximized;
-                    pnlTop.Visible = false;
-                    pnlDivider.Visible = false;
-                    tabbedApp.TopMost = true;
-                }
-                else
-                {
-                    tabbedApp.WindowState = FormWindowState.Normal;
-                    tabbedApp.FormBorderStyle = FormBorderStyle.Sizable;
-                    tabbedApp.Bounds = new Rectangle(point, size);
-                    tabbedApp.WindowState = _windowState;
-                    tabbedApp.OverlayVisible = true;
-                    pnlTop.Visible = true;
-                    pnlDivider.Visible = true;
-                    tabbedApp.TopMost = false;
-                    wvWebView1.Focus();
-                }
-                tabbedApp.ResizeTabContents();
+                if (ParentTabs is AppContainer window) window.FullScreen = value;
             }
         }
         #endregion
@@ -165,18 +131,7 @@ namespace Quartz
             }
             InitializeUpdateAvailableMenuItem();
             InitializeZoomMenuRow();
-            wvWebView1.KeyDown += (sender, e) =>
-            {
-                if (e.KeyData != Keys.F11) return;
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-                // Let WebView2 finish handling the key before resizing its window.
-                BeginInvoke(new Action(() =>
-                {
-                    if (!IsDisposed && !Disposing)
-                        fullscreenToolStripMenuItem_Click(this, EventArgs.Empty);
-                }));
-            };
+            InitializeShortcuts();
             InitializeWebViewFocus();
             DoubleBuffered = true;
             InitializeTabPreview();
@@ -860,7 +815,8 @@ namespace Quartz
 
             wvWebView1.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) =>
             {
-                this.FullScreen = wvWebView1.CoreWebView2.ContainsFullScreenElement;
+                if (ParentTabs?.SelectedTab?.Content == this)
+                    FullScreen = wvWebView1.CoreWebView2.ContainsFullScreenElement;
             };
 
             if (SettingsService.Get("HiddenPDFNone") != "true")
@@ -1559,22 +1515,8 @@ namespace Quartz
 
         private void openFileInBrowserToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.CheckFileExists)
-            {
-                if (openFileDialog1.CheckPathExists)
-                {
-                    openFileDialog1.ShowDialog(this);
-                    wvWebView1.Source = new Uri("file://" + openFileDialog1.FileName);
-                }
-                else
-                {
-                    MessageBox.Show("The Selected Path Does Not Exist", "Something Not Right", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            else
-            {
-                MessageBox.Show("The Selected File Does Not Exist", "Something Not Right", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+                wvWebView1.Source = new Uri(openFileDialog1.FileName);
         }
 
         private void CoreViewView2__DownloadStarting(object sender, CoreWebView2DownloadStartingEventArgs e)
@@ -1735,22 +1677,19 @@ namespace Quartz
         private void SettingsMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             RefreshUpdateAvailableMenuItem();
-
-            if (SettingsService.Get("AreDevToolsEnabled") == "true")
-            {
-                inspectToolStripMenuItem.Enabled = true;
-            }
-            else
-            {
-                inspectToolStripMenuItem.Enabled = false;
-            }
-
-            historyToolStripMenuItem.Enabled = Program.profileService.Get(ProfileService.Current).isDisposable != true;
+            inspectToolStripMenuItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.DeveloperTools);
+            historyToolStripMenuItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.History);
+            downloadsToolStripMenuItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.Downloads);
+            findToolStripMenuItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.Find);
+            printToolStripMenuItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.Print);
+            webview2TaskManagerToolStripMenuItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.TaskManager);
 
             UpdateZoomMenuRow();
         }
         private void Browser_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // A keyboard close can arrive before the new tab finishes starting.
+            if (wvWebView1.CoreWebView2 == null) return;
             // Get all open AppContainer forms
             var forms = Application.OpenForms.Cast<Form>()
                 .Where(f => f.Name == "AppContainer")
@@ -2008,8 +1947,8 @@ namespace Quartz
 
                 ToolStripMenuItem historyItem = new ToolStripMenuItem();
                 historyItem.Text = "History";
-                historyItem.ShortcutKeys = Keys.Control | Keys.H;
-                historyItem.Click += historyToolStripMenuItem_Click;
+                BindShortcutMenu(historyItem, BrowserCommand.History);
+                historyItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.History);
                 mnuHistory.Items.Add(historyItem);
 
                 ToolStripSeparator separatorItem = new ToolStripSeparator();
@@ -2053,8 +1992,8 @@ namespace Quartz
 
 
                 ToolStripMenuItem clearHistoryItem = new ToolStripMenuItem("Clear browsing data...");
-                clearHistoryItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.Delete; 
-                clearHistoryItem.Click += ClearHistoryItem_Click;
+                BindShortcutMenu(clearHistoryItem, BrowserCommand.ClearBrowsingData);
+                clearHistoryItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.ClearBrowsingData);
                 mnuHistory.Items.Add(clearHistoryItem);
             }
             finally
@@ -2268,14 +2207,7 @@ namespace Quartz
 
         private void fullscreenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (FullScreen)
-            {
-                FullScreen = false;
-            }
-            else
-            {
-                FullScreen = true;
-            }
+            ShortcutManager.ExecuteCommand(this, BrowserCommand.Fullscreen);
         }
 
 
@@ -2697,8 +2629,7 @@ namespace Quartz
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            wvWebView1.Focus();
-            SendKeys.SendWait("^f");
+            ShortcutManager.ExecuteCommand(this, BrowserCommand.Find);
         }
 
         private void mnuFavourites_Opening(object sender, CancelEventArgs e)
@@ -2707,26 +2638,19 @@ namespace Quartz
             try
             {
                 ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem("Add this tab to favourites...");
-                toolStripMenuItem.ShortcutKeys = Keys.Control | Keys.D;
-                toolStripMenuItem.Enabled = wvWebView1.CoreWebView2 != null && wvWebView1.Source != null;
-                toolStripMenuItem.Click += btnAddFavourite_Click;
+                BindShortcutMenu(toolStripMenuItem, BrowserCommand.AddFavourite);
+                toolStripMenuItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.AddFavourite);
 
                 var addAllTabs = new ToolStripMenuItem("Add all tabs to favourites");
-                addAllTabs.ShortcutKeys = Keys.Control | Keys.Shift | Keys.D;
-                addAllTabs.Enabled = ParentTabs != null && ParentTabs.Tabs.Count > 1 && GetTabsToFavourite().Count > 0;
-                addAllTabs.Click += AddAllTabsToFavourites_Click;
+                BindShortcutMenu(addAllTabs, BrowserCommand.FavouriteAllTabs);
+                addAllTabs.Enabled = CanExecuteShortcutCommand(BrowserCommand.FavouriteAllTabs);
 
                 var showBar = new ToolStripMenuItem("Show favourites bar")
                 {
-                    ShortcutKeys = Keys.Control | Keys.Shift | Keys.B,
                     Checked = SettingsService.Get("showFavouritesBar") == "true",
-                    CheckOnClick = true
+                    CheckOnClick = false
                 };
-                showBar.Click += (s, args) =>
-                {
-                    SettingsService.Set("showFavouritesBar", showBar.Checked.ToString().ToLower());
-                    UpdateFavBar();
-                };
+                BindShortcutMenu(showBar, BrowserCommand.ToggleFavouritesBar);
 
                 mnuFavourites.Items.Clear();
                 mnuFavourites.Items.Add(toolStripMenuItem);

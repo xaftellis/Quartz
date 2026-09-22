@@ -56,22 +56,22 @@ namespace Quartz
 
             _zoomOutButton = CreateZoomMenuButton(
                 "−",
-                "Zoom out",
+                "Zoom out (" + ShortcutManager.GetDisplayShortcut(BrowserCommand.ZoomOut) + ")",
                 30);
 
             _zoomResetButton = CreateZoomMenuButton(
                 "100%",
-                "Reset zoom",
+                "Reset zoom (" + ShortcutManager.GetDisplayShortcut(BrowserCommand.ResetZoom) + ")",
                 55);
 
             _zoomInButton = CreateZoomMenuButton(
                 "+",
-                "Zoom in",
+                "Zoom in (" + ShortcutManager.GetDisplayShortcut(BrowserCommand.ZoomIn) + ")",
                 30);
 
             var fullscreenButton = CreateZoomMenuButton(
                 "",
-                "Full screen (F11)",
+                "Full screen (" + ShortcutManager.GetDisplayShortcut(BrowserCommand.Fullscreen) + ")",
                 52);
 
             fullscreenButton.Paint += (sender, e) =>
@@ -134,13 +134,13 @@ namespace Quartz
             };
 
             _zoomOutButton.Click += (sender, e) =>
-                StepMenuZoom(-1);
+                ShortcutManager.ExecuteCommand(this, BrowserCommand.ZoomOut);
 
             _zoomInButton.Click += (sender, e) =>
-                StepMenuZoom(1);
+                ShortcutManager.ExecuteCommand(this, BrowserCommand.ZoomIn);
 
             _zoomResetButton.Click += (sender, e) =>
-                SetMenuZoom(1);
+                ShortcutManager.ExecuteCommand(this, BrowserCommand.ResetZoom);
 
             fullscreenButton.Click += (sender, e) =>
             {

@@ -366,9 +366,6 @@
   <data name="changeLocationToolStripMenuItem1.Text" xml:space="preserve">
     <value>Change Location</value>
   </data>
-  <data name="downloadsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+J</value>
-  </data>
   <data name="downloadsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>225, 22</value>
   </data>
@@ -2354,26 +2351,17 @@
   <metadata name="SettingsMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>438, 22</value>
   </metadata>
-  <data name="newTabToolStripMenuItem1.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+T</value>
-  </data>
   <data name="newTabToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>225, 22</value>
   </data>
   <data name="newTabToolStripMenuItem1.Text" xml:space="preserve">
     <value>New tab</value>
   </data>
-  <data name="newWindowToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+N</value>
-  </data>
   <data name="newWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>225, 22</value>
   </data>
   <data name="newWindowToolStripMenuItem.Text" xml:space="preserve">
     <value>New window</value>
-  </data>
-  <data name="changeProfileToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+Shift+M</value>
   </data>
   <data name="changeProfileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>225, 22</value>
@@ -2387,9 +2375,6 @@
   <metadata name="mnuHistory.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>105, 18</value>
   </metadata>
-  <data name="historyToolStripMenuItem1.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+H</value>
-  </data>
   <data name="historyToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>155, 22</value>
   </data>
@@ -2417,9 +2402,6 @@
   <metadata name="mnuFavourites.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>435, 58</value>
   </metadata>
-  <data name="addFavouritesToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+D</value>
-  </data>
   <data name="addFavouritesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>188, 22</value>
   </data>
@@ -2453,26 +2435,17 @@
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 6</value>
   </data>
-  <data name="findToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+F</value>
-  </data>
   <data name="findToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>225, 22</value>
   </data>
   <data name="findToolStripMenuItem.Text" xml:space="preserve">
     <value>Find</value>
   </data>
-  <data name="printToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+P</value>
-  </data>
   <data name="printToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>225, 22</value>
   </data>
   <data name="printToolStripMenuItem.Text" xml:space="preserve">
     <value>Print</value>
-  </data>
-  <data name="openFileInBrowserToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+O</value>
   </data>
   <data name="openFileInBrowserToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>225, 22</value>
@@ -2500,9 +2473,6 @@
   </data>
   <data name="toolStripSeparator13.Size" type="System.Drawing.Size, System.Drawing">
     <value>180, 6</value>
-  </data>
-  <data name="inspectToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>F12</value>
   </data>
   <data name="inspectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>183, 22</value>

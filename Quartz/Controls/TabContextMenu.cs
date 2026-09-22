@@ -45,13 +45,13 @@ namespace Quartz.Controls
             };
             toolStripSeparator = new ToolStripSeparator();
             reloadTabToolStripMenuItem = new ToolStripMenuItem("Reload");
-            reloadTabToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.R;
+            ShortcutManager.SetMenuShortcut(reloadTabToolStripMenuItem, BrowserCommand.Reload);
             duplicateTabToolStripMenuItem = new ToolStripMenuItem("Duplicate");
             pinTabToolStripMenuItem = new ToolStripMenuItem("Pin");
             muteTabToolStripMenuItem = new ToolStripMenuItem("Mute tab");
             toolStripSeparator1 = new ToolStripSeparator();
             closeTabToolStripMenuItem = new ToolStripMenuItem("Close Tab");
-            closeTabToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.W;
+            ShortcutManager.SetMenuShortcut(closeTabToolStripMenuItem, BrowserCommand.CloseTab);
             closeOtherToolStripMenuItem = new ToolStripMenuItem("Close other tabs");
             closeLeftToolStripMenuItem = new ToolStripMenuItem("Close tabs to the left");
             closeRightToolStripMenuItem = new ToolStripMenuItem("Close tabs to the right");
@@ -165,8 +165,7 @@ namespace Quartz.Controls
         {
             if (_clickedTab?.Content is Browser browser)
             {
-                // Reload using WebView2 API
-                browser.wvWebView1.Reload();
+                ShortcutManager.ExecuteCommand(browser, BrowserCommand.Reload);
             }
         }
 
@@ -231,7 +230,7 @@ namespace Quartz.Controls
 
         private void CloseTabToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _clickedTab.Content.Close();
+            ShortcutManager.ExecuteCommand(_clickedTab?.Content as Browser, BrowserCommand.CloseTab);
         }
 
         private void DefaultContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
