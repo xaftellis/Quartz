@@ -80,6 +80,15 @@
     <Compile Include="..\Quartz\Controls\ChromiumButtonAnimation.cs">
       <Link>Controls\ChromiumButtonAnimation.cs</Link>
     </Compile>
+    <Compile Include="..\Quartz\Controls\ChromiumButton.Composition.cs">
+      <Link>Controls\ChromiumButton.Composition.cs</Link>
+    </Compile>
+    <Compile Include="..\Quartz\Controls\ChromiumButtonComposition.cs">
+      <Link>Controls\ChromiumButtonComposition.cs</Link>
+    </Compile>
+    <Compile Include="..\Quartz\Controls\DirectComposition.cs">
+      <Link>Controls\DirectComposition.cs</Link>
+    </Compile>
     <Compile Include="..\Quartz\Controls\ChromiumButtonImage.cs">
       <Link>Controls\ChromiumButtonImage.cs</Link>
     </Compile>

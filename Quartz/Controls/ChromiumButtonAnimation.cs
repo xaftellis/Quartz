@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Quartz.Controls
 {
@@ -180,6 +181,43 @@ namespace Quartz.Controls
             _fadeAt = start;
             _fadeDuration = Duration(300);
             _finishedAt = start + _fadeDuration;
+        }
+
+        internal struct Frame
+        {
+            internal double Time, Highlight, Radius, Opacity;
+        }
+
+        // Sample a private copy: future hidden/highlight transitions must not
+        // advance the live input state. Times supplied to DWM are in seconds.
+        internal List<Frame> CaptureTimeline(double now)
+        {
+            var copy = new ChromiumButtonAnimation
+            {
+                AnimationsEnabled = AnimationsEnabled, State = State,
+                _hovered = _hovered, _finishedAt = _finishedAt,
+                _fadeAt = _fadeAt, _fadeDuration = _fadeDuration
+            };
+            copy._highlight.Set(_highlight.From, _highlight.To, _highlight.Start, _highlight.Duration, _highlight.Curve);
+            copy._radius.Set(_radius.From, _radius.To, _radius.Start, _radius.Duration, _radius.Curve);
+            copy._opacity.Set(_opacity.From, _opacity.To, _opacity.Start, _opacity.Duration, _opacity.Curve);
+            double end = Math.Max(now, Math.Max(_highlight.End, Math.Max(_radius.End, _opacity.End)));
+            if (State == InkState.Triggered || State == InkState.Deactivated || State == InkState.Hiding)
+                end = Math.Max(end, _finishedAt + Duration(120));
+            var times = new SortedSet<double> { now, end };
+            // Four-ms segments preserve the source curves between compositor frames.
+            for (double at = now + 4; at < end; at += 4) times.Add(at);
+            foreach (double at in new[] { _highlight.Start, _highlight.End, _radius.End,
+                _opacity.End, _fadeAt ?? now, _finishedAt, _finishedAt + Duration(120) })
+                if (at > now && at < end) times.Add(at);
+            var frames = new List<Frame>(times.Count);
+            foreach (double at in times)
+            {
+                copy.Advance(at);
+                frames.Add(new Frame { Time = (at - now) / 1000, Highlight = copy.Highlight(at),
+                    Radius = copy.Radius(at), Opacity = copy.Opacity(at) });
+            }
+            return frames;
         }
 
         // ui/gfx/animation/tween.cc. EASE_IN_OUT is piecewise quadratic,

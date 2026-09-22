@@ -222,6 +222,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\ChromiumButtonAnimation.cs" />
+    <Compile Include="Controls\ChromiumButton.Composition.cs" />
+    <Compile Include="Controls\ChromiumButtonComposition.cs" />
+    <Compile Include="Controls\DirectComposition.cs" />
     <Compile Include="Controls\ChromiumButtonImage.cs" />
     <EmbeddedResource Include="Controls\ChromiumIcons\*.icon">
       <LogicalName>Quartz.ChromiumIcons.%(Filename)%(Extension)</LogicalName>

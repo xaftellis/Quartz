@@ -12,7 +12,7 @@ using SkiaSharp;
 namespace Quartz.Controls
 {
     /// <summary>A WinForms Button with Chromium 85 toolbar ink-drop feedback.</summary>
-    public class ChromiumButton : Button
+    public partial class ChromiumButton : Button
     {
         // TEMPORARY click-colour test: set this to false to restore all original colours.
         internal static readonly bool TestModernLightClickColor = true;
@@ -69,6 +69,7 @@ namespace Quartz.Controls
         // Control.OnPaint when UserPaint is off, preserving ordinary Paint events.
         protected override void OnPaint(PaintEventArgs e)
         {
+            if (TryPaintComposition(e)) return;
             RenderButton(this, e);
             SetStyle(ControlStyles.UserPaint, false);
             try { base.OnPaint(e); }
@@ -230,15 +231,14 @@ namespace Quartz.Controls
 
         protected virtual bool HitTest(Point point) => ClientRectangle.Contains(point);
 
-        private void RenderButton(object sender, PaintEventArgs e)
+        private float InkCornerRadius(RectangleF bounds) => _cornerRadius < 0 ? Math.Min(bounds.Width, bounds.Height) / 2
+            : Math.Min(_cornerRadius * DpiScale, Math.Min(bounds.Width, bounds.Height) / 2);
+
+        private void PrepareBackground()
         {
-            if (Width <= 0 || Height <= 0) return;
-            double now = ButtonFrames.Now;
-            _animation.Advance(now);
             EnsureBuffer();
             RectangleF bounds = GetInkBounds();
-            float radius = _cornerRadius < 0 ? Math.Min(bounds.Width, bounds.Height) / 2
-                : Math.Min(_cornerRadius * DpiScale, Math.Min(bounds.Width, bounds.Height) / 2);
+            float radius = InkCornerRadius(bounds);
             _clip.SetRect(ToSkia(bounds), radius, radius);
             _canvas.Clear(ToSkia(OpaqueBackground(Parent)));
             _paint.Style = SKPaintStyle.Fill;
@@ -246,13 +246,18 @@ namespace Quartz.Controls
             _canvas.DrawRoundRect(_clip, _paint);
 
             // Retain Quartz's decorative backgrounds (including seasonal snow).
+            _canvas.Flush();
             if (BackgroundImage != null)
-            {
-                _canvas.Flush();
-                e.Graphics.DrawImageUnscaled(_buffer, 0, 0);
-                DrawBackgroundImage(e.Graphics);
-                _canvas.Clear(SKColors.Transparent);
-            }
+                using (var graphics = Graphics.FromImage(_buffer)) DrawBackgroundImage(graphics);
+        }
+
+        private void RenderButton(object sender, PaintEventArgs e)
+        {
+            if (Width <= 0 || Height <= 0) return;
+            double now = ButtonFrames.Now;
+            _animation.Advance(now);
+            PrepareBackground();
+            RectangleF bounds = GetInkBounds();
 
             // Chromium 85's platform high-contrast ink-drop feature is disabled
             // by default. Toolbar ink still uses maximum contrast in that mode.
@@ -292,9 +297,15 @@ namespace Quartz.Controls
             _paintedOpacity = opacity;
             _paintedRadius = rippleProgress;
             PaintButtonContent(e.Graphics);
+            PaintFocusRing(e.Graphics);
+        }
 
+        private void PaintFocusRing(Graphics graphics)
+        {
             if (Enabled && Focused && (!FocusOnPress || (ShowFocusCues && _keyboardFocus)))
             {
+                RectangleF bounds = GetInkBounds();
+                float radius = InkCornerRadius(bounds);
                 _canvas.Clear(SKColors.Transparent);
                 // A child HWND cannot paint Chromium's outward halo. Keep the
                 // same 2-DIP stroke just inside the control's clipping boundary.
@@ -312,7 +323,7 @@ namespace Quartz.Controls
                     _paint.Color = ToSkia(focus);
                     _canvas.DrawRoundRect(ToSkia(bounds), Math.Max(0, radius - inset), Math.Max(0, radius - inset), _paint);
                     _canvas.Flush();
-                    e.Graphics.DrawImageUnscaled(_buffer, 0, 0);
+                    graphics.DrawImageUnscaled(_buffer, 0, 0);
                 }
             }
         }
@@ -626,6 +637,8 @@ namespace Quartz.Controls
 
         protected override void WndProc(ref Message m)
         {
+            bool previousPrinting = _printing;
+            if (m.Msg == 0x0317 || m.Msg == 0x0318) _printing = true; // WM_PRINT / WM_PRINTCLIENT
             bool release = m.Msg == 0x0202 || m.Msg == 0x0208; // left / middle mouse up
             bool suppressFocus = !FocusOnPress && (m.Msg == 0x0201 || m.Msg == 0x0203 || m.Msg == 0x0207 || m.Msg == 0x0209);
             bool previousRelease = _releasingMouse;
@@ -653,6 +666,7 @@ namespace Quartz.Controls
                     _releasePoint = previousReleasePoint;
                 }
                 _touchMouseMessage = previousTouchMessage;
+                _printing = previousPrinting;
             }
             if (m.Msg == 0x001A) ReadAnimationPreference(); // WM_SETTINGCHANGE
         }
@@ -749,13 +763,17 @@ namespace Quartz.Controls
         private void WakeAnimation()
         {
             if (IsDisposed || Disposing) return;
+            _compositionAnimationDirty = true;
+            bool composed = UpdateCompositionAnimation();
             Invalidate();
-            if (IsHandleCreated && Visible && _animation.IsAnimating(ButtonFrames.Now)) ButtonFrames.Add(this);
+            if (composed) ButtonFrames.Remove(this);
+            else if (IsHandleCreated && Visible && _animation.IsAnimating(ButtonFrames.Now)) ButtonFrames.Add(this);
         }
 
         internal bool AdvanceFrame(double now)
         {
             if (IsDisposed || Disposing || !IsHandleCreated || !Visible) return false;
+            if (_composition != null) return false;
             _animation.Advance(now);
             double highlight = Enabled ? _animation.Highlight(now) : 0;
             double opacity = Enabled ? _animation.Opacity(now) : 0;
@@ -777,13 +795,28 @@ namespace Quartz.Controls
             _origin = CenterPoint();
             _animation.Reset(Enabled && Visible && Activated, Enabled && Visible && _hovered, ButtonFrames.Now);
             ButtonFrames.Remove(this);
-            Invalidate();
+            WakeAnimation();
         }
 
         protected override void OnEnabledChanged(EventArgs e) { base.OnEnabledChanged(e); ResetFeedback(); }
-        protected override void OnVisibleChanged(EventArgs e) { base.OnVisibleChanged(e); ResetFeedback(); }
-        protected override void OnHandleCreated(EventArgs e) { base.OnHandleCreated(e); ReadAnimationPreference(); }
-        protected override void OnHandleDestroyed(EventArgs e) { ButtonFrames.Remove(this); base.OnHandleDestroyed(e); }
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+            if (!Visible) DisposeComposition();
+            ResetFeedback();
+        }
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            _compositionFailed = false;
+            ReadAnimationPreference();
+        }
+        protected override void OnHandleDestroyed(EventArgs e)
+        {
+            ButtonFrames.Remove(this);
+            DisposeComposition();
+            base.OnHandleDestroyed(e);
+        }
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
@@ -793,10 +826,13 @@ namespace Quartz.Controls
             _origin = CenterPoint();
             _animation.Reset(Enabled && Visible && Activated, Enabled && Visible && _hovered, ButtonFrames.Now);
             ButtonFrames.Remove(this);
+            _compositionAnimationDirty = true;
+            Invalidate();
         }
         protected override void OnParentChanged(EventArgs e)
         {
             base.OnParentChanged(e);
+            DisposeComposition();
             ResetFeedback();
         }
         protected override void OnDpiChangedAfterParent(EventArgs e)
@@ -959,6 +995,7 @@ namespace Quartz.Controls
             {
                 ButtonFrames.Remove(this);
                 ObserveMenu(null);
+                DisposeComposition();
                 DisposeBuffer();
                 ClearImageCache();
             }
