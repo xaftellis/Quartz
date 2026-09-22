@@ -211,7 +211,7 @@ namespace Quartz.Controls
         // of our black/white mattes, destroying the recovered edge coverage.
         // A real DIB-backed HDC lets both GDI text and GDI+ images blend against
         // the same initialized pixels. These buffers are reused between paints.
-        private sealed class GdiBuffer : IDisposable
+        internal sealed class GdiBuffer : IDisposable
         {
             private IntPtr _dc, _bitmap, _previous, _bits;
 

@@ -152,8 +152,8 @@ namespace Quartz.Controls
             if (_captionHeight > 0)
             {
                 int y = _circularImage == null ? (Height - _captionHeight) / 2 : bounds.Bottom + gap;
-                TextRenderer.DrawText(graphics, ButtonText, Font,
-                    new Rectangle((Width - width) / 2, y, width, _captionHeight), ContentColor, CaptionFlags);
+                DrawButtonText(graphics, ButtonText,
+                    new Rectangle((Width - width) / 2, y, width, _captionHeight), CaptionFlags);
             }
         }
 

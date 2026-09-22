@@ -86,6 +86,9 @@
     <Compile Include="..\Quartz\Controls\ChromiumButtonComposition.cs">
       <Link>Controls\ChromiumButtonComposition.cs</Link>
     </Compile>
+    <Compile Include="..\Quartz\Controls\ChromiumButtonText.cs">
+      <Link>Controls\ChromiumButtonText.cs</Link>
+    </Compile>
     <Compile Include="..\Quartz\Controls\DirectComposition.cs">
       <Link>Controls\DirectComposition.cs</Link>
     </Compile>

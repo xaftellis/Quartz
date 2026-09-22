@@ -20,7 +20,7 @@ namespace Quartz.Controls
 
         private bool CanCompose => !_compositionFailed && !_printing && IsHandleCreated && Visible &&
             Width > 0 && Height > 0 && Parent != null && !(Parent is ToolStrip) &&
-            !DesignMode && LicenseManager.UsageMode != LicenseUsageMode.Designtime &&
+            !IsDesignPreview &&
             PaintEventKey != null && Events[PaintEventKey] == null;
 
         private bool TryPaintComposition(PaintEventArgs e)

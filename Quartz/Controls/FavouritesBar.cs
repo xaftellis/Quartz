@@ -309,7 +309,6 @@ namespace Quartz.Controls
                 if (deadZone.Contains(screen)) return;
                 _dragging = true;
                 _pressedButton.SuppressMouseClick = true;
-                _pressedButton.BeginDragFeedback();
                 _animating = ShouldAnimate();
                 _insertionStarts.Clear();
                 _lastFrame = _clock.Elapsed.TotalMilliseconds;
@@ -391,14 +390,8 @@ namespace Quartz.Controls
             }
             finally
             {
-                // Keep activation through capture release, which otherwise
-                // cancels the pending press before its normal fade can run.
-                try { pressed.EndDragFeedback(); }
-                finally
-                {
-                    _finishing = false;
-                    InteractionEnded?.Invoke(this, EventArgs.Empty);
-                }
+                _finishing = false;
+                InteractionEnded?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -572,7 +565,6 @@ namespace Quartz.Controls
             {
                 if (_filterInstalled) Application.RemoveMessageFilter(this);
                 _filterInstalled = false;
-                _pressedButton?.EndDragFeedback();
                 _pressedButton = null;
                 _previewOrder = null;
                 _originalOrder = null;
@@ -623,23 +615,7 @@ namespace Quartz.Controls
 
         internal bool SuppressMouseClick { get; set; }
         private bool _releasingMouse;
-        private bool _dragFeedback, _activeBeforeDrag;
         private FavouritesBar Bar => Parent as FavouritesBar;
-
-        internal void BeginDragFeedback()
-        {
-            if (_dragFeedback) return;
-            _dragFeedback = true;
-            _activeBeforeDrag = IsActive;
-            IsActive = true;
-        }
-
-        internal void EndDragFeedback()
-        {
-            if (!_dragFeedback) return;
-            _dragFeedback = false;
-            IsActive = _activeBeforeDrag;
-        }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {

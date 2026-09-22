@@ -306,60 +306,39 @@ namespace Quartz.Controls
 
         private static Bitmap CaptureForeground(Button face, bool label, out Point origin)
         {
-            // Isolate our rendered glyphs from an otherwise identical blank
-            // face. The label can then move independently of the fading icon,
-            // with its glyphs retained at their native resolution.
+            // Preserve the shared renderer's actual alpha, including smooth
+            // glyph edges. Subtracting an opaque face baked the old background
+            // into those edges and changed the text when movement finished.
             var renderer = (ChromiumButton)face;
             var bounds = new Rectangle(Point.Empty, face.Size);
-            var glyphs = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
-            using (var blank = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb))
+            var glyphs = renderer.CaptureForegroundLayer(label);
+            try
             {
-                // Hide paint layers without changing layout. Removing Image to
-                // capture the label used to move the label into the icon's slot,
-                // leaving that entire slot as extra space at the right edge.
-                try
-                {
-                    renderer.SuppressSnapshotImage = label;
-                    renderer.SuppressSnapshotText = !label;
-                    face.DrawToBitmap(glyphs, bounds);
-                    renderer.SuppressSnapshotImage = renderer.SuppressSnapshotText = true;
-                    face.DrawToBitmap(blank, bounds);
-                }
-                finally
-                {
-                    renderer.SuppressSnapshotImage = renderer.SuppressSnapshotText = false;
-                }
-                BitmapData glyphData = glyphs.LockBits(bounds, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-                BitmapData blankData = blank.LockBits(bounds, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                BitmapData glyphData = glyphs.LockBits(bounds, ImageLockMode.ReadOnly, PixelFormat.Format32bppPArgb);
                 int left = bounds.Width, top = bounds.Height;
                 try
                 {
                     int length = glyphData.Stride * bounds.Height;
                     var pixels = new byte[length];
-                    var background = new byte[length];
                     Marshal.Copy(glyphData.Scan0, pixels, 0, length);
-                    Marshal.Copy(blankData.Scan0, background, 0, length);
                     for (int y = 0; y < bounds.Height; y++)
                         for (int x = 0; x < bounds.Width; x++)
                         {
                             int offset = y * glyphData.Stride + x * 4;
-                            if (pixels[offset] == background[offset] && pixels[offset + 1] == background[offset + 1] &&
-                                pixels[offset + 2] == background[offset + 2]) pixels[offset + 3] = 0;
-                            else
+                            if (pixels[offset + 3] != 0)
                             {
                                 left = Math.Min(left, x);
                                 top = Math.Min(top, y);
                             }
                         }
-                    Marshal.Copy(pixels, 0, glyphData.Scan0, length);
                 }
                 finally
                 {
                     glyphs.UnlockBits(glyphData);
-                    blank.UnlockBits(blankData);
                 }
                 origin = left == bounds.Width ? Point.Empty : new Point(left, top);
             }
+            catch { glyphs.Dispose(); throw; }
             return glyphs;
         }
 

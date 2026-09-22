@@ -14,8 +14,9 @@ namespace Quartz.Controls
     /// <summary>A WinForms Button with Chromium 85 toolbar ink-drop feedback.</summary>
     public partial class ChromiumButton : Button
     {
-        // TEMPORARY click-colour test: set this to false to restore all original colours.
-        internal static readonly bool TestModernLightClickColor = true;
+        // Original grey ripple. Swap these two lines to restore the blue test colour.
+        internal static readonly bool TestModernLightClickColor = false;
+        // internal static readonly bool TestModernLightClickColor = true;
         internal static bool IsLightThemeForClickColorTest { get; set; }
 
         private readonly ChromiumButtonAnimation _animation = new ChromiumButtonAnimation();
@@ -50,6 +51,7 @@ namespace Quartz.Controls
         private Size _measuredLabel;
         internal bool SuppressSnapshotImage { get; set; }
         internal bool SuppressSnapshotText { get; set; }
+        private readonly ChromiumButtonText _textRenderer = new ChromiumButtonText();
 
         public ChromiumButton()
         {
@@ -69,11 +71,54 @@ namespace Quartz.Controls
         // Control.OnPaint when UserPaint is off, preserving ordinary Paint events.
         protected override void OnPaint(PaintEventArgs e)
         {
-            if (TryPaintComposition(e)) return;
-            RenderButton(this, e);
+            // Keep the designer independent of Skia and the compositor.
+            if (IsDesignPreview)
+                PaintDesignPreview(e.Graphics);
+            else
+            {
+                if (TryPaintComposition(e)) return;
+                RenderButton(this, e);
+            }
             SetStyle(ControlStyles.UserPaint, false);
             try { base.OnPaint(e); }
             finally { SetStyle(ControlStyles.UserPaint, true); }
+        }
+
+        private void PaintDesignPreview(Graphics graphics)
+        {
+            RectangleF bounds = GetInkBounds();
+            if (bounds.Width <= 0 || bounds.Height <= 0) return;
+            float diameter = InkCornerRadius(bounds) * 2;
+            var state = graphics.Save();
+            try
+            {
+                graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using (var background = new SolidBrush(OpaqueBackground(Parent)))
+                    graphics.FillRectangle(background, ClientRectangle);
+                using (var shape = new GraphicsPath())
+                {
+                    if (diameter <= 0) shape.AddRectangle(bounds);
+                    else
+                    {
+                        shape.AddArc(bounds.Left, bounds.Top, diameter, diameter, 180, 90);
+                        shape.AddArc(bounds.Right - diameter, bounds.Top, diameter, diameter, 270, 90);
+                        shape.AddArc(bounds.Right - diameter, bounds.Bottom - diameter, diameter, diameter, 0, 90);
+                        shape.AddArc(bounds.Left, bounds.Bottom - diameter, diameter, diameter, 90, 90);
+                        shape.CloseFigure();
+                    }
+                    Color ink = InkColor.IsEmpty ? DefaultInkColor : InkColor;
+                    using (var brush = new SolidBrush(Blend(ink, SurfaceColor, (float)HighlightOpacity)))
+                        graphics.FillPath(brush, shape);
+                }
+                // Use runtime content bounds, not the standard Button adapter's
+                // extra vertical padding, which clips these compact controls.
+                GetContentBounds(out Rectangle imageBounds, out Rectangle textBounds);
+                if (Image != null && imageBounds.Width > 0 && imageBounds.Height > 0)
+                    graphics.DrawImage(Image, imageBounds);
+                if (!string.IsNullOrEmpty(Text) && textBounds.Width > 0 && textBounds.Height > 0)
+                    TextRenderer.DrawText(graphics, Text, Font, textBounds, ContentColor, GetTextFlags());
+            }
+            finally { graphics.Restore(state); }
         }
 
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -216,7 +261,18 @@ namespace Quartz.Controls
         protected virtual float DpiScale => DeviceDpi / 96f;
         protected bool IsHovered => _hovered;
         private bool Activated => _active || _menuActive || _popupClickDepth > 0;
-        private bool CanAnimate => _animationEnabled && _systemAnimations && !DesignMode;
+        private bool IsDesignPreview
+        {
+            get
+            {
+                if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
+                // Nested controls need not have their own designer site.
+                for (Control control = Parent; control != null; control = control.Parent)
+                    if (control.Site?.DesignMode == true) return true;
+                return false;
+            }
+        }
+        private bool CanAnimate => _animationEnabled && _systemAnimations && !IsDesignPreview;
         protected Color SurfaceColor => OpaqueBackground(this);
         protected Color ContentColor => Enabled ? ForeColor : Blend(ForeColor, SurfaceColor, 110 / 255f);
         protected virtual double HighlightOpacity => .08;
@@ -339,7 +395,24 @@ namespace Quartz.Controls
                 graphics.DrawImageUnscaled(icon, imageBounds.Location);
             }
             if (!SuppressSnapshotText && textBounds.Width > 0 && textBounds.Height > 0 && !string.IsNullOrEmpty(Text))
-                TextRenderer.DrawText(graphics, Text, Font, textBounds, ContentColor, GetTextFlags());
+                DrawButtonText(graphics, Text, textBounds, GetTextFlags());
+        }
+
+        protected void DrawButtonText(Graphics graphics, string text, Rectangle bounds, TextFormatFlags flags)
+            => _textRenderer.Draw(graphics, text, Font, bounds, ContentColor, flags, DeviceDpi);
+
+        internal Bitmap CaptureForegroundLayer(bool label)
+        {
+            var bitmap = new Bitmap(Width, Height, PixelFormat.Format32bppPArgb);
+            try
+            {
+                SuppressSnapshotImage = label;
+                SuppressSnapshotText = !label;
+                using (var graphics = Graphics.FromImage(bitmap)) PaintButtonContent(graphics);
+                return bitmap;
+            }
+            catch { bitmap.Dispose(); throw; }
+            finally { SuppressSnapshotImage = SuppressSnapshotText = false; }
         }
 
         // LabelButton::Layout / ImageButton::ComputeImagePaintPosition. Icons
@@ -763,6 +836,7 @@ namespace Quartz.Controls
         private void WakeAnimation()
         {
             if (IsDisposed || Disposing) return;
+            if (IsDesignPreview) { Invalidate(); return; }
             _compositionAnimationDirty = true;
             bool composed = UpdateCompositionAnimation();
             Invalidate();
@@ -998,6 +1072,7 @@ namespace Quartz.Controls
                 DisposeComposition();
                 DisposeBuffer();
                 ClearImageCache();
+                _textRenderer.Dispose();
             }
             base.Dispose(disposing);
         }
