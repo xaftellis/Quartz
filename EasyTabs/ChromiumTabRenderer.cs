@@ -211,6 +211,7 @@ namespace EasyTabs
         private bool _hoverAnimating, _buttonAnimating, _contentAnimating, _addHovered, _disposed;
         private Point _lastCursor = new Point(int.MinValue, int.MinValue);
         private Rectangle _tabPaintBounds;
+        private Size? _lastLayoutWindowSize;
         private TitleBarTab _hoveredTab;
         private ChromiumTabTheme _theme = ChromiumTabTheme.Light;
         private int? _availableWidthDuringMouseClose;
@@ -558,6 +559,9 @@ namespace EasyTabs
                 _sizingBoxes.Scale = scale;
                 double now = AnimationTimeMilliseconds;
                 bool animate = ShouldAnimateLayout();
+                Size windowSize = _parentWindow.ClientSize;
+                bool windowResized = _lastLayoutWindowSize.HasValue && _lastLayoutWindowSize.Value != windowSize;
+                _lastLayoutWindowSize = windowSize;
                 if (IsTabClosingMode && (_parentWindow.ClientSize != _mouseCloseWindowSize ||
                     scale != _mouseCloseScale || IsTabRepositioning || _detachedTabX.HasValue || tabs.Count == 0 ||
                     tabs.Any(tab => !_visuals.ContainsKey(tab))))
@@ -585,7 +589,9 @@ namespace EasyTabs
                 foreach (TitleBarTab tab in tabs) _animationItems.Add(tab);
                 foreach (TitleBarTab tab in _closingTabs) _animationItems.Add(tab);
                 if (ShowAddButton) _animationItems.Add(_addKey);
-                _animation.BeginFrame(_animationItems, now, animate);
+                // Window resizing places tabs and the + button directly at their
+                // new bounds, including any layout animation already in flight.
+                _animation.BeginFrame(_animationItems, now, animate && !windowResized);
 
                 Point screenOrigin = _parentWindow.PointToScreen(Point.Empty);
                 int startX = SystemInformation.BorderSize.Width + offset.X;
