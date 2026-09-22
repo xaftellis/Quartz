@@ -297,6 +297,16 @@ namespace Quartz
             }
 
 
+            // Begin the costly resize on detached pixels before the buttons first
+            // paint. Cached results are shared by later Browser forms.
+            backImage = PrepareToolbarArtwork(btnBack, theme + "/back", backImage);
+            forwardImage = PrepareToolbarArtwork(btnForward, theme + "/forward", forwardImage);
+            refreshImage = PrepareToolbarArtwork(btnRefresh, theme + "/refresh", refreshImage);
+            stopImage = PrepareToolbarArtwork(btnRefresh, theme + "/stop", stopImage);
+            downloadImage = PrepareToolbarArtwork(btnDownload, theme + "/download", downloadImage);
+            favImage = PrepareToolbarArtwork(btnAddFavourite, theme + "/favourite", favImage);
+            settingsImage = PrepareToolbarArtwork(btnSettings, theme + "/settings", settingsImage);
+
             //BUTTONS
             btnBack.Image = backImage;
             btnBack.FlatAppearance.MouseOverBackColor = mouseOver;
@@ -370,6 +380,19 @@ namespace Quartz
             UpdateZoomMenuRow();
             NewControlThemeChanger.ChangeControlTheme(mnuFavourites);
             _siteInfoController?.ApplyTheme(txtWebAddress.BackColor, txtWebAddress.ForeColor);
+        }
+
+        private static Image PrepareToolbarArtwork(Quartz.Controls.ChromiumButton button, string key, Image image)
+        {
+            if (image == null) return null;
+            int slot = button.IconSize == 0 ? 16 : button.IconSize;
+            float fit = button.IconSize > 0 ? slot / (float)Math.Max(image.Width, image.Height) : 1f;
+            int width = Math.Max(1, (int)Math.Round(image.Width * fit));
+            int height = Math.Max(1, (int)Math.Round(image.Height * fit));
+            float scale = button.DeviceDpi / 96f;
+            var pixels = new Size((int)Math.Ceiling(width * scale), (int)Math.Ceiling(height * scale));
+            Quartz.Controls.ChromiumButtonImage.PrepareToolbarImage(key, image, pixels);
+            return image;
         }
 
         public void ChangeTheme(string theme)
