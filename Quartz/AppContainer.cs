@@ -34,6 +34,11 @@ namespace Quartz
 
         internal void UpdateMinimumWindowSize()
         {
+            // Setting MinimumSize while minimized can overwrite WinForms' restore bounds.
+            // Recalculate from the visible layout when the window is restored.
+            if (WindowState == FormWindowState.Minimized)
+                return;
+
             Size minimum = MinimumWindowSize;
             if (MinimumSize != minimum)
                 MinimumSize = minimum;
@@ -433,9 +438,11 @@ namespace Quartz
 
         private void AppContainer_SizeChanged(object sender, EventArgs e)
         {
-            UpdateMinimumWindowSize();
-
             FormWindowState currentState = WindowState;
+            if (currentState != FormWindowState.Minimized
+                && currentState != _lastObservedWindowState)
+                UpdateMinimumWindowSize();
+
             if (currentState != FormWindowState.Minimized)
                 _lastNonMinimizedWindowState = currentState;
 
