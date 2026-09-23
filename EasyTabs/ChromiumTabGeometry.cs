@@ -26,8 +26,8 @@ namespace EasyTabs
         internal static int Pixel(float value) => (int)Math.Round(value, MidpointRounding.AwayFromZero);
         internal static float Clamp(float value, float min, float max) => Math.Max(min, Math.Min(max, value));
 
-        // TabStyle::GetStandardWidth and TabStripLayout's overlapping slots. Reserve
-        // the active tab's minimum before distributing remaining space left to right.
+        // Chromium 85 TabStripLayout::AllocateExtraSpace includes the active tab
+        // in left-to-right rounding unless its larger minimum width is required.
         internal static int[] LayoutWidths(int count, int activeIndex, int available, float scale)
         {
             var widths = new int[count];
@@ -37,13 +37,14 @@ namespace EasyTabs
             int standard = Pixel(StandardWidth * scale);
             int minimumActive = Pixel(MinimumActiveWidth * scale);
             int shared = Math.Min(standard, total / count);
-            int reserved = activeIndex >= 0 && shared < minimumActive ? minimumActive : shared;
-            int remaining = Math.Max(0, total - (activeIndex >= 0 ? reserved : 0));
-            int others = count - (activeIndex >= 0 ? 1 : 0);
+            bool reserveActive = activeIndex >= 0 && shared < minimumActive;
+            int reserved = reserveActive ? minimumActive : 0;
+            int remaining = Math.Max(0, total - reserved);
+            int others = count - (reserveActive ? 1 : 0);
             int otherWidth = others == 0 ? 0 : Math.Min(standard, remaining / others);
             int remainder = others == 0 || otherWidth == standard ? 0 : remaining - otherWidth * others;
             for (int i = 0; i < count; i++)
-                widths[i] = i == activeIndex ? reserved : otherWidth + (remainder-- > 0 ? 1 : 0);
+                widths[i] = reserveActive && i == activeIndex ? reserved : otherWidth + (remainder-- > 0 ? 1 : 0);
             // Below the minimum required strip width, retain real minimum tab sizes;
             // the host clips overflow instead of producing inverted paths/hit areas.
             for (int i = 0; i < count; i++)

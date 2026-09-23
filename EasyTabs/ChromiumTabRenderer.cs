@@ -29,6 +29,7 @@ namespace EasyTabs
             internal bool Closing, ClosingTargetInitialized, HasIcon;
             internal Visual Previous;
             internal int Index;
+            internal bool WasActive, WasPinned;
             internal bool ContentInitialized, ShowingIcon, WasLoading;
             internal int LoadingCompletionVersion;
             internal Rectangle TitleBounds, TitleStart, TitleTarget;
@@ -589,9 +590,22 @@ namespace EasyTabs
                 foreach (TitleBarTab tab in tabs) _animationItems.Add(tab);
                 foreach (TitleBarTab tab in _closingTabs) _animationItems.Add(tab);
                 if (ShowAddButton) _animationItems.Add(_addKey);
+                bool sameTabs = _removedTabs.Count == 0 && tabs.Count == _visuals.Count;
+                bool selectionChanged = false;
+                for (int i = 0; sameTabs && i < tabs.Count; i++)
+                {
+                    Visual previous;
+                    sameTabs = _visuals.TryGetValue(tabs[i], out previous) &&
+                        previous.Index == i && previous.WasPinned == tabs[i].IsPinned;
+                    if (sameTabs && previous.WasActive != tabs[i].Active) selectionChanged = true;
+                }
+                // TabStrip::SetSelection snaps selection-driven width changes
+                // when idle, but retargets an already running bounds animation.
+                // Insertions, removals, pinning and reordering keep their animation.
+                bool snapSelection = sameTabs && selectionChanged && !_animation.IsAnimating;
                 // Window resizing places tabs and the + button directly at their
                 // new bounds, including any layout animation already in flight.
-                _animation.BeginFrame(_animationItems, now, animate && !windowResized);
+                _animation.BeginFrame(_animationItems, now, animate && !windowResized && !snapSelection);
 
                 Point screenOrigin = _parentWindow.PointToScreen(Point.Empty);
                 int startX = SystemInformation.BorderSize.Width + offset.X;
@@ -669,6 +683,8 @@ namespace EasyTabs
                     bool added = !_visuals.TryGetValue(tab, out visual);
                     if (added) _visuals[tab] = visual = new Visual();
                     visual.Index = i;
+                    visual.WasActive = tab.Active;
+                    visual.WasPinned = tab.IsPinned;
                     Rectangle target = new Rectangle(nextX, y, widths[i], Scale(ChromiumTabMetrics.Height));
                     nextX += widths[i] - OverlapWidth;
                     visual.Target = target;
