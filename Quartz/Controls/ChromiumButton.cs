@@ -290,20 +290,23 @@ namespace Quartz.Controls
         private float InkCornerRadius(RectangleF bounds) => _cornerRadius < 0 ? Math.Min(bounds.Width, bounds.Height) / 2
             : Math.Min(_cornerRadius * DpiScale, Math.Min(bounds.Width, bounds.Height) / 2);
 
-        private void PrepareBackground()
+        private void PrepareBackground(bool transparent = false)
         {
             EnsureBuffer();
             RectangleF bounds = GetInkBounds();
             float radius = InkCornerRadius(bounds);
             _clip.SetRect(ToSkia(bounds), radius, radius);
-            _canvas.Clear(ToSkia(OpaqueBackground(Parent)));
-            _paint.Style = SKPaintStyle.Fill;
-            _paint.Color = ToSkia(SurfaceColor);
-            _canvas.DrawRoundRect(_clip, _paint);
+            _canvas.Clear(transparent ? SKColors.Transparent : ToSkia(OpaqueBackground(Parent)));
+            if (!transparent)
+            {
+                _paint.Style = SKPaintStyle.Fill;
+                _paint.Color = ToSkia(SurfaceColor);
+                _canvas.DrawRoundRect(_clip, _paint);
+            }
 
             // Retain Quartz's decorative backgrounds (including seasonal snow).
             _canvas.Flush();
-            if (BackgroundImage != null)
+            if (!transparent && BackgroundImage != null)
                 using (var graphics = Graphics.FromImage(_buffer)) DrawBackgroundImage(graphics);
         }
 
@@ -882,13 +885,15 @@ namespace Quartz.Controls
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            _compositionFailed = false;
+            if (!_updatingTransparentWindow) _compositionFailed = false;
+            InitializeTransparentWindow();
             ReadAnimationPreference();
         }
         protected override void OnHandleDestroyed(EventArgs e)
         {
             ButtonFrames.Remove(this);
             DisposeComposition();
+            _transparentWindow = _compositionPaintPending = false;
             base.OnHandleDestroyed(e);
         }
         protected override void OnSizeChanged(EventArgs e)
@@ -907,6 +912,7 @@ namespace Quartz.Controls
         {
             base.OnParentChanged(e);
             DisposeComposition();
+            UpdateTransparentWindow();
             ResetFeedback();
         }
         protected override void OnDpiChangedAfterParent(EventArgs e)
