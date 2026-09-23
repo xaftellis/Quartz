@@ -171,6 +171,12 @@
       <DependentUpon>Browser.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="TabOpenGesture.cs" />
+    <Compile Include="TabOpenDisposition.cs" />
+    <Compile Include="Browser.TabOpening.cs">
+      <DependentUpon>Browser.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Browser.Focus.cs">
       <DependentUpon>Browser.cs</DependentUpon>
       <SubType>Form</SubType>

@@ -451,11 +451,13 @@ namespace Quartz
             {
                 if (e.Button == MouseButtons.Left)
                 {
+                    // Ctrl/Shift are reserved for selection in this native
+                    // multi-row grid. Its middle-click and context commands
+                    // use the tab-opening policy below.
                     if (keyPressed != Keys.ShiftKey && keyPressed != Keys.ControlKey)
                     {
                         var url = dataGridView1.Rows[e.RowIndex].Cells["WebAddress"].Value.ToString();
                         _browser.SetSource(url);
-                        Close();
                         return;
                     }
                 }
@@ -464,31 +466,8 @@ namespace Quartz
                     dataGridView1.ClearSelection();
                     dataGridView1.CurrentCell = dataGridView1.Rows[e.RowIndex].Cells["Title"];
                     dataGridView1.Rows[e.RowIndex].Cells["Title"].Selected = true;
-                    Application.DoEvents(); // lets the UI update
-
-                    var ParentTabs = _browser.ParentTabs;
                     var url = dataGridView1.Rows[e.RowIndex].Cells["WebAddress"].Value.ToString();
-
-                    Browser browser = new Browser(url, true);
-                    browser.InitializeTab();
-                    var newtab = new TitleBarTab(ParentTabs) { Content = browser };
-                    if (ParentTabs.InvokeRequired)
-                    {
-                        ParentTabs.Invoke(new Action(() =>
-                        {
-                            ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                            ParentTabs.SelectedTab = newtab;
-                            ParentTabs.RedrawTabs();
-                        }));
-                    }
-                    else
-                    {
-                        ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                        ParentTabs.SelectedTab = newtab;
-                        ParentTabs.RedrawTabs();
-                    }
-
-                    this.Close();
+                    _browser.OpenFavouriteOrHistory(url, MouseButtons.Middle, ModifierKeys);
                 }
                 else if (e.Button == MouseButtons.Right)
                 {
@@ -695,25 +674,7 @@ namespace Quartz
                 {
                     string url = row.Cells["WebAddress"].Value.ToString();
 
-                    var browser = new Browser(url, true);
-                    browser.InitializeTab();
-
-                    var newTab = new TitleBarTab(_browser.ParentTabs) { Content = browser };
-
-                    void AddTab()
-                    {
-                        int index = _browser.ParentTabs.SelectedTabIndex + 1;
-                        _browser.ParentTabs.Tabs.Insert(index, newTab);
-                        _browser.ParentTabs.SelectedTab = newTab;
-                        _browser.ParentTabs.RedrawTabs();
-                    }
-
-                    if (_browser.ParentTabs.InvokeRequired)
-                        _browser.ParentTabs.Invoke(new Action(AddTab));
-                    else
-                        AddTab();
-
-                    this.Close();
+                    _browser.OpenTab(url, TabOpenDisposition.NewBackgroundTab);
                 }
             }
         }
@@ -737,7 +698,6 @@ namespace Quartz
                 }
             }
             Program.OpenNewWindowWithTabsFast(urls);
-            this.Close();
         }
 
         private void copyLinkToolStripMenuItem_Click(object sender, EventArgs e)

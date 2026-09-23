@@ -230,11 +230,15 @@
             // 
             // button1
             // 
+            this.button1.FocusRingColor = System.Drawing.Color.Empty;
+            this.button1.InkColor = System.Drawing.Color.Empty;
             this.button1.Location = new System.Drawing.Point(12, 9);
             this.button1.Name = "button1";
+            this.button1.Padding = new System.Windows.Forms.Padding(6);
             this.button1.Size = new System.Drawing.Size(108, 28);
             this.button1.TabIndex = 5;
             this.button1.Text = "Clear browsing data";
+            this.button1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.btnClear_Click);
             // 

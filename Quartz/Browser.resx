@@ -216,7 +216,7 @@
     <value>mnuMenu</value>
   </data>
   <data name="&gt;&gt;mnuMenu.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -317,14 +317,14 @@
   <data name="btnDownload.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Zoom</value>
   </data>
-  <data name="btnDownload.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
   <data name="btnDownload.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 9.75pt</value>
   </data>
   <data name="btnDownload.Location" type="System.Drawing.Point, System.Drawing">
     <value>1098, 5</value>
+  </data>
+  <data name="btnDownload.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="btnDownload.Size" type="System.Drawing.Size, System.Drawing">
     <value>34, 34</value>
@@ -343,7 +343,7 @@
     <value>btnDownload</value>
   </data>
   <data name="&gt;&gt;btnDownload.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumButton, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;btnDownload.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -367,7 +367,7 @@
     <value>Change Location</value>
   </data>
   <data name="downloadsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="downloadsToolStripMenuItem.Text" xml:space="preserve">
     <value>Downloads</value>
@@ -379,7 +379,7 @@
     <value>mnuDownloadsDropDown</value>
   </data>
   <data name="&gt;&gt;mnuDownloadsDropDown.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnAddFavourite.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -747,14 +747,14 @@
   <data name="btnAddFavourite.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Zoom</value>
   </data>
-  <data name="btnAddFavourite.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
   <data name="btnAddFavourite.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="btnAddFavourite.Location" type="System.Drawing.Point, System.Drawing">
     <value>1060, 5</value>
+  </data>
+  <data name="btnAddFavourite.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="btnAddFavourite.Size" type="System.Drawing.Size, System.Drawing">
     <value>34, 34</value>
@@ -772,7 +772,7 @@
     <value>btnAddFavourite</value>
   </data>
   <data name="&gt;&gt;btnAddFavourite.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumButton, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;btnAddFavourite.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -1037,14 +1037,14 @@
   <data name="btnForward.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Zoom</value>
   </data>
-  <data name="btnForward.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
   <data name="btnForward.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="btnForward.Location" type="System.Drawing.Point, System.Drawing">
     <value>46, 5</value>
+  </data>
+  <data name="btnForward.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="btnForward.Size" type="System.Drawing.Size, System.Drawing">
     <value>34, 34</value>
@@ -1052,11 +1052,14 @@
   <data name="btnForward.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
+  <data name="btnForward.TextImageRelation" type="System.Windows.Forms.TextImageRelation, System.Windows.Forms">
+    <value>ImageBeforeText</value>
+  </data>
   <data name="&gt;&gt;btnForward.Name" xml:space="preserve">
     <value>btnForward</value>
   </data>
   <data name="&gt;&gt;btnForward.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumButton, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;btnForward.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -1263,9 +1266,6 @@
   <data name="btnBack.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Zoom</value>
   </data>
-  <data name="btnBack.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
   <data name="btnBack.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
@@ -1275,17 +1275,23 @@
   <data name="btnBack.Location" type="System.Drawing.Point, System.Drawing">
     <value>8, 5</value>
   </data>
+  <data name="btnBack.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
+  </data>
   <data name="btnBack.Size" type="System.Drawing.Size, System.Drawing">
     <value>34, 34</value>
   </data>
   <data name="btnBack.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
+  <data name="btnBack.TextImageRelation" type="System.Windows.Forms.TextImageRelation, System.Windows.Forms">
+    <value>ImageBeforeText</value>
+  </data>
   <data name="&gt;&gt;btnBack.Name" xml:space="preserve">
     <value>btnBack</value>
   </data>
   <data name="&gt;&gt;btnBack.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumButton, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;btnBack.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -1375,7 +1381,7 @@
     <value>mnuSearch</value>
   </data>
   <data name="&gt;&gt;mnuSearch.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnRefresh.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -2102,14 +2108,14 @@
   <data name="btnRefresh.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Zoom</value>
   </data>
-  <data name="btnRefresh.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
   <data name="btnRefresh.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt</value>
   </data>
   <data name="btnRefresh.Location" type="System.Drawing.Point, System.Drawing">
     <value>84, 5</value>
+  </data>
+  <data name="btnRefresh.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="btnRefresh.Size" type="System.Drawing.Size, System.Drawing">
     <value>34, 34</value>
@@ -2117,23 +2123,23 @@
   <data name="btnRefresh.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
+  <data name="btnRefresh.TextImageRelation" type="System.Windows.Forms.TextImageRelation, System.Windows.Forms">
+    <value>ImageBeforeText</value>
+  </data>
   <data name="&gt;&gt;btnRefresh.Name" xml:space="preserve">
     <value>btnRefresh</value>
   </data>
   <data name="&gt;&gt;btnRefresh.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumButton, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;btnRefresh.Parent" xml:space="preserve">
     <value>pnlTop</value>
   </data>
   <data name="&gt;&gt;btnRefresh.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>10</value>
   </data>
   <data name="btnSiteInformation.AccessibleName" xml:space="preserve">
     <value>Site information</value>
-  </data>
-  <data name="btnSiteInformation.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
   </data>
   <data name="btnSiteInformation.Location" type="System.Drawing.Point, System.Drawing">
     <value>139, 8</value>
@@ -2147,11 +2153,14 @@
   <data name="btnSiteInformation.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
+  <data name="btnSiteInformation.TextImageRelation" type="System.Windows.Forms.TextImageRelation, System.Windows.Forms">
+    <value>ImageBeforeText</value>
+  </data>
   <data name="&gt;&gt;btnSiteInformation.Name" xml:space="preserve">
     <value>btnSiteInformation</value>
   </data>
   <data name="&gt;&gt;btnSiteInformation.Type" xml:space="preserve">
-    <value>Quartz.Controls.SiteInfoButton, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.SiteInfoButton, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;btnSiteInformation.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -2184,7 +2193,7 @@
     <value>pnlFavourites</value>
   </data>
   <data name="&gt;&gt;pnlFavourites.Type" xml:space="preserve">
-    <value>Quartz.Controls.FavouritesBar, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FavouritesBar, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlFavourites.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -2352,49 +2361,49 @@
     <value>438, 22</value>
   </metadata>
   <data name="newTabToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="newTabToolStripMenuItem1.Text" xml:space="preserve">
     <value>New tab</value>
   </data>
   <data name="newWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="newWindowToolStripMenuItem.Text" xml:space="preserve">
     <value>New window</value>
   </data>
   <data name="changeProfileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="changeProfileToolStripMenuItem.Text" xml:space="preserve">
     <value>Profiles</value>
   </data>
   <data name="toolStripSeparator20.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 6</value>
+    <value>179, 6</value>
   </data>
   <metadata name="mnuHistory.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>105, 18</value>
   </metadata>
   <data name="historyToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
+    <value>112, 22</value>
   </data>
   <data name="historyToolStripMenuItem1.Text" xml:space="preserve">
     <value>History</value>
   </data>
   <data name="toolStripSeparator10.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 6</value>
+    <value>109, 6</value>
   </data>
   <data name="mnuHistory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 32</value>
+    <value>113, 32</value>
   </data>
   <data name="&gt;&gt;mnuHistory.Name" xml:space="preserve">
     <value>mnuHistory</value>
   </data>
   <data name="&gt;&gt;mnuHistory.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="historyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="historyToolStripMenuItem.Text" xml:space="preserve">
     <value>History</value>
@@ -2403,52 +2412,52 @@
     <value>435, 58</value>
   </metadata>
   <data name="addFavouritesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 22</value>
+    <value>146, 22</value>
   </data>
   <data name="addFavouritesToolStripMenuItem.Text" xml:space="preserve">
     <value>Add favourite</value>
   </data>
   <data name="toolStripSeparator8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>185, 6</value>
+    <value>143, 6</value>
   </data>
   <data name="mnuFavourites.Size" type="System.Drawing.Size, System.Drawing">
-    <value>189, 32</value>
+    <value>147, 32</value>
   </data>
   <data name="&gt;&gt;mnuFavourites.Name" xml:space="preserve">
     <value>mnuFavourites</value>
   </data>
   <data name="&gt;&gt;mnuFavourites.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="favouritesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="favouritesToolStripMenuItem.Text" xml:space="preserve">
     <value>Favourites</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 6</value>
+    <value>179, 6</value>
   </data>
   <data name="zoomToolStrip.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 23</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 6</value>
+    <value>179, 6</value>
   </data>
   <data name="findToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="findToolStripMenuItem.Text" xml:space="preserve">
     <value>Find</value>
   </data>
   <data name="printToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="printToolStripMenuItem.Text" xml:space="preserve">
     <value>Print</value>
   </data>
   <data name="openFileInBrowserToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="openFileInBrowserToolStripMenuItem.Text" xml:space="preserve">
     <value>Open File In Browser</value>
@@ -2457,46 +2466,46 @@
     <value>592, 62</value>
   </metadata>
   <data name="nameWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 22</value>
+    <value>160, 22</value>
   </data>
   <data name="nameWindowToolStripMenuItem.Text" xml:space="preserve">
     <value>Name window...</value>
   </data>
   <data name="toolStripSeparator12.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 6</value>
+    <value>157, 6</value>
   </data>
   <data name="webview2TaskManagerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 22</value>
+    <value>160, 22</value>
   </data>
   <data name="webview2TaskManagerToolStripMenuItem.Text" xml:space="preserve">
     <value>Task manager</value>
   </data>
   <data name="toolStripSeparator13.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 6</value>
+    <value>157, 6</value>
   </data>
   <data name="inspectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 22</value>
+    <value>160, 22</value>
   </data>
   <data name="inspectToolStripMenuItem.Text" xml:space="preserve">
     <value>Developer Tools</value>
   </data>
   <data name="mnuExperts.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 82</value>
+    <value>161, 82</value>
   </data>
   <data name="&gt;&gt;mnuExperts.Name" xml:space="preserve">
     <value>mnuExperts</value>
   </data>
   <data name="&gt;&gt;mnuExperts.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="expertsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="expertsToolStripMenuItem.Text" xml:space="preserve">
     <value>More tools</value>
   </data>
   <data name="toolStripSeparator7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 6</value>
+    <value>179, 6</value>
   </data>
   <metadata name="mnuUserData.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>958, 58</value>
@@ -2523,37 +2532,37 @@
     <value>mnuUserData</value>
   </data>
   <data name="&gt;&gt;mnuUserData.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="userDataToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="userDataToolStripMenuItem.Text" xml:space="preserve">
     <value>UserData</value>
   </data>
   <data name="settingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="settingsToolStripMenuItem.Text" xml:space="preserve">
     <value>Settings</value>
   </data>
   <data name="toolStripSeparator16.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 6</value>
+    <value>179, 6</value>
   </data>
   <data name="restartToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="restartToolStripMenuItem.Text" xml:space="preserve">
     <value>Restart</value>
   </data>
   <data name="exitToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 22</value>
+    <value>182, 22</value>
   </data>
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
   <data name="SettingsMenuStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>226, 369</value>
+    <value>183, 369</value>
   </data>
   <data name="SettingsMenuStrip.Text" xml:space="preserve">
     <value>Options</value>
@@ -2562,10 +2571,7 @@
     <value>SettingsMenuStrip</value>
   </data>
   <data name="&gt;&gt;SettingsMenuStrip.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="btnSettings.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
+    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnSettings.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt</value>
@@ -2575,6 +2581,9 @@
   </data>
   <data name="btnSettings.Location" type="System.Drawing.Point, System.Drawing">
     <value>1136, 5</value>
+  </data>
+  <data name="btnSettings.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="btnSettings.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
     <value>No</value>
@@ -2592,7 +2601,7 @@
     <value>btnSettings</value>
   </data>
   <data name="&gt;&gt;btnSettings.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumButton, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;btnSettings.Parent" xml:space="preserve">
     <value>pnlTop</value>
@@ -2625,7 +2634,7 @@
     <value>pnlTop</value>
   </data>
   <data name="&gt;&gt;UrlBox.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>9</value>
   </data>
   <data name="UrlLeft.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -2675,7 +2684,7 @@
     <value>pnlTop</value>
   </data>
   <data name="&gt;&gt;UrlLeft.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>11</value>
   </data>
   <data name="UrlRight.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -2727,7 +2736,7 @@
     <value>pnlTop</value>
   </data>
   <data name="&gt;&gt;UrlRight.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>12</value>
   </data>
   <data name="pnlTop.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -2745,7 +2754,7 @@
     <value>pnlTop</value>
   </data>
   <data name="&gt;&gt;pnlTop.Type" xml:space="preserve">
-    <value>Quartz.Controls.BrowserToolbarPanel, Quartz, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Quartz.Controls.BrowserToolbarPanel, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlTop.Parent" xml:space="preserve">
     <value>$this</value>

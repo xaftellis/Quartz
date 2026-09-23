@@ -276,8 +276,12 @@ namespace Quartz
                 var tab = new TitleBarTab(container) { Content = browser };
                 container.Tabs.Add(tab);
 
-                // Select immediately
-                container.SelectedTab = tab;
+                // Chromium startup/batch navigation selects the first tab;
+                // subsequent tabs initialize hidden without stealing selection.
+                container.ResizeTabContents(tab);
+                if (TabOpenPolicy.ShouldActivate(TabOpenDisposition.NewBackgroundTab, container.Tabs.Count == 1))
+                    container.SelectedTab = tab;
+                browser.StartTabInitialization();
 
                 // Allow UI to process ONE frame → almost instant
                 await Task.Yield();

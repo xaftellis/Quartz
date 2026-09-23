@@ -2,6 +2,7 @@ using EasyTabs;
 using Microsoft.SqlServer.Server;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
+using Quartz.Controls;
 using Quartz.Libs;
 using Quartz.Models;
 using Quartz.Services;
@@ -545,40 +546,17 @@ namespace Quartz
             return button.Tag as FavouriteModel;
         }
 
-        private async void Button_MouseUp(object sender, MouseEventArgs e)
+        private void Button_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Middle)
+            if (e.Button == MouseButtons.Middle 
+                && sender is Button)
             {
-                var button = (System.Windows.Forms.Button)sender;
+                var button = (Button)sender;
                 var favourite = GetFavourite(button);
                 if (favourite == null)
                     return;
 
-                var browser = new Browser(favourite.WebAddress, true);
-                browser.InitializeTab();
-
-                var newTab = new TitleBarTab(ParentTabs)
-                {
-                    Content = browser,
-                    Caption = "Loading...",
-                    IsLoading = browser.IsLoading
-                };
-
-                void AddTab()
-                {
-                    int index = ParentTabs.SelectedTabIndex + 1;
-                    ParentTabs.Tabs.Insert(index, newTab);
-                    ParentTabs.SelectedTab = newTab;
-                    ParentTabs.RedrawTabs();
-                }
-
-                if (ParentTabs.InvokeRequired)
-                    ParentTabs.Invoke(new Action(AddTab));
-                else
-                    AddTab();
-
-                // Instant UI activation (0–1ms)
-                await Task.Yield();
+                OpenFavouriteOrHistory(favourite.WebAddress, MouseButtons.Middle, ModifierKeys);
             }
         }
         private void btnGotoFavourite_Click(object sender, EventArgs e)
@@ -594,7 +572,7 @@ namespace Quartz
                 var favourite = GetFavourite(button);
                 if (favourite != null)
                 {
-                    SetSource(favourite.WebAddress);
+                    OpenFavouriteOrHistory(favourite.WebAddress, MouseButtons.Left, ModifierKeys);
                 }
             }
         }
@@ -753,9 +731,22 @@ namespace Quartz
         #endregion
 
         #region Events
-        private async void Browser_Load(object sender, EventArgs e)
+        private void Browser_Load(object sender, EventArgs e)
         {
+            StartTabInitialization();
+        }
+
+        private async Task InitializeBrowserAsync()
+        {
+            // Publish the shared initialization task before handle creation can
+            // raise Load. Hidden tabs initialize once without ever being shown.
+            await Task.Yield();
+            if (IsDisposed || Disposing) return;
             PrepareBrowserForm();
+
+            var browserHandle = Handle;
+            var panelHandle = pnlBottom.Handle;
+            var webViewHandle = wvWebView1.Handle;
 
             // Force the underlying window handle to be created early
             var h = SettingsMenuStrip.Handle;
@@ -779,11 +770,11 @@ namespace Quartz
 
             try
             {
-                env = await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\", null);
+                env = _openingEnvironment ?? await CoreWebView2Environment.CreateAsync(null, GetLocalPath() + @"\Xaftellis\Quartz\UserData\WebView2\", null);
                 if (IsDisposed || Disposing) return;
                 options = env.CreateCoreWebView2ControllerOptions();
-                options.ProfileName = ProfileService.Current.ToString();
-                options.IsInPrivateModeEnabled = Program.profileService.Get(ProfileService.Current).isDisposable;
+                options.ProfileName = tabbedApp.ProfileId.ToString();
+                options.IsInPrivateModeEnabled = Program.profileService.Get(tabbedApp.ProfileId).isDisposable;
                 // Supply the color at controller creation, before its first paint.
                 // Setting the control property alone can still produce a white flash.
                 options.DefaultBackgroundColor = wvWebView1.DefaultBackgroundColor;
@@ -794,11 +785,13 @@ namespace Quartz
                 }
 
                 if (IsDisposed || Disposing) return;
+                InitializeTabOpening();
+                if (IsDisposed || Disposing) return;
                 await _siteInfoController.InitializeAsync();
 
-                if (Program.profileService.Get(ProfileService.Current).isDisposable)
+                if (Program.profileService.Get(tabbedApp.ProfileId).isDisposable)
                 {
-                    Program.profileService.Get(ProfileService.Current).endSession = true;
+                    Program.profileService.Get(tabbedApp.ProfileId).endSession = true;
                     Program.profileService.SaveChanges();
                 }
             }
@@ -813,7 +806,7 @@ namespace Quartz
                         Power.Shutdown();
                     }
                 }
-
+                throw;
             }
 
             if (IsDisposed || Disposing || wvWebView1.CoreWebView2 == null) return;
@@ -827,13 +820,11 @@ namespace Quartz
             NewControlThemeChanger.ChangeControlTheme(wvWebView1);
             wvWebView1.CoreWebView2.SetVirtualHostNameToFolderMapping("quartz.com", Application.StartupPath + @"\assets\quartz.com\", CoreWebView2HostResourceAccessKind.Allow);
 
-            if (_newtab)
+            // NewWindowRequested supplies native navigation after initialization,
+            // preserving POST data and window.opener.
+            if (!_requestedWebWindow)
             {
-                SetSource(_tabAddress);
-            }
-            else
-            {
-                SetSource(GetHomeUrl());
+                SetSource(_newtab ? _tabAddress : GetHomeUrl());
             }
 
             wvWebView1.CoreWebView2.ContainsFullScreenElementChanged += (obj, args) =>
@@ -949,6 +940,7 @@ namespace Quartz
             notifyIcon1.Text = "Quartz v3.0.1";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
+            notifyIcon1.Visible = ParentTabs?.SelectedTab?.Content == this;
         }
 
         private void testToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1070,8 +1062,7 @@ namespace Quartz
                                 break;
                         }
                     }
-                    SetSource(uri);
-                    wvWebView1.Focus();
+                    NavigateFromAddressBar(uri, e.Modifiers);
                 }
                 catch
                 {
@@ -1127,8 +1118,7 @@ namespace Quartz
                             uri = new Uri("https://www.google.com/search?q=" + String.Join("+", Uri.EscapeDataString(rawUrl).Split(new string[] { "%20" }, StringSplitOptions.RemoveEmptyEntries)));
                             break;
                     }
-                    SetSource(uri);
-                    wvWebView1.Focus();
+                    NavigateFromAddressBar(uri, e.Modifiers);
                 }
                 #endregion
             }
@@ -1166,32 +1156,30 @@ namespace Quartz
             }
         }
 
-        private void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
+        private async void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
         {
             e.Handled = true;
-            Browser browser = new Browser(e.Uri, true);
-            browser.InitializeTab();
-            var newtab = new TitleBarTab(ParentTabs)
-            { 
-                Content = browser,
-                Caption = "Loading...",
-                IsLoading = browser.IsLoading
-            };
-
-            if (ParentTabs.InvokeRequired)
+            var disposition = _tabOpenGesture.Take(e.IsUserInitiated,
+                !e.WindowFeatures.ShouldDisplayToolbar, Environment.TickCount);
+            using (e.GetDeferral())
             {
-                ParentTabs.Invoke(new Action(() =>
+                Browser browser = null;
+                try
                 {
-                    ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                    ParentTabs.SelectedTab = newtab;
-                    ParentTabs.RedrawTabs();
-                }));
-            }
-            else
-            {
-                ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                ParentTabs.SelectedTab = newtab;
-                ParentTabs.RedrawTabs();
+                    browser = OpenTab(e.Uri, disposition,
+                        wvWebView1.CoreWebView2.Environment, requestedWebWindow: true);
+                    if (browser == null) return;
+                    await browser.EnsureBrowserInitializedAsync();
+                    if (browser.IsDisposed || browser.Disposing ||
+                        browser.wvWebView1.CoreWebView2 == null) return;
+                    e.NewWindow = browser.wvWebView1.CoreWebView2;
+                    browser.wvWebView1.CoreWebView2.WindowCloseRequested += (s, args) => browser.Close();
+                }
+                catch (Exception error)
+                {
+                    Trace.TraceError("Could not open requested tab: {0}", error);
+                    if (browser != null && !browser.IsDisposed) browser.Close();
+                }
             }
         }
 
@@ -1366,7 +1354,7 @@ namespace Quartz
                 this.ShowIcon = true;
             }
 
-            if (loadnum == 0 && !_newtab)
+            if (loadnum == 0 && !_newtab && ParentTabs?.SelectedTab?.Content == this)
             {
                 if (txtWebAddress.SelectionLength != txtWebAddress.TextLength)
                 {
@@ -1892,29 +1880,7 @@ namespace Quartz
         }
         private void newTabToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Browser browser = new Browser(null, false);
-            browser.InitializeTab();
-            var newtab = new TitleBarTab(ParentTabs)
-            {
-                Content = browser,
-                Caption = "New Tab",
-                IsLoading = browser.IsLoading
-            };
-            if (ParentTabs.InvokeRequired)
-            {
-                ParentTabs.Invoke(new Action(() =>
-                {
-                    ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                    ParentTabs.SelectedTab = newtab;
-                    ParentTabs.RedrawTabs();
-                }));
-            }
-            else
-            {
-                ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                ParentTabs.SelectedTab = newtab;
-                ParentTabs.RedrawTabs();
-            }
+            OpenTab(null, TabOpenDisposition.NewForegroundTab);
         }
 
         private void closeTabToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2039,30 +2005,7 @@ namespace Quartz
 
                 ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
 
-                Browser browser = new Browser(menuItem.Tag.ToString(), true);
-                browser.InitializeTab();
-                var newtab = new TitleBarTab(ParentTabs)
-                {
-                    Content = browser,
-                    Caption = "Loading...",
-                    IsLoading = browser.IsLoading
-                };
-
-                if (ParentTabs.InvokeRequired)
-                {
-                    ParentTabs.Invoke(new Action(() =>
-                    {
-                        ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                        ParentTabs.SelectedTab = newtab;
-                        ParentTabs.RedrawTabs();
-                    }));
-                }
-                else
-                {
-                    ParentTabs.Tabs.Insert(ParentTabs.SelectedTabIndex + 1, newtab);
-                    ParentTabs.SelectedTab = newtab;
-                    ParentTabs.RedrawTabs();
-                }
+                OpenFavouriteOrHistory(menuItem.Tag.ToString(), MouseButtons.Middle, ModifierKeys);
             }
         }
 
@@ -2070,7 +2013,7 @@ namespace Quartz
         {
             ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
 
-            SetSource(new Uri(menuItem.Tag.ToString()));
+            OpenFavouriteOrHistory(menuItem.Tag.ToString(), MouseButtons.Left, ModifierKeys);
         }
 
         private void resetToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -2363,21 +2306,15 @@ namespace Quartz
                         // Get the control that is displaying this context menu
                         Button button = (Button)owner.SourceControl;
 
-                        // Fake a middle mouse button click at position (0,0) with one click and delta 0
-                        MouseEventArgs middleClick = new MouseEventArgs(MouseButtons.Middle, 1, 0, 0, 0);
-
-                        // Pass the fake mouse event to your existing handler
-                        Button_MouseUp(button, middleClick);
+                        var favourite = GetFavourite(button);
+                        if (favourite != null) OpenTab(favourite.WebAddress, TabOpenDisposition.NewBackgroundTab);
                     }
                     else
                     {
                         foreach (Button button in pnlFavourites.Controls)
                         {
-                            // Fake a middle mouse button click at position (0,0) with one click and delta 0
-                            MouseEventArgs middleClick = new MouseEventArgs(MouseButtons.Middle, 1, 0, 0, 0);
-
-                            // Pass the fake mouse event to your existing handler
-                            Button_MouseUp(button, middleClick);
+                            var favourite = GetFavourite(button);
+                            if (favourite != null) OpenTab(favourite.WebAddress, TabOpenDisposition.NewBackgroundTab);
                         }
                     }
                 }
@@ -2706,38 +2643,14 @@ namespace Quartz
 
                     menuItem.Click += (_s, _e) =>
                     {
-                        SetSource(favourite.WebAddress);
+                        OpenFavouriteOrHistory(favourite.WebAddress, MouseButtons.Left, ModifierKeys);
                     };
 
-                    menuItem.MouseUp += async (_s, _e) =>
+                    menuItem.MouseUp += (_s, _e) =>
                     {
                         if (_e.Button == MouseButtons.Middle)
                         {
-                            var browser = new Browser(favourite.WebAddress, true);
-                            browser.InitializeTab();
-
-                            var newTab = new TitleBarTab(ParentTabs)
-                            {
-                                Content = browser,
-                                Caption = "Loading...",
-                                IsLoading = browser.IsLoading
-                            };
-
-                            void AddTab()
-                            {
-                                int index = ParentTabs.SelectedTabIndex + 1;
-                                ParentTabs.Tabs.Insert(index, newTab);
-                                ParentTabs.SelectedTab = newTab;
-                                ParentTabs.RedrawTabs();
-                            }
-
-                            if (ParentTabs.InvokeRequired)
-                                ParentTabs.Invoke(new Action(AddTab));
-                            else
-                                AddTab();
-
-                            // Instant UI activation (0–1ms)
-                            await Task.Yield();
+                            OpenFavouriteOrHistory(favourite.WebAddress, MouseButtons.Middle, ModifierKeys);
                         }
                     };
 

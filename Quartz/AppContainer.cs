@@ -106,7 +106,9 @@ namespace Quartz
             set => _overlay.Visible = value;
         }
 
-        public AppContainer()
+        public AppContainer() : this(null) { }
+
+        internal AppContainer(Guid? profileId)
         {
             InitializeComponent();
             MinimumSize = MinimumWindowSize;
@@ -117,7 +119,7 @@ namespace Quartz
             ApplyWindowSettings();
 
             ProfileService.LoadCurrentProfile();
-            ProfileId = ProfileService.Current;
+            ProfileId = profileId ?? ProfileService.Current;
             AeroPeekEnabled = false;
             ApplyWindowTheme();
 

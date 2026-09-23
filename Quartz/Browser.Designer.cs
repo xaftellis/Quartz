@@ -270,8 +270,10 @@ namespace Quartz
             this.btnDownload.BackColor = System.Drawing.Color.Transparent;
             this.btnDownload.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnDownload.FlatAppearance.BorderSize = 0;
+            this.btnDownload.FocusRingColor = System.Drawing.Color.Empty;
             this.btnDownload.ForeColor = System.Drawing.Color.White;
             this.btnDownload.IconSize = 20;
+            this.btnDownload.InkColor = System.Drawing.Color.Empty;
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.UseToolbarGeometry = false;
             this.btnDownload.UseVisualStyleBackColor = false;
@@ -313,8 +315,10 @@ namespace Quartz
             this.btnAddFavourite.BackColor = System.Drawing.Color.Transparent;
             this.btnAddFavourite.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnAddFavourite.FlatAppearance.BorderSize = 0;
+            this.btnAddFavourite.FocusRingColor = System.Drawing.Color.Empty;
             this.btnAddFavourite.ForeColor = System.Drawing.Color.White;
             this.btnAddFavourite.IconSize = 20;
+            this.btnAddFavourite.InkColor = System.Drawing.Color.Empty;
             this.btnAddFavourite.Name = "btnAddFavourite";
             this.btnAddFavourite.UseToolbarGeometry = false;
             this.btnAddFavourite.UseVisualStyleBackColor = false;
@@ -326,8 +330,10 @@ namespace Quartz
             resources.ApplyResources(this.btnForward, "btnForward");
             this.btnForward.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnForward.FlatAppearance.BorderSize = 0;
+            this.btnForward.FocusRingColor = System.Drawing.Color.Empty;
             this.btnForward.ForeColor = System.Drawing.Color.White;
             this.btnForward.IconSize = 20;
+            this.btnForward.InkColor = System.Drawing.Color.Empty;
             this.btnForward.Name = "btnForward";
             this.btnForward.UseToolbarGeometry = false;
             this.btnForward.UseVisualStyleBackColor = false;
@@ -353,8 +359,10 @@ namespace Quartz
             this.btnBack.FlatAppearance.BorderSize = 0;
             this.btnBack.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
             this.btnBack.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.btnBack.FocusRingColor = System.Drawing.Color.Empty;
             this.btnBack.ForeColor = System.Drawing.Color.Transparent;
             this.btnBack.IconSize = 20;
+            this.btnBack.InkColor = System.Drawing.Color.Empty;
             this.btnBack.Name = "btnBack";
             this.btnBack.UseToolbarGeometry = false;
             this.btnBack.UseVisualStyleBackColor = false;
@@ -472,8 +480,10 @@ namespace Quartz
             resources.ApplyResources(this.btnRefresh, "btnRefresh");
             this.btnRefresh.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnRefresh.FlatAppearance.BorderSize = 0;
+            this.btnRefresh.FocusRingColor = System.Drawing.Color.Empty;
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
             this.btnRefresh.IconSize = 20;
+            this.btnRefresh.InkColor = System.Drawing.Color.Empty;
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.UseToolbarGeometry = false;
             this.btnRefresh.UseVisualStyleBackColor = false;
@@ -504,9 +514,12 @@ namespace Quartz
             resources.ApplyResources(this.btnSiteInformation, "btnSiteInformation");
             this.btnSiteInformation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
             this.btnSiteInformation.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSiteInformation.FocusRingColor = System.Drawing.Color.Empty;
             this.btnSiteInformation.ForeColor = System.Drawing.Color.Black;
-            this.btnSiteInformation.IconSize = 16;
+            this.btnSiteInformation.HoldActiveOnClick = true;
+            this.btnSiteInformation.InkColor = System.Drawing.Color.Empty;
             this.btnSiteInformation.Name = "btnSiteInformation";
+            this.btnSiteInformation.UseToolbarGeometry = false;
             this.btnSiteInformation.UseVisualStyleBackColor = false;
             // 
             // pnlFavourites
@@ -541,8 +554,10 @@ namespace Quartz
             this.btnSettings.ContextMenuStrip = this.SettingsMenuStrip;
             this.btnSettings.Cursor = System.Windows.Forms.Cursors.Default;
             this.btnSettings.FlatAppearance.BorderSize = 0;
+            this.btnSettings.FocusRingColor = System.Drawing.Color.Empty;
             this.btnSettings.ForeColor = System.Drawing.Color.White;
             this.btnSettings.IconSize = 20;
+            this.btnSettings.InkColor = System.Drawing.Color.Empty;
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.UseToolbarGeometry = false;
             this.btnSettings.UseVisualStyleBackColor = false;
