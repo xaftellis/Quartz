@@ -9,12 +9,14 @@ namespace Quartz.Controls.ChromiumMenus
 {
     internal sealed class MenuSession : IMessageFilter, IDisposable
     {
+        static MenuSession() { EasyTabs.ContextMenuProvider.IsOwnedMenuOpen = () => Current != null; }
         internal static MenuSession Current { get; private set; }
         private readonly List<MenuPopup> popups = new List<MenuPopup>();
         private readonly Control source;
         private readonly Form owner;
         private readonly MenuAppearance appearance;
         private readonly IntPtr initialForeground;
+        private IntPtr hiddenCaret;
         private readonly Timer timer = new Timer { Interval = 30 };
         private readonly MenuTooltip tooltip = new MenuTooltip();
         private Point lastPoint, openingPoint;
@@ -49,7 +51,12 @@ namespace Quartz.Controls.ChromiumMenus
                     int y = anchor.Y - popup.Pixel(popup.TopInset);
                     if (y + popup.Pixel(popup.TopInset + popup.BodyHeight) > area.Bottom) y = anchor.Y - popup.Height + popup.Pixel(popup.BottomInset);
                     session.Place(popup, x, y, area); session.popups.Add(popup); popup.ShowMenu(session.owner);
-                    menu.DidOpen(); Application.AddMessageFilter(session); SetCapture(popup.Handle); session.timer.Start();
+                    menu.DidOpen(); Application.AddMessageFilter(session);
+                    // Keep text focus/selection intact but suspend its native
+                    // caret for the lifetime of this (nonactivating) menu.
+                    var gui = new GuiThreadInfo { Size = Marshal.SizeOf(typeof(GuiThreadInfo)) };
+                    if (GetGUIThreadInfo(GetCurrentThreadId(), ref gui) && gui.Caret != IntPtr.Zero && HideCaret(gui.Caret)) session.hiddenCaret = gui.Caret;
+                    SetCapture(popup.Handle); session.timer.Start();
                 }
                 catch { session.Dispose(); throw; }
             }
@@ -116,22 +123,19 @@ namespace Quartz.Controls.ChromiumMenus
             if (m.Msg < 0x200 || m.Msg > 0x20e) return false;
             using (new DpiScope())
             {
-                GetCursorPos(out Point point);
+                Point point = MessagePoint(m);
                 var popup = popups.LastOrDefault(p => p.BodyBounds.Contains(point));
-                bool down = m.Msg == 0x201 || m.Msg == 0x204 || m.Msg == 0x207;
+                // Windows replaces every second rapid press with DBLCLK. Views
+                // still passes it to ButtonController as a normal press.
+                bool down = m.Msg == 0x201 || m.Msg == 0x203 || m.Msg == 0x204 || m.Msg == 0x206 || m.Msg == 0x207 || m.Msg == 0x209 || m.Msg == 0x20b || m.Msg == 0x20d;
                 bool up = m.Msg == 0x202 || m.Msg == 0x205 || m.Msg == 0x208;
                 if (down && popup == null)
                 {
-                    IntPtr target = WindowFromPoint(point);
                     bool captured = OwnsHandle(m.HWnd);
+                    IntPtr sourceHandle = m.HWnd;
                     Dispose();
                     if (!captured) return false;
-                    // Repost the initiating down to its actual control after releasing capture.
-                    if (target != IntPtr.Zero)
-                    {
-                        PhysicalToLogicalPointForPerMonitorDPI(target, ref point); ScreenToClient(target, ref point);
-                        PostMessage(target, m.Msg, m.WParam, new IntPtr((point.X & 0xffff) | (point.Y << 16)));
-                    }
+                    RepostPointerDown(sourceHandle, m.Msg, m.WParam, point);
                     return true;
                 }
                 if (m.Msg == 0x200) { if (point != lastPoint) { Hover(popup, point); lastPoint = point; } return true; }
@@ -140,7 +144,7 @@ namespace Quartz.Controls.ChromiumMenus
                     if (popup != null) Scroll(popup, unchecked((short)((long)m.WParam >> 16)) > 0 ? -1 : 1);
                     return true;
                 }
-                if (down) { tooltip.Press(); dragging = m.Msg == 0x201; Hover(popup, point); return true; }
+                if (down) { tooltip.Press(); dragging = m.Msg == 0x201 || m.Msg == 0x203; Hover(popup, point); return true; }
                 if (up)
                 {
                     double dx = point.X - openingPoint.X, dy = point.Y - openingPoint.Y;
@@ -320,9 +324,51 @@ namespace Quartz.Controls.ChromiumMenus
         public void Dispose()
         {
             if (closing) return; closing = true;
+            bool release = OwnsHandle(GetCapture());
             if (Current == this) Current = null;
-            Application.RemoveMessageFilter(this); timer.Stop(); timer.Dispose(); tooltip.Dispose(); ReleaseCapture(); CloseAfter(-1);
+            Application.RemoveMessageFilter(this); timer.Stop(); timer.Dispose(); tooltip.Dispose();
+            if (release) ReleaseCapture();
+            CloseAfter(-1);
+            if (hiddenCaret != IntPtr.Zero) { ShowCaret(hiddenCaret); hiddenCaret = IntPtr.Zero; }
         }
+        internal static Point MessagePoint(Message message)
+        {
+            Point p = new Point(unchecked((short)(long)message.LParam), unchecked((short)((long)message.LParam >> 16)));
+            if (message.Msg == 0x20a || message.Msg == 0x20e) return p;
+            IntPtr previous = SetThreadDpiAwarenessContext(GetWindowDpiAwarenessContext(message.HWnd));
+            try { ClientToScreen(message.HWnd, ref p); LogicalToPhysicalPointForPerMonitorDPI(message.HWnd, ref p); }
+            finally { SetThreadDpiAwarenessContext(previous); }
+            return p;
+        }
+        internal static void RepostPointerDown(IntPtr sourceHandle, int message, IntPtr flags, Point physicalPoint)
+        {
+            // MenuController::RepostEventImpl (menu_controller.cc:405–479).
+            // Cross-thread windows already receive native input despite capture.
+            IntPtr target = WindowFromPoint(physicalPoint);
+            if (target == IntPtr.Zero || GetWindowThreadProcessId(target, IntPtr.Zero) != GetCurrentThreadId()) return;
+            IntPtr previous = SetThreadDpiAwarenessContext(GetWindowDpiAwarenessContext(target));
+            try
+            {
+                Point p = physicalPoint; PhysicalToLogicalPointForPerMonitorDPI(target, ref p);
+                int hit = (int)SendMessage(target, 0x84, IntPtr.Zero, PointParam(p));
+                if (hit == 1) ScreenToClient(target, ref p);
+                else if (hit > 0) { message -= 0x160; flags = new IntPtr(hit); }
+                else return;
+                PostMessage(target, message, flags, PointParam(p));
+            }
+            finally { SetThreadDpiAwarenessContext(previous); }
+        }
+        internal static IntPtr PointParam(Point p) => new IntPtr(unchecked((int)((uint)(ushort)p.X | ((uint)(ushort)p.Y << 16))));
+        [StructLayout(LayoutKind.Sequential)] private struct GuiThreadInfo { internal int Size, Flags; internal IntPtr Active, Focus, Capture, MenuOwner, MoveSize, Caret; internal Rect CaretRect; }
+        [DllImport("user32.dll")] private static extern bool GetGUIThreadInfo(uint thread, ref GuiThreadInfo info);
+        [DllImport("user32.dll")] private static extern bool HideCaret(IntPtr hwnd);
+        [DllImport("user32.dll")] private static extern bool ShowCaret(IntPtr hwnd);
+        [DllImport("user32.dll")] private static extern IntPtr GetCapture();
+        [DllImport("kernel32.dll")] private static extern uint GetCurrentThreadId();
+        [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(IntPtr hwnd, IntPtr process);
+        [DllImport("user32.dll")] private static extern IntPtr GetWindowDpiAwarenessContext(IntPtr hwnd);
+        [DllImport("user32.dll")] private static extern bool ClientToScreen(IntPtr hwnd, ref Point point);
+        [DllImport("user32.dll")] private static extern IntPtr SendMessage(IntPtr hwnd, int message, IntPtr wparam, IntPtr lparam);
         private static Rectangle WorkArea(Point point, out float scale)
         {
             IntPtr monitor = MonitorFromPoint(point, 2); var info = new MonitorInfo { Size = Marshal.SizeOf(typeof(MonitorInfo)) }; GetMonitorInfo(monitor, ref info);

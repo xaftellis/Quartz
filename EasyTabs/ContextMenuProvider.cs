@@ -15,6 +15,10 @@ namespace EasyTabs
     }
     public static class ContextMenuProvider
     {
+        // The custom presenter owns mouse input while open. Low-level tab hooks
+        // must not interpret that same input behind an owned popup.
+        public static Func<bool> IsOwnedMenuOpen { get; set; }
+        internal static bool MenuOwnsInput => IsOwnedMenuOpen?.Invoke() == true;
         public static TitleBarTabs _parentForm;
         public static TitleBarTab _clickedTab;
             

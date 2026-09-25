@@ -47,6 +47,8 @@ namespace Quartz.Controls.ChromiumMenus
                 Nested = new ChromiumMenuItem("&Spelling") { ShortcutKeyDisplayString = "Ctrl+Shift+S" };
                 Nested.DropDownItems.Add(new ChromiumMenuItem("English (United States)") { Radio = true, Checked = true });
                 Nested.DropDownItems.Add(new ChromiumMenuItem("English (United Kingdom)") { Radio = true });
+                foreach (var language in Nested.DropDownItems.ToArray())
+                    language.Click += (sender, args) => { foreach (var option in Nested.DropDownItems.Where(i => i.Radio)) option.Checked = option == language; };
                 Nested.DropDownItems.Add(new ChromiumMenuSeparator());
                 Nested.DropDownItems.Add(new ChromiumMenuItem("Check spelling") { CheckOnClick = true, Checked = true });
                 Zoom = new ChromiumZoomMenuItem
@@ -142,7 +144,7 @@ namespace Quartz.Controls.ChromiumMenus
             using (var owner = new Form { Text = "Quartz menu verification", Size = new Size(760, 700), StartPosition = FormStartPosition.CenterScreen })
             using (var fixture = new Fixture(new MenuAppearance { HighContrast = false, Animations = false }))
             {
-                owner.Show(); owner.Activate(); Application.DoEvents();
+                owner.Show(); owner.Hide(); owner.Show(); owner.Activate(); Application.DoEvents();
                 fixture.Menu.Show(owner, new Point(70, 70));
                 Require(fixture.Menu.Visible, "Native popup failed to open");
                 var popup = Application.OpenForms.OfType<MenuPopup>().Single();
@@ -200,6 +202,8 @@ namespace Quartz.Controls.ChromiumMenus
                 // pipeline. A second menu must receive its own messages inside it.
                 VerifyModalMenus(owner, report);
                 VerifyTooltipAndFade(owner, report);
+                VerifyInputLifetime(owner, report);
+                VerifySharedSubmenu(owner, report);
                 owner.Close();
             }
             report.AppendLine("PASS: render matrix; shaped metrics; hidden/icon/check columns; tall icons; separator variants; localized preset width and font overrides; zoom endpoints/epsilon; native layered popup; stable accessibility tree and alert role; zoom keyboard invocation/disabled state; child traversal; F11 consumption; informational percentage; submenu open/Escape; fullscreen close-before-command and capability/exit state; work-area placement; ordinary command execution; Home/End; oversized-menu scrolling.");
@@ -299,14 +303,107 @@ namespace Quartz.Controls.ChromiumMenus
                 fixture.Menu.Show(owner, new Point(80, 80)); PumpFor(180);
                 var popup = Application.OpenForms.OfType<MenuPopup>().Single(p => !p.Retired);
                 Require(popup.SurfaceAlpha == 255, "Fade-in completes"); fixture.Menu.Close();
-                Require(!fixture.Menu.Visible && MenuSession.Current == null && GetCapture() != popup.Handle, "Fade-out releases session and capture immediately");
-                PumpFor(180); Require(popup.IsDisposed, "Fade-out disposes the cached host");
+                Require(!fixture.Menu.Visible && MenuSession.Current == null && popup.IsDisposed, "Dismissal destroys the popup immediately, with no closing fade");
             }
-            report.AppendLine("PASS: tooltip delay/anchor update/target change/10-second timeout/click suppression/cancellation/edge fit/RTL/wrapping/truncation; 150 ms linear fade-in/out with immediate input/capture release. OS animation permission=" + MenuFadeAnimation.SystemEnabled);
+            report.AppendLine("PASS: tooltip delay/anchor update/target change/10-second timeout/click suppression/cancellation/edge fit/RTL/wrapping/truncation; 150 ms linear opening fade; immediate close/input/capture release. OS animation permission=" + MenuFadeAnimation.SystemEnabled);
         }
         [DllImport("user32.dll")] private static extern IntPtr SendMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
         [DllImport("user32.dll")] private static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
         [DllImport("user32.dll")] private static extern IntPtr GetCapture();
+        [DllImport("user32.dll")] private static extern bool IsWindowEnabled(IntPtr hwnd);
+        private sealed class PointerProbe : Control
+        {
+            internal int LastMessage, Count, Hit = 1;
+            internal IntPtr LastFlags, LastPoint;
+            protected override void WndProc(ref Message m)
+            {
+                if (m.Msg == 0x84) { m.Result = new IntPtr(Hit); return; }
+                if (m.Msg == 0x201 || m.Msg == 0xa1)
+                { LastMessage = m.Msg; LastFlags = m.WParam; LastPoint = m.LParam; ++Count; return; }
+                base.WndProc(ref m);
+            }
+        }
+        private static void VerifyInputLifetime(Form owner, StringBuilder report)
+        {
+            using (var field = new TextBox { Text = "Caret test", Bounds = new Rectangle(15, 15, 200, 24) })
+            using (var probe = new PointerProbe { Bounds = new Rectangle(15, 80, 160, 40) })
+            using (var fixture = new Fixture(new MenuAppearance { Animations = false }))
+            {
+                owner.Controls.Add(field); owner.Controls.Add(probe); field.CreateControl(); probe.CreateControl(); owner.Activate(); Application.DoEvents(); field.Focus(); field.SelectionStart = 3;
+                Require(field.Focused, "Caret fixture must have focus before opening: owner enabled=" + owner.Enabled + ", field enabled=" + field.Enabled + ", owner visible=" + owner.Visible + ", field visible=" + field.Visible + ", can focus=" + field.CanFocus + ", handle=" + field.IsHandleCreated + ", native owner=" + IsWindowEnabled(owner.Handle) + ", native field=" + IsWindowEnabled(field.Handle));
+                Require(CreateCaret(field.Handle, IntPtr.Zero, 1, 16) && ShowCaret(field.Handle), "Test native caret creation");
+                var gui = new GuiInfo { Size = Marshal.SizeOf(typeof(GuiInfo)) };
+                GetGUIThreadInfo(0, ref gui); Require((gui.Flags & 1) != 0, "Test caret is initially visible");
+                fixture.Menu.Show(field, new Point(230, 60));
+                var popup = Application.OpenForms.OfType<MenuPopup>().Single(p => !p.Retired);
+                GetGUIThreadInfo(0, ref gui); Require((gui.Flags & 1) == 0 && field.Focused && field.SelectionStart == 3, "Menu hides caret without changing focus/selection: flags=" + gui.Flags + ", focused=" + field.Focused + ", selection=" + field.SelectionStart + ", caret=" + gui.Caret + ", hidden=" + typeof(MenuSession).GetField("hiddenCaret", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(MenuSession.Current));
+                Require(EasyTabs.ContextMenuProvider.IsOwnedMenuOpen(), "Tab hooks must know menu owns input");
+                // Every click, including WM_LBUTTONDBLCLK, must activate immediately.
+                var row = popup.LayoutData.Rows.Single(r => r.Item == fixture.Zoom);
+                var plus = row.Buttons[1];
+                var local = new Point(popup.Pixel(popup.LeftInset + plus.Left + 3), popup.Pixel(popup.TopInset + plus.MidY));
+                fixture.Zoom.GetZoom = () => 1; fixture.Zoom.Step = d => ++fixture.ZoomCommands;
+                var elapsed = Stopwatch.StartNew();
+                for (int i = 0; i < 20; ++i)
+                {
+                    var down = Message.Create(popup.Handle, i % 2 == 0 ? 0x201 : 0x203, new IntPtr(1), MenuSession.PointParam(local));
+                    Require(MenuSession.Current.PreFilterMessage(ref down), "Menu consumes each press");
+                    var up = Message.Create(popup.Handle, 0x202, IntPtr.Zero, MenuSession.PointParam(local));
+                    Require(MenuSession.Current.PreFilterMessage(ref up) && fixture.ZoomCommands == i + 1, "Rapid click must immediately invoke exactly once");
+                }
+                report.AppendLine("20 rapid press/release pairs, alternating ordinary and double-click presses: " + elapsed.ElapsedMilliseconds + " ms; all 20 invoked synchronously.");
+                // An outside press over nonclient caption must preserve its native
+                // hit code and screen coordinate; then a client press uses local coordinates.
+                probe.Hit = 2; var screen = probe.PointToScreen(new Point(7, 9));
+                var captured = popup.PointToClient(screen);
+                var outside = Message.Create(popup.Handle, 0x201, new IntPtr(1), MenuSession.PointParam(captured));
+                MenuSession.Current.PreFilterMessage(ref outside); Application.DoEvents();
+                Require(probe.Count == 1 && probe.LastMessage == 0xa1 && (int)probe.LastFlags == 2 && probe.LastPoint == MenuSession.PointParam(screen), "Dismissal repost preserves caption drag press");
+                GetGUIThreadInfo(0, ref gui); Require((gui.Flags & 1) != 0 && field.Focused && !EasyTabs.ContextMenuProvider.IsOwnedMenuOpen(), "Dismiss restores caret and relinquishes input");
+                probe.Hit = 1; fixture.Menu.Show(field, new Point(230, 60)); popup = Application.OpenForms.OfType<MenuPopup>().Single(p => !p.Retired);
+                captured = popup.PointToClient(screen); outside = Message.Create(popup.Handle, 0x201, new IntPtr(1), MenuSession.PointParam(captured));
+                MenuSession.Current.PreFilterMessage(ref outside); Application.DoEvents();
+                Require(probe.Count == 2 && probe.LastMessage == 0x201 && probe.LastPoint == MenuSession.PointParam(new Point(7, 9)), "Dismissal repost preserves client click");
+                fixture.Menu.Show(field, new Point(230, 60)); probe.Capture = true;
+                Require(MenuSession.Current == null && probe.Capture, "Capture loss must not release the new owner's capture"); probe.Capture = false;
+                DestroyCaret(); owner.Controls.Remove(field); owner.Controls.Remove(probe);
+            }
+            report.AppendLine("PASS: native caret hidden/restored with focus and selection preserved; tab-hook input ownership; immediate rapid zoom including double-clicks/full rectangular padding; same-thread client/nonclient dismissal replay; capture handoff preserves new owner.");
+        }
+        private static void VerifySharedSubmenu(Form owner, StringBuilder report)
+        {
+            using (var menu = new ChromiumMenu { Appearance = new MenuAppearance { Animations = false } })
+            using (var shared = new ChromiumMenu())
+            {
+                int chosen = 0; shared.Items.Add("Edit birthday").Click += (s, e) => chosen = (int)shared.Tag;
+                var first = menu.Items.Add("First birthday"); var second = menu.Items.Add("Second birthday");
+                first.DropDown = second.DropDown = shared;
+                first.DropDownOpening += (s, e) => shared.Tag = 1; second.DropDownOpening += (s, e) => shared.Tag = 2;
+                menu.Show(owner, new Point(70, 70)); var popup = Application.OpenForms.OfType<MenuPopup>().Single(p => !p.Retired);
+                popup.Selected = first; SendKey(Keys.Right); Require((int)shared.Tag == 1, "First birthday captures its context");
+                popup.Selected = second;
+                // Open the other item's shared submenu without first dismissing it.
+                var open = typeof(MenuSession).GetMethod("OpenSubmenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                open.Invoke(MenuSession.Current, new object[] { popup, popup.LayoutData.Rows.Single(r => r.Item == second), true });
+                Require((int)shared.Tag == 2 && shared.OwnerItem == second, "Shared submenu must refresh context when parent item changes");
+                SendKey(Keys.Enter); Application.DoEvents(); Require(chosen == 2, "Shared submenu action uses the selected birthday");
+            }
+            using (var fixture = new Fixture(new MenuAppearance { Animations = false }))
+            {
+                fixture.Menu.Show(owner, new Point(70, 70)); var popup = Application.OpenForms.OfType<MenuPopup>().Single(p => !p.Retired);
+                popup.Selected = fixture.Nested; SendKey(Keys.Right); SendKey(Keys.Down); SendKey(Keys.Enter); Application.DoEvents();
+                Require(!fixture.Nested.DropDownItems[0].Checked && fixture.Nested.DropDownItems[1].Checked, "Language radio selection remains exclusive");
+                fixture.Menu.Show(owner, new Point(70, 70)); popup = Application.OpenForms.OfType<MenuPopup>().Single(p => !p.Retired);
+                popup.Selected = fixture.Nested; SendKey(Keys.Right); SendKey(Keys.End); SendKey(Keys.Enter); Application.DoEvents();
+                Require(!fixture.Nested.DropDownItems.Last().Checked, "Checkbox toggles once and retains its value");
+            }
+            report.AppendLine("PASS: shared birthday dropdown switches invocation context; language radio items select exclusively; check items toggle once; nested keyboard navigation preserves state.");
+        }
+        [StructLayout(LayoutKind.Sequential)] private struct GuiInfo { internal int Size, Flags; internal IntPtr Active, Focus, Capture, Menu, Move, Caret; internal Rectangle Rect; }
+        [DllImport("user32.dll")] private static extern bool GetGUIThreadInfo(uint thread, ref GuiInfo info);
+        [DllImport("user32.dll")] private static extern bool CreateCaret(IntPtr hwnd, IntPtr bitmap, int width, int height);
+        [DllImport("user32.dll")] private static extern bool ShowCaret(IntPtr hwnd);
+        [DllImport("user32.dll")] private static extern bool DestroyCaret();
         private static void Save(string directory, string name, MenuPainter painter, MenuLayout layout, float scale, ChromiumMenuItem selected, int part)
         {
             using (var bitmap = new SKBitmap((int)Math.Ceiling((layout.Width + 48) * scale), (int)Math.Ceiling((layout.Height + 48) * scale), SKColorType.Bgra8888, SKAlphaType.Premul))

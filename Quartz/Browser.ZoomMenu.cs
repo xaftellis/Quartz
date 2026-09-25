@@ -26,8 +26,9 @@ namespace Quartz
         private void SetMenuZoom(double zoom)
         {
             wvWebView1.ZoomFactor = Math.Max(.25, Math.Min(5, zoom));
-            SettingsService.Set("Zoom", wvWebView1.ZoomFactor.ToString());
-            UpdateZoomMenuRow();
+            // ZoomFactorChanged already persists and invalidates the row. Avoid
+            // a duplicate synchronous settings-file write and full repaint on
+            // every press (including each press in a double-click sequence).
         }
         private void UpdateZoomMenuRow() { zoomToolStrip?.Invalidate(); }
     }

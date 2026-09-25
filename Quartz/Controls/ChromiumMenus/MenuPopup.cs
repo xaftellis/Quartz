@@ -32,9 +32,9 @@ namespace Quartz.Controls.ChromiumMenus
         }
         internal void Retire()
         {
-            Retired = true; MakeInputTransparent();
-            if (!Painter.Appearance.Animations || !MenuFadeAnimation.SystemEnabled) { Dispose(); return; }
-            fade.Start(SurfaceAlpha / 255.0, 0, value => { SurfaceAlpha = (byte)Math.Round(value * 255); Present(); }, Dispose);
+            // Opening fade only, per the requested interaction. No lingering
+            // HWND may obstruct the caption/tab press which dismissed the menu.
+            Retired = true; fade.Stop(); Dispose();
         }
         internal int LeftInset => Submenu ? 16 : 24;
         internal int TopInset => Submenu ? 16 : 12;

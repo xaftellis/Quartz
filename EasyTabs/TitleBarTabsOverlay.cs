@@ -813,6 +813,7 @@ namespace EasyTabs
         // the next animation tick. There is no worker/UI Invoke round trip.
         private void ProcessPendingMouseMove()
         {
+            if (ContextMenuProvider.MenuOwnsInput) { _mouseMovePending = false; return; }
             if (!_mouseMovePending || IsDisposed || _parentForm.IsDisposed || _parentForm.TabRenderer == null) return;
             _mouseMovePending = false;
             Point cursor = _latestMousePosition;
@@ -886,6 +887,7 @@ namespace EasyTabs
         protected void InterpretMouseEvents()
         {
             _mouseInputQueued = false;
+            if (ContextMenuProvider.MenuOwnsInput) { _mouseEvents.Clear(); _mouseMovePending = false; return; }
             while (_mouseEvents.Count > 0 && !IsDisposed && !_parentForm.IsDisposed)
             {
                 MouseEvent input = _mouseEvents.Dequeue();
@@ -953,6 +955,8 @@ namespace EasyTabs
 		/// <returns>A zero value if the procedure processes the message; a nonzero value if the procedure ignores the message.</returns>
         protected IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
+            if (ContextMenuProvider.MenuOwnsInput)
+                return User32.CallNextHookEx(_hookId, nCode, wParam, lParam);
             if (nCode >= 0 && !IsDisposed && !Disposing && !_parentFormClosing && _parentForm.TabRenderer != null)
             {
                 WM message = (WM)wParam.ToInt32();
