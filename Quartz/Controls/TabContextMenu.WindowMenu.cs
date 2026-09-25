@@ -1,3 +1,4 @@
+﻿using Quartz.Controls.ChromiumMenus;
 using EasyTabs;
 using System;
 using System.Drawing;
@@ -9,7 +10,7 @@ namespace Quartz.Controls
 {
     public partial class TabContextMenu
     {
-        private ToolStripMenuItem moveTabToolStripMenuItem;
+        private ChromiumMenuItem moveTabToolStripMenuItem;
 
         private bool CanMoveClickedTab => _parentForm != null && !_parentForm.IsDisposed &&
             !_parentForm.Disposing && !_parentForm.IsClosing && _clickedTab != null &&
@@ -18,7 +19,7 @@ namespace Quartz.Controls
         private void UpdateMoveWindowMenu()
         {
             // Rebuild on opening: titles, window membership and activation order can change.
-            foreach (ToolStripItem item in moveTabToolStripMenuItem.DropDownItems.Cast<ToolStripItem>().ToArray())
+            foreach (ChromiumMenuItem item in moveTabToolStripMenuItem.DropDownItems.Cast<ChromiumMenuItem>().ToArray())
                 item.Dispose();
             moveTabToolStripMenuItem.DropDownItems.Clear();
 
@@ -31,20 +32,17 @@ namespace Quartz.Controls
             moveTabToolStripMenuItem.Enabled = windows.Length > 0 || canCreate;
             if (windows.Length == 0) return;
 
-            var newWindow = new ToolStripMenuItem("New window") { Enabled = canCreate };
+            var newWindow = new ChromiumMenuItem("New window") { Enabled = canCreate };
             newWindow.Click += (sender, e) => MoveTabToNewWindow();
             moveTabToolStripMenuItem.DropDownItems.Add(newWindow);
-            moveTabToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
+            moveTabToolStripMenuItem.DropDownItems.Add(new ChromiumMenuSeparator());
             foreach (TitleBarTabs window in windows)
             {
-                var item = new ToolStripMenuItem(GetMoveWindowTitle(window).Replace("&", "&&"));
+                var item = new ChromiumMenuItem(GetMoveWindowTitle(window).Replace("&", "&&"));
                 // Capture the window itself; a stale menu must never move to a different window.
                 item.Click += (sender, e) => MoveTabToExistingWindow(window);
                 moveTabToolStripMenuItem.DropDownItems.Add(item);
             }
-            moveTabToolStripMenuItem.DropDown.Renderer = Renderer;
-            moveTabToolStripMenuItem.DropDown.BackColor = BackColor;
-            moveTabToolStripMenuItem.DropDown.ForeColor = ForeColor;
         }
 
         private string GetMoveWindowTitle(TitleBarTabs window)
@@ -54,12 +52,11 @@ namespace Quartz.Controls
             title = string.IsNullOrWhiteSpace(title) ? "New tab" : title.Replace("\r", "").Replace("\n", "");
             int otherTabs = string.IsNullOrEmpty(name) ? Math.Max(0, window.Tabs.Count - 1) : 0;
             string suffix = otherTabs == 0 ? "" : " and " + otherTabs + (otherTabs == 1 ? " other tab" : " other tabs");
-            int maxWidth = (int)Math.Round(400 * DeviceDpi / 96.0);
+            int maxWidth = 400;
             return ElideWindowTitle(title, Math.Max(1, maxWidth - MeasureWindowTitle(suffix))) + suffix;
         }
 
-        private int MeasureWindowTitle(string title) => TextRenderer.MeasureText(title, Font,
-            Size.Empty, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine).Width;
+        private int MeasureWindowTitle(string title) { using (var metrics = new MenuText()) return metrics.Width(title); }
 
         private string ElideWindowTitle(string title, int maxWidth)
         {

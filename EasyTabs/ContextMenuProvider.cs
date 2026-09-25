@@ -6,12 +6,19 @@ using System.Windows.Forms;
 
 namespace EasyTabs
 {
+    public interface IContextMenuPresenter
+    {
+        void Show(Control source, System.Drawing.Point location);
+        void Close();
+        bool Visible { get; }
+        bool IsDisposed { get; }
+    }
     public static class ContextMenuProvider
     {
         public static TitleBarTabs _parentForm;
         public static TitleBarTab _clickedTab;
             
-        public static ContextMenuStrip _contextMenuStripNormal;
-        public static ContextMenuStrip _contextMenuStripTab;
+        public static IContextMenuPresenter _contextMenuStripNormal;
+        public static IContextMenuPresenter _contextMenuStripTab;
     }
 }

@@ -1,4 +1,5 @@
-﻿using EasyTabs;
+﻿using Quartz.Controls.ChromiumMenus;
+using EasyTabs;
 using Quartz.Models;
 using Quartz.Services;
 using System;
@@ -10,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Quartz.Controls
 {
-    public class DefaultContextMenu : AnimatedContextMenuStrip
+    public class DefaultContextMenu : ChromiumMenu
     {
         TitleBarTabs _parentForm;
         TitleBarTab _clickedTab;
@@ -32,16 +33,16 @@ namespace Quartz.Controls
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
-        private ToolStripMenuItem restoreToolStripMenuItem;
-        private ToolStripMenuItem moveToolStripMenuItem;
-        private ToolStripMenuItem sizeToolStripMenuItem;
-        private ToolStripMenuItem minimizeToolStripMenuItem;
-        private ToolStripMenuItem maximizeToolStripMenuItem;
-        private ToolStripMenuItem reloadAllToolStripMenuItem;
-        private ToolStripMenuItem favouriteAllToolStripMenuItem;
-        private ToolStripMenuItem nameWindowAllToolStripMenuItem;
-        private ToolStripMenuItem taskManagerToolStripMenuItem;
-        private ToolStripMenuItem closeToolStripMenuItem;
+        private ChromiumMenuItem restoreToolStripMenuItem;
+        private ChromiumMenuItem moveToolStripMenuItem;
+        private ChromiumMenuItem sizeToolStripMenuItem;
+        private ChromiumMenuItem minimizeToolStripMenuItem;
+        private ChromiumMenuItem maximizeToolStripMenuItem;
+        private ChromiumMenuItem reloadAllToolStripMenuItem;
+        private ChromiumMenuItem favouriteAllToolStripMenuItem;
+        private ChromiumMenuItem nameWindowAllToolStripMenuItem;
+        private ChromiumMenuItem taskManagerToolStripMenuItem;
+        private ChromiumMenuItem closeToolStripMenuItem;
 
         public DefaultContextMenu()
         {
@@ -49,24 +50,24 @@ namespace Quartz.Controls
             NewControlThemeChanger.ChangeControlTheme(this);
 
             // Menu items
-            restoreToolStripMenuItem = new ToolStripMenuItem("Restore");
-            moveToolStripMenuItem = new ToolStripMenuItem("Move");
-            sizeToolStripMenuItem = new ToolStripMenuItem("Size");
-            minimizeToolStripMenuItem = new ToolStripMenuItem("Minimize");
-            maximizeToolStripMenuItem = new ToolStripMenuItem("Maximize");
-            var sep = new ToolStripSeparator();
-            reloadAllToolStripMenuItem = new ToolStripMenuItem("Reload all tabs...");
-            favouriteAllToolStripMenuItem = new ToolStripMenuItem("Favourite all tabs...");
-            nameWindowAllToolStripMenuItem = new ToolStripMenuItem("Name window...");
+            restoreToolStripMenuItem = new ChromiumMenuItem("Restore");
+            moveToolStripMenuItem = new ChromiumMenuItem("Move");
+            sizeToolStripMenuItem = new ChromiumMenuItem("Size");
+            minimizeToolStripMenuItem = new ChromiumMenuItem("Minimize");
+            maximizeToolStripMenuItem = new ChromiumMenuItem("Maximize");
+            var sep = new ChromiumMenuSeparator();
+            reloadAllToolStripMenuItem = new ChromiumMenuItem("Reload all tabs...");
+            favouriteAllToolStripMenuItem = new ChromiumMenuItem("Favourite all tabs...");
+            nameWindowAllToolStripMenuItem = new ChromiumMenuItem("Name window...");
 
-            var sep2 = new ToolStripSeparator();
-            taskManagerToolStripMenuItem = new ToolStripMenuItem("Task manager");
+            var sep2 = new ChromiumMenuSeparator();
+            taskManagerToolStripMenuItem = new ChromiumMenuItem("Task manager");
             ShortcutManager.SetMenuShortcut(taskManagerToolStripMenuItem, BrowserCommand.TaskManager);
-            var sep3 = new ToolStripSeparator();
-            closeToolStripMenuItem = new ToolStripMenuItem("Close");
+            var sep3 = new ChromiumMenuSeparator();
+            closeToolStripMenuItem = new ChromiumMenuItem("Close");
             ShortcutManager.SetMenuShortcut(closeToolStripMenuItem, BrowserCommand.CloseWindow);
 
-            this.Items.AddRange(new ToolStripItem[]
+            this.Items.AddRange(new ChromiumMenuItem[]
             {
                 restoreToolStripMenuItem,
                 moveToolStripMenuItem,          

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -752,6 +752,12 @@ namespace Quartz.Controls
             ObserveMenu(null);
             base.OnContextMenuStripChanged(e);
             ObserveMenu(ContextMenuStrip);
+        }
+
+        internal void SetOwnedMenuActive(bool active)
+        {
+            _menuActive = active;
+            UpdateActivation();
         }
 
         private void ObserveMenu(ContextMenuStrip menu)

@@ -1,3 +1,4 @@
+﻿using Quartz.Controls.ChromiumMenus;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,23 +27,23 @@ namespace Quartz
             BindShortcutMenu(webview2TaskManagerToolStripMenuItem, BrowserCommand.TaskManager, taskManagerToolStripMenuItem_Click);
         }
 
-        private void BindShortcutMenu(ToolStripMenuItem item, BrowserCommand command, EventHandler oldHandler = null)
+        private void BindShortcutMenu(ChromiumMenuItem item, BrowserCommand command, EventHandler oldHandler = null)
         {
             ShortcutManager.SetMenuShortcut(item, command);
             if (oldHandler != null) item.Click -= oldHandler;
             item.Click += (sender, e) => ShortcutManager.ExecuteCommand(this, command);
         }
 
-        internal bool OwnsShortcutMenu(ToolStripDropDown menu)
+        internal bool OwnsShortcutMenu(ChromiumMenu menu)
         {
-            return components != null && components.Components.OfType<ContextMenuStrip>()
+            return components != null && components.Components.OfType<ChromiumMenu>()
                 .Any(root => ShortcutManager.ContainsMenu(root, menu));
         }
 
         internal void CloseShortcutMenus()
         {
             if (components == null) return;
-            foreach (var menu in components.Components.OfType<ContextMenuStrip>().ToArray())
+            foreach (var menu in components.Components.OfType<ChromiumMenu>().ToArray())
                 if (!menu.IsDisposed && menu.Visible) menu.Close();
         }
 

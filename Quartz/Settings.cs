@@ -1,4 +1,5 @@
-﻿using EasyTabs;
+﻿using Quartz.Controls.ChromiumMenus;
+using EasyTabs;
 using ImageMagick;
 using Microsoft.SqlServer.Server;
 using Microsoft.Web.WebView2.Core;
@@ -761,12 +762,13 @@ namespace Quartz
             {
                 birthdaysToolStripMenuItem.DropDown = mnuBirthdays;
                 birthdaysToolStripMenuItem.Text = "Birthdays";
-                birthdaysToolStripMenuItem.Click += null;
+                birthdaysToolStripMenuItem.Click -= ToolStripMenu_Click;
             }
             else
             {
                 birthdaysToolStripMenuItem.DropDown = null;
                 birthdaysToolStripMenuItem.Text = "Add birthday";
+                birthdaysToolStripMenuItem.Click -= ToolStripMenu_Click;
                 birthdaysToolStripMenuItem.Click += ToolStripMenu_Click;
 
             }
@@ -801,12 +803,12 @@ namespace Quartz
         {
             mnuBirthdays.Items.Clear();
 
-            ToolStripMenuItem toolStripMenu = new ToolStripMenuItem();
+            ChromiumMenuItem toolStripMenu = new ChromiumMenuItem();
             toolStripMenu.Text = "Add birthday";
 
             toolStripMenu.Click += ToolStripMenu_Click;
 
-            ToolStripSeparator toolStripSeparator = new ToolStripSeparator();
+            ChromiumMenuSeparator toolStripSeparator = new ChromiumMenuSeparator();
 
             mnuBirthdays.Items.Add(toolStripMenu);
             mnuBirthdays.Items.Add(toolStripSeparator);
@@ -814,7 +816,7 @@ namespace Quartz
             // Populate the main menu
             foreach (BirthdayModel model in birthdayService.All())
             {
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem
+                ChromiumMenuItem toolStripMenuItem = new ChromiumMenuItem
                 {
                     Text = $"{model.Name}'s Birthday",
                     Tag = model,            // Store the model for click handling
@@ -844,7 +846,7 @@ namespace Quartz
 
         private void ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var model = ((ToolStripMenuItem)sender).Tag as BirthdayModel;
+            var model = ((ChromiumMenuItem)sender).Tag as BirthdayModel;
 
             DateTime currentDate = DateTime.Now;
             DateTime dateTime = model.DOB;
@@ -1051,7 +1053,7 @@ namespace Quartz
         }
 
         bool mnubClose = true;
-        private async void mnuBirthdays_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        private async void mnuBirthdays_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!mnubClose)
             {
@@ -1071,7 +1073,7 @@ namespace Quartz
             }
         }
 
-        private async void mnuTimeMachine_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        private async void mnuTimeMachine_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!mnubClose)
             {

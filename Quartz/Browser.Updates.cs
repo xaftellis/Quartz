@@ -1,3 +1,4 @@
+﻿using Quartz.Controls.ChromiumMenus;
 using Quartz.Models;
 using Quartz.Services;
 using System;
@@ -9,12 +10,12 @@ namespace Quartz
 {
     public partial class Browser
     {
-        private ToolStripMenuItem updateAvailableToolStripMenuItem;
-        private ToolStripSeparator updateAvailableSeparator;
+        private ChromiumMenuItem updateAvailableToolStripMenuItem;
+        private ChromiumMenuSeparator updateAvailableSeparator;
 
         private void InitializeUpdateAvailableMenuItem()
         {
-            updateAvailableToolStripMenuItem = new ToolStripMenuItem
+            updateAvailableToolStripMenuItem = new ChromiumMenuItem
             {
                 Name = "updateAvailableToolStripMenuItem",
                 Text = "Update available",
@@ -22,7 +23,7 @@ namespace Quartz
             };
             updateAvailableToolStripMenuItem.Click += UpdateAvailableToolStripMenuItem_Click;
 
-            updateAvailableSeparator = new ToolStripSeparator
+            updateAvailableSeparator = new ChromiumMenuSeparator
             {
                 Name = "updateAvailableSeparator",
                 Visible = false

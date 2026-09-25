@@ -1,4 +1,5 @@
-﻿using EasyTabs;
+﻿using Quartz.Controls.ChromiumMenus;
+using EasyTabs;
 using Quartz.Services;
 using System;
 using System.Collections.Generic;
@@ -10,58 +11,58 @@ using System.Windows.Media.Animation;
 
 namespace Quartz.Controls
 {
-    public partial class TabContextMenu : AnimatedContextMenuStrip
+    public partial class TabContextMenu : ChromiumMenu
     {
         TitleBarTabs _parentForm;
         TitleBarTab _clickedTab;
 
         // Menu Items
-        private ToolStripMenuItem newTabLeftStripMenuItem;
-        private ToolStripMenuItem newTabRightStripMenuItem;
-        private ToolStripSeparator toolStripSeparator;
-        private ToolStripMenuItem reloadTabToolStripMenuItem;
-        private ToolStripMenuItem duplicateTabToolStripMenuItem;
-        private ToolStripMenuItem pinTabToolStripMenuItem;
-        private ToolStripMenuItem muteTabToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripMenuItem closeTabToolStripMenuItem;
-        private ToolStripMenuItem closeOtherToolStripMenuItem;
-        private ToolStripMenuItem closeLeftToolStripMenuItem;
-        private ToolStripMenuItem closeRightToolStripMenuItem;
-        //private ToolStripMenuItem showSiteIconsOnlyToolStripMenuItem;
+        private ChromiumMenuItem newTabLeftStripMenuItem;
+        private ChromiumMenuItem newTabRightStripMenuItem;
+        private ChromiumMenuSeparator toolStripSeparator;
+        private ChromiumMenuItem reloadTabToolStripMenuItem;
+        private ChromiumMenuItem duplicateTabToolStripMenuItem;
+        private ChromiumMenuItem pinTabToolStripMenuItem;
+        private ChromiumMenuItem muteTabToolStripMenuItem;
+        private ChromiumMenuSeparator toolStripSeparator1;
+        private ChromiumMenuItem closeTabToolStripMenuItem;
+        private ChromiumMenuItem closeOtherToolStripMenuItem;
+        private ChromiumMenuItem closeLeftToolStripMenuItem;
+        private ChromiumMenuItem closeRightToolStripMenuItem;
+        //private ChromiumMenuItem showSiteIconsOnlyToolStripMenuItem;
         public TabContextMenu()
         {
             // Theme
             NewControlThemeChanger.ChangeControlTheme(this);
 
             // Controls
-            newTabLeftStripMenuItem = new ToolStripMenuItem("New tab to the left");
-            newTabRightStripMenuItem = new ToolStripMenuItem("New tab to the right");
-            moveTabToolStripMenuItem = new ToolStripMenuItem("Move tab to new window");
-            moveTabToolStripMenuItem.DropDown = new AnimatedContextMenuStrip();
+            newTabLeftStripMenuItem = new ChromiumMenuItem("New tab to the left");
+            newTabRightStripMenuItem = new ChromiumMenuItem("New tab to the right");
+            moveTabToolStripMenuItem = new ChromiumMenuItem("Move tab to new window");
+            moveTabToolStripMenuItem.DropDown = new ChromiumMenu();
             moveTabToolStripMenuItem.Click += (sender, e) =>
             {
                 if (!moveTabToolStripMenuItem.HasDropDownItems) MoveTabToNewWindow();
             };
-            toolStripSeparator = new ToolStripSeparator();
-            reloadTabToolStripMenuItem = new ToolStripMenuItem("Reload");
+            toolStripSeparator = new ChromiumMenuSeparator();
+            reloadTabToolStripMenuItem = new ChromiumMenuItem("Reload");
             ShortcutManager.SetMenuShortcut(reloadTabToolStripMenuItem, BrowserCommand.Reload);
-            duplicateTabToolStripMenuItem = new ToolStripMenuItem("Duplicate");
-            pinTabToolStripMenuItem = new ToolStripMenuItem("Pin");
-            muteTabToolStripMenuItem = new ToolStripMenuItem("Mute tab");
-            toolStripSeparator1 = new ToolStripSeparator();
-            closeTabToolStripMenuItem = new ToolStripMenuItem("Close Tab");
+            duplicateTabToolStripMenuItem = new ChromiumMenuItem("Duplicate");
+            pinTabToolStripMenuItem = new ChromiumMenuItem("Pin");
+            muteTabToolStripMenuItem = new ChromiumMenuItem("Mute tab");
+            toolStripSeparator1 = new ChromiumMenuSeparator();
+            closeTabToolStripMenuItem = new ChromiumMenuItem("Close Tab");
             ShortcutManager.SetMenuShortcut(closeTabToolStripMenuItem, BrowserCommand.CloseTab);
-            closeOtherToolStripMenuItem = new ToolStripMenuItem("Close other tabs");
-            closeLeftToolStripMenuItem = new ToolStripMenuItem("Close tabs to the left");
-            closeRightToolStripMenuItem = new ToolStripMenuItem("Close tabs to the right");
-            //showSiteIconsOnlyToolStripMenuItem = new ToolStripMenuItem("Show site icons only");
+            closeOtherToolStripMenuItem = new ChromiumMenuItem("Close other tabs");
+            closeLeftToolStripMenuItem = new ChromiumMenuItem("Close tabs to the left");
+            closeRightToolStripMenuItem = new ChromiumMenuItem("Close tabs to the right");
+            //showSiteIconsOnlyToolStripMenuItem = new ChromiumMenuItem("Show site icons only");
 
             //showSiteIconsOnlyToolStripMenuItem.CheckOnClick = true;
 
 
 
-            this.Items.AddRange(new ToolStripItem[]
+            this.Items.AddRange(new ChromiumMenuItem[]
             {
                 newTabLeftStripMenuItem,
                 newTabRightStripMenuItem,

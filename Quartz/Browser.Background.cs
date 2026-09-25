@@ -1,3 +1,4 @@
+﻿using Quartz.Controls.ChromiumMenus;
 using Quartz.Models;
 using Quartz.Services;
 using System;
@@ -114,9 +115,9 @@ namespace Quartz
                     "Quartz", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private static void ClearMenuItems(ContextMenuStrip menu)
+        private static void ClearMenuItems(ChromiumMenu menu)
         {
-            foreach (ToolStripItem item in menu.Items.Cast<ToolStripItem>().ToArray())
+            foreach (ChromiumMenuItem item in menu.Items.Cast<ChromiumMenuItem>().ToArray())
             {
                 Image image = item.Image;
                 item.Image = null;
@@ -126,7 +127,7 @@ namespace Quartz
             }
         }
 
-        private async Task PopulateHistoryMenuAsync(int version, ToolStripItem loading)
+        private async Task PopulateHistoryMenuAsync(int version, ChromiumMenuItem loading)
         {
             Guid profile = ProfileService.Current;
             byte[] fallback = DefaultIconBytes();
@@ -156,7 +157,7 @@ namespace Quartz
                         foreach (var entry in data.History)
                         {
                             Bitmap icon;
-                            var item = new ToolStripMenuItem
+                            var item = new ChromiumMenuItem
                             {
                                 Text = entry.Title != null && entry.Title.Length > 64 ? entry.Title.Substring(0, 64) + "..." : entry.Title,
                                 Tag = entry.WebAddress, ToolTipText = entry.WebAddress,
@@ -167,7 +168,7 @@ namespace Quartz
                             mnuHistory.Items.Insert(position++, item);
                         }
                         if (data.History.Count == 0)
-                            mnuHistory.Items.Insert(position, new ToolStripMenuItem("No recent pages") { Enabled = false });
+                            mnuHistory.Items.Insert(position, new ChromiumMenuItem("No recent pages") { Enabled = false });
                     }
                     finally { mnuHistory.ResumeLayout(true); }
                 }
@@ -179,7 +180,7 @@ namespace Quartz
             }
         }
 
-        private async Task PopulateFavouriteMenuAsync(int version, ToolStripItem loading)
+        private async Task PopulateFavouriteMenuAsync(int version, ChromiumMenuItem loading)
         {
             Guid profile = ProfileService.Current;
             byte[] fallback = SettingsService.Get("showFavouriteIcon") == "true" ? DefaultIconBytes() : null;
@@ -194,11 +195,11 @@ namespace Quartz
                     {
                         mnuFavourites.Items.Remove(loading);
                         loading.Dispose();
-                        if (data.Favourites.Count > 0) mnuFavourites.Items.Add(new ToolStripSeparator());
+                        if (data.Favourites.Count > 0) mnuFavourites.Items.Add(new ChromiumMenuSeparator());
                         foreach (var favourite in data.Favourites)
                         {
                             Bitmap icon;
-                            var item = new ToolStripMenuItem
+                            var item = new ChromiumMenuItem
                             {
                                 Name = "smi" + favourite.Id.ToString("N"), Text = favourite.Name,
                                 Tag = favourite.WebAddress,

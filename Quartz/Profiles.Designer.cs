@@ -1,4 +1,5 @@
-﻿namespace Quartz
+﻿using Quartz.Controls.ChromiumMenus;
+namespace Quartz
 {
     partial class Profiles
     {
@@ -31,18 +32,18 @@
             this.components = new System.ComponentModel.Container();
             this.pnlProfiles = new System.Windows.Forms.FlowLayoutPanel();
             this.txtSearch = new System.Windows.Forms.TextBox();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator1 = new ChromiumMenuSeparator();
+            this.toolStripSeparator5 = new ChromiumMenuSeparator();
             this.cbSortBy = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.LabelTitle = new System.Windows.Forms.Label();
             this.button1 = new Quartz.Controls.ChromiumButton();
             this.btnCreate = new Quartz.Controls.ChromiumButton();
-            this.ContextMenuStripProfiles = new Quartz.Controls.AnimatedContextMenuStrip(this.components);
-            this.setDefaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ContextMenuStripProfiles = new ChromiumMenu(this.components);
+            this.setDefaultToolStripMenuItem = new ChromiumMenuItem();
+            this.editToolStripMenuItem = new ChromiumMenuItem();
+            this.toolStripSeparator3 = new ChromiumMenuSeparator();
+            this.deleteToolStripMenuItem = new ChromiumMenuItem();
             this.ContextMenuStripProfiles.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,7 +70,6 @@
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(152, 6);
             // 
@@ -147,12 +147,12 @@
             // 
             // ContextMenuStripProfiles
             // 
-            this.ContextMenuStripProfiles.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ContextMenuStripProfiles.Items.AddRange(new ChromiumMenuItem[] {
             this.setDefaultToolStripMenuItem,
             this.editToolStripMenuItem,
             this.toolStripSeparator3,
             this.deleteToolStripMenuItem});
-            this.ContextMenuStripProfiles.Name = "ContextMenuStrip";
+            this.ContextMenuStripProfiles.Name = "ChromiumMenu";
             this.ContextMenuStripProfiles.Size = new System.Drawing.Size(131, 76);
             this.ContextMenuStripProfiles.Opening += new System.ComponentModel.CancelEventHandler(this.ContextMenuStripProfiles_Opening);
             // 
@@ -211,16 +211,16 @@
 
         #endregion
         private Quartz.Controls.ChromiumButton btnCreate;
-        private Quartz.Controls.AnimatedContextMenuStrip ContextMenuStripProfiles;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private ChromiumMenu ContextMenuStripProfiles;
+        private ChromiumMenuItem deleteToolStripMenuItem;
+        private ChromiumMenuItem editToolStripMenuItem;
+        private ChromiumMenuSeparator toolStripSeparator3;
         private System.Windows.Forms.FlowLayoutPanel pnlProfiles;
         private System.Windows.Forms.TextBox txtSearch;
         private Quartz.Controls.ChromiumButton button1;
-        private System.Windows.Forms.ToolStripMenuItem setDefaultToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private ChromiumMenuItem setDefaultToolStripMenuItem;
+        private ChromiumMenuSeparator toolStripSeparator1;
+        private ChromiumMenuSeparator toolStripSeparator5;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox cbSortBy;
         private System.Windows.Forms.Label LabelTitle;

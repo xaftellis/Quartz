@@ -118,105 +118,91 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <metadata name="mnuMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>325, 58</value>
+    <value>1235, 350</value>
   </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
-  </data>
-  <data name="openToolStripMenuItem.Text" xml:space="preserve">
-    <value>Open</value>
-  </data>
-  <data name="openInNewTabToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
-  </data>
-  <data name="openInNewTabToolStripMenuItem.Text" xml:space="preserve">
-    <value>Open in new tab</value>
-  </data>
-  <data name="openInNewWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
-  </data>
-  <data name="openInNewWindowToolStripMenuItem.Text" xml:space="preserve">
-    <value>Open in new window</value>
-  </data>
-  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 6</value>
-  </data>
+  <metadata name="openToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1206, 239</value>
+  </metadata>
+  <metadata name="openInNewTabToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>970, 239</value>
+  </metadata>
+  <metadata name="openInNewWindowToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>709, 239</value>
+  </metadata>
+  <metadata name="toolStripSeparator3.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>554, 239</value>
+  </metadata>
+  <metadata name="modifyToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>360, 239</value>
+  </metadata>
+  <metadata name="toolStripSeparator18.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>199, 239</value>
+  </metadata>
+  <metadata name="cutToolStripMenuItem1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 276</value>
+  </metadata>
+  <metadata name="copyToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 239</value>
+  </metadata>
+  <metadata name="pasteToolStripMenuItem1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>899, 202</value>
+  </metadata>
+  <metadata name="toolStripSeparator4.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>744, 202</value>
+  </metadata>
+  <metadata name="removeToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>548, 202</value>
+  </metadata>
+  <metadata name="removeAllToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>338, 202</value>
+  </metadata>
+  <metadata name="toolStripSeparator14.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>177, 202</value>
+  </metadata>
+  <metadata name="toolStripMenuItem5.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 202</value>
+  </metadata>
+  <metadata name="sortByAlphabeticallyToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1089, 202</value>
+  </metadata>
+  <metadata name="showFavouritesBarToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>196, 276</value>
+  </metadata>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="modifyToolStripMenuItem.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Zoom</value>
+  <data name="pnlFavourites.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
   </data>
-  <data name="modifyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="pnlFavourites.AutoScroll" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="modifyToolStripMenuItem.Text" xml:space="preserve">
-    <value>Edit</value>
+  <data name="pnlFavourites.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
   </data>
-  <data name="toolStripSeparator18.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 6</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pnlFavourites.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 40</value>
   </data>
-  <data name="cutToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
+  <data name="pnlFavourites.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1171, 30</value>
   </data>
-  <data name="cutToolStripMenuItem1.Text" xml:space="preserve">
-    <value>Cut</value>
+  <data name="pnlFavourites.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
-  <data name="copyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
+  <data name="pnlFavourites.WrapContents" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
-  <data name="copyToolStripMenuItem.Text" xml:space="preserve">
-    <value>Copy</value>
+  <data name="&gt;&gt;pnlFavourites.Name" xml:space="preserve">
+    <value>pnlFavourites</value>
   </data>
-  <data name="pasteToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
+  <data name="&gt;&gt;pnlFavourites.Type" xml:space="preserve">
+    <value>Quartz.Controls.FavouritesBar, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="pasteToolStripMenuItem1.Text" xml:space="preserve">
-    <value>Paste</value>
+  <data name="&gt;&gt;pnlFavourites.Parent" xml:space="preserve">
+    <value>pnlTop</value>
   </data>
-  <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 6</value>
-  </data>
-  <data name="removeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
-  </data>
-  <data name="removeToolStripMenuItem.Text" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="removeAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
-  </data>
-  <data name="removeAllToolStripMenuItem.Text" xml:space="preserve">
-    <value>Delete all</value>
-  </data>
-  <data name="toolStripSeparator14.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 6</value>
-  </data>
-  <data name="toolStripMenuItem5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
-  </data>
-  <data name="toolStripMenuItem5.Text" xml:space="preserve">
-    <value>Show icons</value>
-  </data>
-  <data name="sortByAlphabeticallyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
-  </data>
-  <data name="sortByAlphabeticallyToolStripMenuItem.Text" xml:space="preserve">
-    <value>Sort by alphabetically</value>
-  </data>
-  <data name="showFavouritesBarToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>187, 22</value>
-  </data>
-  <data name="showFavouritesBarToolStripMenuItem.Text" xml:space="preserve">
-    <value>Show favourites bar</value>
-  </data>
-  <data name="mnuMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 292</value>
-  </data>
-  <data name="&gt;&gt;mnuMenu.Name" xml:space="preserve">
-    <value>mnuMenu</value>
-  </data>
-  <data name="&gt;&gt;mnuMenu.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
+  <data name="&gt;&gt;pnlFavourites.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="btnDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -329,7 +315,6 @@
   <data name="btnDownload.Size" type="System.Drawing.Size, System.Drawing">
     <value>34, 34</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnDownload.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
@@ -352,35 +337,17 @@
     <value>7</value>
   </data>
   <metadata name="mnuDownloadsDropDown.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>265, 29</value>
+    <value>775, 350</value>
   </metadata>
-  <data name="locationToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
-  </data>
-  <data name="locationToolStripMenuItem1.Text" xml:space="preserve">
-    <value>Location:</value>
-  </data>
-  <data name="changeLocationToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
-  </data>
-  <data name="changeLocationToolStripMenuItem1.Text" xml:space="preserve">
-    <value>Change Location</value>
-  </data>
-  <data name="downloadsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="downloadsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Downloads</value>
-  </data>
-  <data name="mnuDownloadsDropDown.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 48</value>
-  </data>
-  <data name="&gt;&gt;mnuDownloadsDropDown.Name" xml:space="preserve">
-    <value>mnuDownloadsDropDown</value>
-  </data>
-  <data name="&gt;&gt;mnuDownloadsDropDown.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
+  <metadata name="locationToolStripMenuItem1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>640, 276</value>
+  </metadata>
+  <metadata name="changeLocationToolStripMenuItem1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>231, 350</value>
+  </metadata>
+  <metadata name="downloadsToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 350</value>
+  </metadata>
   <data name="btnAddFavourite.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
@@ -1300,88 +1267,82 @@
     <value>4</value>
   </data>
   <metadata name="mnuSearch.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>188, 50</value>
+    <value>1121, 350</value>
   </metadata>
-  <data name="emojiToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
+  <metadata name="emojiToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1078, 313</value>
+  </metadata>
+  <metadata name="toolStripSeparator9.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>923, 313</value>
+  </metadata>
+  <metadata name="undoToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>739, 313</value>
+  </metadata>
+  <metadata name="redoToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>478, 350</value>
+  </metadata>
+  <metadata name="toolStripSeparator11.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>578, 313</value>
+  </metadata>
+  <metadata name="cutToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>205, 313</value>
+  </metadata>
+  <metadata name="copyToolStripMenuItem1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 313</value>
+  </metadata>
+  <metadata name="pasteToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1254, 276</value>
+  </metadata>
+  <metadata name="pasteAndGoToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1033, 276</value>
+  </metadata>
+  <metadata name="deleteToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>845, 276</value>
+  </metadata>
+  <metadata name="toolStripSeparator15.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1220, 165</value>
+  </metadata>
+  <metadata name="selectAllToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>378, 313</value>
+  </metadata>
+  <metadata name="toolStripSeparator21.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>794, 165</value>
+  </metadata>
+  <metadata name="alwaysShowFullURLsToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>955, 165</value>
+  </metadata>
+  <data name="txtWebAddress.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
   </data>
-  <data name="emojiToolStripMenuItem.Text" xml:space="preserve">
-    <value>Emoji</value>
+  <data name="txtWebAddress.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 12pt</value>
   </data>
-  <data name="toolStripSeparator9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 6</value>
+  <data name="txtWebAddress.Location" type="System.Drawing.Point, System.Drawing">
+    <value>167, 11</value>
   </data>
-  <data name="undoToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
+  <data name="txtWebAddress.Multiline" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
-  <data name="undoToolStripMenuItem.Text" xml:space="preserve">
-    <value>Undo</value>
+  <data name="txtWebAddress.Size" type="System.Drawing.Size, System.Drawing">
+    <value>850, 25</value>
   </data>
-  <data name="redoToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
+  <data name="txtWebAddress.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
-  <data name="redoToolStripMenuItem.Text" xml:space="preserve">
-    <value>Redo</value>
+  <data name="txtWebAddress.Text" xml:space="preserve">
+    <value>Search...</value>
   </data>
-  <data name="toolStripSeparator11.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 6</value>
+  <data name="&gt;&gt;txtWebAddress.Name" xml:space="preserve">
+    <value>txtWebAddress</value>
   </data>
-  <data name="cutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
+  <data name="&gt;&gt;txtWebAddress.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="cutToolStripMenuItem.Text" xml:space="preserve">
-    <value>Cut</value>
+  <data name="&gt;&gt;txtWebAddress.Parent" xml:space="preserve">
+    <value>pnlTop</value>
   </data>
-  <data name="copyToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="copyToolStripMenuItem1.Text" xml:space="preserve">
-    <value>Copy</value>
-  </data>
-  <data name="pasteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="pasteToolStripMenuItem.Text" xml:space="preserve">
-    <value>Paste</value>
-  </data>
-  <data name="pasteAndGoToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="pasteAndGoToolStripMenuItem.Text" xml:space="preserve">
-    <value>Paste and go</value>
-  </data>
-  <data name="deleteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="deleteToolStripMenuItem.Text" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="toolStripSeparator15.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 6</value>
-  </data>
-  <data name="selectAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="selectAllToolStripMenuItem.Text" xml:space="preserve">
-    <value>Select All</value>
-  </data>
-  <data name="toolStripSeparator21.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 6</value>
-  </data>
-  <data name="alwaysShowFullURLsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="alwaysShowFullURLsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Always show full URLs</value>
-  </data>
-  <data name="mnuSearch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>192, 248</value>
-  </data>
-  <data name="&gt;&gt;mnuSearch.Name" xml:space="preserve">
-    <value>mnuSearch</value>
-  </data>
-  <data name="&gt;&gt;mnuSearch.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
+  <data name="&gt;&gt;txtWebAddress.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="btnRefresh.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -2168,72 +2129,6 @@
   <data name="&gt;&gt;btnSiteInformation.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="pnlFavourites.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="pnlFavourites.AutoScroll" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="pnlFavourites.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-    <value>GrowAndShrink</value>
-  </data>
-  <data name="pnlFavourites.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 40</value>
-  </data>
-  <data name="pnlFavourites.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1171, 30</value>
-  </data>
-  <data name="pnlFavourites.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="pnlFavourites.WrapContents" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;pnlFavourites.Name" xml:space="preserve">
-    <value>pnlFavourites</value>
-  </data>
-  <data name="&gt;&gt;pnlFavourites.Type" xml:space="preserve">
-    <value>Quartz.Controls.FavouritesBar, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;pnlFavourites.Parent" xml:space="preserve">
-    <value>pnlTop</value>
-  </data>
-  <data name="&gt;&gt;pnlFavourites.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="txtWebAddress.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="txtWebAddress.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 12pt</value>
-  </data>
-  <data name="txtWebAddress.Location" type="System.Drawing.Point, System.Drawing">
-    <value>167, 11</value>
-  </data>
-  <data name="txtWebAddress.Multiline" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="txtWebAddress.Size" type="System.Drawing.Size, System.Drawing">
-    <value>850, 25</value>
-  </data>
-  <data name="txtWebAddress.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="txtWebAddress.Text" xml:space="preserve">
-    <value>Search...</value>
-  </data>
-  <data name="&gt;&gt;txtWebAddress.Name" xml:space="preserve">
-    <value>txtWebAddress</value>
-  </data>
-  <data name="&gt;&gt;txtWebAddress.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;txtWebAddress.Parent" xml:space="preserve">
-    <value>pnlTop</value>
-  </data>
-  <data name="&gt;&gt;txtWebAddress.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="btnSettings.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
@@ -2356,222 +2251,6 @@
   </data>
   <data name="btnSettings.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Zoom</value>
-  </data>
-  <metadata name="SettingsMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>438, 22</value>
-  </metadata>
-  <data name="newTabToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="newTabToolStripMenuItem1.Text" xml:space="preserve">
-    <value>New tab</value>
-  </data>
-  <data name="newWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="newWindowToolStripMenuItem.Text" xml:space="preserve">
-    <value>New window</value>
-  </data>
-  <data name="changeProfileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="changeProfileToolStripMenuItem.Text" xml:space="preserve">
-    <value>Profiles</value>
-  </data>
-  <data name="toolStripSeparator20.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 6</value>
-  </data>
-  <metadata name="mnuHistory.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>105, 18</value>
-  </metadata>
-  <data name="historyToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>112, 22</value>
-  </data>
-  <data name="historyToolStripMenuItem1.Text" xml:space="preserve">
-    <value>History</value>
-  </data>
-  <data name="toolStripSeparator10.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 6</value>
-  </data>
-  <data name="mnuHistory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>113, 32</value>
-  </data>
-  <data name="&gt;&gt;mnuHistory.Name" xml:space="preserve">
-    <value>mnuHistory</value>
-  </data>
-  <data name="&gt;&gt;mnuHistory.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="historyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="historyToolStripMenuItem.Text" xml:space="preserve">
-    <value>History</value>
-  </data>
-  <metadata name="mnuFavourites.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>435, 58</value>
-  </metadata>
-  <data name="addFavouritesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 22</value>
-  </data>
-  <data name="addFavouritesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Add favourite</value>
-  </data>
-  <data name="toolStripSeparator8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>143, 6</value>
-  </data>
-  <data name="mnuFavourites.Size" type="System.Drawing.Size, System.Drawing">
-    <value>147, 32</value>
-  </data>
-  <data name="&gt;&gt;mnuFavourites.Name" xml:space="preserve">
-    <value>mnuFavourites</value>
-  </data>
-  <data name="&gt;&gt;mnuFavourites.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="favouritesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="favouritesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Favourites</value>
-  </data>
-  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 6</value>
-  </data>
-  <data name="zoomToolStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 23</value>
-  </data>
-  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 6</value>
-  </data>
-  <data name="findToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="findToolStripMenuItem.Text" xml:space="preserve">
-    <value>Find</value>
-  </data>
-  <data name="printToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="printToolStripMenuItem.Text" xml:space="preserve">
-    <value>Print</value>
-  </data>
-  <data name="openFileInBrowserToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="openFileInBrowserToolStripMenuItem.Text" xml:space="preserve">
-    <value>Open File In Browser</value>
-  </data>
-  <metadata name="mnuExperts.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>592, 62</value>
-  </metadata>
-  <data name="nameWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 22</value>
-  </data>
-  <data name="nameWindowToolStripMenuItem.Text" xml:space="preserve">
-    <value>Name window...</value>
-  </data>
-  <data name="toolStripSeparator12.Size" type="System.Drawing.Size, System.Drawing">
-    <value>157, 6</value>
-  </data>
-  <data name="webview2TaskManagerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 22</value>
-  </data>
-  <data name="webview2TaskManagerToolStripMenuItem.Text" xml:space="preserve">
-    <value>Task manager</value>
-  </data>
-  <data name="toolStripSeparator13.Size" type="System.Drawing.Size, System.Drawing">
-    <value>157, 6</value>
-  </data>
-  <data name="inspectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 22</value>
-  </data>
-  <data name="inspectToolStripMenuItem.Text" xml:space="preserve">
-    <value>Developer Tools</value>
-  </data>
-  <data name="mnuExperts.Size" type="System.Drawing.Size, System.Drawing">
-    <value>161, 82</value>
-  </data>
-  <data name="&gt;&gt;mnuExperts.Name" xml:space="preserve">
-    <value>mnuExperts</value>
-  </data>
-  <data name="&gt;&gt;mnuExperts.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="expertsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="expertsToolStripMenuItem.Text" xml:space="preserve">
-    <value>More tools</value>
-  </data>
-  <data name="toolStripSeparator7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 6</value>
-  </data>
-  <metadata name="mnuUserData.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>958, 58</value>
-  </metadata>
-  <data name="openFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>218, 22</value>
-  </data>
-  <data name="openFolderToolStripMenuItem.Text" xml:space="preserve">
-    <value>Open Folder in File Explorer</value>
-  </data>
-  <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>215, 6</value>
-  </data>
-  <data name="resetToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>218, 22</value>
-  </data>
-  <data name="resetToolStripMenuItem1.Text" xml:space="preserve">
-    <value>Reset</value>
-  </data>
-  <data name="mnuUserData.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 54</value>
-  </data>
-  <data name="&gt;&gt;mnuUserData.Name" xml:space="preserve">
-    <value>mnuUserData</value>
-  </data>
-  <data name="&gt;&gt;mnuUserData.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="userDataToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="userDataToolStripMenuItem.Text" xml:space="preserve">
-    <value>UserData</value>
-  </data>
-  <data name="settingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="settingsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Settings</value>
-  </data>
-  <data name="toolStripSeparator16.Size" type="System.Drawing.Size, System.Drawing">
-    <value>179, 6</value>
-  </data>
-  <data name="restartToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="restartToolStripMenuItem.Text" xml:space="preserve">
-    <value>Restart</value>
-  </data>
-  <data name="exitToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 22</value>
-  </data>
-  <data name="exitToolStripMenuItem.Text" xml:space="preserve">
-    <value>Exit</value>
-  </data>
-  <data name="SettingsMenuStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 369</value>
-  </data>
-  <data name="SettingsMenuStrip.Text" xml:space="preserve">
-    <value>Options</value>
-  </data>
-  <data name="&gt;&gt;SettingsMenuStrip.Name" xml:space="preserve">
-    <value>SettingsMenuStrip</value>
-  </data>
-  <data name="&gt;&gt;SettingsMenuStrip.Type" xml:space="preserve">
-    <value>Quartz.Controls.FocusAwareContextMenuStrip, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="btnSettings.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt</value>
@@ -2762,6 +2441,114 @@
   <data name="&gt;&gt;pnlTop.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <metadata name="SettingsMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>970, 350</value>
+  </metadata>
+  <metadata name="newTabToolStripMenuItem1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>239, 17</value>
+  </metadata>
+  <metadata name="newWindowToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="changeProfileToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>602, 17</value>
+  </metadata>
+  <metadata name="toolStripSeparator20.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>831, 17</value>
+  </metadata>
+  <metadata name="historyToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>992, 17</value>
+  </metadata>
+  <metadata name="mnuHistory.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>658, 350</value>
+  </metadata>
+  <metadata name="historyToolStripMenuItem1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1184, 17</value>
+  </metadata>
+  <metadata name="toolStripSeparator10.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 54</value>
+  </metadata>
+  <metadata name="favouritesToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>178, 54</value>
+  </metadata>
+  <metadata name="mnuFavourites.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 387</value>
+  </metadata>
+  <metadata name="addFavouritesToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>546, 54</value>
+  </metadata>
+  <metadata name="toolStripSeparator8.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>776, 54</value>
+  </metadata>
+  <metadata name="toolStripSeparator2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>931, 54</value>
+  </metadata>
+  <metadata name="zoomToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1086, 54</value>
+  </metadata>
+  <metadata name="toolStripSeparator1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1217, 54</value>
+  </metadata>
+  <metadata name="findToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 91</value>
+  </metadata>
+  <metadata name="printToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>194, 91</value>
+  </metadata>
+  <metadata name="openFileInBrowserToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>375, 91</value>
+  </metadata>
+  <metadata name="expertsToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>407, 165</value>
+  </metadata>
+  <metadata name="mnuExperts.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>150, 387</value>
+  </metadata>
+  <metadata name="nameWindowToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 165</value>
+  </metadata>
+  <metadata name="toolStripSeparator12.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1148, 128</value>
+  </metadata>
+  <metadata name="webview2TaskManagerToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>870, 128</value>
+  </metadata>
+  <metadata name="toolStripSeparator13.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>709, 128</value>
+  </metadata>
+  <metadata name="inspectToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>600, 165</value>
+  </metadata>
+  <metadata name="toolStripSeparator7.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>554, 128</value>
+  </metadata>
+  <metadata name="userDataToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>191, 128</value>
+  </metadata>
+  <metadata name="mnuUserData.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>519, 387</value>
+  </metadata>
+  <metadata name="openFolderToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1167, 91</value>
+  </metadata>
+  <metadata name="toolStripSeparator6.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1012, 91</value>
+  </metadata>
+  <metadata name="resetToolStripMenuItem1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>825, 91</value>
+  </metadata>
+  <metadata name="settingsToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>628, 91</value>
+  </metadata>
+  <metadata name="toolStripSeparator16.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>393, 128</value>
+  </metadata>
+  <metadata name="restartToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>451, 276</value>
+  </metadata>
+  <metadata name="exitToolStripMenuItem.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 128</value>
+  </metadata>
   <data name="pnlDivider.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
   </data>
@@ -2811,31 +2598,22 @@
     <value>0</value>
   </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>705, 58</value>
+    <value>266, 387</value>
   </metadata>
   <data name="openFileDialog1.Title" xml:space="preserve">
     <value>Quartz</value>
   </data>
-  <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 20</value>
-  </data>
-  <data name="toolStripMenuItem2.Text" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="toolStripMenuItem3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 20</value>
-  </data>
-  <data name="toolStripMenuItem3.Text" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="toolStripMenuItem4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 20</value>
-  </data>
-  <data name="toolStripMenuItem4.Text" xml:space="preserve">
-    <value>4</value>
-  </data>
+  <metadata name="toolStripMenuItem2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>247, 165</value>
+  </metadata>
+  <metadata name="toolStripMenuItem3.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>386, 54</value>
+  </metadata>
+  <metadata name="toolStripMenuItem4.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>442, 17</value>
+  </metadata>
   <metadata name="notifyIcon1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>844, 58</value>
+    <value>405, 387</value>
   </metadata>
   <data name="notifyIcon1.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -8203,389 +7981,437 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Browser</value>
   </data>
+  <data name="&gt;&gt;mnuMenu.Name" xml:space="preserve">
+    <value>mnuMenu</value>
+  </data>
+  <data name="&gt;&gt;mnuMenu.Type" xml:space="preserve">
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenu, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
   <data name="&gt;&gt;openToolStripMenuItem.Name" xml:space="preserve">
     <value>openToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;openToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;openInNewTabToolStripMenuItem.Name" xml:space="preserve">
     <value>openInNewTabToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;openInNewTabToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;openInNewWindowToolStripMenuItem.Name" xml:space="preserve">
     <value>openInNewWindowToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;openInNewWindowToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator3.Name" xml:space="preserve">
     <value>toolStripSeparator3</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;modifyToolStripMenuItem.Name" xml:space="preserve">
     <value>modifyToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;modifyToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator18.Name" xml:space="preserve">
     <value>toolStripSeparator18</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator18.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cutToolStripMenuItem1.Name" xml:space="preserve">
     <value>cutToolStripMenuItem1</value>
   </data>
   <data name="&gt;&gt;cutToolStripMenuItem1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;copyToolStripMenuItem.Name" xml:space="preserve">
     <value>copyToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;copyToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pasteToolStripMenuItem1.Name" xml:space="preserve">
     <value>pasteToolStripMenuItem1</value>
   </data>
   <data name="&gt;&gt;pasteToolStripMenuItem1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator4.Name" xml:space="preserve">
     <value>toolStripSeparator4</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;removeToolStripMenuItem.Name" xml:space="preserve">
     <value>removeToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;removeToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;removeAllToolStripMenuItem.Name" xml:space="preserve">
     <value>removeAllToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;removeAllToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator14.Name" xml:space="preserve">
     <value>toolStripSeparator14</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator14.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem5.Name" xml:space="preserve">
     <value>toolStripMenuItem5</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem5.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;sortByAlphabeticallyToolStripMenuItem.Name" xml:space="preserve">
     <value>sortByAlphabeticallyToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;sortByAlphabeticallyToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;showFavouritesBarToolStripMenuItem.Name" xml:space="preserve">
     <value>showFavouritesBarToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;showFavouritesBarToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;mnuDownloadsDropDown.Name" xml:space="preserve">
+    <value>mnuDownloadsDropDown</value>
+  </data>
+  <data name="&gt;&gt;mnuDownloadsDropDown.Type" xml:space="preserve">
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenu, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;locationToolStripMenuItem1.Name" xml:space="preserve">
     <value>locationToolStripMenuItem1</value>
   </data>
   <data name="&gt;&gt;locationToolStripMenuItem1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;changeLocationToolStripMenuItem1.Name" xml:space="preserve">
     <value>changeLocationToolStripMenuItem1</value>
   </data>
   <data name="&gt;&gt;changeLocationToolStripMenuItem1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;downloadsToolStripMenuItem.Name" xml:space="preserve">
     <value>downloadsToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;downloadsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;mnuSearch.Name" xml:space="preserve">
+    <value>mnuSearch</value>
+  </data>
+  <data name="&gt;&gt;mnuSearch.Type" xml:space="preserve">
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenu, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;emojiToolStripMenuItem.Name" xml:space="preserve">
     <value>emojiToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;emojiToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator9.Name" xml:space="preserve">
     <value>toolStripSeparator9</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator9.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;undoToolStripMenuItem.Name" xml:space="preserve">
     <value>undoToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;undoToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;redoToolStripMenuItem.Name" xml:space="preserve">
     <value>redoToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;redoToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator11.Name" xml:space="preserve">
     <value>toolStripSeparator11</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator11.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cutToolStripMenuItem.Name" xml:space="preserve">
     <value>cutToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;cutToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;copyToolStripMenuItem1.Name" xml:space="preserve">
     <value>copyToolStripMenuItem1</value>
   </data>
   <data name="&gt;&gt;copyToolStripMenuItem1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pasteToolStripMenuItem.Name" xml:space="preserve">
     <value>pasteToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;pasteToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pasteAndGoToolStripMenuItem.Name" xml:space="preserve">
     <value>pasteAndGoToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;pasteAndGoToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;deleteToolStripMenuItem.Name" xml:space="preserve">
     <value>deleteToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;deleteToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator15.Name" xml:space="preserve">
     <value>toolStripSeparator15</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator15.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;selectAllToolStripMenuItem.Name" xml:space="preserve">
     <value>selectAllToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;selectAllToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator21.Name" xml:space="preserve">
     <value>toolStripSeparator21</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator21.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;alwaysShowFullURLsToolStripMenuItem.Name" xml:space="preserve">
     <value>alwaysShowFullURLsToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;alwaysShowFullURLsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;SettingsMenuStrip.Name" xml:space="preserve">
+    <value>SettingsMenuStrip</value>
+  </data>
+  <data name="&gt;&gt;SettingsMenuStrip.Type" xml:space="preserve">
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenu, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;newTabToolStripMenuItem1.Name" xml:space="preserve">
     <value>newTabToolStripMenuItem1</value>
   </data>
   <data name="&gt;&gt;newTabToolStripMenuItem1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;newWindowToolStripMenuItem.Name" xml:space="preserve">
     <value>newWindowToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;newWindowToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;changeProfileToolStripMenuItem.Name" xml:space="preserve">
     <value>changeProfileToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;changeProfileToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator20.Name" xml:space="preserve">
     <value>toolStripSeparator20</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator20.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;historyToolStripMenuItem.Name" xml:space="preserve">
     <value>historyToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;historyToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;mnuHistory.Name" xml:space="preserve">
+    <value>mnuHistory</value>
+  </data>
+  <data name="&gt;&gt;mnuHistory.Type" xml:space="preserve">
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenu, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;historyToolStripMenuItem1.Name" xml:space="preserve">
     <value>historyToolStripMenuItem1</value>
   </data>
   <data name="&gt;&gt;historyToolStripMenuItem1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator10.Name" xml:space="preserve">
     <value>toolStripSeparator10</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator10.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;favouritesToolStripMenuItem.Name" xml:space="preserve">
     <value>favouritesToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;favouritesToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;mnuFavourites.Name" xml:space="preserve">
+    <value>mnuFavourites</value>
+  </data>
+  <data name="&gt;&gt;mnuFavourites.Type" xml:space="preserve">
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenu, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;addFavouritesToolStripMenuItem.Name" xml:space="preserve">
     <value>addFavouritesToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;addFavouritesToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator8.Name" xml:space="preserve">
     <value>toolStripSeparator8</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator8.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
     <value>toolStripSeparator2</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;zoomToolStrip.Name" xml:space="preserve">
     <value>zoomToolStrip</value>
   </data>
   <data name="&gt;&gt;zoomToolStrip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumZoomMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
     <value>toolStripSeparator1</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;findToolStripMenuItem.Name" xml:space="preserve">
     <value>findToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;findToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;printToolStripMenuItem.Name" xml:space="preserve">
     <value>printToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;printToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;openFileInBrowserToolStripMenuItem.Name" xml:space="preserve">
     <value>openFileInBrowserToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;openFileInBrowserToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;expertsToolStripMenuItem.Name" xml:space="preserve">
     <value>expertsToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;expertsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;mnuExperts.Name" xml:space="preserve">
+    <value>mnuExperts</value>
+  </data>
+  <data name="&gt;&gt;mnuExperts.Type" xml:space="preserve">
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenu, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;nameWindowToolStripMenuItem.Name" xml:space="preserve">
     <value>nameWindowToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;nameWindowToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator12.Name" xml:space="preserve">
     <value>toolStripSeparator12</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator12.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;webview2TaskManagerToolStripMenuItem.Name" xml:space="preserve">
     <value>webview2TaskManagerToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;webview2TaskManagerToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator13.Name" xml:space="preserve">
     <value>toolStripSeparator13</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator13.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;inspectToolStripMenuItem.Name" xml:space="preserve">
     <value>inspectToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;inspectToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator7.Name" xml:space="preserve">
     <value>toolStripSeparator7</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator7.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;userDataToolStripMenuItem.Name" xml:space="preserve">
     <value>userDataToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;userDataToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;mnuUserData.Name" xml:space="preserve">
+    <value>mnuUserData</value>
+  </data>
+  <data name="&gt;&gt;mnuUserData.Type" xml:space="preserve">
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenu, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;openFolderToolStripMenuItem.Name" xml:space="preserve">
     <value>openFolderToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;openFolderToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator6.Name" xml:space="preserve">
     <value>toolStripSeparator6</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator6.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;resetToolStripMenuItem1.Name" xml:space="preserve">
     <value>resetToolStripMenuItem1</value>
   </data>
   <data name="&gt;&gt;resetToolStripMenuItem1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;settingsToolStripMenuItem.Name" xml:space="preserve">
     <value>settingsToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;settingsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator16.Name" xml:space="preserve">
     <value>toolStripSeparator16</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator16.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuSeparator, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;restartToolStripMenuItem.Name" xml:space="preserve">
     <value>restartToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;restartToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;exitToolStripMenuItem.Name" xml:space="preserve">
     <value>exitToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;exitToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;openFileDialog1.Name" xml:space="preserve">
     <value>openFileDialog1</value>
@@ -8597,19 +8423,19 @@
     <value>toolStripMenuItem2</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem3.Name" xml:space="preserve">
     <value>toolStripMenuItem3</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem4.Name" xml:space="preserve">
     <value>toolStripMenuItem4</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Quartz.Controls.ChromiumMenus.ChromiumMenuItem, Quartz, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;notifyIcon1.Name" xml:space="preserve">
     <value>notifyIcon1</value>

@@ -1,4 +1,4 @@
-using Microsoft.Web.WebView2.Core;
+﻿using Microsoft.Web.WebView2.Core;
 using Quartz.Libs;
 using Quartz.Services;
 using System;
@@ -22,7 +22,7 @@ namespace Quartz
             using (SettingsService.BeginReadSnapshot())
             {
                 var controls = NewControlThemeChanger.GetAllControls(this)
-                    .OfType<Control>().Concat(new Control[] { mnuBirthdays, contextMenuStrip1 })
+                    .OfType<Control>()
                     .Distinct().ToArray();
                 var containers = controls.Where(control => control.HasChildren).ToArray();
                 foreach (Control control in containers) control.SuspendLayout();

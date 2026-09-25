@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -399,6 +399,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Browser.resx">
       <DependentUpon>Browser.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ClearHistory.resx">
       <DependentUpon>ClearHistory.cs</DependentUpon>
@@ -1305,4 +1306,33 @@
   <Import Project="..\packages\Microsoft.Web.WebView2.1.0.4191.47\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.4191.47\build\Microsoft.Web.WebView2.targets')" />
   <Import Project="..\packages\SkiaSharp.NativeAssets.macOS.4.152.1\build\net48\SkiaSharp.NativeAssets.macOS.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.macOS.4.152.1\build\net48\SkiaSharp.NativeAssets.macOS.targets')" />
   <Import Project="..\packages\SkiaSharp.NativeAssets.Win32.4.152.1\build\net48\SkiaSharp.NativeAssets.Win32.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.Win32.4.152.1\build\net48\SkiaSharp.NativeAssets.Win32.targets')" />
+  <ItemGroup>
+    <Compile Include="Controls\ChromiumMenus\MenuAppearance.cs" />
+    <Compile Include="Controls\ChromiumMenus\MenuLayout.cs" />
+    <Compile Include="Controls\ChromiumMenus\MenuLayeredWindow.cs" />
+    <Compile Include="Controls\ChromiumMenus\MenuTooltip.cs" />
+    <Compile Include="Controls\ChromiumMenus\MenuModel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ChromiumMenus\MenuPainter.cs" />
+    <Compile Include="Controls\ChromiumMenus\MenuPlatform.cs" />
+    <Compile Include="Controls\ChromiumMenus\MenuPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\ChromiumMenus\MenuPreview.cs" />
+    <Compile Include="Controls\ChromiumMenus\MenuSession.cs" />
+    <Compile Include="Controls\ChromiumMenus\MenuText.cs" />
+    <Compile Include="Controls\ChromiumMenus\MenuVectors.cs" />
+    <EmbeddedResource Include="Controls\ChromiumMenus\Icons\*.icon">
+      <LogicalName>ChromiumIcons.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <None Include="Controls\ChromiumMenus\Icons\LICENSE.chromium" />
+    <Reference Include="SkiaSharp.HarfBuzz">
+      <HintPath>..\packages\SkiaSharp.HarfBuzz.4.152.1\lib\net48\SkiaSharp.HarfBuzz.dll</HintPath>
+    </Reference>
+    <Reference Include="HarfBuzzSharp">
+      <HintPath>..\packages\HarfBuzzSharp.14.2.1.201\lib\net48\HarfBuzzSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="..\packages\HarfBuzzSharp.NativeAssets.Win32.14.2.1.201\buildTransitive\net48\HarfBuzzSharp.NativeAssets.Win32.targets" />
 </Project>

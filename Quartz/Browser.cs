@@ -1,3 +1,4 @@
+﻿using Quartz.Controls.ChromiumMenus;
 using EasyTabs;
 using Microsoft.SqlServer.Server;
 using Microsoft.Web.WebView2.Core;
@@ -126,6 +127,9 @@ namespace Quartz
             {
                 InitializeComponent();
                 InitializeChromiumButtons();
+                mnuMenu.Attach(pnlFavourites);
+                mnuSearch.Attach(txtWebAddress);
+                SettingsMenuStrip.Attach(btnSettings);
                 // Set the native placeholder before the tab is attached/shown.
                 NewControlThemeChanger.ChangeControlTheme(this);
                 NewControlThemeChanger.ChangeControlTheme(wvWebView1);
@@ -432,7 +436,6 @@ namespace Quartz
                 {
                     button = new Controls.FavouriteButton
                     {
-                        ContextMenuStrip = mnuMenu,
                         AutoSize = true,
                         AutoSizeMode = AutoSizeMode.GrowAndShrink,
                         ImageAlign = ContentAlignment.MiddleLeft,
@@ -440,6 +443,7 @@ namespace Quartz
                         TextImageRelation = TextImageRelation.ImageBeforeText,
                         UseMnemonic = false
                     };
+                    mnuMenu.Attach(button);
                     button.Click += btnGotoFavourite_Click;
                 }
                 else available.Remove(button);
@@ -748,8 +752,6 @@ namespace Quartz
             var panelHandle = pnlBottom.Handle;
             var webViewHandle = wvWebView1.Handle;
 
-            // Force the underlying window handle to be created early
-            var h = SettingsMenuStrip.Handle;
 
             tabbedApp = (AppContainer)Parent;
             var profile = Program.profileService.GetDefault();
@@ -939,7 +941,7 @@ namespace Quartz
 
             notifyIcon1.Text = "Quartz v3.0.1";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
-            notifyIcon1.ContextMenuStrip = SettingsMenuStrip;
+            notifyIcon1.MouseUp += (sender, e) => { if (e.Button == MouseButtons.Right) SettingsMenuStrip.Show(this, PointToClient(Cursor.Position)); };
             notifyIcon1.Visible = ParentTabs?.SelectedTab?.Content == this;
         }
 
@@ -1558,12 +1560,12 @@ namespace Quartz
 
         private void removeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Try to cast the sender to a ToolStripItem
-            ToolStripItem menuItem = sender as ToolStripItem;
+            // Try to cast the sender to a ChromiumMenuItem
+            ChromiumMenuItem menuItem = sender as ChromiumMenuItem;
             if (menuItem != null)
             {
-                // Retrieve the ContextMenuStrip that owns this ToolStripItem
-                ContextMenuStrip owner = menuItem.Owner as ContextMenuStrip;
+                // Retrieve the ChromiumMenu that owns this ChromiumMenuItem
+                ChromiumMenu owner = menuItem.Owner as ChromiumMenu;
                 if (owner != null)
                 {
                     // Get the control that is displaying this context menu
@@ -1606,6 +1608,7 @@ namespace Quartz
         private void wvWebView1_ZoomFactorChanged(object sender, EventArgs e)
         {
             SettingsService.Set("Zoom", wvWebView1.ZoomFactor.ToString());
+            UpdateZoomMenuRow();
         }
 
         private void removeAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1748,12 +1751,12 @@ namespace Quartz
 
         private void modifyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Try to cast the sender to a ToolStripItem
-            ToolStripItem menuItem = sender as ToolStripItem;
+            // Try to cast the sender to a ChromiumMenuItem
+            ChromiumMenuItem menuItem = sender as ChromiumMenuItem;
             if (menuItem != null)
             {
-                // Retrieve the ContextMenuStrip that owns this ToolStripItem
-                ContextMenuStrip owner = menuItem.Owner as ContextMenuStrip;
+                // Retrieve the ChromiumMenu that owns this ChromiumMenuItem
+                ChromiumMenu owner = menuItem.Owner as ChromiumMenu;
                 if (owner != null)
                 {
                     // Get the control that is displaying this context menu
@@ -1934,13 +1937,13 @@ namespace Quartz
 
                 mnuHistory.Items.Clear();
 
-                ToolStripMenuItem historyItem = new ToolStripMenuItem();
+                ChromiumMenuItem historyItem = new ChromiumMenuItem();
                 historyItem.Text = "History";
                 BindShortcutMenu(historyItem, BrowserCommand.History);
                 historyItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.History);
                 mnuHistory.Items.Add(historyItem);
 
-                ToolStripSeparator separatorItem = new ToolStripSeparator();
+                ChromiumMenuSeparator separatorItem = new ChromiumMenuSeparator();
                 mnuHistory.Items.Add(separatorItem);
 
                 if (historyService.All().Count >= 1)
@@ -1953,7 +1956,7 @@ namespace Quartz
                     {
                         if (count <= limit)
                         {
-                            ToolStripMenuItem menuItem = new ToolStripMenuItem();
+                            ChromiumMenuItem menuItem = new ChromiumMenuItem();
 
                             menuItem.Text = history.Title.Length > 64 ? history.Title.Substring(0, 64) + "..." : history.Title;
                             menuItem.Tag = history.WebAddress;
@@ -1970,17 +1973,17 @@ namespace Quartz
                 }
                 else
                 {
-                    ToolStripMenuItem lohItem = new ToolStripMenuItem();
+                    ChromiumMenuItem lohItem = new ChromiumMenuItem();
                     lohItem.Text = "No recent pages";
                     lohItem.Enabled = false;
                     mnuHistory.Items.Add(lohItem);
                 }
 
-                ToolStripSeparator separatorItem2 = new ToolStripSeparator();
+                ChromiumMenuSeparator separatorItem2 = new ChromiumMenuSeparator();
                 mnuHistory.Items.Add(separatorItem2);
 
 
-                ToolStripMenuItem clearHistoryItem = new ToolStripMenuItem("Clear browsing data...");
+                ChromiumMenuItem clearHistoryItem = new ChromiumMenuItem("Clear browsing data...");
                 BindShortcutMenu(clearHistoryItem, BrowserCommand.ClearBrowsingData);
                 clearHistoryItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.ClearBrowsingData);
                 mnuHistory.Items.Add(clearHistoryItem);
@@ -2003,7 +2006,7 @@ namespace Quartz
             {
                 SettingsMenuStrip.Close();
 
-                ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
+                ChromiumMenuItem menuItem = (ChromiumMenuItem)sender;
 
                 OpenFavouriteOrHistory(menuItem.Tag.ToString(), MouseButtons.Middle, ModifierKeys);
             }
@@ -2011,7 +2014,7 @@ namespace Quartz
 
         private void MenuItem_Click(object sender, EventArgs e)
         {
-            ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
+            ChromiumMenuItem menuItem = (ChromiumMenuItem)sender;
 
             OpenFavouriteOrHistory(menuItem.Tag.ToString(), MouseButtons.Left, ModifierKeys);
         }
@@ -2111,7 +2114,7 @@ namespace Quartz
 
         private void Item_Click(object sender, EventArgs e)
         {
-            ToolStripMenuItem menuItem = sender as ToolStripMenuItem;
+            ChromiumMenuItem menuItem = sender as ChromiumMenuItem;
 
             // Example string: "formIndex: 2, tabIndex: 5"
             string tagValue = menuItem.Tag.ToString();
@@ -2146,23 +2149,6 @@ namespace Quartz
             form.SelectedTabIndex = tabIndex;
 
 
-        }
-
-        private void zoomToolStrip_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            wvWebView1.ZoomFactor = Convert.ToDouble(zoomToolStrip.Text.Replace("%", "")) / 100;
-            SettingsService.Set("Zoom", (Convert.ToDouble(zoomToolStrip.Text.Replace("%", "")) / 100).ToString());
-        }
-
-        private void zoomToolStrip_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (!zoomToolStrip.Items.Contains(zoomToolStrip.Text))
-                {
-                    zoomToolStrip.Text = (wvWebView1.ZoomFactor * 100).ToString() + "%";
-                }
-            }
         }
 
         private void toolStripMenuItem5_CheckedChanged(object sender, EventArgs e)
@@ -2293,12 +2279,12 @@ namespace Quartz
 
         private void openInNewTabToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Try to cast the sender to a ToolStripItem
-            ToolStripItem menuItem = sender as ToolStripItem;
+            // Try to cast the sender to a ChromiumMenuItem
+            ChromiumMenuItem menuItem = sender as ChromiumMenuItem;
             if (menuItem != null)
             {
-                // Retrieve the ContextMenuStrip that owns this ToolStripItem
-                ContextMenuStrip owner = menuItem.Owner as ContextMenuStrip;
+                // Retrieve the ChromiumMenu that owns this ChromiumMenuItem
+                ChromiumMenu owner = menuItem.Owner as ChromiumMenu;
                 if (owner != null)
                 {
                     if (owner.SourceControl is Button)
@@ -2323,12 +2309,12 @@ namespace Quartz
 
         private async void openInNewWindowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Try to cast the sender to a ToolStripItem
-            ToolStripItem menuItem = sender as ToolStripItem;
+            // Try to cast the sender to a ChromiumMenuItem
+            ChromiumMenuItem menuItem = sender as ChromiumMenuItem;
             if (menuItem != null)
             {
-                // Retrieve the ContextMenuStrip that owns this ToolStripItem
-                ContextMenuStrip owner = menuItem.Owner as ContextMenuStrip;
+                // Retrieve the ChromiumMenu that owns this ChromiumMenuItem
+                ChromiumMenu owner = menuItem.Owner as ChromiumMenu;
                 if (owner != null)
                 {
 
@@ -2359,12 +2345,12 @@ namespace Quartz
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Try to cast the sender to a ToolStripItem
-            ToolStripItem menuItem = sender as ToolStripItem;
+            // Try to cast the sender to a ChromiumMenuItem
+            ChromiumMenuItem menuItem = sender as ChromiumMenuItem;
             if (menuItem != null)
             {
-                // Retrieve the ContextMenuStrip that owns this ToolStripItem
-                ContextMenuStrip owner = menuItem.Owner as ContextMenuStrip;
+                // Retrieve the ChromiumMenu that owns this ChromiumMenuItem
+                ChromiumMenu owner = menuItem.Owner as ChromiumMenu;
                 if (owner != null)
                 {
                     // Get the control that is displaying this context menu
@@ -2378,12 +2364,12 @@ namespace Quartz
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Try to cast the sender to a ToolStripItem
-            ToolStripItem menuItem = sender as ToolStripItem;
+            // Try to cast the sender to a ChromiumMenuItem
+            ChromiumMenuItem menuItem = sender as ChromiumMenuItem;
             if (menuItem != null)
             {
-                // Retrieve the ContextMenuStrip that owns this ToolStripItem
-                ContextMenuStrip owner = menuItem.Owner as ContextMenuStrip;
+                // Retrieve the ChromiumMenu that owns this ChromiumMenuItem
+                ChromiumMenu owner = menuItem.Owner as ChromiumMenu;
                 if (owner != null)
                 {
                     // Get the control that is displaying this context menu
@@ -2557,12 +2543,12 @@ namespace Quartz
 
         private void cutToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            // Try to cast the sender to a ToolStripItem
-            ToolStripItem menuItem = sender as ToolStripItem;
+            // Try to cast the sender to a ChromiumMenuItem
+            ChromiumMenuItem menuItem = sender as ChromiumMenuItem;
             if (menuItem != null)
             {
-                // Retrieve the ContextMenuStrip that owns this ToolStripItem
-                ContextMenuStrip owner = menuItem.Owner as ContextMenuStrip;
+                // Retrieve the ChromiumMenu that owns this ChromiumMenuItem
+                ChromiumMenu owner = menuItem.Owner as ChromiumMenu;
                 if (owner != null)
                 {
                     // Get the control that is displaying this context menu
@@ -2597,15 +2583,15 @@ namespace Quartz
             mnuFavourites.SuspendLayout();
             try
             {
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem("Add this tab to favourites...");
+                ChromiumMenuItem toolStripMenuItem = new ChromiumMenuItem("Add this tab to favourites...");
                 BindShortcutMenu(toolStripMenuItem, BrowserCommand.AddFavourite);
                 toolStripMenuItem.Enabled = CanExecuteShortcutCommand(BrowserCommand.AddFavourite);
 
-                var addAllTabs = new ToolStripMenuItem("Add all tabs to favourites");
+                var addAllTabs = new ChromiumMenuItem("Add all tabs to favourites");
                 BindShortcutMenu(addAllTabs, BrowserCommand.FavouriteAllTabs);
                 addAllTabs.Enabled = CanExecuteShortcutCommand(BrowserCommand.FavouriteAllTabs);
 
-                var showBar = new ToolStripMenuItem("Show favourites bar")
+                var showBar = new ChromiumMenuItem("Show favourites bar")
                 {
                     Checked = SettingsService.Get("showFavouritesBar") == "true",
                     CheckOnClick = false
@@ -2616,18 +2602,18 @@ namespace Quartz
                 mnuFavourites.Items.Add(toolStripMenuItem);
                 mnuFavourites.Items.Add(addAllTabs);
 
-                mnuFavourites.Items.Add(new ToolStripSeparator());
+                mnuFavourites.Items.Add(new ChromiumMenuSeparator());
                 mnuFavourites.Items.Add(showBar);
 
                 FavouriteService favouriteService = new FavouriteService();
                 var favourites = favouriteService.All().OrderBy(f => f.Index).ToList();
 
                 if (favourites.Count > 0)
-                    mnuFavourites.Items.Add(new ToolStripSeparator());
+                    mnuFavourites.Items.Add(new ChromiumMenuSeparator());
 
                 foreach (var favourite in favourites)
                 {
-                    var menuItem = new ToolStripMenuItem
+                    var menuItem = new ChromiumMenuItem
                     {
                         Name = "smi" + favourite.Id.ToString("N"),
                         Text = favourite.Name,

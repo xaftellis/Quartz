@@ -1,4 +1,5 @@
-﻿using Microsoft.Web.WebView2.Core;
+﻿using Quartz.Controls.ChromiumMenus;
+using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 using Quartz.Libs;
 using Quartz.Models;
@@ -144,11 +145,12 @@ namespace Quartz
                     AutoSize = false,
                     Height = 100,
                     Width = 100,
-                    ContextMenuStrip = ContextMenuStripProfiles,
+
                     CircularImageSize = 64,
                     CircularImageToTextGapping = 5,
                 };
 
+                ContextMenuStripProfiles.Attach(button);
                 NewControlThemeChanger.ChangeControlTheme(button);
 
                 var picture = Program.profileService.GetProfilePicture(profile.Id);
@@ -286,12 +288,12 @@ namespace Quartz
 
         private async void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Try to cast the sender to a ToolStripItem
-            ToolStripItem menuItem = sender as ToolStripItem;
+            // Try to cast the sender to a ChromiumMenuItem
+            ChromiumMenuItem menuItem = sender as ChromiumMenuItem;
             if (menuItem != null)
             {
-                // Retrieve the ContextMenuStrip that owns this ToolStripItem
-                ContextMenuStrip owner = menuItem.Owner as ContextMenuStrip;
+                // Retrieve the ChromiumMenu that owns this ChromiumMenuItem
+                ChromiumMenu owner = menuItem.Owner as ChromiumMenu;
                 if (owner != null)
                 {
                     // Get the control that is displaying this context menu
@@ -354,12 +356,12 @@ namespace Quartz
 
         private void setDefaultToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Try to cast the sender to a ToolStripItem
-            ToolStripItem menuItem = sender as ToolStripItem;
+            // Try to cast the sender to a ChromiumMenuItem
+            ChromiumMenuItem menuItem = sender as ChromiumMenuItem;
             if (menuItem != null)
             {
-                // Retrieve the ContextMenuStrip that owns this ToolStripItem
-                ContextMenuStrip owner = menuItem.Owner as ContextMenuStrip;
+                // Retrieve the ChromiumMenu that owns this ChromiumMenuItem
+                ChromiumMenu owner = menuItem.Owner as ChromiumMenu;
                 if (owner != null)
                 {
                     // Get the control that is displaying this context menu
@@ -431,12 +433,12 @@ namespace Quartz
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Try to cast the sender to a ToolStripItem
-            ToolStripItem menuItem = sender as ToolStripItem;
+            // Try to cast the sender to a ChromiumMenuItem
+            ChromiumMenuItem menuItem = sender as ChromiumMenuItem;
             if (menuItem != null)
             {
-                // Retrieve the ContextMenuStrip that owns this ToolStripItem
-                ContextMenuStrip owner = menuItem.Owner as ContextMenuStrip;
+                // Retrieve the ChromiumMenu that owns this ChromiumMenuItem
+                ChromiumMenu owner = menuItem.Owner as ChromiumMenu;
                 if (owner != null)
                 {
                     // Get the control that is displaying this context menu

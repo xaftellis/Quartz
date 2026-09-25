@@ -1,3 +1,4 @@
+﻿using Quartz.Controls.ChromiumMenus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,7 +99,7 @@ namespace Quartz
                 .Replace("Escape", "Esc").Replace("Oemplus", "+").Replace("OemMinus", "-");
         }
 
-        internal static void SetMenuShortcut(ToolStripMenuItem item, BrowserCommand command)
+        internal static void SetMenuShortcut(ChromiumMenuItem item, BrowserCommand command)
         {
             // WinForms must not independently execute the same key, or use a
             // context menu's remembered right-click target for keyboard input.
@@ -124,6 +125,7 @@ namespace Quartz
 
         public bool PreFilterMessage(ref Message message)
         {
+            if (MenuSession.FilterKeys(ref message)) return true;
             bool keyDown = message.Msg == 0x0100 || message.Msg == 0x0104;
             bool keyUp = message.Msg == 0x0101 || message.Msg == 0x0105;
             if ((!keyDown && !keyUp) || !CanRouteInput() || !IsInputSurface(message.HWnd)) return false;
@@ -183,27 +185,13 @@ namespace Quartz
             if (handle == _window.Handle || GetAncestor(handle, 2) == _window.Handle) return true;
             if (_window.IsTabStripHandle(handle)) return true;
 
-            var control = Control.FromChildHandle(handle);
-            var menu = control as ToolStripDropDown ?? control?.TopLevelControl as ToolStripDropDown;
-            if (menu == null) return false;
-            while (menu.OwnerItem?.Owner is ToolStripDropDown parent) menu = parent;
-            if (menu is ContextMenuStrip context && context.SourceControl != null)
-                return context.SourceControl.TopLevelControl == _window;
-            if (ContainsMenu(ContextMenuProvider._contextMenuStripNormal, menu) || ContainsMenu(ContextMenuProvider._contextMenuStripTab, menu))
-                return ContextMenuProvider._parentForm == _window;
-            return (_window.SelectedTab?.Content as Browser)?.OwnsShortcutMenu(menu) == true;
-            // Deliberately do not follow GW_OWNER: owned Settings/Favourite
-            // forms and native dialogs are outside the browser shortcut scope.
+            return MenuSession.OwnsHandle(handle);
         }
 
-        internal static bool ContainsMenu(ToolStripDropDown root, ToolStripDropDown target)
+        internal static bool ContainsMenu(ChromiumMenu root, ChromiumMenu target)
         {
-            if (root == null || root.IsDisposed) return false;
-            if (root == target) return true;
-            // Custom dropdowns do not always have OwnerItem populated. Follow
-            // the actual menu tree without changing its focus/hover behaviour.
-            return root.Items.OfType<ToolStripDropDownItem>().Any(item =>
-                item.HasDropDownItems && ContainsMenu(item.DropDown, target));
+            return root != null && !root.IsDisposed && (root == target ||
+                root.Items.Any(item => item.HasSubmenu && ContainsMenu(item.DropDown, target)));
         }
 
         private void CloseBrowserMenus()

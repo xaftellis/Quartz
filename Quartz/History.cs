@@ -1,4 +1,5 @@
-﻿using EasyTabs;
+﻿using Quartz.Controls.ChromiumMenus;
+using EasyTabs;
 using Quartz.Controls;
 using Quartz.Libs;
 using Quartz.Models;

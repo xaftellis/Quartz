@@ -1,4 +1,5 @@
-﻿namespace Quartz
+﻿using Quartz.Controls.ChromiumMenus;
+namespace Quartz
 {
     partial class History
     {
@@ -40,13 +41,13 @@
             this.WebAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.When = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Delete = new System.Windows.Forms.DataGridViewImageColumn();
-            this.contextMenuStrip1 = new Quartz.Controls.AnimatedContextMenuStrip(this.components);
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openInNewTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.copyLinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip1 = new ChromiumMenu(this.components);
+            this.openToolStripMenuItem = new ChromiumMenuItem();
+            this.openInNewTabToolStripMenuItem = new ChromiumMenuItem();
+            this.openInNewWindowToolStripMenuItem = new ChromiumMenuItem();
+            this.toolStripSeparator2 = new ChromiumMenuSeparator();
+            this.copyLinkToolStripMenuItem = new ChromiumMenuItem();
+            this.deleteToolStripMenuItem = new ChromiumMenuItem();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.button1 = new Quartz.Controls.ChromiumButton();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -167,7 +168,7 @@
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.contextMenuStrip1.Items.AddRange(new ChromiumMenuItem[] {
             this.openToolStripMenuItem,
             this.openInNewTabToolStripMenuItem,
             this.openInNewWindowToolStripMenuItem,
@@ -293,9 +294,9 @@
         #endregion
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Panel panel2;
-        private Quartz.Controls.AnimatedContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private ChromiumMenu contextMenuStrip1;
+        private ChromiumMenuSeparator toolStripSeparator2;
+        private ChromiumMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.TextBox txtSearch;
         private Quartz.Controls.ChromiumButton button1;
@@ -307,10 +308,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn WebAddress;
         private System.Windows.Forms.DataGridViewTextBoxColumn When;
         private System.Windows.Forms.DataGridViewImageColumn Delete;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openInNewTabToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openInNewWindowToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem copyLinkToolStripMenuItem;
+        private ChromiumMenuItem openToolStripMenuItem;
+        private ChromiumMenuItem openInNewTabToolStripMenuItem;
+        private ChromiumMenuItem openInNewWindowToolStripMenuItem;
+        private ChromiumMenuItem copyLinkToolStripMenuItem;
         private System.Windows.Forms.Panel pnlDivider;
     }
 }
