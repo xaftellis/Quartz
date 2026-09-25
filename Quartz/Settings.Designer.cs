@@ -202,7 +202,7 @@ namespace Quartz
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(120, 24);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version 3.0.1";
+            this.labelVersion.Text = "Version 3.1.0";
             // 
             // LoadingProgress
             // 

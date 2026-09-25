@@ -939,7 +939,7 @@ namespace Quartz
             wvWebView1.CoreWebView2.Settings.IsScriptEnabled = SettingsService.Get("IsScriptEnabled") == "true";
             wvWebView1.CoreWebView2.Settings.IsStatusBarEnabled = SettingsService.Get("IsStatusBarEnabled") == "true";
 
-            notifyIcon1.Text = "Quartz v3.0.1";
+            notifyIcon1.Text = "Quartz v3.1.0";
             notifyIcon1.Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
             notifyIcon1.MouseUp += (sender, e) => { if (e.Button == MouseButtons.Right) SettingsMenuStrip.Show(this, PointToClient(Cursor.Position)); };
             notifyIcon1.Visible = ParentTabs?.SelectedTab?.Content == this;

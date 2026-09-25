@@ -1,15 +1,16 @@
+using System.Resources;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle(".NET Title Bar Tabs")]
-[assembly: AssemblyDescription("Library to enable .NET WinForms apps to easily render a set of tabs in their titlebar space, similar to Chrome, Firefox, Edge, etc.")]
+[assembly: AssemblyTitle("EasyTabs")]
+[assembly: AssemblyDescription(".NET CHROME TABS")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Luke Stratman")]
-[assembly: AssemblyProduct(".NET Title Bar Tabs")]
-[assembly: AssemblyCopyright("Copyright © 2020")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct(".NET CHROME TABS")]
+[assembly: AssemblyCopyright("© Daniel Xaftellis 2026. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,6 +32,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyVersion("2.0.0.43")]
-[assembly: AssemblyFileVersion("2.0.0.43")]
+[assembly: AssemblyVersion("3.0.0.45")]
+[assembly: AssemblyFileVersion("3.0.0.45")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Quartz.PinnedTabs.Tests")]
+[assembly: NeutralResourcesLanguage("en-AU")]
