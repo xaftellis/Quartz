@@ -335,7 +335,6 @@
     <Compile Include="Services\MouseDragger.cs" />
     <Compile Include="Services\NewControlThemeChanger.cs" />
     <Compile Include="Services\UpdateStatusService.cs" />
-    <Compile Include="Services\SnowButtonAnimator.cs" />
     <Compile Include="Services\WhiteContextMenuRenderer.cs" />
     <Compile Include="Services\AquaTabRenderer.cs" />
     <Compile Include="Services\AquaContextMenuRenderer.cs" />
@@ -1309,7 +1308,9 @@
   <ItemGroup>
     <Compile Include="Controls\ChromiumMenus\MenuAppearance.cs" />
     <Compile Include="Controls\ChromiumMenus\MenuLayout.cs" />
-    <Compile Include="Controls\ChromiumMenus\MenuLayeredWindow.cs" />
+    <Compile Include="Controls\ChromiumMenus\MenuLayeredWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Controls\ChromiumMenus\MenuTooltip.cs" />
     <Compile Include="Controls\ChromiumMenus\MenuModel.cs">
       <SubType>Component</SubType>

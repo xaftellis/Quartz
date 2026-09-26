@@ -202,15 +202,6 @@ namespace Quartz.Services
                 button.BackColor = extrabackcolor;
                 button.ForeColor = extraforecolor;
                 button.FlatAppearance.BorderSize = buttonbordersize;
-
-                if (GetRealTimeInZone.GetRealTimeInComputerTimeZone().Month == 12 && theme == "black")
-                {
-                    SnowButtonAnimator.Animate(button);
-                }
-                else
-                {
-                    SnowButtonAnimator.Stop(button);
-                }
             }
             else if (control is ContextMenuStrip)
             {
