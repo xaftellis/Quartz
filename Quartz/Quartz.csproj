@@ -317,16 +317,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\FaviconService.cs" />
-    <Compile Include="Services\LightTabRenderer.cs" />
     <Compile Include="Services\MouseDragger.cs" />
     <Compile Include="Services\NewControlThemeChanger.cs" />
     <Compile Include="Services\UpdateStatusService.cs" />
     <Compile Include="Services\WhiteContextMenuRenderer.cs" />
-    <Compile Include="Services\AquaTabRenderer.cs" />
     <Compile Include="Services\AquaContextMenuRenderer.cs" />
     <Compile Include="Services\XmasContextMenuRenderer.cs" />
-    <Compile Include="Services\XmasTabRenderer.cs" />
-    <Compile Include="Services\BlackTabRenderer.cs" />
     <Compile Include="Services\DarkContextMenuRenderer.cs" />
     <Compile Include="Services\BlackContextMenuRenderer.cs" />
     <Compile Include="Models\History.cs" />
@@ -341,7 +337,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\DarkTabRenderer.cs" />
     <Compile Include="Services\MainSettingsService.cs" />
     <Compile Include="Services\ProfileService.cs" />
     <Compile Include="Services\HistoryService.cs" />
@@ -418,9 +413,6 @@
     <None Include="Properties\DataSources\Quartz.Models.HistoryModel.datasource" />
     <None Include="Properties\DataSources\Quartz.Services.HistoryService.datasource" />
     <None Include="Properties\DataSources\Quartz.Services.FavoriteService.datasource" />
-    <None Include="Resources\AddHover_xmas.png" />
-    <None Include="Resources\Add_xmas.png" />
-    <None Include="Resources\Background_xmas.png" />
     <None Include="Resources\Black_Download.png" />
     <None Include="Resources\Black_Fav.png" />
     <None Include="Resources\Black_House.png" />
@@ -432,18 +424,8 @@
     <None Include="Resources\Black_Stop.png" />
     <None Include="Resources\Black_URL_Left.png" />
     <None Include="Resources\Black_URL_Right.png" />
-    <None Include="Resources\B_Add.png" />
-    <None Include="Resources\B_AddHover.png" />
-    <None Include="Resources\B_Background.png" />
-    <None Include="Resources\B_Center.png" />
     <None Include="Resources\B_Close.png" />
     <None Include="Resources\B_CloseHover.png" />
-    <None Include="Resources\B_InactiveCenter.png" />
-    <None Include="Resources\B_InactiveLeft.png" />
-    <None Include="Resources\B_InactiveRight.png" />
-    <None Include="Resources\B_Left.png" />
-    <None Include="Resources\B_Right.png" />
-    <None Include="Resources\Center_xmas.png" />
     <None Include="Resources\CloseHover_xmas.png" />
     <None Include="Resources\Close_xmas.png" />
     <None Include="Resources\Cross.ico" />
@@ -465,18 +447,12 @@
     <None Include="Resources\icon-Fav.png" />
     <None Include="Resources\icon-House.png" />
     <None Include="Resources\icon-Setting.png" />
-    <None Include="Resources\InactiveCenter_xmas.png" />
-    <None Include="Resources\InactiveLeft_xmas.png" />
-    <None Include="Resources\InactiveRightNoDivider_xmas.png" />
-    <None Include="Resources\InactiveRight_xmas.png" />
     <None Include="Resources\Left.png" />
-    <None Include="Resources\Left_xmas.png" />
     <None Include="Resources\Quartz Xmas.png" />
     <None Include="Resources\Quartz Xmas1.png" />
     <None Include="Resources\Quartz.png" />
     <None Include="Resources\Refresh.png" />
     <None Include="Resources\Right.png" />
-    <None Include="Resources\Right_xmas.png" />
     <None Include="Resources\Settings.png" />
     <None Include="Resources\spin.gif" />
     <None Include="Resources\Stop.png" />
@@ -514,16 +490,6 @@
     <None Include="Resources\16_5.ico" />
     <None Include="Resources\Aqua_Close.png" />
     <None Include="Resources\Aqua_CloseHover.png" />
-    <None Include="Resources\Aqua_InactiveCenter.png" />
-    <None Include="Resources\Aqua_InactiveLeft.png" />
-    <None Include="Resources\Aqua_InactiveRight.png" />
-    <None Include="Resources\Aqua_InactiveRightNoDivider.png" />
-    <None Include="Resources\Aqua_Left.png" />
-    <None Include="Resources\Aqua_Right.png" />
-    <None Include="Resources\Aqua_Add.png" />
-    <None Include="Resources\Aqua_AddHover.png" />
-    <None Include="Resources\Aqua_Background.png" />
-    <None Include="Resources\Aqua_Center.png" />
     <Content Include="assets\quartz.com\aqua\assets\css\styles.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -641,12 +607,8 @@
     <Content Include="favicon2.ico" />
     <Content Include="favicon_beta.ico" />
     <Content Include="favicon_xmas.ico" />
-    <None Include="Resources\AddHover.png" />
-    <None Include="Resources\Background.png" />
-    <None Include="Resources\Center.png" />
     <None Include="Resources\Close.png" />
     <None Include="Resources\CloseHover.png" />
-    <None Include="Resources\Add.png" />
     <None Include="Resources\Blue_Close.png" />
     <None Include="Resources\Blue_CloseHover.png" />
     <None Include="Resources\default_favicon.ico" />
@@ -655,25 +617,9 @@
     <Content Include="Resources\favicon.ico" />
     <None Include="Resources\UrlBoxRightAqua.png" />
     <None Include="Resources\UrlBoxLeftWhiteAqua.png" />
-    <None Include="Resources\Tabs_Add.png" />
-    <None Include="Resources\Tabs_AddHover.png" />
-    <None Include="Resources\Tabs_Background.png" />
-    <None Include="Resources\Tabs_Center.png" />
     <None Include="Resources\Tabs_Close.png" />
     <None Include="Resources\Tabs_CloseHover.png" />
-    <None Include="Resources\Tabs_InactiveCenter.png" />
-    <None Include="Resources\Tabs_InactiveLeft.png" />
-    <None Include="Resources\Tabs_InactiveRight.png" />
-    <None Include="Resources\Tabs_InactiveRightNoDivider.png" />
-    <None Include="Resources\Tabs_Left.png" />
-    <None Include="Resources\Tabs_Right.png" />
     <None Include="Resources\Tabs_CloseHoverInactive.png" />
-    <None Include="Resources\InactiveCenter.png" />
-    <None Include="Resources\InactiveLeft.png" />
-    <None Include="Resources\InactiveRight.png" />
-    <None Include="Resources\InactiveRightNoDivider.png" />
-    <None Include="Resources\TLeft.png" />
-    <None Include="Resources\TRight.png" />
     <None Include="Resources\search_16dp_0000FF_FILL0_wght400_GRAD0_opsz20.png" />
     <None Include="Resources\search_16dp_FFFFFF_FILL0_wght400_GRAD0_opsz20.png" />
     <None Include="Resources\search_16dp_C3C3C3_FILL0_wght400_GRAD0_opsz20.png" />
