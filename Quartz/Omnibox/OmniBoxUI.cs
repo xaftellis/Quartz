@@ -304,12 +304,6 @@ namespace Quartz.Omnibox
                 searchIcon = Quartz.Properties.Resources.search_16dp_555753_FILL0_wght400_GRAD0_opsz20;
             else if (theme == "dark")
                 searchIcon = Quartz.Properties.Resources.search_16dp_C3C3C3_FILL0_wght400_GRAD0_opsz20;
-            else if (theme == "black")
-                searchIcon = Quartz.Properties.Resources.search_16dp_FFFFFF_FILL0_wght400_GRAD0_opsz20;
-            else if (theme == "aqua")
-                searchIcon = Quartz.Properties.Resources.search_16dp_0000FF_FILL0_wght400_GRAD0_opsz20;
-            else if (theme == "xmas")
-                searchIcon = Quartz.Properties.Resources.search_16dp_00FF00_FILL0_wght400_GRAD0_opsz20;
 
             return searchIcon;
         }

@@ -62,6 +62,14 @@ namespace Quartz.Services
 
             var _items = items.FirstOrDefault(s => s.ProfileId == profileId && s.Name == name)?.Value;
 
+            // Keep preferences saved by older Quartz versions usable.
+            if (name == "Theme")
+            {
+                if (_items == "black") _items = "dark";
+                else if (_items == "aqua" || _items == "xmas") _items = "light";
+                else if (_items == "auto (light/black)") _items = "auto (light/dark)";
+            }
+
             if(name == "Theme" && _items == "auto (light/dark)")
             {
                 String theme;
@@ -72,20 +80,6 @@ namespace Quartz.Services
                 else
                 {
                     theme = "dark";
-                }
-
-                return theme;
-            }
-            else if (name == "Theme" && _items == "auto (light/black)")
-            {
-                String theme;
-                if (GetWindowsTheme() == "light")
-                {
-                    theme = "light";
-                }
-                else
-                {
-                    theme = "black";
                 }
 
                 return theme;
@@ -119,7 +113,7 @@ namespace Quartz.Services
 
             if (name == "Theme" && _items == "auto (light/dark)" || name == "Theme" && _items == "auto (light/black)")
             {
-                return _items;
+                return "auto (light/dark)";
             }
             else
             {

@@ -21,7 +21,7 @@ namespace Quartz.Controls.ChromiumMenus
             string theme = Services.SettingsService.Get("Theme");
             if (string.IsNullOrEmpty(theme))
                 theme = Convert.ToInt32(Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1)) == 0 ? "dark" : "light";
-            return new MenuAppearance { Dark = theme == "dark" || theme == "black" };
+            return new MenuAppearance { Dark = theme == "dark" };
         }
         internal MenuColors Resolve() { return new MenuColors(this); }
     }

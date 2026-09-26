@@ -63,249 +63,9 @@ namespace Quartz.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Aqua_Close {
-            get {
-                object obj = ResourceManager.GetObject("Aqua_Close", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Aqua_CloseHover {
-            get {
-                object obj = ResourceManager.GetObject("Aqua_CloseHover", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Aqua_Download {
-            get {
-                object obj = ResourceManager.GetObject("Aqua_Download", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Aqua_Fav {
-            get {
-                object obj = ResourceManager.GetObject("Aqua_Fav", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Aqua_Home {
-            get {
-                object obj = ResourceManager.GetObject("Aqua_Home", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Aqua_Icon_Left {
-            get {
-                object obj = ResourceManager.GetObject("Aqua_Icon_Left", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Aqua_Icon_Right {
-            get {
-                object obj = ResourceManager.GetObject("Aqua_Icon_Right", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Aqua_Refresh {
-            get {
-                object obj = ResourceManager.GetObject("Aqua_Refresh", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Aqua_Settings {
-            get {
-                object obj = ResourceManager.GetObject("Aqua_Settings", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Aqua_Stop {
-            get {
-                object obj = ResourceManager.GetObject("Aqua_Stop", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap B_Close {
-            get {
-                object obj = ResourceManager.GetObject("B_Close", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap B_CloseHover {
-            get {
-                object obj = ResourceManager.GetObject("B_CloseHover", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Black_Download {
-            get {
-                object obj = ResourceManager.GetObject("Black_Download", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Black_Fav {
-            get {
-                object obj = ResourceManager.GetObject("Black_Fav", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Black_House {
-            get {
-                object obj = ResourceManager.GetObject("Black_House", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Black_Left {
-            get {
-                object obj = ResourceManager.GetObject("Black_Left", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Black_Refresh {
-            get {
-                object obj = ResourceManager.GetObject("Black_Refresh", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Black_Right {
-            get {
-                object obj = ResourceManager.GetObject("Black_Right", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Black_Settings {
-            get {
-                object obj = ResourceManager.GetObject("Black_Settings", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Black_Stop {
-            get {
-                object obj = ResourceManager.GetObject("Black_Stop", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Black_URL_Left {
-            get {
-                object obj = ResourceManager.GetObject("Black_URL_Left", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Black_URL_Right {
-            get {
-                object obj = ResourceManager.GetObject("Black_URL_Right", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap blank {
             get {
                 object obj = ResourceManager.GetObject("blank", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Blue_Close {
-            get {
-                object obj = ResourceManager.GetObject("Blue_Close", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Blue_CloseHover {
-            get {
-                object obj = ResourceManager.GetObject("Blue_CloseHover", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -323,29 +83,9 @@ namespace Quartz.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Close_xmas {
-            get {
-                object obj = ResourceManager.GetObject("Close_xmas", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap CloseHover {
             get {
                 object obj = ResourceManager.GetObject("CloseHover", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap CloseHover_xmas {
-            get {
-                object obj = ResourceManager.GetObject("CloseHover_xmas", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -693,26 +433,6 @@ namespace Quartz.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap search_16dp_0000FF_FILL0_wght400_GRAD0_opsz20 {
-            get {
-                object obj = ResourceManager.GetObject("search_16dp_0000FF_FILL0_wght400_GRAD0_opsz20", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap search_16dp_00FF00_FILL0_wght400_GRAD0_opsz20 {
-            get {
-                object obj = ResourceManager.GetObject("search_16dp_00FF00_FILL0_wght400_GRAD0_opsz20", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap search_16dp_555753_FILL0_wght400_GRAD0_opsz20 {
             get {
                 object obj = ResourceManager.GetObject("search_16dp_555753_FILL0_wght400_GRAD0_opsz20", resourceCulture);
@@ -726,16 +446,6 @@ namespace Quartz.Properties {
         public static System.Drawing.Bitmap search_16dp_C3C3C3_FILL0_wght400_GRAD0_opsz20 {
             get {
                 object obj = ResourceManager.GetObject("search_16dp_C3C3C3_FILL0_wght400_GRAD0_opsz20", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap search_16dp_FFFFFF_FILL0_wght400_GRAD0_opsz20 {
-            get {
-                object obj = ResourceManager.GetObject("search_16dp_FFFFFF_FILL0_wght400_GRAD0_opsz20", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -793,26 +503,6 @@ namespace Quartz.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap UrlBoxLeftWhiteAqua {
-            get {
-                object obj = ResourceManager.GetObject("UrlBoxLeftWhiteAqua", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap UrlBoxRightAqua {
-            get {
-                object obj = ResourceManager.GetObject("UrlBoxRightAqua", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap UrlBoxRightWhite {
             get {
                 object obj = ResourceManager.GetObject("UrlBoxRightWhite", resourceCulture);
@@ -841,102 +531,12 @@ namespace Quartz.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Xdownload {
-            get {
-                object obj = ResourceManager.GetObject("Xdownload", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Xicon_Fav {
-            get {
-                object obj = ResourceManager.GetObject("Xicon_Fav", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Xicon_House {
-            get {
-                object obj = ResourceManager.GetObject("Xicon_House", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Xicon_Setting {
-            get {
-                object obj = ResourceManager.GetObject("Xicon_Setting", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap XLeft {
-            get {
-                object obj = ResourceManager.GetObject("XLeft", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         public static System.Drawing.Icon xmas16 {
             get {
                 object obj = ResourceManager.GetObject("xmas16", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap XRefresh {
-            get {
-                object obj = ResourceManager.GetObject("XRefresh", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap XRight {
-            get {
-                object obj = ResourceManager.GetObject("XRight", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap XStop {
-            get {
-                object obj = ResourceManager.GetObject("XStop", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap XUrlBoxLeft {
-            get {
-                object obj = ResourceManager.GetObject("XUrlBoxLeft", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

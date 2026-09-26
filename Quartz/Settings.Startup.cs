@@ -124,13 +124,10 @@ namespace Quartz
             ComboBoxTheme.Items.AddRange(new object[]
             {
                 disposable ? "Auto (Light/Dark)" : "Auto (Light/Dark) (Default)",
-                "Auto (Light/Black)", "Light", "Dark",
-                disposable ? "Black (Default)" : "Black", "Aqua"
+                "Light", disposable ? "Dark (Default)" : "Dark"
             });
-            if (DateTime.Now.Month == 12 || theme == "xmas")
-                ComboBoxTheme.Items.Add("Xmas");
-            SelectSettingsItem(ComboBoxTheme, theme, disposable ? 4 : 0,
-                "auto (light/dark)", "auto (light/black)", "light", "dark", "black", "aqua", "xmas");
+            SelectSettingsItem(ComboBoxTheme, theme, disposable ? 2 : 0,
+                "auto (light/dark)", "light", "dark");
         }
 
         private void ApplySettingsTabAlignment()

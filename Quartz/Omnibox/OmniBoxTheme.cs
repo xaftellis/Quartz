@@ -28,9 +28,6 @@ namespace Quartz.Omnibox
             string theme = SettingsService.Get("Theme");
             if (theme == "light") return Color.Black;
             else if (theme == "dark") return Color.FromArgb(195, 195, 195);
-            else if (theme == "black") return Color.Black;
-            else if (theme == "aqua") return Color.Aqua;
-            else if (theme == "xmas") return Color.Red;
             else return Color.Black;
         }
 
@@ -39,9 +36,6 @@ namespace Quartz.Omnibox
             string theme = SettingsService.Get("Theme");
             if (theme == "light") return Color.Gray;
             else if (theme == "dark") return Color.FromArgb(148, 148, 148);
-            else if (theme == "black") return Color.Gray;
-            else if (theme == "aqua") return Color.DeepSkyBlue;
-            else if (theme == "xmas") return Color.FromArgb(192, 0, 0);
             else return Color.Black;
         }
         

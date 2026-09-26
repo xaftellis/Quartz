@@ -8,7 +8,7 @@ namespace Quartz.Services
 {
     internal static class InternalPageTheme
     {
-        private static readonly string[] Themes = { "light", "dark", "black", "aqua", "xmas" };
+        private static readonly string[] Themes = { "light", "dark" };
         private static readonly string[] Pages = { "Google.html", "Bing.html", "Yahoo.html", "DuckDuckGo.html",
             "Ecosia.html", "Netflix.html", "YouTube.html", "Google Maps.html", "Custom.html", "Error.html", "Safety.html" };
         private static readonly Lazy<string> Script = new Lazy<string>(() =>

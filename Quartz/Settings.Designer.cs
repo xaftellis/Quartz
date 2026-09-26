@@ -484,11 +484,8 @@
             this.ComboBoxTheme.IntegralHeight = false;
             this.ComboBoxTheme.Items.AddRange(new object[] {
             "Auto (Light/Dark) (Default)",
-            "Auto (Light/Black)",
             "Light ",
-            "Dark",
-            "Black",
-            "Aqua"});
+            "Dark"});
             this.ComboBoxTheme.Location = new System.Drawing.Point(31, 198);
             this.ComboBoxTheme.Name = "ComboBoxTheme";
             this.ComboBoxTheme.Size = new System.Drawing.Size(140, 21);

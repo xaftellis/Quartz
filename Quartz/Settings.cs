@@ -262,7 +262,7 @@ namespace Quartz
         private void ComboBoxTheme_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_loadingSettings) return;
-            string[] themes = { "auto (light/dark)", "auto (light/black)", "light", "dark", "black", "aqua", "xmas" };
+            string[] themes = { "auto (light/dark)", "light", "dark" };
             int index = ComboBoxTheme.SelectedIndex;
             if (index < 0 || index >= themes.Length) return;
             string preference = themes[index];

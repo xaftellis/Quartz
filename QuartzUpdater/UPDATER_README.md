@@ -133,8 +133,8 @@ handling. Quartz does not need to duplicate the GitHub release logic.
 ## Matching Quartz's theme
 
 Quartz's Settings window passes its resolved active-profile theme using
-`--theme light`, `dark`, `black`, `aqua`, or `xmas`. Both automatic theme modes
-are resolved by Quartz before launch. The existing updater layout uses the
+`--theme light` or `dark`. The automatic theme mode
+is resolved by Quartz before launch. The existing updater layout uses the
 matching background, text, buttons, links, progress bar and supported title-bar
 colours. Windows high-contrast colours take precedence.
 The light palette keeps the standard Windows progress bar and its animations.

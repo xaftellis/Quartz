@@ -46,8 +46,7 @@ namespace Quartz
         {
             NewControlThemeChanger.ChangeControlTheme(LoadingProgress);
             string theme = SettingsService.Get("Theme");
-            string colour = theme == "xmas" ? "xmas_green" : theme == "black" ? "white" :
-                theme == "aqua" ? "blue" : theme;
+            string colour = theme;
             string path = Path.Combine(Application.StartupPath, "assets", "throbber",
                 "throbber_medium_" + colour + ".svg");
             LoadingProgress.ZoomFactor = 1;
@@ -175,15 +174,12 @@ namespace Quartz
         {
             try
             {
-                // SettingsService resolves both automatic modes for the active profile.
+                // SettingsService resolves the automatic mode for the active profile.
                 string theme = SettingsService.Get("Theme");
                 switch (theme)
                 {
                     case "light":
                     case "dark":
-                    case "black":
-                    case "aqua":
-                    case "xmas":
                         return " --theme " + theme;
                 }
             }

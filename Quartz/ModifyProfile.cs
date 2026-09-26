@@ -174,7 +174,7 @@ namespace Quartz
                 }
                 else
                 {
-                    SettingsService.Set("Theme", "black");
+                    SettingsService.Set("Theme", "dark");
                 }
 
                 SettingsService.Set("IsSwipeNavigationEnabled", "true");
@@ -278,21 +278,6 @@ namespace Quartz
                 {
                     circularImageButton1.ActionButtonImage = Properties.Resources.Tabs_Close;
                     circularImageButton1.ActionButtonHoverImage = Properties.Resources.Tabs_CloseHoverInactive;
-                }
-                else if (theme == "black")
-                {
-                    circularImageButton1.ActionButtonImage = Properties.Resources.B_Close;
-                    circularImageButton1.ActionButtonHoverImage = Properties.Resources.B_CloseHover;
-                }
-                else if (theme == "aqua")
-                {
-                    circularImageButton1.ActionButtonImage = Properties.Resources.Aqua_Close;
-                    circularImageButton1.ActionButtonHoverImage = Properties.Resources.Aqua_CloseHover;
-                }
-                else if (theme == "xmas")
-                {
-                    circularImageButton1.ActionButtonImage = Properties.Resources.Close_xmas;
-                    circularImageButton1.ActionButtonHoverImage = Properties.Resources.CloseHover_xmas;
                 }
             }
             else

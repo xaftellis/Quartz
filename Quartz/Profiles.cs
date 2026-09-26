@@ -508,7 +508,7 @@ namespace Quartz
 
             // Apply settings
             MainSettingsService.Set("RunBrowser", "true");
-            SettingsService.Set("Theme", "black");
+            SettingsService.Set("Theme", "dark");
             SettingsService.Set("IsSwipeNavigationEnabled", "true");
             SettingsService.Set("SearchEngine", "google");
             SettingsService.Set("IsZoomControlEnabled", "true");

@@ -240,66 +240,6 @@ namespace Quartz
                 PanelforeColor = Color.FromArgb(195, 195, 195);
                 dividerColor = Color.FromArgb(88, 88, 88);
             }
-            if (theme == "black")
-            {
-                //IMAGES
-                backImage = Quartz.Properties.Resources.Black_Left;
-                forwardImage = Quartz.Properties.Resources.Black_Right;
-                houseImage = Quartz.Properties.Resources.Black_House;
-                refreshImage = Quartz.Properties.Resources.Black_Refresh;
-                stopImage = Quartz.Properties.Resources.Black_Stop;
-                downloadImage = Quartz.Properties.Resources.Black_Download;
-                favImage = Quartz.Properties.Resources.Black_Fav;
-                settingsImage = Quartz.Properties.Resources.Black_Settings;
-                leftImage = Quartz.Properties.Resources.Black_URL_Left;
-                rightImage = Quartz.Properties.Resources.Black_URL_Right;
-
-                //COLORS
-                mouseOver = Color.FromArgb(18, 18, 18);
-                PanelbackColor = Color.White;
-                PanelforeColor = Color.Black;
-                dividerColor = Color.FromArgb(128, 128, 128);
-            }
-            if (theme == "aqua")
-            {
-                //IMAGES
-                backImage = Quartz.Properties.Resources.Aqua_Icon_Left;
-                forwardImage = Quartz.Properties.Resources.Aqua_Icon_Right;
-                houseImage = Quartz.Properties.Resources.Aqua_Home;
-                refreshImage = Quartz.Properties.Resources.Aqua_Refresh;
-                stopImage = Quartz.Properties.Resources.Aqua_Stop;
-                downloadImage = Quartz.Properties.Resources.Aqua_Download;
-                favImage = Quartz.Properties.Resources.Aqua_Fav;
-                settingsImage = Quartz.Properties.Resources.Aqua_Settings;
-                leftImage = Quartz.Properties.Resources.UrlBoxLeftWhiteAqua;
-                rightImage = Quartz.Properties.Resources.UrlBoxRightAqua;
-
-                //COLORS
-                mouseOver = Color.FromArgb(0, 238, 238);
-                PanelbackColor = Color.Blue;
-                PanelforeColor = Color.Aqua;
-                dividerColor = Color.Blue;
-            }
-            if (theme == "xmas")
-            {
-                //IMAGES
-                backImage = Quartz.Properties.Resources.XLeft;
-                forwardImage = Quartz.Properties.Resources.XRight;
-                houseImage = Quartz.Properties.Resources.Xicon_House;
-                refreshImage = Quartz.Properties.Resources.XRefresh;
-                stopImage = Quartz.Properties.Resources.XStop;
-                downloadImage = Quartz.Properties.Resources.Xdownload;
-                favImage = Quartz.Properties.Resources.Xicon_Fav;
-                settingsImage = Quartz.Properties.Resources.Xicon_Setting;
-                leftImage = Quartz.Properties.Resources.XUrlBoxLeft;
-                rightImage = Quartz.Properties.Resources.XUrlBoxRight;
-
-                //COLORS
-                mouseOver = Color.FromArgb(229, 0, 0);
-                PanelbackColor = Color.Lime;
-                PanelforeColor = Color.Red;
-                dividerColor = Color.Lime;
-            }
 
 
             // Begin the costly resize on detached pixels before the buttons first
@@ -1241,7 +1181,7 @@ namespace Quartz
             string theme = SettingsService.Get("Theme");
 
             if (string.IsNullOrWhiteSpace(theme))
-                theme = "black";
+                theme = "light";
 
             switch (e.WebErrorStatus)
             {
@@ -1316,18 +1256,6 @@ namespace Quartz
             else if (theme == "dark")
             {
                 return Color.FromArgb(88, 88, 88);
-            }
-            else if (theme == "black")
-            {
-                return Color.White;
-            }
-            else if (theme == "aqua")
-            {
-                return Color.Blue;
-            }
-            else if (theme == "xmas")
-            {
-                return Color.Lime;
             }
             else
             {

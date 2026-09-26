@@ -45,27 +45,6 @@ namespace Quartz.Services
                 var forecolor = Color.Black;
                 CustomWindow(backcolor, forecolor, Color.FromArgb(219, 220, 221), handle);
             }
-            else if (theme == "black")
-            {
-                var backcolor = Color.Black;
-                var forecolor = Color.White;
-
-                CustomWindow(backcolor, forecolor, backcolor, handle);
-            }
-            else if (theme == "aqua")
-            {
-                var backcolor = Color.Aqua;
-                var forecolor = Color.Blue;
-
-                CustomWindow(backcolor, forecolor, backcolor, handle);
-            }
-            else if (theme == "xmas")
-            {
-                var backcolor = Color.Red;
-                var forecolor = Color.Lime;
-
-                CustomWindow(backcolor, forecolor, backcolor, handle);
-            }
             else if (theme == "dark")
             {
                 var backcolor = Color.FromArgb(35, 35, 35);
@@ -108,48 +87,6 @@ namespace Quartz.Services
                 coreWebView2ColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Light;
                 renderer = new WhiteContextMenuRenderer();
 
-            }
-            else if (theme == "black")
-            {
-                backcolor = Color.Black;
-                forecolor = Color.White;
-                extrabackcolor = Color.Black;
-                extraforecolor = Color.White;
-                mouseOver = Color.FromArgb(18, 18, 18);
-                flatStyle = FlatStyle.Popup;
-                checkboxflatstyle = FlatStyle.Flat;
-                borderStyle = BorderStyle.FixedSingle;
-                buttonbordersize = 1;
-                renderer = new BlackContextMenuRenderer();
-                coreWebView2ColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Dark;
-            }
-            else if (theme == "aqua")
-            {
-                backcolor = Color.Aqua;
-                forecolor = Color.Blue;
-                extrabackcolor = Color.Blue;
-                extraforecolor = Color.Aqua;
-                mouseOver = Color.FromArgb(0, 238, 238);
-                flatStyle = FlatStyle.Popup;
-                checkboxflatstyle = FlatStyle.Flat;
-                borderStyle = BorderStyle.FixedSingle;
-                buttonbordersize = 1;
-                coreWebView2ColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Auto;
-                renderer = new AquaContextMenuRenderer();
-            }
-            else if (theme == "xmas")
-            {
-                backcolor = Color.Red;
-                forecolor = Color.Lime;
-                extrabackcolor = Color.Red;
-                extraforecolor = Color.Lime;
-                mouseOver = Color.FromArgb(229, 0, 0);
-                flatStyle = FlatStyle.Flat;
-                checkboxflatstyle = FlatStyle.Flat;
-                borderStyle = BorderStyle.FixedSingle;
-                buttonbordersize = 0;
-                coreWebView2ColorScheme = Microsoft.Web.WebView2.Core.CoreWebView2PreferredColorScheme.Auto;
-                renderer = new XmasContextMenuRenderer();
             }
             else if (theme == "dark")
             {
@@ -210,16 +147,6 @@ namespace Quartz.Services
                 {
                     ContextMenuStrip.BackColor = backcolor;
                     ContextMenuStrip.ForeColor = forecolor;
-                }
-                else if (theme == "aqua")
-                {
-                    ContextMenuStrip.BackColor = extrabackcolor;
-                    ContextMenuStrip.ForeColor = extraforecolor;
-                }
-                else if (theme == "xmas")
-                {
-                    ContextMenuStrip.BackColor = extrabackcolor;
-                    ContextMenuStrip.ForeColor = extraforecolor;
                 }
                 ContextMenuStrip.Renderer = renderer;
                 //ContextMenuStrip.DropShadowEnabled = true;

@@ -70,8 +70,8 @@ Window activation colours follow the supplied **Chromium 85.0.4183.121** source:
   frame tint `{-1, -1, 0.642}` changes light grey `#DEE1E6` to `#E7EAED`.
   Only Quartz's light theme uses this default tint.
 - `chrome/browser/themes/browser_theme_pack.cc`, `BuildFromColors`: generated
-  custom themes explicitly disable inactive frame tinting. Quartz's dark, black,
-  aqua and Christmas palettes follow this path, preserving their frame and tab
+  custom themes explicitly disable inactive frame tinting. Quartz's dark
+  palette follows this path, preserving its frame and tab
   fills in both states. `SetFrameAndToolbarRelatedColors` propagates custom
   selected-tab text to both states; `GetTabForegroundColor` respects explicit
   custom foregrounds and fades only the unspecified background-tab foreground.

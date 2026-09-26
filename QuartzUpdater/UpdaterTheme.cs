@@ -15,9 +15,6 @@ namespace QuartzUpdater
             {
                 case "light": return "light";
                 case "dark": return "dark";
-                case "black": return "black";
-                case "aqua": return "aqua";
-                case "xmas": return "xmas";
                 default:
                     try
                     {
@@ -63,31 +60,6 @@ namespace QuartzUpdater
                     palette.ProgressBackground = Color.FromArgb(64, 64, 64);
                     palette.ButtonStyle = FlatStyle.Popup;
                     palette.ButtonBorder = 1;
-                    break;
-                case "black":
-                    palette.Background = palette.ButtonBackground = palette.Border = Color.Black;
-                    palette.Foreground = palette.Secondary = palette.ButtonForeground =
-                        palette.Accent = Color.White;
-                    palette.Hover = Color.FromArgb(18, 18, 18);
-                    palette.ProgressBackground = Color.FromArgb(32, 32, 32);
-                    palette.ButtonStyle = FlatStyle.Popup;
-                    palette.ButtonBorder = 1;
-                    break;
-                case "aqua":
-                    palette.Background = palette.ButtonForeground = palette.Border = Color.Aqua;
-                    palette.Foreground = palette.Secondary = palette.ButtonBackground =
-                        palette.Accent = Color.Blue;
-                    palette.Hover = Color.FromArgb(0, 0, 210);
-                    palette.ProgressBackground = Color.FromArgb(0, 220, 220);
-                    palette.ButtonStyle = FlatStyle.Popup;
-                    palette.ButtonBorder = 1;
-                    break;
-                case "xmas":
-                    palette.Background = palette.ButtonBackground = palette.Border = Color.Red;
-                    palette.Foreground = palette.Secondary = palette.ButtonForeground =
-                        palette.Accent = Color.Lime;
-                    palette.Hover = Color.FromArgb(229, 0, 0);
-                    palette.ProgressBackground = Color.FromArgb(205, 0, 0);
                     break;
             }
 
@@ -186,7 +158,7 @@ namespace QuartzUpdater
             Palette palette = GetPalette(name);
             try
             {
-                int dark = name == "dark" || name == "black" ? 1 : 0;
+                int dark = name == "dark" ? 1 : 0;
                 DwmSetWindowAttribute(handle, 20, ref dark, sizeof(int));
                 int background = ColorTranslator.ToWin32(palette.Background);
                 int foreground = ColorTranslator.ToWin32(palette.Foreground);

@@ -163,46 +163,17 @@ namespace Quartz
                 textForeColor = System.Drawing.Color.FromArgb(195, 195, 195);
                 windowOutline = System.Drawing.Color.FromArgb(88, 88, 88);
             }
-            else if (theme == "black")
-            {
-                renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.Black, System.Drawing.Color.Black,
-                    activeForeground: System.Drawing.Color.White, inactiveForeground: System.Drawing.Color.White, customColors: true);
-
-                barBackColor = System.Drawing.Color.Black;
-                textForeColor = System.Drawing.Color.White;
-                windowOutline = System.Drawing.Color.FromArgb(128, 128, 128);
-            }
-            else if (theme == "aqua")
-            {
-                renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.Blue, System.Drawing.Color.Aqua, customColors: true);
-
-                barBackColor = System.Drawing.Color.Blue;
-                textForeColor = System.Drawing.Color.Aqua;
-                windowOutline = System.Drawing.Color.Blue;
-            }
-            else if (theme == "xmas")
-            {
-                renderer.Theme = new ChromiumTabTheme(System.Drawing.Color.Lime, System.Drawing.Color.Red, customColors: true);
-
-                barBackColor = System.Drawing.Color.Lime;
-                textForeColor = System.Drawing.Color.Red;
-                windowOutline = System.Drawing.Color.Lime;
-            }
             else
             {
                 renderer.Theme = ChromiumTabTheme.Light;
             }
 
             ((ChromiumTabRenderer)TabRenderer).DefaultFavicon = FaviconHelper.GetDefaultFavicon16();
-            // Light uses the blue throbber; the other themes use their existing foreground colour.
-            TabRenderer.LoadingIndicatorColor = theme == "light" ||
-                !(theme == "dark" || theme == "black" || theme == "aqua" || theme == "xmas")
+            // Light uses the blue throbber; Dark uses its foreground colour.
+            TabRenderer.LoadingIndicatorColor = theme != "dark"
                 ? System.Drawing.Color.FromArgb(66, 133, 244)
                 : textForeColor;
-            // Aqua and Xmas need contrasting spinner colours on their selected tabs.
-            renderer.ActiveLoadingIndicatorColor = theme == "aqua"
-                ? System.Drawing.Color.Blue
-                : theme == "xmas" ? System.Drawing.Color.Lime : (System.Drawing.Color?)null;
+            renderer.ActiveLoadingIndicatorColor = null;
 
             Icon = FaviconHelper.GetFullResDefaultFaviconWithoutCustomFavicon();
 

@@ -386,10 +386,8 @@ namespace Quartz
 
         private void ApplyVisualFinishing()
         {
-            string theme = SettingsService.Get("Theme");
-            bool colorfulTheme = theme == "aqua" || theme == "xmas";
             bool darkBackground = BackColor.GetBrightness() < 0.45f;
-            Color secondaryText = colorfulTheme ? ForeColor : darkBackground
+            Color secondaryText = darkBackground
                 ? Color.FromArgb(175, 175, 175)
                 : Color.FromArgb(95, 99, 104);
 
@@ -409,12 +407,12 @@ namespace Quartz
             foreach (Label label in secondaryLabels)
                 label.ForeColor = secondaryText;
 
-            pnlNotice.BackColor = colorfulTheme ? BackColor : darkBackground
+            pnlNotice.BackColor = darkBackground
                 ? Color.FromArgb(48, 48, 48)
                 : Color.FromArgb(241, 243, 244);
             lblNotice.BackColor = Color.Transparent;
 
-            Color dividerColor = colorfulTheme ? ForeColor : darkBackground
+            Color dividerColor = darkBackground
                 ? Color.FromArgb(70, 70, 70)
                 : Color.FromArgb(218, 220, 224);
             pnlTopDivider.BackColor = dividerColor;

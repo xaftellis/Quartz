@@ -321,10 +321,7 @@
     <Compile Include="Services\NewControlThemeChanger.cs" />
     <Compile Include="Services\UpdateStatusService.cs" />
     <Compile Include="Services\WhiteContextMenuRenderer.cs" />
-    <Compile Include="Services\AquaContextMenuRenderer.cs" />
-    <Compile Include="Services\XmasContextMenuRenderer.cs" />
     <Compile Include="Services\DarkContextMenuRenderer.cs" />
-    <Compile Include="Services\BlackContextMenuRenderer.cs" />
     <Compile Include="Models\History.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="Models\Setting.cs" />
@@ -413,21 +410,7 @@
     <None Include="Properties\DataSources\Quartz.Models.HistoryModel.datasource" />
     <None Include="Properties\DataSources\Quartz.Services.HistoryService.datasource" />
     <None Include="Properties\DataSources\Quartz.Services.FavoriteService.datasource" />
-    <None Include="Resources\Black_Download.png" />
-    <None Include="Resources\Black_Fav.png" />
-    <None Include="Resources\Black_House.png" />
-    <None Include="Resources\Black_Left.png" />
     <None Include="Resources\Black_OG_Loading.gif" />
-    <None Include="Resources\Black_Refresh.png" />
-    <None Include="Resources\Black_Right.png" />
-    <None Include="Resources\Black_Settings.png" />
-    <None Include="Resources\Black_Stop.png" />
-    <None Include="Resources\Black_URL_Left.png" />
-    <None Include="Resources\Black_URL_Right.png" />
-    <None Include="Resources\B_Close.png" />
-    <None Include="Resources\B_CloseHover.png" />
-    <None Include="Resources\CloseHover_xmas.png" />
-    <None Include="Resources\Close_xmas.png" />
     <None Include="Resources\Cross.ico" />
     <None Include="Resources\Cross.png" />
     <None Include="Resources\Ddownload.png" />
@@ -458,16 +441,6 @@
     <None Include="Resources\Stop.png" />
     <None Include="Resources\UrlBoxLeftWhite.png" />
     <None Include="Resources\UrlBoxRightWhite.png" />
-    <None Include="Resources\Xdownload.png" />
-    <None Include="Resources\Xicon-Fav.png" />
-    <None Include="Resources\Xicon-House.png" />
-    <None Include="Resources\Xicon-Setting.png" />
-    <None Include="Resources\XLeft.png" />
-    <None Include="Resources\XRefresh.png" />
-    <None Include="Resources\XRight.png" />
-    <None Include="Resources\XStop.png" />
-    <None Include="Resources\XUrlBoxLeft.png" />
-    <None Include="Resources\XUrlBoxRight.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -488,115 +461,12 @@
     <None Include="Resources\16_3.ico" />
     <None Include="Resources\16.ico" />
     <None Include="Resources\16_5.ico" />
-    <None Include="Resources\Aqua_Close.png" />
-    <None Include="Resources\Aqua_CloseHover.png" />
-    <Content Include="assets\quartz.com\aqua\assets\css\styles.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\css\tabs.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\js\tabs.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Bing.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Custom.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\DuckDuckGo.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Ecosia.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Error.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\favicon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Google Maps.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Google.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Netflix.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Quartz.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Safety.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Safety.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Wikipedia.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\Yahoo.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\assets\Resources\YouTube.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\Bing.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\Custom.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\DuckDuckGo.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\Ecosia.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\Error.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\Google Maps.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\Google.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\Netflix.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\Safety.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\Yahoo.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\aqua\YouTube.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\throbber\throbber_medium_aqua.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="assets\throbber\throbber_medium_blue.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\throbber\throbber_small_aqua.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="assets\throbber\throbber_small_blue.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\Aqua_Refresh.png" />
-    <None Include="Resources\Aqua_Fav.png" />
-    <None Include="Resources\Aqua_Download.png" />
-    <None Include="Resources\Aqua_Settings.png" />
-    <None Include="Resources\Aqua_Stop.png" />
-    <None Include="Resources\Aqua_Home.png" />
-    <None Include="Resources\Aqua_Icon_Right.png" />
-    <None Include="Resources\Aqua_Icon_Left.png" />
     <None Include="Resources\2D Quartz %28White%29 %2816%29.ico" />
     <None Include="Resources\2D Quartz %28White%29.ico" />
     <None Include="Resources\Aqua Quartz %2816%29.ico" />
@@ -609,115 +479,21 @@
     <Content Include="favicon_xmas.ico" />
     <None Include="Resources\Close.png" />
     <None Include="Resources\CloseHover.png" />
-    <None Include="Resources\Blue_Close.png" />
-    <None Include="Resources\Blue_CloseHover.png" />
     <None Include="Resources\default_favicon.ico" />
     <None Include="Resources\default_favicon_dark.png" />
     <None Include="Resources\default_favicon_dark.ico" />
     <Content Include="Resources\favicon.ico" />
-    <None Include="Resources\UrlBoxRightAqua.png" />
-    <None Include="Resources\UrlBoxLeftWhiteAqua.png" />
     <None Include="Resources\Tabs_Close.png" />
     <None Include="Resources\Tabs_CloseHover.png" />
     <None Include="Resources\Tabs_CloseHoverInactive.png" />
-    <None Include="Resources\search_16dp_0000FF_FILL0_wght400_GRAD0_opsz20.png" />
-    <None Include="Resources\search_16dp_FFFFFF_FILL0_wght400_GRAD0_opsz20.png" />
     <None Include="Resources\search_16dp_C3C3C3_FILL0_wght400_GRAD0_opsz20.png" />
     <None Include="Resources\search_16dp_555753_FILL0_wght400_GRAD0_opsz20.png" />
-    <None Include="Resources\search_16dp_00FF00_FILL0_wght400_GRAD0_opsz20.png" />
     <None Include="Resources\Xmas Quartz %2816%29.ico" />
     <None Include="Resources\Xmas Quartz.ico" />
     <None Include="Resources\Xmas Quartz.png" />
     <None Include="bin\Debug\agq\xmas_edge 3.png" />
     <None Include="bin\Debug\agq\xmas_edge2.png" />
     <None Include="bin\Debug\agq\xmas_edge4.png" />
-    <Content Include="assets\quartz.com\black\assets\css\styles.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\css\tabs.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\js\tabs.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Bing.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Custom.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\DuckDuckGo.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Ecosia.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Error.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\favicon.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Google Maps.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Google.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Netflix.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Quartz.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Safety.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Safety.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Wikipedia.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\Yahoo.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\assets\Resources\YouTube.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\Bing.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\Custom.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\DuckDuckGo.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\Ecosia.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\Error.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\Google Maps.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\Google.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\Netflix.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\Safety.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\Yahoo.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\black\YouTube.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="assets\quartz.com\dark\assets\css\styles.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -892,98 +668,8 @@
     <Content Include="assets\quartz.com\light\YouTube.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\quartz.com\xmas\assets\css\styles.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\css\tabs.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\js\tabs.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Bing.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Custom.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\DuckDuckGo.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Ecosia.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Error.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\favicon.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Google Maps.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Google.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Netflix.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Quartz.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Safety.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Safety.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Wikipedia.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\Yahoo.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\assets\Resources\YouTube.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\Bing.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\Custom.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\DuckDuckGo.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\Ecosia.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\Error.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\Google Maps.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\Google.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\Netflix.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\Safety.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\Yahoo.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\quartz.com\xmas\YouTube.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="bin\Release\UserData\cache\www.google.com.png" />
     <Content Include="favicon.ico" />
-    <Content Include="assets\throbber\throbber_medium_black.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="assets\throbber\throbber_medium_dark.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -993,15 +679,6 @@
     <Content Include="assets\throbber\throbber_medium_white.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\throbber\throbber_medium_xmas_green.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\throbber\throbber_medium_xmas_red.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\throbber\throbber_small_black.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="assets\throbber\throbber_small_dark.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1009,12 +686,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="assets\throbber\throbber_small_white.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\throbber\throbber_small_xmas_green.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\throbber\throbber_small_xmas_red.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

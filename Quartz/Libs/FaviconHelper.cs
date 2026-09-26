@@ -338,11 +338,9 @@ namespace Quartz.Libs
                 DateTime currentDateTime = DateTime.Now;
                 DateTime easterDateTime = CalculateEaster(currentDateTime.Year);
                 DateTime goodfridayDateTime = CalculateGoodFriday(easterDateTime);
-                string theme = SettingsService.Get("Theme");
 
-                //xmas icon (theme is xmas or its december)
-                if (theme == "xmas" 
-                    || currentDateTime.Month == 12)
+                // Christmas icon in December
+                if (currentDateTime.Month == 12)
                 {
                     icon = Quartz.Properties.Resources.favicon_xmas;
                 }
@@ -371,11 +369,9 @@ namespace Quartz.Libs
             DateTime currentDateTime = DateTime.Now;
             DateTime easterDateTime = CalculateEaster(currentDateTime.Year);
             DateTime goodfridayDateTime = CalculateGoodFriday(easterDateTime);
-            string theme = SettingsService.Get("Theme");
 
-            //xmas icon (theme is xmas or its december)
-            if (theme == "xmas"
-                || currentDateTime.Month == 12)
+            // Christmas icon in December
+            if (currentDateTime.Month == 12)
             {
                 icon = Quartz.Properties.Resources.favicon_xmas;
             }
@@ -417,11 +413,9 @@ namespace Quartz.Libs
                 DateTime currentDateTime = DateTime.Now;
                 DateTime easterDateTime = CalculateEaster(currentDateTime.Year);
                 DateTime goodfridayDateTime = CalculateGoodFriday(easterDateTime);
-                string theme = SettingsService.Get("Theme");
 
-                //xmas icon (theme is xmas or its december)
-                if (theme == "xmas"
-                    || currentDateTime.Month == 12)
+                // Christmas icon in December
+                if (currentDateTime.Month == 12)
                 {
                     icon = Quartz.Properties.Resources.xmas16;
                 }
@@ -450,11 +444,9 @@ namespace Quartz.Libs
             DateTime currentDateTime = DateTime.Now;
             DateTime easterDateTime = CalculateEaster(currentDateTime.Year);
             DateTime goodfridayDateTime = CalculateGoodFriday(easterDateTime);
-            string theme = SettingsService.Get("Theme");
 
-            //xmas icon (theme is xmas or its december)
-            if (theme == "xmas"
-                || currentDateTime.Month == 12)
+            // Christmas icon in December
+            if (currentDateTime.Month == 12)
             {
                 image = Quartz.Properties.Resources.Quartz_Xmas;
             }

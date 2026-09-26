@@ -17,7 +17,7 @@ function (update) {
     base.href = update.url;
     for (const link of document.querySelectorAll('link[href]')) {
         const url = new URL(link.getAttribute('href'), update.url);
-        if (url.origin === location.origin && /^\/(light|dark|black|aqua|xmas)\/assets\//.test(url.pathname)) {
+        if (url.origin === location.origin && /^\/(light|dark)\/assets\//.test(url.pathname)) {
             url.pathname = url.pathname.replace(/^\/[^/]+\//, '/' + update.theme + '/');
             link.href = url.href;
         }

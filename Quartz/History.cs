@@ -62,14 +62,8 @@ namespace Quartz
             if (theme == "dark")
                 dividerColor = Color.FromArgb(88, 88, 88);
 
-            if (theme == "black")
-                dividerColor = Color.FromArgb(128, 128, 128);
 
-            if (theme == "aqua")
-                dividerColor = Color.Blue;
 
-            if (theme == "xmas")
-                dividerColor = Color.Lime;
 
             seporater.BackColor = dividerColor;
         }
@@ -219,18 +213,6 @@ namespace Quartz
                     else if (theme == "dark")
                     {
                         row.Cells["Delete"].Value = Properties.Resources.Tabs_Close;
-                    }
-                    else if (theme == "black")
-                    {
-                        row.Cells["Delete"].Value = Properties.Resources.B_Close;
-                    }
-                    else if (theme == "aqua")
-                    {
-                        row.Cells["Delete"].Value = Properties.Resources.Blue_Close;
-                    }
-                    else if (theme == "xmas")
-                    {
-                        row.Cells["Delete"].Value = Properties.Resources.Close_xmas;
                     }
                 }
 
@@ -606,18 +588,6 @@ namespace Quartz
                 {
                     dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.Tabs_Close;
                 }
-                else if (theme == "black")
-                {
-                    dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.B_Close;
-                }
-                else if (theme == "aqua")
-                {
-                    dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.Blue_Close;
-                }
-                else if (theme == "xmas")
-                {
-                    dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.Close_xmas;
-                }
             }
         }
 
@@ -633,18 +603,6 @@ namespace Quartz
                 else if (theme == "dark")
                 {
                     dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.Tabs_CloseHover;
-                }
-                else if (theme == "black")
-                {
-                    dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.B_CloseHover;
-                }
-                else if (theme == "aqua")
-                {
-                    dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.Blue_CloseHover;
-                }
-                else if (theme == "xmas")
-                {
-                    dataGridView1.Rows[e.RowIndex].Cells["Delete"].Value = Properties.Resources.CloseHover_xmas;
                 }
             }
         }
