@@ -21,7 +21,6 @@ namespace Quartz
     {
         public HistoryService HistoryService = new HistoryService();
         public FavouriteService FavouriteService = new FavouriteService();
-        public BirthdayService BirthdayService = new BirthdayService();
 
         int tabIndex = 0;
 
@@ -316,7 +315,6 @@ namespace Quartz
                         SettingsService.DeleteProfileSettings(Guid.Parse(button.Tag.ToString()));
                         HistoryService.DeleteProfileHistory(Guid.Parse(button.Tag.ToString()));
                         FavouriteService.DeleteProfileFav(Guid.Parse(button.Tag.ToString()));
-                        BirthdayService.DeleteProfileBirthdays(Guid.Parse(button.Tag.ToString()));
 
                         Program.profileService.Remove(Guid.Parse(button.Tag.ToString()));
                         Program.profileService.SaveChanges();
@@ -508,28 +506,9 @@ namespace Quartz
             AddFavourite("Google", "https://www.google.com/");
             AddFavourite("YouTube", "https://www.youtube.com/");
 
-            BirthdayService birthdayService = new BirthdayService();
-            var birthdays = new[]
-            {
-                new BirthdayModel { Name = "Quartz", DOB = DateTime.Parse("20 November 2022") },
-                new BirthdayModel { Name = "Daniel Xaftellis", DOB = DateTime.Parse("2 May 2008") },
-                new BirthdayModel { Name = "Kaitlyn Xaftellis", DOB = DateTime.Parse("24 February 2005") },
-                new BirthdayModel { Name = "Taki Xaftellis", DOB = DateTime.Parse("17 July 1973") },
-                new BirthdayModel { Name = "Carolyn Xaftellis", DOB = DateTime.Parse("2 October 1972") },
-                new BirthdayModel { Name = "Julie Collen", DOB = DateTime.Parse("16 February 1942") },
-                new BirthdayModel { Name = "Ebony Xaftellis", DOB = DateTime.Parse("13 October 2014") },
-                new BirthdayModel { Name = "Argie Xaftellis", DOB = DateTime.Parse("17 March 1972") }
-                };
-
-            foreach (var bday in birthdays)
-                birthdayService.Add(bday);
-
-            birthdayService.SaveChanges();
-
             // Apply settings
             MainSettingsService.Set("RunBrowser", "true");
             SettingsService.Set("Theme", "black");
-            SettingsService.Set("simulateDate", "false");
             SettingsService.Set("IsSwipeNavigationEnabled", "true");
             SettingsService.Set("SearchEngine", "google");
             SettingsService.Set("IsZoomControlEnabled", "true");

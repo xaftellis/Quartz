@@ -168,25 +168,6 @@ namespace Quartz
                 _fav.Add(favourite3);
                 _fav.SaveChanges();
 
-
-                BirthdayService birthdayService = new BirthdayService();
-                var birthdays = new[]
-                {
-                new BirthdayModel { Name = "Quartz", DOB = DateTime.Parse("20 November 2022") },
-                new BirthdayModel { Name = "Daniel Xaftellis", DOB = DateTime.Parse("2 May 2008") },
-                new BirthdayModel { Name = "Kaitlyn Xaftellis", DOB = DateTime.Parse("24 February 2005") },
-                new BirthdayModel { Name = "Taki Xaftellis", DOB = DateTime.Parse("17 July 1973") },
-                new BirthdayModel { Name = "Carolyn Xaftellis", DOB = DateTime.Parse("2 October 1972") },
-                new BirthdayModel { Name = "Julie Collen", DOB = DateTime.Parse("16 February 1942") },
-                new BirthdayModel { Name = "Ebony Xaftellis", DOB = DateTime.Parse("13 October 2014") },
-                new BirthdayModel { Name = "Argie Xaftellis", DOB = DateTime.Parse("17 March 1972") }
-                };
-
-                foreach (var bday in birthdays)
-                    birthdayService.Add(bday);
-
-                birthdayService.SaveChanges();
-
                 if (Program.profileService.Get(ProfileService.Current).isDisposable != true)
                 {
                     SettingsService.Set("Theme", "auto (light/dark)");
@@ -196,7 +177,6 @@ namespace Quartz
                     SettingsService.Set("Theme", "black");
                 }
 
-                SettingsService.Set("simulateDate", "false");
                 SettingsService.Set("IsSwipeNavigationEnabled", "true");
                 SettingsService.Set("SearchEngine", "google");
                 SettingsService.Set("IsZoomControlEnabled", "true");
@@ -330,10 +310,6 @@ namespace Quartz
             }
 
             NewControlThemeChanger.ChangeTheme(this);
-            //if (GetRealTimeInZone.GetRealTimeInComputerTimeZone().Month == 12 && SettingsService.Get("Theme") == "black")
-            //{ 
-            //    NewControlThemeChanger.AnimateButtonImageFromResources(circularImageButton1);
-            //}
 
             txtExists.ForeColor = Color.Red;
             LabelNameNull.ForeColor = Color.Red;

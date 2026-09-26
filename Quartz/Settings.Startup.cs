@@ -30,13 +30,11 @@ namespace Quartz
                 try
                 {
                     LoadSettingsSelections();
-                    LoadTimeMachineSelection();
                     LoadThemeSelection();
 
                     NewControlThemeChanger.ChangeWindowTheme(Handle);
                     foreach (Control control in controls)
                         NewControlThemeChanger.ChangeControlTheme(control);
-                    ApplyTimeMachineLayout();
                     UpdateBrowserSettingAvailability();
 
                     pictureBox1.BackgroundImage = FaviconHelper.GetFullResDefaultFaviconAsImage();
@@ -118,25 +116,6 @@ namespace Quartz
             control.SelectedIndex = index < 0 ? fallback : index;
         }
 
-        private void LoadTimeMachineSelection()
-        {
-            cbtimeMachine.Checked = SettingsService.Get("simulateDate") == "true";
-            txtTimeMachine.Enabled = cbtimeMachine.Checked;
-            btnDown.Enabled = cbtimeMachine.Checked;
-            mcTimeMachine.Visible = false;
-            btnDown.Text = "▼";
-
-            DateTime date = DateTime.Today;
-            DateTime savedDate;
-            if (cbtimeMachine.Checked && DateTime.TryParse(SettingsService.Get("timeMachine"), out savedDate))
-                date = savedDate.Date;
-            if (date < mcTimeMachine.MinDate) date = mcTimeMachine.MinDate;
-            if (date > mcTimeMachine.MaxDate) date = mcTimeMachine.MaxDate;
-            mcTimeMachine.AddBoldedDate(date);
-            mcTimeMachine.SetSelectionRange(date, date);
-            txtTimeMachine.Text = date.ToString("D").Replace(date.DayOfWeek + ", ", "");
-        }
-
         private void LoadThemeSelection()
         {
             bool disposable = Program.profileService.Get(ProfileService.Current)?.isDisposable == true;
@@ -148,7 +127,7 @@ namespace Quartz
                 "Auto (Light/Black)", "Light", "Dark",
                 disposable ? "Black (Default)" : "Black", "Aqua"
             });
-            if (GetRealTimeInZone.GetRealTimeInComputerTimeZone().Month == 12 || theme == "xmas")
+            if (DateTime.Now.Month == 12 || theme == "xmas")
                 ComboBoxTheme.Items.Add("Xmas");
             SelectSettingsItem(ComboBoxTheme, theme, disposable ? 4 : 0,
                 "auto (light/dark)", "auto (light/black)", "light", "dark", "black", "aqua", "xmas");
@@ -161,23 +140,6 @@ namespace Quartz
             if (index < 0 || index >= alignments.Length) return;
             tabControl1.SizeMode = index == 1 || index == 2 ? TabSizeMode.Normal : TabSizeMode.Fixed;
             tabControl1.Alignment = alignments[index];
-        }
-
-        private void ApplyTimeMachineLayout()
-        {
-            string theme = SettingsService.Get("Theme");
-            if (theme == "dark")
-            {
-                txtTimeMachine.Size = new Size(204, 20);
-                btnDown.Location = new Point(222, 107);
-                btnDown.Size = new Size(22, 22);
-            }
-            else if (theme == "light" || theme == "black" || theme == "aqua")
-            {
-                txtTimeMachine.Size = new Size(theme == "aqua" ? 208 : 207, 20);
-                btnDown.Location = new Point(224, 108);
-                btnDown.Size = new Size(20, 20);
-            }
         }
 
         private void BrowserSettingsReady(object sender, CoreWebView2InitializationCompletedEventArgs e)

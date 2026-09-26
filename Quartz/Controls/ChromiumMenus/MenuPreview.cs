@@ -231,7 +231,7 @@ namespace Quartz.Controls.ChromiumMenus
                         var button = new Button { Text = "Profile fixture", Location = new Point(40, 50), Size = new Size(130, 50) };
                         modal.Controls.Add(button); menu.Attach(button);
                         var item = menu.Items.Add("Invoke owned menu command"); item.Click += (ss, ee) => { invoked = true; modal.Close(); };
-                        var nested = menu.Items.Add("Birthday fixture"); nested.DropDownItems.Add(new ChromiumMenuItem("Edit fixture"));
+                        var nested = menu.Items.Add("Nested fixture"); nested.DropDownItems.Add(new ChromiumMenuItem("Edit fixture"));
                         modal.Shown += (ss, ee) => modal.BeginInvoke((Action)(() =>
                         {
                             // Native controls send WM_CONTEXTMENU during their own
@@ -375,18 +375,18 @@ namespace Quartz.Controls.ChromiumMenus
             using (var menu = new ChromiumMenu { Appearance = new MenuAppearance { Animations = false } })
             using (var shared = new ChromiumMenu())
             {
-                int chosen = 0; shared.Items.Add("Edit birthday").Click += (s, e) => chosen = (int)shared.Tag;
-                var first = menu.Items.Add("First birthday"); var second = menu.Items.Add("Second birthday");
+                int chosen = 0; shared.Items.Add("Edit item").Click += (s, e) => chosen = (int)shared.Tag;
+                var first = menu.Items.Add("First item"); var second = menu.Items.Add("Second item");
                 first.DropDown = second.DropDown = shared;
                 first.DropDownOpening += (s, e) => shared.Tag = 1; second.DropDownOpening += (s, e) => shared.Tag = 2;
                 menu.Show(owner, new Point(70, 70)); var popup = Application.OpenForms.OfType<MenuPopup>().Single(p => !p.Retired);
-                popup.Selected = first; SendKey(Keys.Right); Require((int)shared.Tag == 1, "First birthday captures its context");
+                popup.Selected = first; SendKey(Keys.Right); Require((int)shared.Tag == 1, "First item captures its context");
                 popup.Selected = second;
                 // Open the other item's shared submenu without first dismissing it.
                 var open = typeof(MenuSession).GetMethod("OpenSubmenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
                 open.Invoke(MenuSession.Current, new object[] { popup, popup.LayoutData.Rows.Single(r => r.Item == second), true });
                 Require((int)shared.Tag == 2 && shared.OwnerItem == second, "Shared submenu must refresh context when parent item changes");
-                SendKey(Keys.Enter); Application.DoEvents(); Require(chosen == 2, "Shared submenu action uses the selected birthday");
+                SendKey(Keys.Enter); Application.DoEvents(); Require(chosen == 2, "Shared submenu action uses the selected item");
             }
             using (var fixture = new Fixture(new MenuAppearance { Animations = false }))
             {
@@ -397,7 +397,7 @@ namespace Quartz.Controls.ChromiumMenus
                 popup.Selected = fixture.Nested; SendKey(Keys.Right); SendKey(Keys.End); SendKey(Keys.Enter); Application.DoEvents();
                 Require(!fixture.Nested.DropDownItems.Last().Checked, "Checkbox toggles once and retains its value");
             }
-            report.AppendLine("PASS: shared birthday dropdown switches invocation context; language radio items select exclusively; check items toggle once; nested keyboard navigation preserves state.");
+            report.AppendLine("PASS: shared item dropdown switches invocation context; language radio items select exclusively; check items toggle once; nested keyboard navigation preserves state.");
         }
         [StructLayout(LayoutKind.Sequential)] private struct GuiInfo { internal int Size, Flags; internal IntPtr Active, Focus, Capture, Menu, Move, Caret; internal Rectangle Rect; }
         [DllImport("user32.dll")] private static extern bool GetGUIThreadInfo(uint thread, ref GuiInfo info);

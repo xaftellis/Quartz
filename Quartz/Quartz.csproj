@@ -146,12 +146,6 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddBirthday.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AddBirthday.Designer.cs">
-      <DependentUpon>AddBirthday.cs</DependentUpon>
-    </Compile>
     <Compile Include="AppContainer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -279,16 +273,9 @@
     <Compile Include="Favorite.Designer.cs">
       <DependentUpon>Favorite.cs</DependentUpon>
     </Compile>
-    <Compile Include="HappyBirthdayMessage.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="HappyBirthdayMessage.Designer.cs">
-      <DependentUpon>HappyBirthdayMessage.cs</DependentUpon>
-    </Compile>
     <Compile Include="Libs\EmojiHelper.cs" />
     <Compile Include="Libs\msg.cs" />
     <Compile Include="Libs\RawInputCapture.cs" />
-    <Compile Include="Models\Birthday.cs" />
     <Compile Include="Models\UpdateStatus.cs" />
     <Compile Include="ModifyProfile.cs">
       <SubType>Form</SubType>
@@ -330,7 +317,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\FaviconService.cs" />
-    <Compile Include="Services\BirthdayService.cs" />
     <Compile Include="Services\LightTabRenderer.cs" />
     <Compile Include="Services\MouseDragger.cs" />
     <Compile Include="Services\NewControlThemeChanger.cs" />
@@ -338,7 +324,6 @@
     <Compile Include="Services\WhiteContextMenuRenderer.cs" />
     <Compile Include="Services\AquaTabRenderer.cs" />
     <Compile Include="Services\AquaContextMenuRenderer.cs" />
-    <Compile Include="Services\GetRealTimeInZone.cs" />
     <Compile Include="Services\XmasContextMenuRenderer.cs" />
     <Compile Include="Services\XmasTabRenderer.cs" />
     <Compile Include="Services\BlackTabRenderer.cs" />
@@ -387,9 +372,6 @@
     <Compile Include="Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AddBirthday.resx">
-      <DependentUpon>AddBirthday.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="AppContainer.resx">
       <DependentUpon>AppContainer.cs</DependentUpon>
     </EmbeddedResource>
@@ -415,9 +397,6 @@
     <EmbeddedResource Include="History.resx">
       <DependentUpon>History.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="HappyBirthdayMessage.resx">
-      <DependentUpon>HappyBirthdayMessage.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="NameWindow.resx">
       <DependentUpon>NameWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -442,8 +421,6 @@
     <None Include="Resources\AddHover_xmas.png" />
     <None Include="Resources\Add_xmas.png" />
     <None Include="Resources\Background_xmas.png" />
-    <None Include="Resources\Birthday Quartz.ico" />
-    <None Include="Resources\Birthday Quartz.png" />
     <None Include="Resources\Black_Download.png" />
     <None Include="Resources\Black_Fav.png" />
     <None Include="Resources\Black_House.png" />
@@ -542,7 +519,6 @@
     <None Include="Resources\16_4.ico" />
     <None Include="Resources\16_3.ico" />
     <None Include="Resources\16.ico" />
-    <None Include="Resources\16_2.ico" />
     <None Include="Resources\16_5.ico" />
     <None Include="Resources\Aqua_Close.png" />
     <None Include="Resources\Aqua_CloseHover.png" />

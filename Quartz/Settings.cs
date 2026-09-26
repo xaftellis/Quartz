@@ -1,5 +1,4 @@
-﻿using Quartz.Controls.ChromiumMenus;
-using EasyTabs;
+﻿using EasyTabs;
 using ImageMagick;
 using Microsoft.SqlServer.Server;
 using Microsoft.Web.WebView2.Core;
@@ -27,8 +26,6 @@ namespace Quartz
     public partial class Settings : Form
     {
         private bool updating;
-        private BirthdayService _birthdayService;
-        public BirthdayService birthdayService => _birthdayService ?? (_birthdayService = new BirthdayService());
 
         private string ToBgr(Color c) => $"{c.B:X2}{c.G:X2}{c.R:X2}";
         [DllImport("DwmApi")]
@@ -48,31 +45,6 @@ namespace Quartz
             //Change border color
             int[] border = new int[] { int.Parse(ToBgr(borderColor), System.Globalization.NumberStyles.HexNumber) };
             DwmSetWindowAttribute(hWnd, DWWMA_BORDER_COLOR, border, 4);
-        }
-
-        private DateTime CalculateEaster(int year)
-        {
-            int a = year % 19;
-            int b = year / 100;
-            int c = year % 100;
-            int d = b / 4;
-            int e = b % 4;
-            int f = (b + 8) / 25;
-            int g = (19 * a + b - d - f + 15) % 30;
-            int h = c / 4;
-            int i = c % 4;
-            int k = (32 + 2 * e + 2 * h - g - i) % 7;
-            int l = (a + 11 * g + 22 * k) / 451;
-            int m = g + k - 7 * l + 114;
-            int month = m / 31;
-            int day = (m % 31) + 1;
-
-            return new DateTime(year, month, day);
-        }
-
-        private DateTime CalculateGoodFriday(DateTime easterDate)
-        {
-            return easterDate.AddDays(-2); // Good Friday is 2 days before Easter Sunday
         }
 
         private void UpdateHiddenPDFSetting()
@@ -306,10 +278,7 @@ namespace Quartz
             try
             {
                 NewControlThemeChanger.ChangeTheme(this);
-                NewControlThemeChanger.ChangeControlTheme(mnuBirthdays);
-                NewControlThemeChanger.ChangeControlTheme(contextMenuStrip1);
                 LoadThemeSelection();
-                ApplyTimeMachineLayout();
                 var previous = pictureBox1.BackgroundImage;
                 pictureBox1.BackgroundImage = FaviconHelper.GetFullResDefaultFaviconAsImage();
                 previous?.Dispose();
@@ -468,86 +437,6 @@ namespace Quartz
             }
         }
 
-        private void mcTimeMachine_DateChanged(object sender, DateRangeEventArgs e)
-        {
-            if (_loadingSettings) return;
-            mcTimeMachine.AddBoldedDate(e.Start);
-            mcTimeMachine.SelectionStart = e.Start;
-            mcTimeMachine.SelectionEnd = e.Start;
-
-            if (SettingsService.Get("timeMachine") != mcTimeMachine.SelectionStart.ToString("D").Replace(mcTimeMachine.SelectionStart.DayOfWeek + ", ", ""))
-            {
-                txtTimeMachine.Text = mcTimeMachine.SelectionStart.ToString("D").Replace(mcTimeMachine.SelectionStart.DayOfWeek + ", ", "");
-
-                SettingsService.Set("timeMachine", mcTimeMachine.SelectionStart.ToString("D").Replace(mcTimeMachine.SelectionStart.DayOfWeek + ", ", ""));
-            }
-        }
-
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-            if (!mcTimeMachine.Visible)
-            {
-                Animation.AnimateWindow(mcTimeMachine.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_POSITIVE);
-                mcTimeMachine.Visible = true;
-                btnDown.Text = "▲";
-            }
-            else
-            {
-                Animation.AnimateWindow(mcTimeMachine.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_NEGATIVE | Animation.AW_HIDE);
-                mcTimeMachine.Visible = false;
-                btnDown.Text = "▼";
-            }
-        }
-        private void txtTimeMachine_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                try
-                {
-                    if (txtTimeMachine.Text != mcTimeMachine.SelectionStart.ToString("D").Replace(mcTimeMachine.SelectionStart.DayOfWeek + ", ", ""))
-                    {
-                        mcTimeMachine.SelectionStart = DateTime.Parse(txtTimeMachine.Text);
-                    }
-                }
-                catch
-                {
-                    txtTimeMachine.Text = SettingsService.Get("timeMachine");
-                    mcTimeMachine.SelectionStart = DateTime.Parse(SettingsService.Get("timeMachine"));
-                }
-            }
-        }
-
-        private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
-        {
-            if (_loadingSettings) return;
-            if (cbtimeMachine.Checked)
-            {
-                SettingsService.Set("simulateDate", "true");
-                txtTimeMachine.Enabled = true;
-                btnDown.Enabled = true;
-
-                if (SettingsService.Get("timeMachine") == null)
-                {
-                    SettingsService.Set("timeMachine", DateTime.Now.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", ""));
-                }
-            }
-            else
-            {
-                if (mcTimeMachine.Visible == true)
-                {
-                    Animation.AnimateWindow(mcTimeMachine.Handle, 250, Animation.AW_SLIDE | Animation.AW_VER_NEGATIVE | Animation.AW_HIDE);
-                    mcTimeMachine.Visible = false;
-                    btnDown.Text = "▼";
-                }
-                txtTimeMachine.Enabled = false;
-                btnDown.Enabled = false;
-
-                //reset UI to today
-                SettingsService.Set("simulateDate", "false");
-                txtTimeMachine.Text = DateTime.Now.ToString("D").Replace(DateTime.Now.DayOfWeek + ", ", "");
-                mcTimeMachine.SelectionStart = DateTime.Now;
-            }
-        }
         private void cbESC_CheckedChanged(object sender, EventArgs e)
         {
             if (_loadingSettings) return;
@@ -676,104 +565,6 @@ namespace Quartz
             HiddenPDFItems_Checked(sender);
         }
 
-        private void todayToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            mcTimeMachine.SelectionStart = DateTime.Now;
-        }
-
-        private void christmasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DateTime currentDate = DateTime.Now;
-            string target = "25 December ";
-            int currentYear = DateTime.Now.Year;
-            int nextYear = currentYear + 1;
-
-            DateTime dateTimeCurrent = DateTime.Parse(target + currentYear);
-            DateTime dateTimeNext = DateTime.Parse(target + nextYear);
-
-            if (currentDate.Date == dateTimeCurrent.Date)
-            {
-                mcTimeMachine.SelectionStart = DateTime.Now.Date;
-                return;
-            }
-
-            if (currentDate < dateTimeCurrent)
-            {
-                mcTimeMachine.SelectionStart = dateTimeCurrent;
-            }
-            else
-            {
-                mcTimeMachine.SelectionStart = dateTimeNext;
-            }
-        }
-
-        private void goodFridayToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DateTime currentDate = DateTime.Now;
-            int currentYear = DateTime.Now.Year;
-            int nextYear = currentYear + 1;
-
-            DateTime currentgoodFriday = CalculateGoodFriday(CalculateEaster(currentYear));
-            DateTime nextgoodFriday = CalculateGoodFriday(CalculateEaster(nextYear));
-
-            if (currentDate.Date == currentgoodFriday.Date)
-            {
-                return;
-            }
-
-            if (currentDate < currentgoodFriday)
-            {
-                mcTimeMachine.SelectionStart = currentgoodFriday;
-            }
-            else
-            {
-                mcTimeMachine.SelectionStart = nextgoodFriday;
-            }
-        }
-
-        private void easterToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DateTime currentDate = DateTime.Now;
-            int currentYear = DateTime.Now.Year;
-            int nextYear = currentYear + 1;
-
-            DateTime currentEaster = CalculateEaster(currentYear);
-            DateTime nextEaster = CalculateEaster(nextYear);
-
-            if (currentDate.Date == currentEaster.Date)
-            {
-                return;
-            }
-
-            if (currentDate < currentEaster)
-            {
-                mcTimeMachine.SelectionStart = currentEaster;
-            }
-            else
-            {
-                mcTimeMachine.SelectionStart = nextEaster;
-            }
-        }
-
-        private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
-            if (birthdayService.All().Count != 0)
-            {
-                birthdaysToolStripMenuItem.DropDown = mnuBirthdays;
-                birthdaysToolStripMenuItem.Text = "Birthdays";
-                birthdaysToolStripMenuItem.Click -= ToolStripMenu_Click;
-            }
-            else
-            {
-                birthdaysToolStripMenuItem.DropDown = null;
-                birthdaysToolStripMenuItem.Text = "Add birthday";
-                birthdaysToolStripMenuItem.Click -= ToolStripMenu_Click;
-                birthdaysToolStripMenuItem.Click += ToolStripMenu_Click;
-
-            }
-        }
-
         private void restartToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Power.Restart();
@@ -797,83 +588,6 @@ namespace Quartz
             if (index < 0 || index >= values.Length) return;
             SettingsService.Set("SettingsTabAlignment", values[index]);
             ApplySettingsTabAlignment();
-        }
-
-        private void mnuBirthdays_Opening(object sender, CancelEventArgs e)
-        {
-            mnuBirthdays.Items.Clear();
-
-            ChromiumMenuItem toolStripMenu = new ChromiumMenuItem();
-            toolStripMenu.Text = "Add birthday";
-
-            toolStripMenu.Click += ToolStripMenu_Click;
-
-            ChromiumMenuSeparator toolStripSeparator = new ChromiumMenuSeparator();
-
-            mnuBirthdays.Items.Add(toolStripMenu);
-            mnuBirthdays.Items.Add(toolStripSeparator);
-
-            // Populate the main menu
-            foreach (BirthdayModel model in birthdayService.All())
-            {
-                ChromiumMenuItem toolStripMenuItem = new ChromiumMenuItem
-                {
-                    Text = $"{model.Name}'s Birthday",
-                    Tag = model,            // Store the model for click handling
-                    DropDown = contextMenuStrip1         // Assign the same menu
-                };
-
-                // When opening the dropdown, set the menu's Tag to the current model
-                toolStripMenuItem.DropDownOpening += (s, ee) =>
-                {
-                    contextMenuStrip1.Tag = toolStripMenuItem.Tag;
-                };
-
-                mnuBirthdays.Items.Add(toolStripMenuItem);
-                toolStripMenuItem.Click += ToolStripMenuItem_Click;
-            }
-
-
-            //last
-        }
-
-
-        private void ToolStripMenu_Click(object sender, EventArgs e)
-        {
-            AddBirthday addBirthdayForm = new AddBirthday(this, false, null, DateTime.MinValue, Guid.Empty);
-            addBirthdayForm.ShowDialog();
-        }
-
-        private void ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var model = ((ChromiumMenuItem)sender).Tag as BirthdayModel;
-
-            DateTime currentDate = DateTime.Now;
-            DateTime dateTime = model.DOB;
-            string target = dateTime.ToString("D")
-                .Replace(dateTime.DayOfWeek + ", ", "")
-                .Replace(dateTime.Year.ToString(), "");
-            int currentYear = DateTime.Now.Year;
-            int nextYear = currentYear + 1;
-
-            DateTime dateTimeCurrent = DateTime.Parse(target + currentYear);
-            DateTime dateTimeNext = DateTime.Parse(target + nextYear);
-
-            if (currentDate.Date == dateTimeCurrent.Date)
-            {
-                mcTimeMachine.SelectionStart = DateTime.Now.Date;
-                return;
-            }
-
-            if (currentDate < dateTimeCurrent)
-            {
-                mcTimeMachine.SelectionStart = dateTimeCurrent;
-            }
-            else
-            {
-                mcTimeMachine.SelectionStart = dateTimeNext;
-            }
-            mnuTimeMachine.Close();
         }
 
         private async void CDFSelectedIndexChanged()
@@ -1049,64 +763,6 @@ namespace Quartz
                 {
                     this.Close();
                 }
-            }
-        }
-
-        bool mnubClose = true;
-        private async void mnuBirthdays_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (!mnubClose)
-            {
-                if (birthdayService.All().Count == 0)
-                {
-
-                    mnubClose = false;
-                    return;
-                }
-
-                e.Cancel = true;
-                mnuBirthdays_Opening(sender, e);
-
-                //WAITS
-                await Task.Delay(100);
-                mnubClose = true;
-            }
-        }
-
-        private async void mnuTimeMachine_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (!mnubClose)
-            {
-                if (birthdayService.All().Count == 0)
-                {
-                    mnubClose = false;
-                    return;
-                }
-
-                e.Cancel = true;
-
-                //WAITS
-                await Task.Delay(100);
-                mnubClose = true;
-            }
-        }
-
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (contextMenuStrip1.Tag is BirthdayModel model)
-            {
-                birthdayService.Remove(model.Id);
-                birthdayService.SaveChanges();
-                // Refresh your menu or UI if needed
-            }
-        }
-
-        private void editToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (contextMenuStrip1.Tag is BirthdayModel model)
-            {
-                AddBirthday addBirthdayForm = new AddBirthday(this, true, model.Name, model.DOB, model.Id);
-                addBirthdayForm.ShowDialog();
             }
         }
 

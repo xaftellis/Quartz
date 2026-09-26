@@ -1,5 +1,4 @@
-﻿using Quartz.Controls.ChromiumMenus;
-namespace Quartz
+﻿namespace Quartz
 {
     partial class Settings
     {
@@ -51,22 +50,6 @@ namespace Quartz
             this.checkBoxMemory = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tabPageApp = new System.Windows.Forms.TabPage();
-            this.cbtimeMachine = new System.Windows.Forms.CheckBox();
-            this.btnDown = new Quartz.Controls.ChromiumButton();
-            this.label6 = new System.Windows.Forms.Label();
-            this.txtTimeMachine = new System.Windows.Forms.TextBox();
-            this.mcTimeMachine = new System.Windows.Forms.MonthCalendar();
-            this.mnuTimeMachine = new ChromiumMenu(this.components);
-            this.todayToolStripMenuItem = new ChromiumMenuItem();
-            this.toolStripSeparator1 = new ChromiumMenuSeparator();
-            this.goodFridayToolStripMenuItem = new ChromiumMenuItem();
-            this.easterToolStripMenuItem = new ChromiumMenuItem();
-            this.christmasToolStripMenuItem = new ChromiumMenuItem();
-            this.toolStripSeparator2 = new ChromiumMenuSeparator();
-            this.birthdaysToolStripMenuItem = new ChromiumMenuItem();
-            this.mnuBirthdays = new ChromiumMenu(this.components);
-            this.addBirthdayToolStripMenuItem = new ChromiumMenuItem();
-            this.toolStripSeparator3 = new ChromiumMenuSeparator();
             this.groupBoxDownloadDialog = new System.Windows.Forms.GroupBox();
             this.comboSettingsTabAlinement = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -115,25 +98,18 @@ namespace Quartz
             this.pz = new System.Windows.Forms.CheckBox();
             this.zc = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.editToolStripMenuItem = new ChromiumMenuItem();
-            this.toolStripSeparator4 = new ChromiumMenuSeparator();
-            this.deleteToolStripMenuItem = new ChromiumMenuItem();
-            this.contextMenuStrip1 = new ChromiumMenu(this.components);
             this.tabPageAbout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LoadingProgress)).BeginInit();
             this.tabPagePrivacy.SuspendLayout();
             this.tabPagePerformance.SuspendLayout();
             this.tabPageApp.SuspendLayout();
-            this.mnuTimeMachine.SuspendLayout();
-            this.mnuBirthdays.SuspendLayout();
             this.groupBoxDownloadDialog.SuspendLayout();
             this.tabPageAccount.SuspendLayout();
             this.GeneralPage.SuspendLayout();
             this.HiddenPDFGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumZoom)).BeginInit();
             this.tabControl1.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPageAbout
@@ -394,11 +370,6 @@ namespace Quartz
             // 
             this.tabPageApp.BackColor = System.Drawing.Color.White;
             this.tabPageApp.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.tabPageApp.Controls.Add(this.cbtimeMachine);
-            this.tabPageApp.Controls.Add(this.btnDown);
-            this.tabPageApp.Controls.Add(this.label6);
-            this.tabPageApp.Controls.Add(this.txtTimeMachine);
-            this.tabPageApp.Controls.Add(this.mcTimeMachine);
             this.tabPageApp.Controls.Add(this.groupBoxDownloadDialog);
             this.tabPageApp.Controls.Add(this.labelAppTittle);
             this.tabPageApp.Location = new System.Drawing.Point(4, 40);
@@ -407,146 +378,9 @@ namespace Quartz
             this.tabPageApp.TabIndex = 2;
             this.tabPageApp.Text = "Appearance";
             // 
-            // cbtimeMachine
-            // 
-            this.cbtimeMachine.AutoSize = true;
-            this.cbtimeMachine.Location = new System.Drawing.Point(17, 85);
-            this.cbtimeMachine.Name = "cbtimeMachine";
-            this.cbtimeMachine.Size = new System.Drawing.Size(93, 17);
-            this.cbtimeMachine.TabIndex = 14;
-            this.cbtimeMachine.Text = "Time Machine";
-            this.cbtimeMachine.UseVisualStyleBackColor = true;
-            this.cbtimeMachine.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
-            // 
-            // btnDown
-            // 
-            this.btnDown.FocusRingColor = System.Drawing.Color.Empty;
-            this.btnDown.InkColor = System.Drawing.Color.Empty;
-            this.btnDown.Location = new System.Drawing.Point(225, 104);
-            this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(28, 28);
-            this.btnDown.TabIndex = 13;
-            this.btnDown.Text = "▼";
-            this.btnDown.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.btnDown.UseVisualStyleBackColor = true;
-            this.btnDown.Click += new System.EventHandler(this.button1_Click_1);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(46, 53);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(166, 29);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "Time Machine";
-            // 
-            // txtTimeMachine
-            // 
-            this.txtTimeMachine.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtTimeMachine.Location = new System.Drawing.Point(17, 108);
-            this.txtTimeMachine.Name = "txtTimeMachine";
-            this.txtTimeMachine.Size = new System.Drawing.Size(209, 20);
-            this.txtTimeMachine.TabIndex = 11;
-            this.txtTimeMachine.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.txtTimeMachine.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtTimeMachine_KeyUp);
-            // 
-            // mcTimeMachine
-            // 
-            this.mnuTimeMachine.Attach(this.mcTimeMachine);
-            this.mcTimeMachine.Location = new System.Drawing.Point(17, 140);
-            this.mcTimeMachine.MaxSelectionCount = 1;
-            this.mcTimeMachine.Name = "mcTimeMachine";
-            this.mcTimeMachine.TabIndex = 10;
-            this.mcTimeMachine.Visible = false;
-            this.mcTimeMachine.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.mcTimeMachine_DateChanged);
-            // 
-            // mnuTimeMachine
-            // 
-            this.mnuTimeMachine.Items.AddRange(new ChromiumMenuItem[] {
-            this.todayToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.goodFridayToolStripMenuItem,
-            this.easterToolStripMenuItem,
-            this.christmasToolStripMenuItem,
-            this.toolStripSeparator2,
-            this.birthdaysToolStripMenuItem});
-            this.mnuTimeMachine.Name = "contextMenuStrip1";
-            this.mnuTimeMachine.Size = new System.Drawing.Size(139, 126);
-            this.mnuTimeMachine.Closing += new System.ComponentModel.CancelEventHandler(this.mnuTimeMachine_Closing);
-            this.mnuTimeMachine.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
-            // 
-            // todayToolStripMenuItem
-            // 
-            this.todayToolStripMenuItem.Name = "todayToolStripMenuItem";
-            this.todayToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.todayToolStripMenuItem.Text = "Today";
-            this.todayToolStripMenuItem.Click += new System.EventHandler(this.todayToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(135, 6);
-            // 
-            // goodFridayToolStripMenuItem
-            // 
-            this.goodFridayToolStripMenuItem.Name = "goodFridayToolStripMenuItem";
-            this.goodFridayToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.goodFridayToolStripMenuItem.Text = "Good Friday";
-            this.goodFridayToolStripMenuItem.Click += new System.EventHandler(this.goodFridayToolStripMenuItem_Click);
-            // 
-            // easterToolStripMenuItem
-            // 
-            this.easterToolStripMenuItem.Name = "easterToolStripMenuItem";
-            this.easterToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.easterToolStripMenuItem.Text = "Easter";
-            this.easterToolStripMenuItem.Click += new System.EventHandler(this.easterToolStripMenuItem_Click);
-            // 
-            // christmasToolStripMenuItem
-            // 
-            this.christmasToolStripMenuItem.Name = "christmasToolStripMenuItem";
-            this.christmasToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.christmasToolStripMenuItem.Text = "Christmas";
-            this.christmasToolStripMenuItem.Click += new System.EventHandler(this.christmasToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(135, 6);
-            // 
-            // birthdaysToolStripMenuItem
-            // 
-            this.birthdaysToolStripMenuItem.DropDown = this.mnuBirthdays;
-            this.birthdaysToolStripMenuItem.Name = "birthdaysToolStripMenuItem";
-            this.birthdaysToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.birthdaysToolStripMenuItem.Text = "Birthdays";
-            // 
-            // mnuBirthdays
-            // 
-            this.mnuBirthdays.Items.AddRange(new ChromiumMenuItem[] {
-            this.addBirthdayToolStripMenuItem,
-            this.toolStripSeparator3});
-            this.mnuBirthdays.Name = "mnuBirthdays";
-            this.mnuBirthdays.OwnerItem = this.birthdaysToolStripMenuItem;
-            this.mnuBirthdays.Size = new System.Drawing.Size(144, 32);
-            this.mnuBirthdays.Closing += new System.ComponentModel.CancelEventHandler(this.mnuBirthdays_Closing);
-            this.mnuBirthdays.Opening += new System.ComponentModel.CancelEventHandler(this.mnuBirthdays_Opening);
-            // 
-            // addBirthdayToolStripMenuItem
-            // 
-            this.addBirthdayToolStripMenuItem.Name = "addBirthdayToolStripMenuItem";
-            this.addBirthdayToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
-            this.addBirthdayToolStripMenuItem.Text = "Add birthday";
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(140, 6);
-            // 
             // groupBoxDownloadDialog
             // 
-            this.groupBoxDownloadDialog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxDownloadDialog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBoxDownloadDialog.BackColor = System.Drawing.Color.White;
             this.groupBoxDownloadDialog.Controls.Add(this.comboSettingsTabAlinement);
             this.groupBoxDownloadDialog.Controls.Add(this.label10);
@@ -557,12 +391,12 @@ namespace Quartz
             this.groupBoxDownloadDialog.Controls.Add(this.ComboBoxTheme);
             this.groupBoxDownloadDialog.Controls.Add(this.labelTheme);
             this.groupBoxDownloadDialog.ForeColor = System.Drawing.Color.Black;
-            this.groupBoxDownloadDialog.Location = new System.Drawing.Point(593, 0);
+            this.groupBoxDownloadDialog.Location = new System.Drawing.Point(17, 65);
             this.groupBoxDownloadDialog.Name = "groupBoxDownloadDialog";
-            this.groupBoxDownloadDialog.Size = new System.Drawing.Size(199, 406);
+            this.groupBoxDownloadDialog.Size = new System.Drawing.Size(199, 320);
             this.groupBoxDownloadDialog.TabIndex = 9;
             this.groupBoxDownloadDialog.TabStop = false;
-            this.groupBoxDownloadDialog.Text = "Other Appearance Settings";
+            this.groupBoxDownloadDialog.Text = "Appearance Settings";
             // 
             // comboSettingsTabAlinement
             // 
@@ -1224,34 +1058,6 @@ namespace Quartz
             this.tabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl1.TabIndex = 0;
             // 
-            // editToolStripMenuItem
-            // 
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
-            this.editToolStripMenuItem.Text = "Edit";
-            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(104, 6);
-            // 
-            // deleteToolStripMenuItem
-            // 
-            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
-            this.deleteToolStripMenuItem.Text = "Delete";
-            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new ChromiumMenuItem[] {
-            this.editToolStripMenuItem,
-            this.toolStripSeparator4,
-            this.deleteToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(108, 54);
-            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1282,8 +1088,6 @@ namespace Quartz
             this.tabPagePerformance.PerformLayout();
             this.tabPageApp.ResumeLayout(false);
             this.tabPageApp.PerformLayout();
-            this.mnuTimeMachine.ResumeLayout(false);
-            this.mnuBirthdays.ResumeLayout(false);
             this.groupBoxDownloadDialog.ResumeLayout(false);
             this.tabPageAccount.ResumeLayout(false);
             this.tabPageAccount.PerformLayout();
@@ -1293,7 +1097,6 @@ namespace Quartz
             this.HiddenPDFGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumZoom)).EndInit();
             this.tabControl1.ResumeLayout(false);
-            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1317,11 +1120,6 @@ namespace Quartz
         private System.Windows.Forms.CheckBox checkBoxMemory;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TabPage tabPageApp;
-        private System.Windows.Forms.CheckBox cbtimeMachine;
-        private Quartz.Controls.ChromiumButton btnDown;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox txtTimeMachine;
-        private System.Windows.Forms.MonthCalendar mcTimeMachine;
         private System.Windows.Forms.GroupBox groupBoxDownloadDialog;
         private System.Windows.Forms.ComboBox ComboBoxTheme;
         private System.Windows.Forms.Label labelTheme;
@@ -1362,26 +1160,11 @@ namespace Quartz
         private System.Windows.Forms.CheckBox pz;
         private System.Windows.Forms.CheckBox zc;
         private System.Windows.Forms.TabControl tabControl1;
-        private ChromiumMenu mnuTimeMachine;
-        private ChromiumMenuItem todayToolStripMenuItem;
-        private ChromiumMenuSeparator toolStripSeparator1;
-        private ChromiumMenuItem christmasToolStripMenuItem;
-        private ChromiumMenuItem goodFridayToolStripMenuItem;
-        private ChromiumMenuItem easterToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboSettingsTabAlinement;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label CoppyRightLable;
-        private ChromiumMenuSeparator toolStripSeparator2;
-        private ChromiumMenuItem birthdaysToolStripMenuItem;
-        private ChromiumMenu mnuBirthdays;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox combDefaultFavicon;
-        private ChromiumMenuItem addBirthdayToolStripMenuItem;
-        private ChromiumMenuSeparator toolStripSeparator3;
-        private ChromiumMenuItem editToolStripMenuItem;
-        private ChromiumMenuSeparator toolStripSeparator4;
-        private ChromiumMenuItem deleteToolStripMenuItem;
-        private ChromiumMenu contextMenuStrip1;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox cbDownloadAlighment;
         private System.Windows.Forms.Label label10;

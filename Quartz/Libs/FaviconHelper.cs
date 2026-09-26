@@ -318,25 +318,6 @@ namespace Quartz.Libs
             return easterDate.AddDays(-2); // Good Friday is 2 days before Easter Sunday
         }
 
-        private static bool IsTodaySomeonesBirthday()
-        {
-            bool isTodaySomeonesBirthday = false;
-            BirthdayService birthdayService = new BirthdayService();
-            DateTime today = GetRealTimeInZone.GetRealTimeInComputerTimeZone();
-
-            foreach (BirthdayModel birthday in birthdayService.All())
-            {
-                if (birthday.DOB.Day == today.Day
-                    && birthday.DOB.Month == today.Month)
-                {
-                    isTodaySomeonesBirthday = true;
-                    break;
-                }
-            }
-
-            return isTodaySomeonesBirthday;
-        }
-
         public static Icon GetFullResDefaultFavicon()
         {
             Icon icon;
@@ -354,7 +335,7 @@ namespace Quartz.Libs
             }
             else
             {
-                DateTime currentDateTime = GetRealTimeInZone.GetRealTimeInComputerTimeZone();
+                DateTime currentDateTime = DateTime.Now;
                 DateTime easterDateTime = CalculateEaster(currentDateTime.Year);
                 DateTime goodfridayDateTime = CalculateGoodFriday(easterDateTime);
                 string theme = SettingsService.Get("Theme");
@@ -364,11 +345,6 @@ namespace Quartz.Libs
                     || currentDateTime.Month == 12)
                 {
                     icon = Quartz.Properties.Resources.favicon_xmas;
-                }
-                //birthday icon (if its someones birthday)
-                else if (IsTodaySomeonesBirthday())
-                {
-                    icon = Quartz.Properties.Resources.Birthday_Quartz;
                 }
                 //good friday icon (when its good friday) (needs updating)
                 else if (currentDateTime.Date == goodfridayDateTime.Date)
@@ -392,7 +368,7 @@ namespace Quartz.Libs
         {
             Icon icon;
 
-            DateTime currentDateTime = GetRealTimeInZone.GetRealTimeInComputerTimeZone();
+            DateTime currentDateTime = DateTime.Now;
             DateTime easterDateTime = CalculateEaster(currentDateTime.Year);
             DateTime goodfridayDateTime = CalculateGoodFriday(easterDateTime);
             string theme = SettingsService.Get("Theme");
@@ -402,11 +378,6 @@ namespace Quartz.Libs
                 || currentDateTime.Month == 12)
             {
                 icon = Quartz.Properties.Resources.favicon_xmas;
-            }
-            //birthday icon (if its someones birthday)
-            else if (IsTodaySomeonesBirthday())
-            {
-                icon = Quartz.Properties.Resources.Birthday_Quartz;
             }
             //good friday icon (when its good friday) (needs updating)
             else if (currentDateTime.Date == goodfridayDateTime.Date)
@@ -443,7 +414,7 @@ namespace Quartz.Libs
             }
             else
             {
-                DateTime currentDateTime = GetRealTimeInZone.GetRealTimeInComputerTimeZone();
+                DateTime currentDateTime = DateTime.Now;
                 DateTime easterDateTime = CalculateEaster(currentDateTime.Year);
                 DateTime goodfridayDateTime = CalculateGoodFriday(easterDateTime);
                 string theme = SettingsService.Get("Theme");
@@ -453,11 +424,6 @@ namespace Quartz.Libs
                     || currentDateTime.Month == 12)
                 {
                     icon = Quartz.Properties.Resources.xmas16;
-                }
-                //birthday icon (if its someones birthday)
-                else if (IsTodaySomeonesBirthday())
-                {
-                    icon = Quartz.Properties.Resources.birthday16;
                 }
                 //good friday icon (when its good friday) (needs updating)
                 else if (currentDateTime.Date == goodfridayDateTime.Date)
@@ -481,7 +447,7 @@ namespace Quartz.Libs
         {
             Image image;
 
-            DateTime currentDateTime = GetRealTimeInZone.GetRealTimeInComputerTimeZone();
+            DateTime currentDateTime = DateTime.Now;
             DateTime easterDateTime = CalculateEaster(currentDateTime.Year);
             DateTime goodfridayDateTime = CalculateGoodFriday(easterDateTime);
             string theme = SettingsService.Get("Theme");
@@ -491,11 +457,6 @@ namespace Quartz.Libs
                 || currentDateTime.Month == 12)
             {
                 image = Quartz.Properties.Resources.Quartz_Xmas;
-            }
-            //birthday icon (if its someones birthday)
-            else if (IsTodaySomeonesBirthday())
-            {
-                image = Quartz.Properties.Resources.Birthday_Quartz1;
             }
             //good friday icon (when its good friday) (needs updating)
             else if (currentDateTime.Date == goodfridayDateTime.Date)

@@ -25,7 +25,6 @@ namespace Quartz
         public static ProfileService profileService = new ProfileService();
 
         private static FavouriteService favouriteService = new FavouriteService();
-        private static BirthdayService birthdayService = new BirthdayService();
 
         // --- Single-instance & IPC fields ---
         private const string AppId = "QuartzApp_Unique_v1"; // change if you want a different identity
@@ -194,8 +193,6 @@ namespace Quartz
             // Now that EasyTabsContext is available, process any pending IPC messages
             ProcessPendingMessages();
 
-            OpenBirthdayDialogIfNecessary();
-
             Application.ApplicationExit += Application_ApplicationExit;
             Application.Run(EasyTabsContext);
         }
@@ -211,21 +208,6 @@ namespace Quartz
                 Application.Run(new Profiles(null, null));
             else
                 Application.Run(new Profiles(null, args[0]));
-        }
-        #endregion
-
-        #region Birthday
-        public static void OpenBirthdayDialogIfNecessary()
-        {
-            var today = GetRealTimeInZone.GetRealTimeInComputerTimeZone().Date;
-
-            foreach (var birthday in birthdayService.All())
-            {
-                if (birthday.DOB.Date.Day == today.Day && birthday.DOB.Date.Month == today.Month)
-                {
-                    new HappyBirthdayMessage(birthday.Name, birthday.DOB.Year).ShowDialog();
-                }
-            }
         }
         #endregion
 
@@ -395,7 +377,6 @@ namespace Quartz
             {
                 CreateDefaultProfile();
                 await CreateDefaultFavourites();
-                CreateDefaultBirthdays();
                 SetDefaultSettings();
             }
 
@@ -431,26 +412,6 @@ namespace Quartz
             }
         }
 
-        private static void CreateDefaultBirthdays()
-        {
-            var birthdays = new[]
-            {
-                new BirthdayModel { Name = "Quartz", DOB = DateTime.Parse("20 November 2022") },
-                new BirthdayModel { Name = "Daniel Xaftellis", DOB = DateTime.Parse("2 May 2008") },
-                new BirthdayModel { Name = "Kaitlyn Xaftellis", DOB = DateTime.Parse("24 February 2005") },
-                new BirthdayModel { Name = "Taki Xaftellis", DOB = DateTime.Parse("17 July 1973") },
-                new BirthdayModel { Name = "Carolyn Xaftellis", DOB = DateTime.Parse("2 October 1972") },
-                new BirthdayModel { Name = "Julie Collen", DOB = DateTime.Parse("16 February 1942") },
-                new BirthdayModel { Name = "Ebony Xaftellis", DOB = DateTime.Parse("13 October 2014") },
-                new BirthdayModel { Name = "Argie Xaftellis", DOB = DateTime.Parse("17 March 1972") }
-            };
-
-            foreach (var bday in birthdays)
-                birthdayService.Add(bday);
-
-            birthdayService.SaveChanges();
-        }
-
         private static void SetDefaultSettings()
         {
             MainSettingsService.Set("RunBrowser", "true");
@@ -459,7 +420,6 @@ namespace Quartz
             var settings = new Dictionary<string, string>
             {
                 { "Theme", "auto (light/dark)" },
-                { "simulateDate", "false" },
                 { "IsSwipeNavigationEnabled", "true" },
                 { "SearchEngine", "google" },
                 { "IsZoomControlEnabled", "true" },
